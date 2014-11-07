@@ -38,10 +38,8 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(5, rating.averageRating, "averageRating should be clamped to max");
         }
 
-    // Test Rating Instantiation
-    testRatingInstantiation = function () {
-
-
+        // Test Rating Instantiation
+        testRatingInstantiation = function () {
             // Get the rating element from the DOM
             LiveUnit.LoggingCore.logComment("Getting the rating element by id");
             var ratingElement = document.getElementById("rating");
@@ -52,10 +50,8 @@ module CorsicaTests {
             LiveUnit.LoggingCore.logComment("Rating has been insantiated.");
             LiveUnit.Assert.isNotNull(rating, "Rating element should not be null when insantiated.");
 
-
             verifyFunction("addEventListener");
             verifyFunction("removeEventListener");
-
 
             function verifyFunction(functionName) {
                 LiveUnit.LoggingCore.logComment("Verifying that function " + functionName + " exists");
@@ -68,13 +64,8 @@ module CorsicaTests {
             }
         }
 
-
-
-
-
-
-    // Test Rating Instatiation with null element
-    testRatingNullInstatiation = function () {
+        // Test Rating Instatiation with null element
+        testRatingNullInstatiation = function () {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the rating with null element");
             var rating = null;
 
@@ -88,12 +79,8 @@ module CorsicaTests {
             LiveUnit.Assert.isNotNull(rating, "Rating instatiation correctly handled a null element.");
         }
 
-
-
-
-
-    // Test rating parameters
-    testRatingParams = function () {
+        // Test rating parameters
+        testRatingParams = function () {
             function testGoodInitOption(paramName, value) {
                 LiveUnit.LoggingCore.logComment("Testing creating a rating using good parameter " + paramName + "=" + value);
 
@@ -115,13 +102,8 @@ module CorsicaTests {
             testGoodInitOption("averageRating", 0/*, averageRatingIsInvalid*/);
         }
 
-
-
-
-
-
-    // Test maxRating,userRating & averageRating updates during runtime
-    testRatingPropertiesUpdate = function (complete) {
+        // Test maxRating,userRating & averageRating updates during runtime
+        testRatingPropertiesUpdate = function (complete) {
             var ratingElement = <HTMLElement>document.getElementById('ratingTestDiv');
             var ratingControl = new WinJS.UI.Rating(ratingElement, { averageRating: 5.5, maxRating: 10 });
             var verifyRatingProperties = function (userRating, averageRating, maxRating, enableClear) {
@@ -129,7 +111,6 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(averageRating, ratingControl.averageRating, "Check averageRating");
                 LiveUnit.Assert.areEqual(maxRating, ratingControl.maxRating, "Check maxRating");
                 LiveUnit.Assert.areEqual(enableClear, ratingControl.enableClear, "Check enableClear");
-
             };
 
             ratingElement.setAttribute("aria-valuenow", "3");
@@ -168,15 +149,14 @@ module CorsicaTests {
                         ratingControl.maxRating = 3;
                         verifyRatingProperties(3, 3, 3, false);
 
-
                         complete();
                     });
                 });
             });
         }
 
-    // Tests for dispose members and requirements
-    testRatingDispose = function () {
+        // Tests for dispose members and requirements
+        testRatingDispose = function () {
             var rating = <WinJS.UI.PrivateRating> new WinJS.UI.Rating();
             LiveUnit.Assert.isTrue(rating.dispose);
             LiveUnit.Assert.isTrue(rating.element.classList.contains("win-disposable"));
@@ -197,7 +177,7 @@ module CorsicaTests {
             }
             rating.dispose();
         }
-}
+    }
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.RatingTests");

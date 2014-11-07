@@ -46,32 +46,6 @@ module RatingUtils {
     // TODO: Make this dynamically figure out the current language... and add the strings to localizedStrings array.
     export var currentLanguage = "en-US";
 
-    //-----------------------------------------------------------------------------------
-    // List of default star glyph colors for each class coming from designer comps
-    export var defaultColors = {
-        dark: {
-            averageEmpty: "rgba(255, 255, 255, 0.35)",
-            averageFull: "rgb(255, 255, 255)",
-            userEmpty: "rgba(255, 255, 255, 0.35)",
-            userFull: "rgb(91, 46, 197)",
-            tentativeEmpty: "rgba(255, 255, 255, 0.35)",
-            tentativeFull: "rgb(129, 82, 239)",
-            disabledEmpty: "rgba(255, 255, 255, 0.35)",
-            disabledFull: "rgb(255, 255, 255)"
-        },
-        light: {
-            averageEmpty: "rgba(0, 0, 0, 0.35)",
-            averageFull: "rgb(0, 0, 0)",
-            userEmpty: "rgba(0, 0, 0, 0.35)",
-            userFull: "rgb(70, 23, 180)",
-            tentativeEmpty: "rgba(0, 0, 0, 0.35)",
-            tentativeFull: "rgb(114, 65, 228)",
-            disabledEmpty: "rgba(0, 0, 0, 0.35)",
-            disabledFull: "rgb(0, 0, 0)"
-        }
-    };
-
-    //-----------------------------------------------------------------------------------
     // Default values for rating control parts.
     export var defaultMaxRating = 5;
     export var defaultUserRating = 0;
@@ -719,8 +693,6 @@ module RatingUtils {
                 LiveUnit.Assert.isTrue(this.classesMatch(this.parts.averageFull, star.getAttribute("class")),
                     "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.averageFull + "', Actual: '" + star.getAttribute("class") + "'");
 
-                Helper.Assert.areColorsEqual(this.defaultColors[this.currentTheme].averageFull, starBeforePartStyle.getPropertyValue("color"), "Verify help star uses the correct color by default in " + this.currentTheme + " theme.");
-
                 var percentFull = rating.averageRating - Math.floor(rating.averageRating);
 
                 if (Math.floor(rating.averageRating) === rating.averageRating) {
@@ -761,8 +733,6 @@ module RatingUtils {
 
                     LiveUnit.Assert.isTrue(this.classesMatch(this.parts.averageEmpty, star.getAttribute("class")),
                         "Verify correct class used for partial star " + (i + 1) + ". Expected: '" + this.parts.averageEmpty + "', Actual: '" + star.getAttribute("class") + "'");
-
-                    Helper.Assert.areColorsEqual(this.defaultColors[this.currentTheme].averageEmpty, starBeforePartStyle.getPropertyValue("color"), "Verify next star after help star uses the correct color by default in " + this.currentTheme + " theme.");
 
                     if (Math.abs((1 - percentFull) - Helper.getCSSPropertyValue(starStyle, "flex")) > 0.1) {
                         LiveUnit.Assert.areEqual((1 - percentFull) + " " + (1 - percentFull) + " auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify the helper star (child # " + (i + 1) + ") with class \"" + star.getAttribute("class") + "\" has correct ms-flex;");
@@ -814,51 +784,40 @@ module RatingUtils {
                 //  Note that there is a possibility that we already ran into the non-displayed, extra average-full prior to
                 //  running through all the normal "full" divs, hence the second check after the || in each if statement below.
                 var expectedClassName = "";
-                var expectedColor = "";
                 switch (expect) {
                     case "user":
                         if (i < rating.userRating || hitExtraAverageFullDiv && i === rating.userRating) {
                             expectedClassName = this.parts.userFull;
-                            expectedColor = this.defaultColors[this.currentTheme].userFull;
                         } else {
                             expectedClassName = this.parts.userEmpty;
-                            expectedColor = this.defaultColors[this.currentTheme].userEmpty;
                         }
                         break;
                     case "average":
                         if (i < rating.averageRating || hitExtraAverageFullDiv && i === rating.averageRating) {
                             expectedClassName = this.parts.averageFull;
-                            expectedColor = this.defaultColors[this.currentTheme].averageFull;
                         } else {
                             expectedClassName = this.parts.averageEmpty;
-                            expectedColor = this.defaultColors[this.currentTheme].averageEmpty;
                         }
                         break;
                     case "tentative":
                         if (i < element.tentativeRatingLast || hitExtraAverageFullDiv && i === element.tentativeRatingLast) {
                             expectedClassName = this.parts.tentativeFull;
-                            expectedColor = this.defaultColors[this.currentTheme].tentativeFull;
                         } else {
                             expectedClassName = this.parts.tentativeEmpty;
-                            expectedColor = this.defaultColors[this.currentTheme].tentativeEmpty;
                         }
                         break;
                     case "disabled":
                         if (rating.userRating || !rating.averageRating) {
                             if (i < rating.userRating || hitExtraAverageFullDiv && i === rating.userRating) {
                                 expectedClassName = this.parts.userFull;
-                                expectedColor = this.defaultColors[this.currentTheme].userFull;
                             } else {
                                 expectedClassName = this.parts.userEmpty;
-                                expectedColor = this.defaultColors[this.currentTheme].userEmpty;
                             }
                         } else {
                             if (i < rating.averageRating || hitExtraAverageFullDiv && i === rating.averageRating) {
                                 expectedClassName = this.parts.averageFull;
-                                expectedColor = this.defaultColors[this.currentTheme].averageFull;
                             } else {
                                 expectedClassName = this.parts.averageEmpty;
-                                expectedColor = this.defaultColors[this.currentTheme].averageEmpty;
                             }
 
                             expectedClassName += " win-disabled";
@@ -877,9 +836,6 @@ module RatingUtils {
 
                 LiveUnit.Assert.isTrue(this.classesMatch(expectedClassName, star.getAttribute("class")),
                     "Verify correct class used for star " + (i + 1) + ". Expected: '" + expectedClassName + "', Actual: '" + star.getAttribute("class") + "'");
-
-                Helper.Assert.areColorsEqual(expectedColor, starBeforePartStyle.getPropertyValue("color"),
-                    "Verify correct color used for star " + (i + 1) + " in " + this.currentTheme + " theme.");
 
                 LiveUnit.Assert.areEqual("1 1 auto", Helper.getCSSPropertyValue(starStyle, "flex"), "Verify star " + (i + 1) + " has flex: 1;");
             }
