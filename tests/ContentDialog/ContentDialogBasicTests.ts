@@ -39,6 +39,11 @@ module ContentDialogTests {
         return style.display !== "none" && style.visibility === "visible" && +style.opacity === 1;
     }
     
+    function assertDialogIsDisposed(dialog: WinJS.UI.PrivateContentDialog) {
+        LiveUnit.Assert.isTrue(dialog._disposed, "ContentDialog didn't mark itself as disposed");
+        LiveUnit.Assert.areEqual("Disposed", dialog._state.name, "ContentDialog didn't move into the disposed state");
+    }
+    
     function assertAreBoundingClientRectValuesEqual(expected, actual, message) {
         // Use a tolerance of 1 because Safari truncates floats returned by getBoundingClientRect while
         // other browsers return the floating point value.
@@ -128,12 +133,14 @@ module ContentDialogTests {
     
     export class BasicTests {
         setUp() {
+            Helper.initUnhandledErrors();
             testRoot = document.createElement("div");
             createDialog = Utils.makeCreateDialog(testRoot);
             document.body.appendChild(testRoot);
         }
 
         tearDown() {
+            Helper.cleanupUnhandledErrors();
             WinJS.Utilities.disposeSubTree(testRoot);
             var parent = testRoot.parentNode;
             parent && parent.removeChild(testRoot);
@@ -167,6 +174,7 @@ module ContentDialogTests {
                 counter++;
                 LiveUnit.Assert.isTrue(dialog.hidden, "afterhide: dialog should be in hidden state");
                 LiveUnit.Assert.isFalse(isVisible(dialog.element), "afterhide: dialog should not be visible on screen");
+                Helper.validateUnhandledErrors();
                 complete();
             };
 
@@ -204,6 +212,7 @@ module ContentDialogTests {
             });
             LiveUnit.Assert.isTrue(dialog.hidden, "ContentDialog should still be hidden");
             LiveUnit.Assert.isTrue(showCanceled, "show's cancelation handler should have run");
+            Helper.validateUnhandledErrors();
         }
         
         testBeforeHideIsCancelable() {
@@ -222,6 +231,7 @@ module ContentDialogTests {
             };
             dialog.hide();
             LiveUnit.Assert.isFalse(dialog.hidden, "ContentDialog should still be shown");
+            Helper.validateUnhandledErrors();
         }
         
         testPrimaryClick() {
@@ -231,6 +241,7 @@ module ContentDialogTests {
                     dialog.element.querySelector("." + ContentDialog._ClassNames.primaryCommand).click();
                 }
             });
+            Helper.validateUnhandledErrors();
         }
 
         testSecondaryClick() {
@@ -240,6 +251,7 @@ module ContentDialogTests {
                     dialog.element.querySelector("." + ContentDialog._ClassNames.secondaryCommand).click();
                 }
             });
+            Helper.validateUnhandledErrors();
         }
 
         testHideDefaultReason() {
@@ -249,6 +261,7 @@ module ContentDialogTests {
                     dialog.hide();
                 }
             });
+            Helper.validateUnhandledErrors();
         }
 
         testHideCustomReason() {
@@ -258,6 +271,7 @@ module ContentDialogTests {
                     dialog.hide("a custom reason");
                 }
             });
+            Helper.validateUnhandledErrors();
         }
         
         testHideWithEscapeKey() {
@@ -267,6 +281,7 @@ module ContentDialogTests {
                     Helper.keydown(dialog.element, WinJS.Utilities.Key.escape);
                 }
             });
+            Helper.validateUnhandledErrors();
         }
         
         testHideWithHardwareBackButton() {
@@ -283,26 +298,49 @@ module ContentDialogTests {
             });
             LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled,
                 "ContentDialog should have marked the backclick event as handled");
+            Helper.validateUnhandledErrors();
         }
         
-        testDispose() {
-            var errorHandlerRan = false;
+        testDisposeWhileShown() {
+            var errorHandler1Ran = false;
+            var errorHandler2Ran = false;
             var dialog = Utils.useSynchronousAnimations(createDialog());
-            dialog.show();
-            dialog.dispose();
-            LiveUnit.Assert.isTrue(dialog._disposed, "ContentDialog didn't mark itself as disposed");
-            LiveUnit.Assert.areEqual("Disposed", dialog._state.name, "ContentDialog didn't move into the disposed state");
             dialog.show().then(function () {
                 LiveUnit.Assert.fail("Show shouldn't have completed successfully. Control is disposed.");
             }, function (error) {
-                errorHandlerRan = true;
+                errorHandler1Ran = true;
                 LiveUnit.Assert.areEqual(error.name, "WinJS.UI.ContentDialog.ControlDisposed",
                     "Show should have errored due to control being disposed");
             });
-            LiveUnit.Assert.isTrue(errorHandlerRan, "show's error handler should have run");
+            dialog.dispose();
+            assertDialogIsDisposed(dialog);
+            dialog.show().then(function () {
+                LiveUnit.Assert.fail("Show shouldn't have completed successfully. Control is disposed.");
+            }, function (error) {
+                errorHandler2Ran = true;
+                LiveUnit.Assert.areEqual(error.name, "WinJS.UI.ContentDialog.ControlDisposed",
+                    "Show should have errored due to control being disposed");
+            });
+            LiveUnit.Assert.isTrue(errorHandler1Ran, "show's error handler should have run");
+            LiveUnit.Assert.isTrue(errorHandler2Ran, "show's error handler should have run");
             // These calls shouldn't throw any exceptions
             dialog.hide();
             dialog.dispose();
+            Helper.validateUnhandledErrors();
+        }
+        
+        testDisposeWhileHidden() {
+            var errorHandler1Ran = false;
+            var errorHandler2Ran = false;
+            var dialog = Utils.useSynchronousAnimations(createDialog());
+            dialog.show();
+            dialog.hide();
+            dialog.dispose();
+            assertDialogIsDisposed(dialog);
+            // These calls shouldn't throw any exceptions
+            dialog.hide();
+            dialog.dispose();
+            Helper.validateUnhandledErrors();
         }
         
         testInitializingProperties() {            
@@ -328,6 +366,7 @@ module ContentDialogTests {
 
                 dialog.hide();
             });
+            Helper.validateUnhandledErrors();
         }
 
         testChangingProperties() {
@@ -369,6 +408,7 @@ module ContentDialogTests {
                 dialog.show();
                 assertProperties(dialog, currentConfig);
             });
+            Helper.validateUnhandledErrors();
         }
         
         testTabIndexOfZeroIsHighest() {
@@ -390,6 +430,7 @@ module ContentDialogTests {
             
             dialog.show();
             verifyTabIndices(dialog, lowestTabIndex, highestTabIndex);
+            Helper.validateUnhandledErrors();
         }
         
         testTabIndices() {
@@ -427,6 +468,7 @@ module ContentDialogTests {
             Helper.keydown(dialog.element, WinJS.Utilities.Key.tab);
             
             verifyTabIndices(dialog, lowestTabIndex, highestTabIndex);
+            Helper.validateUnhandledErrors();
         }
         
         testPositioningAndSizing(complete) {
@@ -636,6 +678,7 @@ module ContentDialogTests {
                     return doTestCases(testCasesWithLimits(customLimits));
                 }).then(function () {
                     dialog.hide();
+                    Helper.validateUnhandledErrors();
                     complete();
                 });
             };

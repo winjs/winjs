@@ -17,12 +17,14 @@ module ContentDialogTests {
     
     export class FocusTests {
         setUp() {
+            Helper.initUnhandledErrors();
             testRoot = document.createElement("div");
             createDialog = Utils.makeCreateDialog(testRoot);
             document.body.appendChild(testRoot);
         }
         
         tearDown() {
+            Helper.cleanupUnhandledErrors();
             WinJS.Utilities.disposeSubTree(testRoot);
             var parent = testRoot.parentNode;
             parent && parent.removeChild(testRoot);
@@ -38,6 +40,7 @@ module ContentDialogTests {
                     "When no content is focusable, the dialog itself should receive focus"
                 );
                 dialog.hide();
+                Helper.validateUnhandledErrors();
                 complete();
             });
         }
@@ -58,6 +61,7 @@ module ContentDialogTests {
                     "The first focusable element in the dialog's content should have received focus"
                 );
                 dialog.hide();
+                Helper.validateUnhandledErrors();
                 complete();
             });
         }
@@ -88,6 +92,7 @@ module ContentDialogTests {
             }).then(function () {
                 LiveUnit.Assert.areEqual(externalButton2, document.activeElement,
                     "Focus should have been restored to externalButton2 after hiding the dialog");
+                Helper.validateUnhandledErrors();
                 complete();
             });
         }

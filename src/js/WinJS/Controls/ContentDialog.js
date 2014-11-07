@@ -280,7 +280,7 @@ define([
                     name: "Init",
                     hidden: true,
                     enter: function ContentDialog_InitState_enter(reason) {
-                        this.dialog._dismissedSignal = new _Signal();
+                        this.dialog._dismissedSignal = null; // The signal will be created on demand when show() is called
                         this.dialog._setState(States.Hidden, false);
                     },
                     exit: _,
@@ -308,9 +308,9 @@ define([
                         if (ContentDialogManager.aDialogIsShowing()) {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         } else {
-                            var dismissedPromise = this.dialog._dismissedSignal.promise;
+                            var dismissedSignal = this.dialog._dismissedSignal = new _Signal(); // save the signal in case it changes when switching states
                             this.dialog._setState(States.BeforeShow);
-                            return dismissedPromise;
+                            return dismissedSignal.promise;
                         }
                     },
                     hide: _,
@@ -328,7 +328,7 @@ define([
                                 return that.dialog._fireBeforeShow(); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function (shouldShow) {
                                 if (!shouldShow) {
-                                    that.dialog._cancelDismissalPromise(); // Give opportunity for chain to be canceled when calling into app code
+                                    that.dialog._cancelDismissalPromise(null); // Give opportunity for chain to be canceled when calling into app code
                                 }
                                 return shouldShow;
                             }).then(function (shouldShow) {
@@ -384,7 +384,7 @@ define([
                         if (this._pendingHide) {
                             var reason = this._pendingHide.reason;
                             this._pendingHide = null;
-                            return this.dialog._resetDismissalPromise(reason).promise;
+                            return this.dialog._resetDismissalPromise(reason, new _Signal()).promise;
                         } else {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         }
@@ -456,7 +456,7 @@ define([
                         interruptible(this, function (that, ready) {
                             return ready.then(function () {
                                 that._showIsPending = false;
-                                that.dialog._resetDismissalPromise(reason); // Give opportunity for chain to be canceled when calling into app code
+                                that.dialog._resetDismissalPromise(reason, null); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
                                 return that.dialog._playExitAnimation();
                             }).then(function () {
@@ -475,13 +475,14 @@ define([
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         } else {
                             this._showIsPending = true;
+                            this.dialog._dismissedSignal = new _Signal();
                             return this.dialog._dismissedSignal.promise;
                         }
                     },
                     hide: function ContentDialog_HidingState_hide(reason) {
                         if (this._showIsPending) {
                             this._showIsPending = false;
-                            this.dialog._resetDismissalPromise(reason);
+                            this.dialog._resetDismissalPromise(reason, null);
                         }
                     },
                     onCommandClicked: _,
@@ -494,7 +495,9 @@ define([
                     enter: function ContentDialog_DisposedState_enter() {
                         ContentDialogManager.didHide(this.dialog);
                         this.dialog._removeExternalListeners();
-                        this.dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
+                        if (this.dialog._dismissedSignal) {
+                            this.dialog._dismissedSignal.error(new _ErrorFromName("WinJS.UI.ContentDialog.ControlDisposed", Strings.controlDisposed));
+                        }
                     },
                     exit: _,
                     show: function ContentDialog_DisposedState_show() {
@@ -925,17 +928,17 @@ define([
                 },
 
                 // Calls into arbitrary app code
-                _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason) {
+                _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason, newSignal) {
                     var dismissedSignal = this._dismissedSignal;
-                    var newDismissedSignal = this._dismissedSignal = new _Signal();
+                    var newDismissedSignal = this._dismissedSignal = newSignal;
                     dismissedSignal.complete({ reason: reason });
                     return newDismissedSignal;
                 },
 
                 // Calls into arbitrary app code
-                _cancelDismissalPromise: function ContentDialog_cancelDismissalPromise() {
+                _cancelDismissalPromise: function ContentDialog_cancelDismissalPromise(newSignal) {
                     var dismissedSignal = this._dismissedSignal;
-                    var newDismissedSignal = this._dismissedSignal = new _Signal();
+                    var newDismissedSignal = this._dismissedSignal = newSignal;
                     dismissedSignal.cancel();
                     return newDismissedSignal;
                 },
