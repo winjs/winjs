@@ -480,8 +480,10 @@ define([
                             _ElementUtilities.addClass(this._element, _Constants.bottomClass);
                         }
 
-                        // Show again if we hid ourselves for the designer
+                        // Update our position on screen.
+                        this._ensurePosition();
                         if (wasShown) {
+                            // Show again if we hid ourselves for the designer
                             this._show();
                         }
                     }

@@ -2042,6 +2042,33 @@ module CorsicaTests {
                 }, WinJS.Utilities.Scheduler.Priority.high);
             }, WinJS.Utilities.Scheduler.Priority.high);
         }
+
+        testChangingAppBarPlacementUpdatesElementPositionImmediately() {
+
+            var root = document.getElementById("appBarDiv");
+            var appBar = new WinJS.UI.AppBar(null, { placement: 'top' });
+            root.appendChild(appBar.element);
+
+            var oldRect: ClientRect,
+                newRect: ClientRect,
+                msg: string = "AppBar element should update position immediately after the AppBar placement property is changed.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+
+            function verifyPositionChanged(oldRect: ClientRect, newRect: ClientRect) {
+                LiveUnit.Assert.areNotEqual(oldRect.top, newRect.top, msg);
+                LiveUnit.Assert.areNotEqual(oldRect.bottom, newRect.bottom, msg);
+            }
+
+            oldRect = appBar.element.getBoundingClientRect();
+            appBar.placement = "bottom";
+            newRect = appBar.element.getBoundingClientRect();
+            verifyPositionChanged(oldRect, newRect);
+
+            oldRect = newRect;
+            appBar.placement = "top";
+            newRect = appBar.element.getBoundingClientRect();
+            verifyPositionChanged(oldRect, newRect);
+        }
     };
 }
 // register the object as a test class by passing in the name
