@@ -16,6 +16,8 @@ define([
     function noop() {
     }
 
+    var schemeRegex = /^(\w+)\:\/\//;
+
     function xhr(options) {
         /// <signature helpKeyword="WinJS.xhr">
         /// <summary locid="WinJS.xhr">
@@ -35,6 +37,18 @@ define([
                 /// <returns value="c(new XMLHttpRequest())" locid="WinJS.xhr.constructor._returnValue" />
                 var priority = Scheduler.currentPriority;
                 req = new _Global.XMLHttpRequest();
+
+                var isLocalRequest = false;
+                var schemeMatch = schemeRegex.exec(options.url.toLowerCase());
+                if (schemeMatch) {
+                    if (schemeMatch[1] === 'file') {
+                        isLocalRequest = true;
+                    }
+                } else if (_Global.location.protocol === 'file:'){
+                    isLocalRequest = true;
+                }
+
+
                 req.onreadystatechange = function () {
                     if (req._canceled) {
                         req.onreadystatechange = noop;
@@ -42,7 +56,7 @@ define([
                     }
 
                     if (req.readyState === 4) {
-                        if ((req.status >= 200 && req.status < 300) || req.status === 0) {
+                        if ((req.status >= 200 && req.status < 300) || (isLocalRequest && req.status === 0)) {
                             schedule(c, req, priority);
                         } else {
                             schedule(e, req, priority);
