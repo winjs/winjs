@@ -28,12 +28,12 @@
     }, {
         browserName: "iPhone",
         platform: "OS X 10.9",
-        version: "7.1"
-    }, {
-        browserName: "Android",
+        version: "8.1"
+    }/*, {
+        browserName: "android",
         platform: "Linux",
         version: "4.4"
-    }];
+    }*/];
 
     function getBrowserIndex(browser) {
         var index = 0;
