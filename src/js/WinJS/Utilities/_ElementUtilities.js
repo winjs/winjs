@@ -466,6 +466,7 @@ define([
             var pointerEventObject = new PointerEventProxy(eventObject, {
                 pointerType: _MSPointerEvent.MSPOINTER_TYPE_TOUCH,
                 pointerId: touchObject.identifier,
+                isPrimary: i === 0,
                 screenX: touchObject.screenX,
                 screenY: touchObject.screenY,
                 clientX: touchObject.clientX,
@@ -487,6 +488,7 @@ define([
     function mouseEventTranslator(callback, eventObject) {
         eventObject.pointerType = _MSPointerEvent.MSPOINTER_TYPE_MOUSE;
         eventObject.pointerId = -1;
+        eventObject.isPrimary = true;
         return callback(eventObject);
     }
 
