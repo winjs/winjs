@@ -237,9 +237,6 @@ define([
                 /// </returns>
                 /// </signature>
                 element = element || _Global.document.createElement("div");
-                if (_ElementUtilities._supportsTouchActionCrossSlide) {
-                    element.classList.add(_Constants._listViewSupportsCrossSlideClass);
-                }
 
                 this._id = element.id || "";
                 this._writeProfilerMark("constructor,StartTM");
@@ -301,11 +298,7 @@ define([
                 this._selectionMode = _UI.SelectionMode.multi;
                 this._tap = _UI.TapBehavior.invokeOnly;
                 this._groupHeaderTap = _UI.GroupHeaderTapBehavior.invoke;
-                this._swipeBehavior = _UI.SwipeBehavior.select;
                 this._mode = new _BrowseMode._SelectionMode(this);
-
-                // Call after swipeBehavior and modes are set
-                this._setSwipeClass();
 
                 this._groups = new _GroupsContainer._NoGroups(this);
                 this._updateItemsAriaRoles();
@@ -518,7 +511,6 @@ define([
                                 this._selectionMode = newMode;
                                 this._element.setAttribute("aria-multiselectable", this._multiSelection());
                                 this._updateItemsAriaRoles();
-                                this._setSwipeClass();
                                 this._configureSelectionMode();
                                 return;
                             }
@@ -564,14 +556,16 @@ define([
                 /// The swipe gesture can select the swiped items or it can
                 /// have no effect on the current selection.
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
+                /// <deprecated type="deprecate">
+                /// swipeBehavior is deprecated. The control will not use this property.
+                /// </deprecated>
                 /// </field>
                 swipeBehavior: {
                     get: function () {
-                        return this._swipeBehavior;
+                        return "none";
                     },
-                    set: function (swipeBehavior) {
-                        this._swipeBehavior = swipeBehavior;
-                        this._setSwipeClass();
+                    set: function (value) {
+                        _ElementUtilities._deprecated(_ErrorMessages.swipeBehaviorDeprecated);
                     }
                 },
 
@@ -940,7 +934,7 @@ define([
                         }
                         if (this._dragSource !== value) {
                             this._dragSource = value;
-                            this._setSwipeClass();
+                            this._setDraggable();
                         }
                     }
                 },
@@ -960,7 +954,7 @@ define([
                         }
                         if (this._reorderable !== value) {
                             this._reorderable = value;
-                            this._setSwipeClass();
+                            this._setDraggable();
                         }
                     }
                 },
@@ -1191,12 +1185,31 @@ define([
                 },
 
                 _configureSelectionMode: function () {
-                    if (_BaseUtils.isPhone) {
-                        if (this.tapBehavior === _UI.TapBehavior.toggleSelect && this.selectionMode === _UI.SelectionMode.multi) {
-                            _ElementUtilities.addClass(this._canvas, _Constants._selectionModeClass);
-                        } else {
-                            _ElementUtilities.removeClass(this._canvas, _Constants._selectionModeClass);
+                    var selectionModeClass = _Constants._selectionModeClass,
+                        hidingSelectionModeClass = _Constants._hidingSelectionMode;
+                    if (this.tapBehavior === _UI.TapBehavior.toggleSelect && this.selectionMode === _UI.SelectionMode.multi) {
+                        _ElementUtilities.addClass(this._canvas, selectionModeClass);
+                        _ElementUtilities.removeClass(this._canvas, hidingSelectionModeClass);
+                    } else {
+                        if (_ElementUtilities.hasClass(this._canvas, selectionModeClass)) {
+                            var that = this;
+                            var animationCompleteHandler = function (e) {
+                                var isAnimationCompleteEvent = (e && e.animationName && e.animationName.indexOf(_Constants._hidingSelectionModeAnimationName) !== -1);
+                                if (isAnimationCompleteEvent || !e) {
+                                    _ElementUtilities._removeEventListener(that._canvas, "animationEnd", animationCompleteHandler, false);
+                                    _ElementUtilities.removeClass(that._canvas, hidingSelectionModeClass);
+                                }
+                            };
+
+                            _Global.setTimeout(function () {
+                                _Global.setTimeout(function () {
+                                    animationCompleteHandler();
+                                }, _Constants._hidingSelectionModeAnimationTimeout);
+                            }, 50);
+                            _ElementUtilities._addEventListener(this._canvas, "animationEnd", animationCompleteHandler, false);
+                            _ElementUtilities.addClass(this._canvas, hidingSelectionModeClass);
                         }
+                        _ElementUtilities.removeClass(this._canvas, selectionModeClass);
                     }
                 },
 
@@ -1661,8 +1674,7 @@ define([
                         modeHandler("DragEnter"),
                         modeHandler("DragLeave"),
                         modeHandler("Drop"),
-                        modeHandler("ContextMenu"),
-                        modeHandler("MSManipulationStateChanged", true, true)
+                        modeHandler("ContextMenu")
                     ];
                     events.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._viewport, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
@@ -2684,42 +2696,11 @@ define([
                     return this._mode;
                 },
 
-                _setSwipeClass: function ListView_setSwipeClass() {
-                    // We apply an -ms-touch-action style to block panning and swiping from occurring at the same time. It is
-                    // possible to pan in the margins between items and on lists without the swipe ability.
-                    // Phone does not support swipe; therefore, we don't add them swipeable CSS class.
-                    if (!_BaseUtils.isPhone && ((this._currentMode() instanceof _BrowseMode._SelectionMode && this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select) ||
-                        this._dragSource || this._reorderable)) {
-                        this._swipeable = true;
-                        _ElementUtilities.addClass(this._element, _Constants._swipeableClass);
-                    } else {
-                        this._swipeable = false;
-                        _ElementUtilities.removeClass(this._element, _Constants._swipeableClass);
-                    }
-                    var dragEnabled = (this.itemsDraggable || this.itemsReorderable),
-                        swipeSelectEnabled = (this._selectionAllowed() && this._swipeBehavior === _UI.SwipeBehavior.select),
-                        swipeEnabled = this._swipeable;
-
+                _setDraggable: function ListView_setDraggable() {
+                    var dragEnabled = (this.itemsDraggable || this.itemsReorderable);
                     this._view.items.each(function (index, item, itemData) {
                         if (itemData.itemBox) {
-                            var dragDisabledOnItem = _ElementUtilities.hasClass(item, _Constants._nonDraggableClass),
-                                selectionDisabledOnItem = _ElementUtilities.hasClass(item, _Constants._nonSelectableClass),
-                                nonSwipeable = _ElementUtilities.hasClass(itemData.itemBox, _Constants._nonSwipeableClass);
-                            itemData.itemBox.draggable = (dragEnabled && !dragDisabledOnItem);
-                            if (!swipeEnabled && nonSwipeable) {
-                                _ElementUtilities.removeClass(itemData.itemBox, _Constants._nonSwipeableClass);
-                            } else if (swipeEnabled) {
-                                var makeNonSwipeable = (dragEnabled && !swipeSelectEnabled && dragDisabledOnItem) ||
-                                                        (swipeSelectEnabled && !dragEnabled && selectionDisabledOnItem) ||
-                                                        (dragDisabledOnItem && selectionDisabledOnItem);
-                                if (makeNonSwipeable && !nonSwipeable) {
-                                    _ElementUtilities.addClass(itemData.itemBox, _Constants._nonSwipeableClass);
-                                } else if (!makeNonSwipeable && nonSwipeable) {
-                                    _ElementUtilities.removeClass(itemData.itemBox, _Constants._nonSwipeableClass);
-                                }
-                            }
-                            var makeNonSelectable = _BaseUtils.isPhone && selectionDisabledOnItem;
-                            _ElementUtilities[makeNonSelectable ? "addClass" : "removeClass"](itemData.itemBox, _Constants._nonSelectableClass);
+                            itemData.itemBox.draggable = (dragEnabled && !_ElementUtilities.hasClass(item, _Constants._nonDraggableClass));
                         }
                     });
                 },
@@ -3172,7 +3153,7 @@ define([
                     }
 
                     this._view.items.each(function (index, element, itemData) {
-                        if (itemData.itemBox && !_ElementUtilities.hasClass(itemData.itemBox, _Constants._swipeClass)) {
+                        if (itemData.itemBox) {
                             var selected = selectAll || !!selectionMap[index];
                             _ItemEventsHandler._ItemEventsHandler.renderSelection(itemData.itemBox, element, selected, true);
                             if (itemData.container) {

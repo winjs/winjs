@@ -7,7 +7,6 @@ define([
 
     var members = {};
     members._listViewClass = "win-listview";
-    members._listViewSupportsCrossSlideClass = "win-listview-supports-cross-slide";
     members._viewportClass = "win-viewport";
     members._rtlListViewClass = "win-rtl";
     members._horizontalClass = "win-horizontal";
@@ -28,8 +27,6 @@ define([
     members._footprintClass = "win-footprint";
     members._groupsClass = "win-groups";
     members._selectedClass = "win-selected";
-    members._swipeableClass = "win-swipeable";
-    members._swipeClass = "win-swipe";
     members._selectionBorderClass = "win-selectionborder";
     members._selectionBackgroundClass = "win-selectionbackground";
     members._selectionCheckmarkClass = "win-selectioncheckmark";
@@ -39,7 +36,6 @@ define([
     members._headerContainerClass = "win-groupheadercontainer";
     members._groupLeaderClass = "win-groupleader";
     members._progressClass = "win-progress";
-    members._selectionHintClass = "win-selectionhint";
     members._revealedClass = "win-revealed";
     members._itemFocusClass = "win-focused";
     members._itemFocusOutlineClass = "win-focusedoutline";
@@ -57,12 +53,14 @@ define([
     members._laidOutClass = "win-laidout";
     members._nonDraggableClass = "win-nondraggable";
     members._nonSelectableClass = "win-nonselectable";
-    members._nonSwipeableClass = "win-nonswipeable";
     members._dragOverClass = "win-dragover";
     members._dragSourceClass = "win-dragsource";
     members._clipClass = "win-clip";
     members._selectionModeClass = "win-selectionmode";
     members._noCSSGrid = "win-nocssgrid";
+    members._hidingSelectionMode = "win-hidingselectionmode";
+    members._hidingSelectionModeAnimationName = "WinJS-selectionMode-shiftLeft";
+    members._hidingSelectionModeAnimationTimeout = 250;
 
     members._INVALID_INDEX = -1;
     members._UNINITIALIZED = -1;
@@ -82,18 +80,6 @@ define([
 
     members._DEFERRED_ACTION = 250;
     members._DEFERRED_SCROLL_END = 250;
-
-    // For horizontal layouts
-    members._VERTICAL_SWIPE_SELECTION_THRESHOLD = 39;
-    members._VERTICAL_SWIPE_SPEED_BUMP_START = 0;
-    members._VERTICAL_SWIPE_SPEED_BUMP_END = 127;
-    members._VERTICAL_SWIPE_SELF_REVEAL_GESTURE = 15;
-
-    // For vertical layouts
-    members._HORIZONTAL_SWIPE_SELECTION_THRESHOLD = 27;
-    members._HORIZONTAL_SWIPE_SPEED_BUMP_START = 0;
-    members._HORIZONTAL_SWIPE_SPEED_BUMP_END = 150;
-    members._HORIZONTAL_SWIPE_SELF_REVEAL_GESTURE = 23;
 
     members._SELECTION_CHECKMARK = "\uE081";
 

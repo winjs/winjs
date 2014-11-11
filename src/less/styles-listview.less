@@ -61,20 +61,6 @@
 .win-listview .win-container  {
     touch-action:pan-x pan-y pinch-zoom;
 }
-.win-listview.win-swipeable .win-horizontal .win-container,
-.win-listview.win-swipeable .win-horizontal .win-itembox.win-nonswipeable  {
-    touch-action:pan-x pinch-zoom;
-}
-.win-listview.win-swipeable .win-vertical .win-container,
-.win-listview.win-swipeable .win-vertical .win-itembox.win-nonswipeable  {
-    touch-action:pan-y pinch-zoom;
-}
-.win-listview.win-swipeable .win-horizontal .win-itembox  {
-    touch-action:pan-x pinch-zoom double-tap-zoom cross-slide-y;
-}
-.win-listview.win-swipeable .win-vertical .win-itembox  {
-    touch-action:pan-y pinch-zoom double-tap-zoom cross-slide-x;
-}
 .win-semanticzoom  .win-listview > .win-viewport * {
     touch-action: auto;
 }
@@ -119,12 +105,33 @@
     pointer-events: none;
 }
 .win-container.win-selected .win-selectionborder {
-    border-width: 4px;
+    border-width: 2px;
     border-style: solid;
 }
 html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
-    border-width: 4px;
+    border-width: 2px;
     border-style: solid;
+}
+html.win-hoverable .win-listview .win-itembox:hover::before,
+html.win-hoverable .win-itemcontainer .win-itembox:hover::before  {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    content: "";
+    width: ~"calc(100% - 4px)";
+    height: ~"calc(100% - 4px)";
+    pointer-events: none;
+    border-style: solid;
+    border-width: 2px;
+    z-index: 3;
+}
+html.win-hoverable .win-listview.win-selectionstylefilled .win-itembox:hover::before,
+html.win-hoverable .win-itemcontainer.win-selectionstylefilled .win-itembox:hover::before,
+html.win-hoverable .win-listview  .win-itembox.win-selected:hover::before,
+html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before,
+html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
+{
+    display: none;
 }
 .win-listview .win-groupheader {
     padding: 10px 10px 10px 2px;
@@ -145,12 +152,14 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
     height: 100%;
     display: inline-block;
     overflow: hidden;
+    white-space: normal;
 }
 .win-listview .win-vertical .win-listheadercontainer,
 .win-listview .win-vertical .win-listfootercontainer {
     width: 100%;
     display: block;
     overflow: hidden;
+    white-space: normal;
 }
 .win-listview .win-groupheader.win-focused {
     outline-style: dotted;
@@ -185,6 +194,7 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
 .win-listview .win-surface {
     // WebKit: Prevent margin collapsing between first group header and surface
     -webkit-margin-collapse: separate;
+    white-space: normal;
 }
 .win-surface ._win-proxy {
     // IE/Firefox: Position relative + overflow hidden are applied to this element
@@ -219,19 +229,22 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
 }
 .win-selectioncheckmarkbackground {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 0;
-    height: 0;
+    top: 2px;
+    right: 2px;
+    width: 14px;
+    height: 11px;
     margin: 0;
     padding: 0;
-    border-width: 20px;
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 4px;
+    border-bottom-width: 3px;
     border-style: solid;
     z-index: 3;
 }
 .win-listview.win-rtl .win-selectioncheckmarkbackground,
 .win-itemcontainer.win-rtl .win-selectioncheckmarkbackground {
-    left: 0;
+    left: 2px;
     right: auto;
 }
 .win-selectioncheckmark {
@@ -241,30 +254,101 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
     right: 0;
     top: 0;
     font-family: "Segoe UI Symbol", "Symbols";
-    font-size: 11pt;
+    font-size: 14px;
     z-index: 4;
 }
-.win-listview.win-rtl .win-selectioncheckmark,
-.win-itemcontainer.win-rtl .win-selectioncheckmark {
-    left: 0;
+.win-rtl .win-selectioncheckmark {
     right: auto;
+    left: 0px;
 }
-.win-selectionhint {
+.win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
+.win-itemcontainer.win-selectionmode.win-container .win-itembox::after,
+.win-listview .win-surface.win-selectionmode .win-itembox::after {
+    content: "";
     position: absolute;
-    margin: 0;
-    padding: 2px;
-    right: 0;
-    font-family: "Segoe UI Symbol", "Symbols";
-    font-size: 11pt;
-    opacity: 0.5;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    right: 2px;
+    top: 2px;
+    z-index: 3;
 }
-.win-selectionhint.win-revealed {
-    opacity: 1;
-}
-.win-listview.win-rtl .win-selectionhint,
-.win-itemcontainer.win-rtl .win-selectionhint {
-    left: 0;
+.win-rtl .win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
+.win-itemcontainer.win-rtl.win-selectionmode.win-container .win-itembox::after,
+.win-listview.win-rtl .win-surface.win-selectionmode .win-itembox::after {
     right: auto;
+    left: 2px;
+}
+.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-itembox::after,
+.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-selectioncheckmarkbackground,
+.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-selectioncheckmark {
+    display: none;
+}
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-item {
+    animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transform: translate(40px, 0px);
+}
+.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-item {
+    animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transform: translate(-40px, 0px);
+}
+.win-listview .win-vertical .win-surface.win-hidingselectionmode.win-listlayout .win-item {
+    animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transform: none;
+}
+.win-listview.win-rtl .win-vertical .win-surface.win-hideselectionmode.win-listlayout .win-item {
+    animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transform: none;
+}
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox::after {
+    left: 12px;
+    right: auto;
+    top: 50%;
+    margin-top: -9px;
+    display: block;
+    border: 2px solid;
+    width: 16px;
+    height: 16px;
+}
+.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox::after {
+    left: auto;
+    right: 12px;
+}
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmarkbackground {
+    left: 12px;
+    top: 50%;
+    margin-top: -9px;
+    display: block;
+    border: 2px solid;
+    width: 16px;
+    height: 16px;
+}
+.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout  .win-selectioncheckmarkbackground {
+    left: auto;
+    right: 12px;
+}
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmark {
+    left: 10px;
+    top: 50%;
+    margin-top: -11px;
+    display: block;
+    width: 14px;
+    height: 14px;
+}
+.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmark {
+    left: 0;
+    right: 10px;
+}
+.win-selectionmode .win-itemcontainer.win-container .win-itembox.win-selected::after,
+.win-itemcontainer.win-selectionmode.win-container .win-itembox.win-selected::after,
+.win-listview .win-surface.win-selectionmode .win-itembox.win-nonselectable::after,
+.win-listview .win-surface.win-selectionmode .win-itembox.win-selected::after,
+.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox.win-selected::after {
+    display: none;
 }
 .win-listview .win-progress {
     left: 50%;
@@ -526,36 +610,10 @@ html.win-hoverable .win-container.win-selected:hover .win-selectionborder {
 html.win-hoverable .win-listview.win-dragover .win-container:hover {
     outline: none;
 }
-.win-listview .win-container.win-swipe, .win-listview .win-container.win-swipe .win-itembox,
-.win-itemcontainer.win-container.win-swipe, .win-itemcontainer.win-container.win-swipe .win-itembox {
-    position: relative;
-    z-index: 1;
-}
 
 .win-listview .win-itembox {
     transition: transform cubic-bezier(0.1, 0.9, 0.2, 1) 220ms;
     -webkit-transition: -webkit-transform cubic-bezier(0.1, 0.9, 0.2, 1) 220ms;
-}
-
-// itemblock margins to facilitate cross-slide
-.win-listview.win-listview-supports-cross-slide .win-horizontal .win-itemscontainer,
-.win-listview.win-listview-supports-cross-slide .win-horizontal .win-itemsblock:not(.win-clip) {
-    margin-top: -200px;
-    margin-bottom: -200px;
-    padding-top: 200px;
-    padding-bottom: 200px;
-}
-.win-listview.win-listview-supports-cross-slide .win-vertical .win-itemscontainer,
-.win-listview.win-listview-supports-cross-slide .win-vertical .win-itemsblock:not(.win-clip) {
-    margin-left: -200px;
-    margin-right: -200px;
-    padding-left: 200px;
-    padding-right: 200px;
-}
-
-.win-listview.win-listview-supports-cross-slide .win-horizontal .win-listlayout .win-itemscontainer {
-    // itemscontainers have a -200px margin by default, but here we want to increase it by 24px to leave room for the scrollbar
-    margin-bottom: -176px;
 }
 
 //
@@ -602,10 +660,4 @@ html.win-hoverable .win-listview.win-dragover .win-container:hover {
 }
 .win-itemcontainer {
     touch-action:pan-x pan-y pinch-zoom;
-}
-.win-itemcontainer.win-swipeable.win-horizontal .win-itembox {
-    touch-action:pan-y pinch-zoom cross-slide-x;
-}
-.win-itemcontainer.win-swipeable.win-vertical .win-itembox {
-    touch-action:pan-x pinch-zoom cross-slide-y;
 }

@@ -52,11 +52,6 @@ module WinJSTests {
         control._onClick();
     }
 
-    function rightClick(control, eventObject) {
-        eventObject.button = WinJS.UI._RIGHT_MSPOINTER_BUTTON;
-        click(control, eventObject);
-    }
-
     function createEvent(element, key, shiftKey = false, ctrlKey = false) {
         return {
             keyCode: key,
@@ -108,8 +103,6 @@ module WinJSTests {
             WinJS.UI._ItemEventsHandler.renderSelection = oldRenderSelection;
         }
 
-        
-
         testElementProperty(complete) {
             var element = document.getElementById("host");
             var control = new ItemContainer(element);
@@ -117,7 +110,6 @@ module WinJSTests {
             complete();
         }
 
-        
         testDraggableProperty(complete) {
             if (utilities.isPhone) {
                 complete();
@@ -137,7 +129,6 @@ module WinJSTests {
             complete();
         }
         
-
         testSelectedProperty(complete) {
             var element = document.getElementById("host");
             var control = new ItemContainer(element);
@@ -147,34 +138,6 @@ module WinJSTests {
             control.selected = true;
             LiveUnit.Assert.isTrue(control.selected, "The control's selected property setter is not working");
             verifySelectionVisual(element, true);
-
-            complete();
-        }
-
-        testSwipeOrientationProperty(complete) {
-            var element = document.getElementById("host");
-            var control = new ItemContainer(element);
-            var itemBox = element.querySelector(".win-itembox");
-
-            LiveUnit.Assert.areEqual(control.swipeOrientation, WinJS.UI.Orientation.vertical, "The default swipe orientation should be vertical");
-            LiveUnit.Assert.isTrue(utilities.hasClass(element, ItemContainer._ClassName.vertical));
-            LiveUnit.Assert.isFalse(utilities.hasClass(element, ItemContainer._ClassName.horizontal));
-
-            if (WinJS.Utilities._supportsTouchActionCrossSlide) {
-                var crossSlideYIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-y");
-                var crossSlideXIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-x");
-                LiveUnit.Assert.isTrue(utilities.isPhone ? crossSlideYIndex === -1 : crossSlideYIndex > 0);
-                LiveUnit.Assert.isTrue(crossSlideXIndex === -1);
-
-                control.swipeOrientation = WinJS.UI.Orientation.horizontal;
-                LiveUnit.Assert.isFalse(utilities.hasClass(element, ItemContainer._ClassName.vertical));
-                LiveUnit.Assert.isTrue(utilities.hasClass(element, ItemContainer._ClassName.horizontal));
-
-                crossSlideYIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-y");
-                crossSlideXIndex = getComputedStyle(itemBox).touchAction.toLowerCase().indexOf("cross-slide-x");
-                LiveUnit.Assert.isTrue(utilities.isPhone ? crossSlideYIndex === -1 : crossSlideXIndex > 0);
-                LiveUnit.Assert.isTrue(crossSlideYIndex === -1);
-            }
 
             complete();
         }
@@ -198,19 +161,6 @@ module WinJSTests {
             var control = new ItemContainer(element);
 
             LiveUnit.Assert.areEqual(WinJS.UI.TapBehavior.invokeOnly, control.tapBehavior, "The control's tabBehavior property should default to invokeOnly");
-
-            complete();
-        }
-
-        testSwipeBehaviorProperty(complete) {
-            var element = document.getElementById("host");
-            var control = new ItemContainer(element);
-
-            LiveUnit.Assert.areEqual(WinJS.UI.SwipeBehavior.select, control.swipeBehavior, "The control's swipeBehavior property should default to select");
-            LiveUnit.Assert.isTrue(!utilities.isPhone === utilities.hasClass(element, WinJS.UI._swipeableClass));
-
-            control.swipeBehavior = WinJS.UI.SwipeBehavior.none;
-            LiveUnit.Assert.isFalse(utilities.hasClass(element, WinJS.UI._swipeableClass));
 
             complete();
         }
@@ -264,7 +214,7 @@ module WinJSTests {
 
             LiveUnit.Assert.isFalse(invoked);
 
-            rightClick(control, { target: element });
+            control._onKeyDown(createEvent(element, utilities.Key.space));
 
             LiveUnit.Assert.isTrue(invoked, "Selectionchanging event should have been called");
 
@@ -282,7 +232,7 @@ module WinJSTests {
             control.onselectionchanged = function () {
                 LiveUnit.Assert.fail("Selectionchanged should not be called because it was prevented on selectionchanging");
             };
-            rightClick(control, { target: element });
+            control._onKeyDown(createEvent(element, utilities.Key.space));
 
             complete();
         }
@@ -300,7 +250,7 @@ module WinJSTests {
 
             LiveUnit.Assert.isFalse(invoked);
 
-            rightClick(control, { target: element });
+            control._onKeyDown(createEvent(element, utilities.Key.space));
 
             LiveUnit.Assert.isTrue(invoked, "Selectionchanged event should have been called");
 
@@ -352,9 +302,6 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(site.itemBoxAtIndex(0), control._itemBox);
             LiveUnit.Assert.areEqual(site.itemAtIndex(0), element);
             LiveUnit.Assert.areEqual(site.containerAtIndex(0), element);
-            LiveUnit.Assert.areEqual(site.swipeBehavior, WinJS.UI.SwipeBehavior.select);
-            control.swipeBehavior = WinJS.UI.SwipeBehavior.none;
-            LiveUnit.Assert.areEqual(site.swipeBehavior, WinJS.UI.SwipeBehavior.none);
             LiveUnit.Assert.areEqual(site.selectionMode, WinJS.UI.SelectionMode.single);
             LiveUnit.Assert.areEqual(site.tapBehavior, WinJS.UI.TapBehavior.invokeOnly);
             control.tapBehavior = WinJS.UI.TapBehavior.toggleSelect;
@@ -368,15 +315,12 @@ module WinJSTests {
             LiveUnit.Assert.isFalse(site.selection.selected);
             control.selected = true;
             LiveUnit.Assert.isTrue(site.selection.selected);
-            LiveUnit.Assert.isTrue(site.horizontal);
-            control.swipeOrientation = WinJS.UI.Orientation.horizontal;
-            LiveUnit.Assert.isFalse(site.horizontal);
             LiveUnit.Assert.isNull(site.customFootprintParent);
 
             complete();
         }
 
-    testDispose(complete) {
+        testDispose(complete) {
             var element = document.getElementById("host");
             var child = document.createElement("div");
             WinJS.Utilities.addClass(child, "win-disposable");
