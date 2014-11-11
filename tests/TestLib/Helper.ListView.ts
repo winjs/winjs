@@ -42,7 +42,6 @@ module Helper.ListView {
         return {
             selectionMode: WinJS.UI.SelectionMode.multi,
             tapBehavior: WinJS.UI.TapBehavior.invokeOnly,
-            swipeBehavior: WinJS.UI.SwipeBehavior.select,
             scrollPosition: 0
         };
     };
@@ -78,7 +77,6 @@ module Helper.ListView {
         LiveUnit.Assert.isTrue(listView.itemDataSource);
         LiveUnit.Assert.isTrue(listView.layout);
         LiveUnit.Assert.isTrue(listView.selectionMode);
-        LiveUnit.Assert.isTrue(listView.swipeBehavior);
         LiveUnit.Assert.isTrue(listView.tapBehavior);
         LiveUnit.Assert.isTrue(listView.loadingState);
         LiveUnit.Assert.isTrue(listView.selection);

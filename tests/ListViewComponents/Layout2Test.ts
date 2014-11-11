@@ -132,9 +132,6 @@ module WinJSTests {
         this._rtl = options.rtl || false;
         this._realizedRange = options.realizedRange || { firstPixel: 0, lastPixel: 1000000 };
         this._itemsCount = options.itemsCount;
-        if (WinJS.Utilities._supportsTouchActionCrossSlide) {
-            element.classList.add(WinJS.UI._listViewSupportsCrossSlideClass);
-        }
         if (this._rtl) {
             element.setAttribute("dir", "rtl");
         }
@@ -602,7 +599,6 @@ module WinJSTests {
 
                     // Verify measurements
                     if (!orientation || orientation === WinJS.UI.Orientation.vertical) {
-
                         // in vertical
                         LiveUnit.Assert.areEqual(20, layout._sizes.containerHeight, "Rendered item height was measured incorrectly");
                         LiveUnit.Assert.areEqual(20, layout._sizes.layoutOriginY, "Space above first item was measured incorrectly");
@@ -612,7 +608,6 @@ module WinJSTests {
                         // Verify that containers have their sizes set
                         LiveUnit.Assert.areEqual(10, container.offsetHeight, "Layout set container height incorrectly");
                     } else {
-
                         // in horizontal
                         LiveUnit.Assert.areEqual(110, layout._sizes.containerWidth, "Rendered item width was measured incorrectly");
                         LiveUnit.Assert.areEqual(20, layout._sizes.layoutOriginY, "Space above first item was measured incorrectly");
@@ -947,13 +942,7 @@ module WinJSTests {
 
                             LiveUnit.Assert.areEqual(278, sizes.maxItemsContainerContentSize, "Items container's height was measured incorrectly");
 
-                            // Items containers on uniform groups should be flush against the items
-                            // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
-                                LiveUnit.Assert.areEqual(640, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
-                            } else {
-                                LiveUnit.Assert.areEqual(240, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
-                            }
+                            LiveUnit.Assert.areEqual(240, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
                             LiveUnit.Assert.areEqual(6, layout._itemsPerBar, "Incorrect items per column");
                         } else {
                             LiveUnit.Assert.areEqual(2 * (WinJS.Utilities.getTotalHeight(itemsContainer) + sizes.headerContainerHeight),
@@ -961,13 +950,7 @@ module WinJSTests {
 
                             LiveUnit.Assert.areEqual(260, sizes.maxItemsContainerContentSize, "Items container's width was measured incorrectly");
 
-                            // Items containers on uniform groups should be flush against the items
-                            // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
-                                LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
-                            } else {
-                                LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
-                            }
+                            LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
                             LiveUnit.Assert.areEqual(3, layout._itemsPerBar, "Incorrect items per column");
                         }
                     } else {
@@ -977,14 +960,7 @@ module WinJSTests {
 
                             LiveUnit.Assert.areEqual(320, sizes.maxItemsContainerContentSize, "Items container's height was measured incorrectly");
 
-                            // Items containers on uniform groups should be flush against the items
-                            // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
-                                LiveUnit.Assert.areEqual(720, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
-                            } else {
-                                LiveUnit.Assert.areEqual(320, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
-                            }
-
+                            LiveUnit.Assert.areEqual(320, itemsContainer.offsetHeight, "Items container's height was set incorrectly");
                             LiveUnit.Assert.areEqual(8, layout._itemsPerBar, "Incorrect items per column");
                         } else {
                             LiveUnit.Assert.areEqual(WinJS.Utilities.getTotalHeight(itemsContainer),
@@ -992,13 +968,7 @@ module WinJSTests {
 
                             LiveUnit.Assert.areEqual(260, sizes.maxItemsContainerContentSize, "Items container's height was measured incorrectly");
 
-                            // Items containers on uniform groups should be flush against the items
-                            // Desktop has an additional 400px = 200px x 2 for margins to support cross-slide
-                            if (!WinJS.Utilities.isPhone && WinJS.Utilities._supportsTouchActionCrossSlide) {
-                                LiveUnit.Assert.areEqual(598, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
-                            } else {
-                                LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
-                            }
+                            LiveUnit.Assert.areEqual(198, itemsContainer.offsetWidth, "Items container's width was set incorrectly");
                             LiveUnit.Assert.areEqual(3, layout._itemsPerBar, "Incorrect items per row");
                         }
                     }
@@ -2628,8 +2598,8 @@ module WinJSTests {
                 return Helper.ListView.waitForReady(listView)().then(function () {
                     var itemsContainer = listView.element.querySelector("." + WinJS.UI._itemsContainerClass),
                         itemsContainerMargins = {
-                            top: WinJS.Utilities.isPhone ? 0 : -200,
-                            bottom: WinJS.Utilities.isPhone ? 0 : -200,
+                            top: 0,
+                            bottom: 0,
                             left: (useGroups && headerPosition === WinJS.UI.HeaderPosition.top && !rtl ? 70 : 0),
                             right: (useGroups && headerPosition === WinJS.UI.HeaderPosition.top && rtl ? 70 : 0)
                         },

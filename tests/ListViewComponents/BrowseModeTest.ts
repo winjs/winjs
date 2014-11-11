@@ -387,7 +387,6 @@ module WinJSTests {
             mockRequestAnimationFrame();
 
             var browseMode = createMode();
-            browseMode.site._swipeBehavior = "select";
             browseMode.site._selectionMode = "none";
 
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));

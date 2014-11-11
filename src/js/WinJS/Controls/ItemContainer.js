@@ -32,13 +32,13 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.ItemContainer">
-        /// Defines an item that can be pressed, swiped, and dragged.
+        /// Defines an item that can be pressed, selected, and dragged.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.itemcontainer.12x12.png" width="12" height="12" />
         /// <icon src="ui_winjs.ui.itemcontainer.16x16.png" width="16" height="16" />
         /// <htmlSnippet supportsContent="true"><![CDATA[
-        /// <div data-win-control="WinJS.UI.ItemContainer" data-win-options="{swipeBehavior: 'select'}">HTML content</div>
+        /// <div data-win-control="WinJS.UI.ItemContainer" data-win-options="{selected: true}">HTML content</div>
         /// ]]></htmlSnippet>
         /// <event name="invoked" bubbles="true" locid="WinJS.UI.ItemContainer_e:invoked">Raised when the user taps or clicks the item.</event>
         /// <event name="selectionchanging" bubbles="true" locid="WinJS.UI.ItemContainer_e:selectionchanging">Raised before the item is selected or deselected.</event>
@@ -52,7 +52,9 @@ define([
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ItemContainer: _Base.Namespace._lazy(function () {
             var strings = {
-                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get swipeOrientationDeprecated() { return "Invalid configuration: swipeOrientation is deprecated. The control will default this property to 'none'"; },
+                get swipeBehaviorDeprecated() { return "Invalid configuration: swipeBehavior is deprecated. The control will default this property to 'none'"; }
             };
 
             var ItemContainer = _Base.Class.define(function ItemContainer_ctor(element, options) {
@@ -93,8 +95,6 @@ define([
                 this._pressedEntity = { type: _UI.ObjectType.item, index: _Constants._INVALID_INDEX };
 
                 this.tapBehavior = _UI.TapBehavior.invokeOnly;
-                this.swipeOrientation = _UI.Orientation.vertical;
-                this.swipeBehavior = _UI.SwipeBehavior.select;
 
                 _ElementUtilities.addClass(this.element, ItemContainer._ClassName.itemContainer + " " + _Constants._containerClass);
 
@@ -177,12 +177,6 @@ define([
                             return that.element;
                         }
                     },
-                    swipeBehavior: {
-                        enumerable: true,
-                        get: function () {
-                            return that._swipeBehavior;
-                        }
-                    },
                     selectionMode: {
                         enumerable: true,
                         get: function () {
@@ -220,12 +214,6 @@ define([
                             return that._selection;
                         }
                     },
-                    horizontal: {
-                        enumerable: true,
-                        get: function () {
-                            return that._swipeOrientation === _UI.Orientation.vertical;
-                        }
-                    },
                     customFootprintParent: {
                         enumerable: true,
                         get: function () {
@@ -251,7 +239,6 @@ define([
                     };
                 }
                 var events = [
-                    eventHandler("MSManipulationStateChanged", true, true),
                     eventHandler("PointerDown"),
                     eventHandler("Click"),
                     eventHandler("PointerUp"),
@@ -317,22 +304,17 @@ define([
 
                 /// <field type="String" oamOptionsDatatype="WinJS.UI.Orientation" locid="WinJS.UI.ItemContainer.swipeOrientation" helpKeyword="WinJS.UI.ItemContainer.swipeOrientation">
                 /// Gets or sets the swipe orientation of the ItemContainer control.
-                /// The default value is "vertical".
+                /// The default value is "none".
+                /// <deprecated type="deprecate">
+                /// swipeOrientation is deprecated. The control will not use this property.
+                /// </deprecated>
                 /// </field>
                 swipeOrientation: {
                     get: function () {
-                        return this._swipeOrientation;
+                        return "none";
                     },
                     set: function (value) {
-                        if (value === _UI.Orientation.vertical) {
-                            _ElementUtilities.removeClass(this.element, ItemContainer._ClassName.horizontal);
-                            _ElementUtilities.addClass(this.element, ItemContainer._ClassName.vertical);
-                        } else {
-                            value = _UI.Orientation.horizontal;
-                            _ElementUtilities.removeClass(this.element, ItemContainer._ClassName.vertical);
-                            _ElementUtilities.addClass(this.element, ItemContainer._ClassName.horizontal);
-                        }
-                        this._swipeOrientation = value;
+                        _ElementUtilities._deprecated(strings.swipeOrientationDeprecated);
                     }
                 },
 
@@ -357,16 +339,18 @@ define([
                 /// <field type="String" oamOptionsDatatype="WinJS.UI.SwipeBehavior" locid="WinJS.UI.ItemContainer.swipeBehavior" helpKeyword="WinJS.UI.ItemContainer.swipeBehavior">
                 /// Gets or sets how the ItemContainer control reacts to the swipe interaction.
                 /// The swipe gesture can select the item or it can have no effect on the current selection.
-                /// Possible values: "select", "none". The default value is: "select".
+                /// Possible values: "none".
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// <deprecated type="deprecate">
+                /// swipeBehavior is deprecated. The control will not use this property.
+                /// </deprecated>
                 /// </field>
                 swipeBehavior: {
                     get: function () {
-                        return this._swipeBehavior;
+                        return "none";
                     },
                     set: function (value) {
-                        this._swipeBehavior = value;
-                        this._setSwipeClass();
+                        _ElementUtilities._deprecated(strings.swipeBehaviorDeprecated);
                     }
                 },
 
@@ -385,7 +369,6 @@ define([
                             this._setDirectionClass();
                             this._selectionMode = _UI.SelectionMode.single;
                         }
-                        this._setSwipeClass();
                         this._setAriaRole();
                     }
                 },
@@ -519,8 +502,7 @@ define([
                 _onKeyDown: function ItemContainer_onKeyDown(eventObject) {
                     if (!this._itemEventsHandler._isInteractive(eventObject.target)) {
                         var Key = _ElementUtilities.Key,
-                            keyCode = eventObject.keyCode,
-                            swipeEnabled = this._swipeBehavior === _UI.SwipeBehavior.select;
+                            keyCode = eventObject.keyCode;
 
                         var handled = false;
                         if (!eventObject.ctrlKey && keyCode === Key.enter) {
@@ -530,10 +512,7 @@ define([
                             }
                             this._fireInvokeEvent();
                             handled = true;
-                        } else if (eventObject.ctrlKey && keyCode === Key.enter ||
-                            (swipeEnabled && eventObject.shiftKey && keyCode === Key.F10) ||
-                            (swipeEnabled && keyCode === Key.menu) ||
-                            keyCode === Key.space) {
+                        } else if (eventObject.ctrlKey && keyCode === Key.enter || keyCode === Key.space) {
                             if (!this.selectionDisabled) {
                                 this.selected = !this.selected;
                                 handled = _ElementUtilities._setActive(this.element);
@@ -616,26 +595,12 @@ define([
                     }
                 },
 
-                _setSwipeClass: function ItemContainer_setSwipeClass() {
-                    if (_BaseUtils.isPhone) {
-                        // Cross-slide is disabled on phone
-                        return;
-                    }
-                    // We apply an -ms-touch-action style to block panning and swiping from occurring at the same time.
-                    if ((this._swipeBehavior === _UI.SwipeBehavior.select && this._selectionMode !== _UI.SelectionMode.none) || this._draggable) {
-                        _ElementUtilities.addClass(this._element, _Constants._swipeableClass);
-                    } else {
-                        _ElementUtilities.removeClass(this._element, _Constants._swipeableClass);
-                    }
-                },
-
                 _updateDraggableAttribute: function ItemContainer_updateDraggableAttribute() {
-                    this._setSwipeClass();
                     this._itemBox.setAttribute("draggable", this._draggable);
                 },
 
                 _verifySelectionAllowed: function ItemContainer_verifySelectionAllowed() {
-                    if (this._selectionMode !== _UI.SelectionMode.none && (this._tapBehavior === _UI.TapBehavior.toggleSelect || this._swipeBehavior === _UI.SwipeBehavior.select)) {
+                    if (this._selectionMode !== _UI.SelectionMode.none && this._tapBehavior === _UI.TapBehavior.toggleSelect) {
                         var canSelect = this._selection.fireSelectionChanging();
                         return {
                             canSelect: canSelect,

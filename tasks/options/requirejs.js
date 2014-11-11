@@ -235,8 +235,8 @@
         return "\n" +
 "        require(['WinJS/Core/_WinJS', '" + name + "'], function (_WinJS) {\n" +
 "            global.WinJS = _WinJS;\n" +
-"            return _WinJS;\n" +
 "        });\n" +
+"        return global.WinJS;\n" +
 "    }));\n" +
 "}(this));\n" +
 "\n";
