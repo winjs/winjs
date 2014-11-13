@@ -40,14 +40,14 @@
     display: inline-block;
     width: 40px;
     height: 4px;
-    margin: 4px 2px 16px 2px;
+    margin: 4px 2px 8px 2px;
 }
 .win-navbarcontainer-horizontal .win-navbarcontainer-viewport::-webkit-scrollbar {
     width: 0;
     height: 0;
 }
 .win-navbarcontainer-horizontal .win-navbarcontainer-viewport {
-    padding: 15px 0 20px 0;
+    padding: 14px 0;
     overflow-x: auto;
     overflow-y: hidden;
     overflow: -moz-scrollbars-none;
@@ -57,10 +57,9 @@
     touch-action: pan-x;
 }
 .win-navbarcontainer-vertical .win-navbarcontainer-viewport {
-    padding: 10px 0;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 250px;
+    max-height: 184px;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     touch-action: pan-y;
 }
@@ -69,19 +68,21 @@
     #flex > .flex-flow(column; wrap);
     #flex > .align-content(flex-start);
 }
+.win-navbarcontainer-vertical .win-navbarcontainer-surface {
+    padding: 12px 0;
+}
 .win-navbarcontainer-navarrow {
     position: absolute;
     z-index: 2;
-    top: 0;
+    top: 16px;
     #flex > .display-flex();
     #flex > .flex-direction(column);
     #flex > .align-items(center);
     #flex > .justify-content(center);
     font-family: "Segoe UI Symbol", "Symbols";
 
-    height: 50px;
-    width: 17px;
-    margin: 20px 0;
+    height: 48px;
+    width: 24px;
     font-size: 16pt;
     overflow: hidden;
 }
@@ -90,14 +91,12 @@
 }
 .win-navbarcontainer-navleft {
     left: 0;
-    margin-right: 8px;
 }
 .win-navbarcontainer-navleft::before {
     content: '\E0E2';
 }
 .win-navbarcontainer-navright {
     right: 0;
-    margin-left: 8px;
 }
 .win-navbarcontainer-navright::before {
     content: '\E0E3';
@@ -108,22 +107,24 @@
 */
 .win-navbarcommand {
     #flex > .display-flex();
-    #flex > .flex(@shrink: 0);
+    #flex > .flex(none);
 }
 .win-navbarcontainer-horizontal .win-navbarcommand {
-    margin: 5px;
-    width: 210px;
+    margin: 2px;
+    width: 192px;
 }
 .win-navbarcontainer-vertical .win-navbarcommand {
-    margin: 10px 30px;
+    margin: 4px 24px;
 }
 .win-navbarcommand-button {
-    #flex > .flex(@grow: 1);
+    #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
     position: relative;
-}
+} 
 .win-navbarcommand-button-content {
     position: relative;
-    padding: 5px 10px;
+    height: 48px; // Keep in sync with splitbutton's line-height
+    padding-left: 16px;
+    padding-right: 16px;
     #flex > .display-flex();
 }
 .win-navbarcommand-button:focus {
@@ -132,34 +133,30 @@
 }
 .win-navbarcommand-icon {
     font-family: "Segoe UI Symbol", "Symbols";
-    height: 24px;
-    width: 24px;
-    font-size: 24px;
-    margin-left: 0;
-    margin-right: 10px;
-    margin-top: 8px; /* Center icon vertically */
-    #flex > .display-flex();
-    #flex > .align-items(center);
-    #flex > .justify-content(center);
+    height: 16px;
+    width: 16px;
+    font-size: 13px;
+    margin-left: 0;;
+    margin-right: 16px;
+    margin-top: 16px; /* Center icon vertically */
+    #flex > .flex(none);
 }
 .win-navbarcommand-icon {
     .RTL({
         margin-right: 0;
-        margin-left: 10px;
+        margin-left: 16px;
     });
 }
 .win-navbarcommand-label {
-    #flex > .flex(@grow: 1);
+    #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 11pt;
-    margin: 10px 0;
+    .win-type-body();
+    margin-top: 13px;
+    margin-bottom: 15px;
 }
 .win-navbarcommand-splitbutton {
-    #flex > .display-flex();
-    #flex > .justify-content(center);
-    #flex > .align-items(center);
+    #flex > .flex(none);
     width: 40px;
     font-family: "Segoe UI Symbol", "Symbols";
     font-size: 11pt;
@@ -175,6 +172,17 @@
 }
 .win-navbarcommand-splitbutton::before {
     content: '\E019';
+    pointer-events: none;
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    
+    line-height: 46px; // Keep in sync with splitbutton-content's height. Minus 2px for border.
+    border: 1px dotted transparent; // Color is added for keyboard focus in colors styles
 }
 .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened::before {
     content: '\E018';

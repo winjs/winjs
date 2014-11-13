@@ -254,24 +254,24 @@ module WinJSTests {
 
             var navbarContainer = new NavBarContainer(navbarContainerEl, {
                 maxRows: 1,
-                data: navUtils.getNavBarCommandsData(100, true, false, false, false, false, false)
+                data: navUtils.getNavBarCommandsData(20, true, false, false, false, false, false)
             });
 
             navbarContainer.element.focus();
             WinJS.Utilities._setImmediate(function () {
                 var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
-                var lastNavItem = navbarContainer._surfaceEl.children[99].winControl;
+                var lastNavItem = navbarContainer._surfaceEl.children[19].winControl;
 
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
-                for (var i = 0; i < 100; i++) {
+                for (var i = 0; i < 20; i++) {
                     Helper.keydown(firstNavItem._buttonEl, Key.rightArrow);
                 }
                 LiveUnit.Assert.areEqual(lastNavItem._buttonEl, document.activeElement);
-                LiveUnit.Assert.areEqual(99, navbarContainer.currentIndex);
+                LiveUnit.Assert.areEqual(19, navbarContainer.currentIndex);
 
                 WinJS.Utilities._setImmediate(function () {
-                    for (var i = 0; i < 100; i++) {
+                    for (var i = 0; i < 20; i++) {
                         Helper.keydown(lastNavItem._buttonEl, Key.leftArrow);
                     }
                     LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
@@ -408,16 +408,16 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(0, navbarContainer.currentIndex);
 
                 Helper.keydown(firstNavItem._buttonEl, Key.pageDown);
-                LiveUnit.Assert.areEqual(fourthNavItem._buttonEl, document.activeElement);
-                LiveUnit.Assert.areEqual(3, navbarContainer.currentIndex);
+                LiveUnit.Assert.areEqual(thirdNavItem._buttonEl, document.activeElement);
+                LiveUnit.Assert.areEqual(2, navbarContainer.currentIndex);
 
                 Helper.keydown(fourthNavItem._buttonEl, Key.pageDown);
-                LiveUnit.Assert.areEqual(seventhNavItem._buttonEl, document.activeElement);
-                LiveUnit.Assert.areEqual(6, navbarContainer.currentIndex);
+                LiveUnit.Assert.areEqual(fifthNavItem._buttonEl, document.activeElement);
+                LiveUnit.Assert.areEqual(4, navbarContainer.currentIndex);
 
                 Helper.keydown(seventhNavItem._buttonEl, Key.pageUp);
-                LiveUnit.Assert.areEqual(fourthNavItem._buttonEl, document.activeElement);
-                LiveUnit.Assert.areEqual(3, navbarContainer.currentIndex);
+                LiveUnit.Assert.areEqual(thirdNavItem._buttonEl, document.activeElement);
+                LiveUnit.Assert.areEqual(2, navbarContainer.currentIndex);
 
                 Helper.keydown(fourthNavItem._buttonEl, Key.pageUp);
                 LiveUnit.Assert.areEqual(firstNavItem._buttonEl, document.activeElement);
@@ -817,7 +817,7 @@ module WinJSTests {
             var dataList = navUtils.getNavBarCommandsData(20, true, false, false, false, false, true);
             var navbarContainer = new NavBarContainer(navbarContainerEl, { data: dataList });
 
-            var editsCount = 500;
+            var editsCount = 100;
 
             function performRandomEdit(i) {
                 var editTypes = ["push", "unshift", "pop", "shift", "reverse", "setAt", "move", "sort", "length"];

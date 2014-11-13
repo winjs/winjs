@@ -1080,12 +1080,23 @@ define([
 
                                 sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;
-                                sizes.maxColumns = sizes.itemWidth ? Math.max(1, Math.floor(usableSpace / sizes.itemWidth)) : 1;
+                                if (sizes.itemWidth) {
+                                    // First and last items in each row need to be flush against the nav arrows. Consequently, the first
+                                    // item in each row will lose its left margin and the last item in each row will lose its right margin.
+                                    // This is equivalent to 1 item in each row losing both of its margins which is the perspective we take for
+                                    // the calculations here.
+                                    var usableSpaceAfterFirstItem = usableSpace - sizes.itemOffsetWidth;
+                                    sizes.maxColumns = Math.max(1, Math.floor(usableSpaceAfterFirstItem / sizes.itemWidth) + 1);   
+                                } else {
+                                    sizes.maxColumns = 1;    
+                                }
                                 sizes.rowsPerPage = Math.min(this.maxRows, Math.ceil(itemCount / sizes.maxColumns));
                                 sizes.columnsPerPage = Math.min(sizes.maxColumns, itemCount);
                                 sizes.pages = Math.ceil(itemCount / (sizes.columnsPerPage * sizes.rowsPerPage));
                                 sizes.trailingEdge = sizes.leadingEdge;
-                                sizes.extraSpace = usableSpace - (sizes.columnsPerPage * sizes.itemWidth);
+                                // First and last items in each row need to be flush against the nav arrows so we need to distribute one
+                                // margin from each of them as extra space. This is why margin left and right are added to the extra space.
+                                sizes.extraSpace = usableSpace - (sizes.columnsPerPage * sizes.itemWidth) + sizes.itemMarginLeft + sizes.itemMarginRight;
 
                                 this._scrollLength = sizes.viewportOffsetWidth * sizes.pages;
 
@@ -1150,19 +1161,13 @@ define([
                                 width = (sizes.itemOffsetWidth + (spaceToDistribute / sizes.maxColumns)) + "px";
                             }
 
-                            var extraMarginRight;
-                            var extraMarginLeft;
-
                             if (sizes.rtl) {
-                                extraMarginRight = (isFirstColumnOnPage ? sizes.leadingEdge : 0);
-                                extraMarginLeft = (isLastColumnOnPage ? extraTrailingMargin : 0);
+                                marginRight = (isFirstColumnOnPage ? sizes.leadingEdge : sizes.itemMarginRight) + "px";
+                                marginLeft = (isLastColumnOnPage ? extraTrailingMargin : sizes.itemMarginLeft) + "px";
                             } else {
-                                extraMarginRight = (isLastColumnOnPage ? extraTrailingMargin : 0);
-                                extraMarginLeft = (isFirstColumnOnPage ? sizes.leadingEdge : 0);
+                                marginRight = (isLastColumnOnPage ? extraTrailingMargin : sizes.itemMarginRight) + "px";
+                                marginLeft = (isFirstColumnOnPage ? sizes.leadingEdge : sizes.itemMarginLeft) + "px";
                             }
-
-                            marginRight = extraMarginRight + sizes.itemMarginRight + "px";
-                            marginLeft = extraMarginLeft + sizes.itemMarginLeft + "px";
                         } else {
                             marginRight = "";
                             marginLeft = "";

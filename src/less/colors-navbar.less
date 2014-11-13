@@ -1,119 +1,69 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-    .mixin(dark) {
-        .win-navbarcontainer-pageindicator {
-            background-color: rgba(255,255,255,0.4);
-        }
-        .win-navbarcontainer-pageindicator-current {
-            background-color: rgba(255,255,255,0.8);
-        }
-        .win-navbarcontainer-pageindicator.win-navbarcontainer-pageindicator:hover:active {
-            background-color: rgba(255,255,255,0.7);
-        }
-        .win-navbarcontainer-navarrow {
-            background-color: rgb(74,74,74);
-            color: rgb(30,30,30)
-        }
-        .win-navbarcontainer-navarrow.win-navbarcontainer-navarrow:hover:active {
-            background-color: rgb(30,30,30);
-            color: rgb(255,255,255);
-        }
-
-        .win-navbarcommand-button,
-        .win-navbarcommand-splitbutton {
-            background-color: rgba(255,255,255,0.11);
-            color: rgb(255,255,255);
-        }
-        .win-navbarcommand-button.win-keyboard:focus,
-        .win-navbarcommand-splitbutton.win-keyboard:focus {
-            outline: 2px solid rgb(255,255,255);
-        }
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
-        .win-navbarcommand-button.win-pressed,
-        .win-navbarcommand-splitbutton.win-pressed {
-            background-color: rgb(255,255,255);
-            color: rgb(0,0,0);
+    .colorDefinitions(@theme);
+    
+    .win-navbarcontainer-pageindicator {
+        background-color: @baseLow;
+    }
+    .win-navbarcontainer-pageindicator-current {
+        background-color: @baseMid;
+    }
+    
+    .win-navbarcontainer-navarrow {
+        background-color: @baseMediumMid;
+        color: @altMediumHigh;
+        
+        &.win-navbarcontainer-navarrow:hover:active {
+            background-color: @baseMediumHigh;
         }
     }
-    .mixin(light) {
-        .win-navbarcontainer-pageindicator {
-            background-color: rgba(0,0,0,0.3);
-        }
-        .win-navbarcontainer-pageindicator-current {
-            background-color: rgba(0,0,0,0.66);
-        }
-        .win-navbarcontainer-pageindicator.win-navbarcontainer-pageindicator:hover:active {
-            background-color: rgba(0,0,0,0.58);
-        }
-        .win-navbarcontainer-navarrow {
-            background-color: rgb(231,231,231);
-            color: rgb(92,92,92)
-        }
-        .win-navbarcontainer-navarrow.win-navbarcontainer-navarrow:hover:active {
-            background-color: rgb(93,93,93);
-            color: rgb(255,255,255);
-        }
-
-        .win-navbarcommand-button,
-        .win-navbarcommand-splitbutton {
-            background-color: rgba(0,0,0,0.09);
-            color: rgb(0,0,0);
-        }
-        .win-navbarcommand-button.win-keyboard:focus,
-        .win-navbarcommand-splitbutton.win-keyboard:focus {
-            outline: 2px solid rgb(0,0,0);
-        }
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
-        .win-navbarcommand-button.win-pressed,
-        .win-navbarcommand-splitbutton.win-pressed {
-            background-color: rgb(0,0,0);
-            color: rgb(255,255,255);
-        }
+    
+    .win-navbarcommand-button,
+    .win-navbarcommand-splitbutton {
+        background-color: @chromeMid;
+        color: @baseHigh;
     }
-    .mixin(@theme);
+    
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
+    .win-navbarcommand-button.win-pressed,
+    .win-navbarcommand-splitbutton.win-pressed {
+        background-color: @listPress;
+    }
+    
+    .win-navbarcommand-button.win-keyboard:focus::before {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        box-sizing: border-box;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border: 1px dotted @baseHigh;
+    }
+    
+    .win-navbarcommand-splitbutton.win-keyboard:focus::before {
+        border-color: @baseHigh;
+    }
 }
 .ColorsHover(@theme) {
-    .mixin(dark) {
-        .win-navbarcontainer-pageindicator:hover {
-            background-color: rgba(255,255,255,0.6);
-        }
-        .win-navbarcontainer-navarrow:hover {
-            background-color: rgb(202,202,202);
-            color: rgb(0,0,0)
-        }
-        .win-navbarcommand-button:hover,
-        .win-navbarcommand-splitbutton:hover {
-            background-color: rgba(255,255,255,0.22);
-        }
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
-        .win-navbarcommand-button.win-pressed:hover,
-        .win-navbarcommand-splitbutton.win-pressed:hover {
-            background-color: rgb(255,255,255);
-            color: rgb(0,0,0);
-        }
+    .colorDefinitions(@theme);
+    
+    .win-navbarcontainer-navarrow:hover {
+        background-color: @baseMid;
     }
-    .mixin(light) {
-        .win-navbarcontainer-pageindicator:hover {
-            background-color: rgba(0,0,0,0.44);
-        }
-        .win-navbarcontainer-navarrow:hover {
-            background-color: rgb(218,218,218);
-            color: rgb(0,0,0)
-        }
-        .win-navbarcommand-button:hover,
-        .win-navbarcommand-splitbutton:hover {
-            background-color: rgba(199,199,199,0.31);
-        }
-        .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
-        .win-navbarcommand-button.win-pressed:hover,
-        .win-navbarcommand-splitbutton.win-pressed:hover {
-            background-color: rgb(0,0,0);
-            color: rgb(255,255,255);
-        }
+    
+    .win-navbarcommand-button:hover,
+    .win-navbarcommand-splitbutton:hover {
+        background-color: @listHover;
     }
-    .mixin(@theme);
+    
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
+    .win-navbarcommand-button.win-pressed:hover,
+    .win-navbarcommand-splitbutton.win-pressed:hover {
+        background-color: @listPress;
+    }
 }
-
 
 @media (-ms-high-contrast) {
     .win-navbarcontainer-pageindicator {
