@@ -228,6 +228,10 @@ define([
                 };
             }
 
+            // Signal ListView's own measurement operation. 
+            // ListView always needs an opportunity to measure, even if layout cannot.
+            site.readyToMeasure();
+
             // Clean up the DOM
             site.viewport.removeChild(surface);
         }
