@@ -841,6 +841,14 @@ module AutoSuggestBoxTests {
             asb._inputElement.value = "Test query";
             asb._inputElement.focus();
         }
+
+        testAttemptingToGetInputContextOnWPDoesNotThrowException() {
+            var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
+            asb._inputElement.msGetInputContext = (): any => {
+                throw "test exception";
+            };
+            LiveUnit.Assert.isNull(asb._tryGetInputContext());
+        }
     };
 }
 LiveUnit.registerTestClass("AutoSuggestBoxTests.AutoSuggestBoxTests");

@@ -289,6 +289,7 @@ declare module WinJS {
             _repeaterElement: HTMLDivElement;
 
             _inputOrImeChangeHandler(eventArg: Event);
+            _tryGetInputContext(): MSInputMethodContext;
 
             static _sortAndMergeHits(hitsProvided?);
             static _EventNames: {

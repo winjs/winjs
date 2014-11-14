@@ -328,7 +328,7 @@ define([
                     _ElementUtilities._addEventListener(this._inputElement, "pointerdown", this._inputPointerDownHandler.bind(this));
                     this._updateInputElementAriaLabel();
                     this._element.appendChild(this._inputElement);
-                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
+                    var context = this._tryGetInputContext();
                     if (context) {
                         context.addEventListener("MSCandidateWindowShow", this._msCandidateWindowShowHandler.bind(this));
                         context.addEventListener("MSCandidateWindowHide", this._msCandidateWindowHideHandler.bind(this));
@@ -440,7 +440,7 @@ define([
 
                 _addFlyoutIMEPaddingIfRequired: function asb_addFlyoutIMEPaddingIfRequired() {
                     // Check if we have InputContext APIs
-                    var context = this._inputElement.msGetInputContext && this._inputElement.msGetInputContext();
+                    var context = this._tryGetInputContext();
                     if (!context) {
                         return;
                     }
@@ -628,19 +628,21 @@ define([
                         var compositionLength = 0;
                         var queryTextPrefix = "";
                         var queryTextSuffix = "";
-                        if (createFilled && this._inputElement.msGetInputContext && this._inputElement.msGetInputContext().getCompositionAlternatives) {
-                            var context = this._inputElement.msGetInputContext();
-                            compositionAlternatives = context.getCompositionAlternatives();
-                            compositionStartOffset = context.compositionStartOffset;
-                            compositionLength = context.compositionEndOffset - context.compositionStartOffset;
+                        if (createFilled) {
+                            var context = this._tryGetInputContext();
+                            if(context && context.getCompositionAlternatives) {
+                                compositionAlternatives = context.getCompositionAlternatives();
+                                compositionStartOffset = context.compositionStartOffset;
+                                compositionLength = context.compositionEndOffset - context.compositionStartOffset;
 
-                            if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (compositionLength > 0)) {
-                                queryTextPrefix = this._inputElement.value.substring(0, compositionStartOffset);
-                                queryTextSuffix = this._inputElement.value.substring(compositionStartOffset + compositionLength);
-                            } else {
-                                // composition ended, but alternatives have been kept, need to reuse the previous query prefix/suffix, but still report to the client that the composition has ended (start & length of composition of 0)
-                                queryTextPrefix = this._inputElement.value.substring(0, this._prevCompositionStart);
-                                queryTextSuffix = this._inputElement.value.substring(this._prevCompositionStart + this._prevCompositionLength);
+                                if ((this._inputElement.value !== this._prevQueryText) || (this._prevCompositionLength === 0) || (compositionLength > 0)) {
+                                    queryTextPrefix = this._inputElement.value.substring(0, compositionStartOffset);
+                                    queryTextSuffix = this._inputElement.value.substring(compositionStartOffset + compositionLength);
+                                } else {
+                                    // composition ended, but alternatives have been kept, need to reuse the previous query prefix/suffix, but still report to the client that the composition has ended (start & length of composition of 0)
+                                    queryTextPrefix = this._inputElement.value.substring(0, this._prevCompositionStart);
+                                    queryTextSuffix = this._inputElement.value.substring(this._prevCompositionStart + this._prevCompositionLength);
+                                }
                             }
                         }
                         linguisticDetails = createQueryLinguisticDetails(compositionAlternatives, compositionStartOffset, compositionLength, queryTextPrefix, queryTextSuffix);
@@ -694,6 +696,18 @@ define([
                     if (this._suggestionManager) {
                         this._suggestionManager.addToHistory(this._inputElement.value, this._lastKeyPressLanguage);
                     }
+                },
+
+                _tryGetInputContext: function asb_tryGetInputContext() {
+                    // On WP, msGetInputContext is defined but throws when invoked
+                    if (this._inputElement.msGetInputContext) {
+                        try {
+                            return this._inputElement.msGetInputContext();
+                        } catch (e) {
+                            return null;
+                        }
+                    }
+                    return null;
                 },
 
                 _updateInputElementAriaLabel: function asb_updateInputElementAriaLabel() {
