@@ -648,6 +648,7 @@ define([
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                 this._element.appendChild(this._headersContainerElement);
                 this._element.addEventListener('click', this._elementClickedHandler.bind(this));
+                _ElementUtilities._addEventListener(this._element, "pointermove", this._elementPointerMoveHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerdown", this._elementPointerDownHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerup", this._elementPointerUpHandler.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
@@ -1404,14 +1405,15 @@ define([
                     }
                 },
 
+                _elementPointerMoveHandler: function pivot_elementPointerMoveHandler(e) {
+                    // This prevents Chrome's history navigation swipe gestures.
+                    e.preventDefault();
+                },
+
                 _elementPointerDownHandler: function pivot_elementPointerDownHandler(e) {
                     if (supportsSnap) {
                         return;
                     }
-
-                    // This prevents Chrome's history navigation swipe gestures.
-                    e.preventDefault();
-
                     this._elementPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse", time: Date.now(), inHeaders: this._headersContainerElement.contains(e.target) };
                 },
 
