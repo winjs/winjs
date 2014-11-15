@@ -630,7 +630,7 @@ define([
                         var queryTextSuffix = "";
                         if (createFilled) {
                             var context = this._tryGetInputContext();
-                            if(context && context.getCompositionAlternatives) {
+                            if (context && context.getCompositionAlternatives) {
                                 compositionAlternatives = context.getCompositionAlternatives();
                                 compositionStartOffset = context.compositionStartOffset;
                                 compositionLength = context.compositionEndOffset - context.compositionStartOffset;
