@@ -9,7 +9,7 @@ export declare function createEventProperties(...events: string[]): any;
 /**
  * A mixin that contains event-related functions.
 **/
-export declare class eventMixin: {
+export declare class eventMixin {
     //#region Methods
 
     /**

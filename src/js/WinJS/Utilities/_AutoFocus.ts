@@ -649,5 +649,6 @@ var toPublish = {
     _autoFocus: _autoFocus
 };
 toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
+toPublish["_listeners"] = {};
 var eventSrc = <_Events.eventMixin><any>toPublish;
 _Base.Namespace.define("WinJS.UI.AutoFocus", toPublish);

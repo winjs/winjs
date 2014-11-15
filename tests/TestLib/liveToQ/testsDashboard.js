@@ -33,7 +33,7 @@
                 var toRun = queue.splice(0, Math.min(maxParallelRuns - numRunning, queue.length));
                 toRun.forEach(function (linkDiv) {
                     linkDiv.querySelector(".status").textContent = "- Running...";
-                    window.open(linkDiv.querySelector(".testLink").href + "&autostart=true&subscriptionKey=" + subscriptionKey, "", "width=800, height=500, top=0, left=400")
+                    window.open(linkDiv.querySelector(".testLink").href + "&autostart=true&subscriptionKey=" + subscriptionKey, "", "width=800, height=800, top=0, left=400")
                     numRunning++;
                 });
             }
