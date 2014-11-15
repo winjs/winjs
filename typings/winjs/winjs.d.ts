@@ -952,7 +952,7 @@ declare module WinJS.Binding {
          * @param element The DOM element to convert to a template.
          * @param options If this parameter is supplied, the template is loaded from the URI and the content of the element parameter is ignored. You can add the following options: href.
         **/
-        constructor(element: HTMLElement, options?:any);
+        constructor(element: HTMLElement, options?: any);
 
         //#endregion Constructors
 
@@ -1473,7 +1473,7 @@ declare module WinJS {
      * @param type The type of message (error, warning, info, etc.).
     **/
     function log(message: string, tags?: string, type?: string): void;
-    function log(message: ()=>string, tags?: string, type?: string): void;
+    function log(message: () => string, tags?: string, type?: string): void;
 
     /**
      * This method has been deprecated. Strict processing is always on; you don't have to call this method to turn it on.
@@ -1499,7 +1499,7 @@ declare module WinJS {
         headers?: any;
         data?: any;
         responseType?: string;
-        customRequestInitializer?:(request: XMLHttpRequest) => void;
+        customRequestInitializer?: (request: XMLHttpRequest) => void;
     }
 
     //#endregion Interfaces
@@ -6517,7 +6517,7 @@ declare module WinJS.UI {
          * @param elemnt The DOM element that will host the new control. The Repeater will create an element if this value is null.
          * @param options An object that contains one or more property/value pairs to apply to the new Repeater. Each property of the options object corresponds to one of the object's properties or events. Event names must begin with "on".
         **/
-        constructor(element?:HTMLElement, options?: any);
+        constructor(element?: HTMLElement, options?: any);
 
         //#endregion Constructors
 
@@ -7802,6 +7802,67 @@ declare module WinJS.UI {
 
 }
 /**
+ * Provides utility functions for generic directional focus movement
+**/
+declare module WinJS.UI.AutoFocus {
+    export interface AutoFocusOptions {
+        /**
+         * The focus scope, only children of this element are considered in the calculation.
+        **/
+        focusRoot?: HTMLElement;
+
+        /**
+         * A rectangle indicating where focus came from before the current state.
+        **/
+        historyRect?: IRect;
+
+        /**
+         * The element from which to calculate the next focusable element; if specified, referenceRect is ignored.
+        **/
+        referenceElement?: HTMLElement;
+
+        /**
+         * The rectangle from which to calculate next focusable element; ignored if referenceElement is also specified.
+        **/
+        referenceRect?: IRect;
+    }
+
+    export interface IRect {
+        left: number;
+        right?: number;
+        top: number;
+        bottom?: number;
+
+        height: number;
+        width: number;
+    }
+
+    export interface AutoFocusEvent extends CustomEvent {
+        detail: { nextFocusElement: HTMLElement; keyCode: number; previousFocusElement: HTMLElement };
+    }
+
+    export var autoFocusMappings: { [key: string]: number[] };
+    export var focusRoot: HTMLElement;
+
+    export function addEventListener(type: string, handler: EventListener, capture?: boolean);
+    export function removeEventListener(type: string, handler: EventListener, capture?: boolean);
+
+    export function findNextFocusElement(direction: "left", options?: AutoFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "right", options?: AutoFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "up", options?: AutoFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "down", options?: AutoFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: string, options?: AutoFocusOptions): HTMLElement;
+
+    export function moveFocus(direction: "left", options?: AutoFocusOptions): HTMLElement;
+    export function moveFocus(direction: "right", options?: AutoFocusOptions): HTMLElement;
+    export function moveFocus(direction: "up", options?: AutoFocusOptions): HTMLElement;
+    export function moveFocus(direction: "down", options?: AutoFocusOptions): HTMLElement;
+    export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement;
+
+    export function enableAutoFocus(): void;
+    export function disableAutoFocus(): void;
+}
+/**
  * Provides functions to load HTML content programmatically.
 **/
 declare module WinJS.UI.Fragments {
@@ -8700,7 +8761,7 @@ declare module WinJS.Utilities {
      * @param element The element.
      * @returns An object with two properties: scrollLeft and scrollTop
     **/
-    function getScrollPosition(element: HTMLElement): { scrollLeft: number; scrollTop: number};
+    function getScrollPosition(element: HTMLElement): { scrollLeft: number; scrollTop: number };
 
     /**
      * Gets the tab index of the specified element.
@@ -8832,7 +8893,7 @@ declare module WinJS.Utilities {
      * @param element The element.
      * @param position An object describing the position to set.
     **/
-    function setScrollPosition(element: HTMLElement, position: { scrollLeft: number; scrollTop: number}): void;
+    function setScrollPosition(element: HTMLElement, position: { scrollLeft: number; scrollTop: number }): void;
 
     /**
      * Configures a logger that writes messages containing the specified tags to the JavaScript console.

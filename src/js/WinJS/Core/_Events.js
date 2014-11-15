@@ -88,7 +88,7 @@ define([
     );
 
     var eventMixin = {
-        _listeners: null,
+        _listeners: {},
 
         addEventListener: function (type, listener, useCapture) {
             /// <signature helpKeyword="WinJS.Utilities.eventMixin.addEventListener">

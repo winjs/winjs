@@ -763,6 +763,10 @@ declare module WinJS {
         var _Overlay;
         var _AppBarCommandsLayout;
 
+        module AutoFocus {
+            function _autoFocus(direction: string, referenceRect?: IRect): void;
+        }
+
         module Pages {
             function _remove(frag);
             var _cacheStore;

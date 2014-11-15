@@ -38,4 +38,4 @@ export declare class eventMixin: {
 
     //#endregion Methods
 
-};
+}

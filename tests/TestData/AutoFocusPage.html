@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link href="../../$(TargetFramework)/css/ui-dark.css" rel="stylesheet" />
+    <script src="../../$(TargetFramework)/js/base.js"></script>
+    <script src="../../$(TargetFramework)/js/ui.js"></script>
+</head>
+<body>
+    <style>
+        body {
+            position: relative;
+            width: 950px;
+            height: 950px;
+        }
+        button:focus {
+            background-color: red;
+        }
+    </style>
+    <script>
+        for (var i = 0; i < 2; i++) {
+            for (var j = 0; j < 2; j++) {
+                var btn = document.createElement("BUTTON");
+                btn.textContent = "Button " + (i * 3 + j);
+                btn.style.position = "absolute";
+                btn.style.left = (j * 200 + 50) + "px";
+                btn.style.top = (i * 200 + 50) + "px";
+                btn.style.width = "150px";
+                btn.style.height = "150px";
+                document.body.appendChild(btn);
+            }
+        }
+        window.__ready = true;
+    </script>
+</body>
+</html>

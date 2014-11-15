@@ -15,7 +15,6 @@ var AttributeNames = {
 
 var ClassNames = {
     focusable: "win-focusable",
-    manualFocusContainer: "win-autofocus-manualfocuscontainer"
 };
 
 var CrossDomainMessageConstants = {
@@ -50,10 +49,9 @@ var FocusableTagNames = [
 
 // These factors can be tweaked to adjust which elements are favored by the focus algorithm  
 var ScoringConstants = {
-    primaryAxisDistanceWeight: 3,
-    secondaryAxisDistanceWeight: 2,
-    percentInHistoryShadowWeight: 10000,
-    inShadowThreshold: 0.25
+    primaryAxisDistanceWeight: 30,
+    secondaryAxisDistanceWeight: 20,
+    percentInHistoryShadowWeight: 100000
 };
 
 interface ICrossDomainMessage {
@@ -71,11 +69,6 @@ interface FindNextFocusResult {
 
 export interface AutoFocusOptions {
     /**
-     * Indicates whether the override attribute is considered.
-    **/
-    allowOverride?: boolean;
-
-    /**
      * The focus scope, only children of this element are considered in the calculation.
     **/
     focusRoot?: HTMLElement;
@@ -86,17 +79,12 @@ export interface AutoFocusOptions {
     historyRect?: IRect;
 
     /**
-     * The maximum distance a potential can be from the reference element in order to be considered.
-    **/
-    maxDistance?: number;
-
-    /**
-     * A element from which to calculate the next focusable element from; if specified, referenceRect is ignored.
+     * The element from which to calculate the next focusable element; if specified, referenceRect is ignored.
     **/
     referenceElement?: HTMLElement;
 
     /**
-     * A rectangle from which to calculate next focusable element from; ignored if referenceElement is also specified.
+     * The rectangle from which to calculate next focusable element; ignored if referenceElement is also specified.
     **/
     referenceRect?: IRect;
 }
@@ -111,6 +99,12 @@ export interface IRect {
     width: number;
 }
 
+export var autoFocusMappings: { [key: string]: number[] } = {
+    left: [_ElementUtilities.Key.leftArrow],
+    right: [_ElementUtilities.Key.rightArrow],
+    up: [_ElementUtilities.Key.upArrow],
+    down: [_ElementUtilities.Key.downArrow]
+};
 export var focusRoot: HTMLElement;
 
 export function findNextFocusElement(direction: "left", options?: AutoFocusOptions): HTMLElement;
@@ -123,96 +117,103 @@ export function findNextFocusElement(direction: string, options?: AutoFocusOptio
     return result ? result.target : null;
 }
 
-var _lastAutoFocusTarget: HTMLElement;
-var _historyRect: IRect;
-var _afEnabledFrames: Window[] = [];
-function _autoFocus (direction: string, exitManualFocusContainer?: boolean, referenceRect?: IRect): void {
-    if (!exitManualFocusContainer) {
-        // AutoFocus is suspended if the activeElement is in a manual-focus-container
-        var element = <HTMLElement>_Global.document.activeElement;
-        while (element) {
-            // Do not use HTMLElement.classList here as the current element may not support it
-            if (element.className.indexOf(ClassNames.manualFocusContainer) >= 0) {
-                return;
-            }
-            element = element.parentElement;
+export function moveFocus(direction: "left", options?: AutoFocusOptions): HTMLElement;
+export function moveFocus(direction: "right", options?: AutoFocusOptions): HTMLElement;
+export function moveFocus(direction: "up", options?: AutoFocusOptions): HTMLElement;
+export function moveFocus(direction: "down", options?: AutoFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement {
+    var result = findNextFocusElement(direction, options);
+    if (result) {
+        var previousFocusElement = _Global.document.activeElement;
+        if (_trySetFocus(result, -1)) {
+            eventSrc.dispatchEvent(EventNames.focusChanged, { previousFocusElement: previousFocusElement, keyCode: -1 });
+
+            return result;
         }
     }
+}
 
+export function enableAutoFocus() {
+    if (!_autoFocusEnabled) {
+        _Global.document.addEventListener("keydown", _handleKeyEvent);
+        _autoFocusEnabled = true;
+    }
+}
+
+export function disableAutoFocus() {
+    if (_autoFocusEnabled) {
+        _Global.document.removeEventListener("keydown", _handleKeyEvent);
+        _autoFocusEnabled = false;
+    }
+}
+
+
+// Privates
+var _autoFocusEnabled = false;
+var _lastAutoFocusTarget: HTMLElement;
+var _cachedLastAutoFocusTargetRect: IRect;
+var _historyRect: IRect;
+var _afEnabledFrames: Window[] = [];
+function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): void {
+    // If focus has moved since the last AutoFocus movement, scrolling occured, or an explicit
+    // reference rectangle was given to us, then we invalidate the history rectangle.
     if (referenceRect || _Global.document.activeElement !== _lastAutoFocusTarget) {
         _historyRect = null;
         _lastAutoFocusTarget = null;
+        _cachedLastAutoFocusTargetRect = null;
+    } else if (_lastAutoFocusTarget && _cachedLastAutoFocusTargetRect) {
+        var lastTargetRect = _lastAutoFocusTarget.getBoundingClientRect();
+        if (lastTargetRect.left !== _cachedLastAutoFocusTargetRect.left || lastTargetRect.top !== _cachedLastAutoFocusTargetRect.top) {
+            _historyRect = null;
+            _lastAutoFocusTarget = null;
+            _cachedLastAutoFocusTargetRect = null;
+        }
     }
 
     var activeElement = _Global.document.activeElement;
     var lastAutoFocusTarget = _lastAutoFocusTarget;
 
     var result = _findNextFocusElementInternal(direction, {
-        allowOverride: true,
         focusRoot: focusRoot,
         historyRect: _historyRect,
         referenceElement: _lastAutoFocusTarget,
         referenceRect: referenceRect
     });
 
-    if (result) {
+    if (result && _trySetFocus(result.target, keyCode)) {
         // A focus target was found
-        var focusMoved = trySetFocus(result.target);
-
         if (result.usedOverride) {
-            if (focusMoved) {
-                // Reset history since the override target could be anywhere
-                _historyRect = null;
-                _lastAutoFocusTarget = result.target;
-            } else {
-                // Attempt to focus override target was prevented, try focusing w/o considering override
-                result = _findNextFocusElementInternal(direction, {
-                    allowOverride: false,
-                    focusRoot: focusRoot,
-                    historyRect: null,
-                    referenceElement: _lastAutoFocusTarget,
-                });
-                if (result) {
-                    focusMoved = trySetFocus(result.target);
-                    if (focusMoved) {
-                        updateHistoryRect(direction, result);
-                        _lastAutoFocusTarget = result.target;
-                    }
-                }
-            }
+            // Reset history since the override target could be anywhere
+            _historyRect = null;
         } else {
             updateHistoryRect(direction, result);
-            _lastAutoFocusTarget = result.target;
         }
+        _lastAutoFocusTarget = result.target;
+        _cachedLastAutoFocusTargetRect = result.targetRect;
 
-        if (focusMoved) {
-            if (result.target.tagName === "IFRAME") {
-                var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
-                if (index >= 0) {
-                    var iframe = _getIFrameFromWindow(_afEnabledFrames[index]);
+        if (result.target.tagName === "IFRAME") {
+            var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
+            if (index >= 0) {
+                // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
+                // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
+                var refRect = _toIRect({
+                    left: result.referenceRect.left - result.targetRect.left,
+                    top: result.referenceRect.top - result.targetRect.top,
+                    width: result.referenceRect.width,
+                    height: result.referenceRect.height
+                });
 
-                    // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
-                    // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
-                    var refRect = _toIRect({
-                        left: result.referenceRect.left - iframe.offsetLeft,
-                        top: result.referenceRect.top - iframe.offsetTop,
-                        width: result.referenceRect.width,
-                        height: result.referenceRect.height
-                    });
-
-                    var message = {};
-                    message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
-                        type: CrossDomainMessageConstants.autoFocusEnter,
-                        direction: direction,
-                        referenceRect: refRect
-                    };
-                    (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
-                }
+                var message = {};
+                message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
+                    type: CrossDomainMessageConstants.autoFocusEnter,
+                    direction: direction,
+                    referenceRect: refRect
+                };
+                (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
             }
-            var evt = <CustomEvent>_Global.document.createEvent("CustomEvent");
-            evt.initCustomEvent(EventNames.focusChanged, true, false, { previousElement: activeElement });
-            (<any>toPublish).dispatchEvent(evt);
         }
+        eventSrc.dispatchEvent(EventNames.focusChanged, { previousFocusElement: activeElement, keyCode: keyCode });
     } else {
         // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
         // Note on coordinates: When signaling exit, do NOT transform the coordinates into the parent's coordinate system.
@@ -244,14 +245,14 @@ function _autoFocus (direction: string, exitManualFocusContainer?: boolean, refe
         //..╚══════════════╝..........................  
         //.....................╔═══════════════════╗..  
         //.....................║                   ║..  
-        //.....................║ newFocusedElement ║..  
+        //.....................║       target      ║..  
         //.....................║                   ║..  
         //.....................╚═══════════════════╝..  
         //  
         // If that is the case, we need to reset the coordinates to the edge of the target element.  
         if (direction === DirectionNames.left || direction === DirectionNames.right) {
-            newHistoryRect.top = Math.max(result.targetRect.top, result.referenceRect.top, _historyRect ? _historyRect.top : Number.MIN_VALUE);
-            newHistoryRect.bottom = Math.min(result.targetRect.bottom, result.referenceRect.bottom, _historyRect ? _historyRect.bottom : Number.MAX_VALUE);
+            newHistoryRect.top = _Global.Math.max(result.targetRect.top, result.referenceRect.top, _historyRect ? _historyRect.top : Number.MIN_VALUE);
+            newHistoryRect.bottom = _Global.Math.min(result.targetRect.bottom, result.referenceRect.bottom, _historyRect ? _historyRect.bottom : Number.MAX_VALUE);
             if (newHistoryRect.bottom <= newHistoryRect.top) {
                 newHistoryRect.top = result.targetRect.top;
                 newHistoryRect.bottom = result.targetRect.bottom;
@@ -262,8 +263,8 @@ function _autoFocus (direction: string, exitManualFocusContainer?: boolean, refe
             newHistoryRect.left = Number.MIN_VALUE;
             newHistoryRect.right = Number.MAX_VALUE;
         } else {
-            newHistoryRect.left = Math.max(result.targetRect.left, result.referenceRect.left, _historyRect ? _historyRect.left : Number.MIN_VALUE);
-            newHistoryRect.right = Math.min(result.targetRect.right, result.referenceRect.right, _historyRect ? _historyRect.right : Number.MAX_VALUE);
+            newHistoryRect.left = _Global.Math.max(result.targetRect.left, result.referenceRect.left, _historyRect ? _historyRect.left : Number.MIN_VALUE);
+            newHistoryRect.right = _Global.Math.min(result.targetRect.right, result.referenceRect.right, _historyRect ? _historyRect.right : Number.MAX_VALUE);
             if (newHistoryRect.right <= newHistoryRect.left) {
                 newHistoryRect.left = result.targetRect.left;
                 newHistoryRect.right = result.targetRect.right;
@@ -276,46 +277,38 @@ function _autoFocus (direction: string, exitManualFocusContainer?: boolean, refe
         }
         _historyRect = newHistoryRect;
     }
-
-    function trySetFocus(element: HTMLElement) {
-        // We raise an event on the focusRoot before focus changes to give listeners  
-        // a chance to prevent the next focus target from receiving focus if they want.  
-        var evt = <CustomEvent>_Global.document.createEvent("CustomEvent");
-        evt.initCustomEvent(EventNames.focusChanging, true, true, { nextFocusElement: element });
-        var canceled = (<any>toPublish).dispatchEvent(evt);
-        if (!canceled) {
-            element.focus();
-        }
-        return _Global.document.activeElement === element;
-    }
 }
 
 function _findNextFocusElementInternal(direction: string, options?: AutoFocusOptions): FindNextFocusResult {
     options = options || {};
-
-    options.allowOverride = options.allowOverride || false;
     options.focusRoot = options.focusRoot || focusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
-    options.maxDistance = options.maxDistance || Math.max(screen.availHeight, screen.availWidth);
 
+    var maxDistance = _Global.Math.max(_Global.screen.availHeight, _Global.screen.availWidth);
     var refObj = getReferenceObject(options.referenceElement, options.referenceRect);
 
     // Handle override
-    if (options.allowOverride && refObj.element) {
+    if (refObj.element) {
         var manualOverrideOptions = refObj.element.getAttribute(AttributeNames.focusOverride);
         if (manualOverrideOptions) {
-            var target: HTMLElement;
-
             var parsedOptions = _OptionsParser.optionsParser(manualOverrideOptions);
 
             // The left-hand side can be cased as either "left" or "Left".
             var selector: string = parsedOptions[direction] || parsedOptions[direction[0].toUpperCase() + direction.substr(1)];
 
             if (selector) {
-                target = <HTMLElement>_Global.document.querySelector(selector);
-            }
-            if (target) {
-                return { target: target, targetRect: null, referenceRect: null, usedOverride: true };
+                var target: HTMLElement;
+                var element = refObj.element;
+                while (!target && element) {
+                    target = <HTMLElement>element.querySelector(selector);
+                    element = element.parentElement;
+                }
+                if (target) {
+                    if (target === _Global.document.activeElement) {
+                        return null;
+                    }
+                    return { target: target, targetRect: _toIRect(target.getBoundingClientRect()), referenceRect: null, usedOverride: true };
+                }
             }
         }
     }
@@ -327,7 +320,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
         score: 0
     };
     var allElements = options.focusRoot.querySelectorAll("*");
-    for (var i = 0, l = allElements.length; i < l; i++) {
+    for (var i = 0, length = allElements.length; i < length; i++) {
         var potentialElement = <HTMLElement>allElements[i];
 
         if (refObj.element === potentialElement || !isFocusable(potentialElement)) {
@@ -336,12 +329,12 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
         var potentialRect = _toIRect(potentialElement.getBoundingClientRect());
 
-        // Skip elements that have either a width or zero or a height of zero  
+        // Skip elements that have either a width of zero or a height of zero  
         if (potentialRect.width === 0 || potentialRect.height === 0) {
             continue;
         }
 
-        var score = calculateScore(direction, options.maxDistance, options.historyRect, refObj.rect, potentialRect);
+        var score = calculateScore(direction, maxDistance, options.historyRect, refObj.rect, potentialRect);
 
         if (score > bestPotential.score) {
             bestPotential.element = potentialElement;
@@ -361,28 +354,9 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             return 0;
         }
 
-        var pixelOverlapWithTheReferenceShadow = (Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord));
-        var potentialEdgeLength = maxPotentialCoord - minPotentialCoord;
+        var pixelOverlapWithTheReferenceShadow = _Global.Math.min(maxReferenceCoord, maxPotentialCoord) - _Global.Math.max(minReferenceCoord, minPotentialCoord);
         var referenceEdgeLength = maxReferenceCoord - minReferenceCoord;
-
-        // If the reference element is bigger than the potential element, then we want to use the length of the reference's edge as the   
-        // denominator when we calculate percentInShadow. Otherwise, if the potential element is bigger, we want to use the length  
-        // of the potential's edge when calculating percentInShadow.  
-        var comparisonEdgeLength = 0;
-        if (referenceEdgeLength >= potentialEdgeLength) {
-            comparisonEdgeLength = potentialEdgeLength;
-        } else {
-            comparisonEdgeLength = referenceEdgeLength;
-        }
-
-        var percentInShadow = 0;
-        if (comparisonEdgeLength !== 0) {
-            percentInShadow = Math.min(pixelOverlapWithTheReferenceShadow / comparisonEdgeLength, 1);
-        } else {
-            percentInShadow = 1;
-        }
-
-        return percentInShadow;
+        return pixelOverlapWithTheReferenceShadow / referenceEdgeLength;
     }
 
     function calculateScore(direction: string, maxDistance: number, historyRect: IRect, referenceRect: IRect, potentialRect: IRect) {
@@ -390,11 +364,11 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
         var percentInShadow: number;
         var primaryAxisDistance: number;
-        var secondaryAxisDistance: number;
+        var secondaryAxisDistance = 0;
         var percentInHistoryShadow = 0;
         switch (direction) {
             case DirectionNames.left:
-                // Make sure we don't evaluate any potential elements to the left of the reference element  
+                // Make sure we don't evaluate any potential elements to the right of the reference element  
                 if (potentialRect.left >= referenceRect.left) {
                     break;
                 }
@@ -404,14 +378,9 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
                 if (percentInShadow > 0) {
                     percentInHistoryShadow = calculatePercentInShadow(historyRect.top, historyRect.bottom, potentialRect.top, potentialRect.bottom);
-                    secondaryAxisDistance = maxDistance;
                 } else {
                     // If the potential element is not in the shadow, then we calculate secondary axis distance  
-                    if (potentialRect.top < referenceRect.top) {
-                        secondaryAxisDistance = Math.abs(referenceRect.top - potentialRect.bottom);
-                    } else {
-                        secondaryAxisDistance = Math.abs(potentialRect.top - referenceRect.bottom);
-                    }
+                    secondaryAxisDistance = (referenceRect.bottom <= potentialRect.top) ? (potentialRect.top - referenceRect.bottom) : referenceRect.top - potentialRect.bottom;
                 }
                 break;
 
@@ -426,19 +395,14 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
                 if (percentInShadow > 0) {
                     percentInHistoryShadow = calculatePercentInShadow(historyRect.top, historyRect.bottom, potentialRect.top, potentialRect.bottom);
-                    secondaryAxisDistance = maxDistance;
                 } else {
-                    // If the potential element is not in the shadow, then we calculate secondary axis distance  
-                    if (potentialRect.top < referenceRect.top) {
-                        secondaryAxisDistance = Math.abs(referenceRect.top - potentialRect.bottom);
-                    } else {
-                        secondaryAxisDistance = Math.abs(potentialRect.top - referenceRect.bottom);
-                    }
+                    // If the potential element is not in the shadow, then we calculate secondary axis distance
+                    secondaryAxisDistance = (referenceRect.bottom <= potentialRect.top) ? (potentialRect.top - referenceRect.bottom) : referenceRect.top - potentialRect.bottom;
                 }
                 break;
 
             case DirectionNames.up:
-                // Make sure we don't evaluate any potential elements to the left of the reference element  
+                // Make sure we don't evaluate any potential elements below the reference element  
                 if (potentialRect.top >= referenceRect.top) {
                     break;
                 }
@@ -448,19 +412,14 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
                 if (percentInShadow > 0) {
                     percentInHistoryShadow = calculatePercentInShadow(historyRect.left, historyRect.right, potentialRect.left, potentialRect.right);
-                    secondaryAxisDistance = maxDistance;
                 } else {
-                    // If the potential element is not in the shadow, then we calculate secondary axis distance  
-                    if (potentialRect.left < referenceRect.left) {
-                        secondaryAxisDistance = Math.abs(referenceRect.left - potentialRect.right);
-                    } else {
-                        secondaryAxisDistance = Math.abs(potentialRect.left - referenceRect.right);
-                    }
+                    // If the potential element is not in the shadow, then we calculate secondary axis distance
+                    secondaryAxisDistance = (referenceRect.right <= potentialRect.left) ? (potentialRect.left - referenceRect.right) : referenceRect.left - potentialRect.right;
                 }
                 break;
 
             case DirectionNames.down:
-                // Make sure we don't evaluate any potential elements to the left of the reference element  
+                // Make sure we don't evaluate any potential elements above the reference element  
                 if (potentialRect.bottom <= referenceRect.bottom) {
                     break;
                 }
@@ -470,14 +429,9 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
                 if (percentInShadow > 0) {
                     percentInHistoryShadow = calculatePercentInShadow(historyRect.left, historyRect.right, potentialRect.left, potentialRect.right);
-                    secondaryAxisDistance = maxDistance;
                 } else {
                     // If the potential element is not in the shadow, then we calculate secondary axis distance  
-                    if (potentialRect.left < referenceRect.left) {
-                        secondaryAxisDistance = Math.abs(referenceRect.left - potentialRect.right);
-                    } else {
-                        secondaryAxisDistance = Math.abs(potentialRect.left - referenceRect.right);
-                    }
+                    secondaryAxisDistance = (referenceRect.right <= potentialRect.left) ? (potentialRect.left - referenceRect.right) : referenceRect.left - potentialRect.right;
                 }
                 break;
         }
@@ -487,14 +441,14 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
             primaryAxisDistance = maxDistance - primaryAxisDistance;
             secondaryAxisDistance = maxDistance - secondaryAxisDistance;
 
-            if (percentInShadow >= ScoringConstants.inShadowThreshold) {
+            if (primaryAxisDistance >= 0 && secondaryAxisDistance >= 0) {
                 // Potential elements in the shadow get a multiplier to their final score  
-                primaryAxisDistance *= 2;
-            }
+                primaryAxisDistance += primaryAxisDistance * percentInShadow;
 
-            score = primaryAxisDistance * ScoringConstants.primaryAxisDistanceWeight +
-            secondaryAxisDistance * ScoringConstants.secondaryAxisDistanceWeight +
-            percentInHistoryShadow * ScoringConstants.percentInHistoryShadowWeight;
+                score = primaryAxisDistance * ScoringConstants.primaryAxisDistanceWeight +
+                secondaryAxisDistance * ScoringConstants.secondaryAxisDistanceWeight +
+                percentInHistoryShadow * ScoringConstants.percentInHistoryShadowWeight;
+            }
         }
         return score;
     }
@@ -505,8 +459,8 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
         if ((!referenceElement && !referenceRect) || (referenceElement && referenceElement.tabIndex === -1) || (referenceElement && !referenceElement.parentNode)) {
             // Note: We need to check to make sure 'parentNode' is not null otherwise there is a case  
-            // where lastFocusedElement is defined, but calling getBoundingClientRect will throw a native exception.  
-            // This case happens if the innerHTML of the parent of the lastFocusElement is set to "".  
+            // where _lastAutoFocusTarget is defined, but calling getBoundingClientRect will throw a native exception.  
+            // This case happens if the innerHTML of the parent of the _lastAutoFocusTarget is set to "".  
 
             // If no valid reference is supplied, we'll use _Global.document.activeElement unless it's the body
             if (_Global.document.activeElement !== _Global.document.body) {
@@ -530,7 +484,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
     function isFocusable(element: HTMLElement): boolean {
         var elementTagName = element.tagName;
-        if (FocusableTagNames.indexOf(elementTagName) === -1 && (!element.classList || !element.classList.contains(ClassNames.focusable))) {
+        if (!element.hasAttribute("tabindex") && FocusableTagNames.indexOf(elementTagName) === -1 && !_ElementUtilities.hasClass(element, ClassNames.focusable)) {
             // If the current potential element is not one of the tags we consider to be focusable, then exit  
             return false;
         }
@@ -571,19 +525,47 @@ function _defaultRect(): IRect {
 
 function _toIRect(rect: IRect): IRect {
     return {
-        top: Math.floor(rect.top),
-        bottom: Math.floor(rect.top + rect.height),
-        right: Math.floor(rect.left + rect.width),
-        left: Math.floor(rect.left),
-        height: Math.floor(rect.height),
-        width: Math.floor(rect.width),
+        top: _Global.Math.floor(rect.top),
+        bottom: _Global.Math.floor(rect.top + rect.height),
+        right: _Global.Math.floor(rect.left + rect.width),
+        left: _Global.Math.floor(rect.left),
+        height: _Global.Math.floor(rect.height),
+        width: _Global.Math.floor(rect.width),
     };
+}
+
+function _trySetFocus(element: HTMLElement, keyCode: number) {
+    // We raise an event on the focusRoot before focus changes to give listeners  
+    // a chance to prevent the next focus target from receiving focus if they want.  
+    var canceled = eventSrc.dispatchEvent(EventNames.focusChanging, { nextFocusElement: element, keyCode: keyCode });
+    if (!canceled) {
+        element.focus();
+    }
+    return _Global.document.activeElement === element;
 }
 
 function _getIFrameFromWindow(win: Window) {
     var iframes = _Global.document.querySelectorAll("IFRAME");
     var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
     return found.length ? found[0] : null;
+}
+
+function _handleKeyEvent(e: KeyboardEvent): void {
+    if (e.defaultPrevented) {
+        return;
+    }
+
+    var keys = Object.keys(autoFocusMappings);
+    for (var i = 0; i < keys.length; i++) {
+        // Note: key is 'left', 'right', 'up', or 'down'
+        var key = keys[i];
+        var keyMappings = autoFocusMappings[key];
+        if (keyMappings.indexOf(e.keyCode) >= 0) {
+            e.preventDefault();
+            _autoFocus(key, e.keyCode);
+            return;
+        }
+    }
 }
 
 _Global.addEventListener("message", (e: MessageEvent): void => {
@@ -606,7 +588,10 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
 
         case CrossDomainMessageConstants.autoFocusEnter:
             // The coordinates stored in data.refRect are already in this frame's coordinate system.
-            _autoFocus(data.direction, true, data.referenceRect);
+            // When we get this message we will force-enable AutoFocus to support scenarios where
+            // websites running WinJS are put into an IFRAME and the parent frame has AutoFocus enabled.
+            enableAutoFocus();
+            _autoFocus(data.direction, -1, data.referenceRect);
             break;
 
         case CrossDomainMessageConstants.autoFocusExit:
@@ -622,36 +607,18 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
             var refRect: IRect = data.referenceRect;
             refRect.left += iframe.offsetLeft;
             refRect.top += iframe.offsetTop;
-            _autoFocus(data.direction, true, refRect);
+            _autoFocus(data.direction, -1, refRect);
             break;
     }
 });
 
 _Global.document.addEventListener("DOMContentLoaded", () => {
-    _Global.document.addEventListener("keydown", (e: KeyboardEvent): void => {
-        var direction: string;
-        switch (e.keyCode) {
-            case _ElementUtilities.Key.upArrow:
-                direction = "up";
-                break;
-            case _ElementUtilities.Key.downArrow:
-                direction = "down";
-                break;
-            case _ElementUtilities.Key.leftArrow:
-                direction = "left";
-                break;
-            case _ElementUtilities.Key.rightArrow:
-                direction = "right";
-                break;
-            default:
-                return null;
-        }
-        e.preventDefault();
-        _autoFocus(direction);
-    });
+    if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
+        enableAutoFocus();
+    }
 
     // If we are running within an iframe, we send a registration message to the parent window  
-    if (top !== window) {
+    if (_Global.top !== _Global.window) {
         var message = {};
         message[CrossDomainMessageConstants.messageDataProperty] = {
             type: CrossDomainMessageConstants.register,
@@ -661,13 +628,10 @@ _Global.document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-_Global.document.addEventListener(CrossDomainMessageConstants.autoFocusExit, (e: CustomEvent): void => {
-    if ((<HTMLElement>_Global.document.activeElement).className.indexOf(ClassNames.manualFocusContainer) >= 0) {
-        _autoFocus(e.detail.direction, true);
-    }
-});
 
+// Publish to WinJS namespace
 var toPublish = {
+    autoFocusMappings: autoFocusMappings,
     focusRoot: {
         get: function () {
             return focusRoot;
@@ -677,7 +641,13 @@ var toPublish = {
         }
     },
 
-    findNextFocusElement: findNextFocusElement
+    enableAutoFocus: enableAutoFocus,
+    disableAutoFocus: disableAutoFocus,
+    findNextFocusElement: findNextFocusElement,
+    moveFocus: moveFocus,
+
+    _autoFocus: _autoFocus
 };
 toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
+var eventSrc = <_Events.eventMixin><any>toPublish;
 _Base.Namespace.define("WinJS.UI.AutoFocus", toPublish);
