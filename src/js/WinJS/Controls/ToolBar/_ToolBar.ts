@@ -563,7 +563,7 @@ export class ToolBar {
                 }
             }
 
-            if (targetCommand) {
+            if (targetCommand && targetCommand !== _Global.document.activeElement) {
                 targetCommand.focus();
                 ev.preventDefault();
             }

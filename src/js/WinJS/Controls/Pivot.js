@@ -1400,8 +1400,10 @@ define([
 
                     if (e.keyCode === Keys.leftArrow || e.keyCode === Keys.pageUp) {
                         this._rtl ? this._goNext() : this._goPrevious();
+                        e.preventDefault();
                     } else if (e.keyCode === Keys.rightArrow || e.keyCode === Keys.pageDown) {
                         this._rtl ? this._goPrevious() : this._goNext();
+                        e.preventDefault();
                     }
                 },
 

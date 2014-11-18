@@ -352,7 +352,7 @@ define([
                     }
                 }
 
-                if (targetCommand) {
+                if (targetCommand && targetCommand !== _Global.document.activeElement) {
                     targetCommand.focus();
                     // Prevent default so that the browser doesn't also evaluate the keydown event on the newly focused element.
                     event.preventDefault();

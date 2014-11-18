@@ -22,7 +22,7 @@ define([
     './Hub/_Section',
     'require-style!less/styles-hub',
     'require-style!less/colors-hub'
-    ], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
+], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -1142,7 +1142,7 @@ define([
                     var leftKey = this._rtl ? Key.rightArrow : Key.leftArrow;
                     var rightKey = this._rtl ? Key.leftArrow : Key.rightArrow;
 
-                        if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
+                    if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
                         var headerTabStopElement = this._findHeaderTabStop(ev.target);
                         if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
                             var currentSection = this.sections.indexOf(headerTabStopElement.parentElement.parentElement.winControl);
@@ -1181,9 +1181,8 @@ define([
                                 } else {
                                     this._scrollToSection(targetSectionIndex, true);
                                 }
+                                ev.preventDefault();
                             }
-
-                            ev.preventDefault();
                         }
                     } else if (ev.keyCode === Key.home || ev.keyCode === Key.end) {
                         // Home/End scroll to start/end and leave focus where it is.
