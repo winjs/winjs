@@ -81,7 +81,7 @@
     #flex > .justify-content(center);
     font-family: "Segoe UI Symbol", "Symbols";
 
-    height: 48px;
+    height: ~"calc(100% - 32px)";
     width: 24px;
     font-size: 16pt;
     overflow: hidden;
@@ -91,12 +91,14 @@
 }
 .win-navbarcontainer-navleft {
     left: 0;
+    margin-right: 2px;
 }
 .win-navbarcontainer-navleft::before {
     content: '\E0E2';
 }
 .win-navbarcontainer-navright {
     right: 0;
+    margin-left: 2px;
 }
 .win-navbarcontainer-navright::before {
     content: '\E0E3';
@@ -136,7 +138,7 @@
     height: 16px;
     width: 16px;
     font-size: 13px;
-    margin-left: 0;;
+    margin-left: 0;
     margin-right: 16px;
     margin-top: 16px; /* Center icon vertically */
     #flex > .flex(none);
