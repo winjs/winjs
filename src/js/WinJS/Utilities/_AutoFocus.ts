@@ -155,7 +155,7 @@ var _lastAutoFocusTarget: HTMLElement;
 var _cachedLastAutoFocusTargetRect: IRect;
 var _historyRect: IRect;
 var _afEnabledFrames: Window[] = [];
-function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): void {
+function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
     // If focus has moved since the last AutoFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
     if (referenceRect || _Global.document.activeElement !== _lastAutoFocusTarget) {
@@ -214,6 +214,7 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
             }
         }
         eventSrc.dispatchEvent(EventNames.focusChanged, { previousFocusElement: activeElement, keyCode: keyCode });
+        return true;
     } else {
         // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
         // Note on coordinates: When signaling exit, do NOT transform the coordinates into the parent's coordinate system.
@@ -230,9 +231,10 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
                 referenceRect: refRect
             };
             _Global.parent.postMessage(message, "*");
+            return true;
         }
     }
-
+    return false;
 
     // Nested Helpers
     function updateHistoryRect(direction: string, result: FindNextFocusResult) {
