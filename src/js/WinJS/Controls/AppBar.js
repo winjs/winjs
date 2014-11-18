@@ -90,7 +90,7 @@ define([
                         } else {
                             client.ld_setZIndex(this._zIndex);
                             // Attempted simplified version of _shouldStealFocus
-                            if (!client.sticky && client._placement === _Constants.appBarPlacementBottom) {
+                            if (!client.sticky && (!this._hasFocus() || client._placement === _Constants.appBarPlacementBottom)) {
                                 this._currentFocus = client;
                                 if (this._isTopLevel()) {
                                     client.ld_becameTopLevel();
@@ -138,6 +138,10 @@ define([
 
                 _isTopLevel: function () {
                     return _LightDismissService.isTopLevel(this);
+                },
+                
+                _hasFocus: function () {
+                    return this.ld_containsElement(document.activeElement);
                 },
 
                 //onFocus: function (d) {
@@ -920,19 +924,19 @@ define([
                     this._changeVisiblePosition(toPosition, showing);
 
                     if (showing) {
-                        // Configure shown state for lightdismiss & sticky appbars.
-                        //if (!this.sticky) {
-                            // Need click-eating div to be visible ASAP.
-                            // ADCOM: lds_shown?
-                            AppBarManager.shown(this);
-                        //}
-
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
                         if (!this.sticky && _isThereVisibleNonStickyBar()) {
                             _updateAllAppBarsFirstAndFinalDiv();
                         } else {
                             this._updateFirstAndFinalDiv();
                         }
+                        
+                        // Configure shown state for lightdismiss & sticky appbars.
+                        //if (!this.sticky) {
+                            // Need click-eating div to be visible ASAP.
+                            // ADCOM: lds_shown?
+                            AppBarManager.shown(this);
+                        //}
 
                         // Check if we should steal focus
                         // ADCOM: _doNotFocus only true for sticky
