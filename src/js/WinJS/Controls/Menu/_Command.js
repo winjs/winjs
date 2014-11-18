@@ -11,7 +11,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Constants',
     '../Flyout/_Overlay'
-    ], function menuCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Constants, _Overlay) {
+], function menuCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -98,7 +98,7 @@ define([
                 if (options.onclick) {
                     this.onclick = options.onclick;
                 }
-                options.onclick = this._handleMenuClick.bind(this);
+                options.onclick = this._handleClick.bind(this);
 
                 _Control.setOptions(this, options);
 
@@ -122,9 +122,6 @@ define([
                     }
                 }
 
-                this._handleMouseMoveBound = this._handleMouseMove.bind(this);
-                this._element.addEventListener("mouseover", this._handleMouseOver.bind(this), false);
-                this._element.addEventListener("mouseout", this._handleMouseOut.bind(this), false);
             }, {
                 /// <field type="String" locid="WinJS.UI.MenuCommand.id" helpKeyword="WinJS.UI.MenuCommand.id" isAdvanced="true">
                 /// Gets the  ID of the MenuCommand.
@@ -154,9 +151,20 @@ define([
                         // we allow setting first time only. otherwise we ignore it.
                         if (!this._type) {
                             if (value !== _Constants.typeButton && value !== _Constants.typeFlyout && value !== _Constants.typeToggle && value !== _Constants.typeSeparator) {
-                                this._type = _Constants.typeButton;
-                            } else {
-                                this._type = value;
+                                value = _Constants.typeButton;
+                            }
+
+                            this._type = value;
+
+                            if (value === _Constants.typeButton) {
+                                _ElementUtilities.addClass(this.element, _Constants.menuCommandButtonClass);
+                            } else if (value === _Constants.typeFlyout) {
+                                _ElementUtilities.addClass(this.element, _Constants.menuCommandFlyoutClass);
+                                this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+                            } else if (value === _Constants.typeSeparator) {
+                                _ElementUtilities.addClass(this.element, _Constants.menuCommandSeparatorClass);
+                            } else if (value === _Constants.typeToggle) {
+                                _ElementUtilities.addClass(this.element, _Constants.menuCommandToggleClass);
                             }
                         }
                     }
@@ -172,7 +180,9 @@ define([
                     },
                     set: function (value) {
                         this._label = value || "";
-                        this._element.textContent = this.label;
+                        if (this._labelSpan) {
+                            this._labelSpan.textContent = this.label;
+                        }
 
                         // Update aria-label
                         this._element.setAttribute("aria-label", this.label);
@@ -385,7 +395,7 @@ define([
                 },
 
                 _createButton: function MenuCommand_createButton() {
-                    // Make sure there's an input element
+                    // Make sure there's an element
                     if (!this._element) {
                         this._element = _Global.document.createElement("button");
                     } else {
@@ -393,100 +403,62 @@ define([
                         if (this._element.tagName !== "BUTTON") {
                             throw new _ErrorFromName("WinJS.UI.MenuCommand.BadButtonElement", strings.badButtonElement);
                         }
-                        this._element.innerHTML = "";
                     }
 
-                    // MenuCommand buttons need to look like this:
-                    //// <button type="button" onclick="" class="win-command">Command 1</button>
+                    // Create our inner HTML. We will set aria values on the button itself further down in the constructor.
+                    this._element.innerHTML =
+                        '<div class="win-menucommand-liner">' +
+                            '<span class="win-toggleicon" aria-hidden="true"></span>' +
+                            '<span class="win-label" aria-hidden="true"></span>' +
+                            '<span class="win-flyouticon" aria-hidden="true"></span>' +
+                        '</div>';
                     this._element.type = "button";
 
-                    // 'textContent' label is added later by caller
+                    // The purpose of menuCommandLiner is to lay out the MenuCommand's children in a flexbox. Ideally, this flexbox would
+                    // be on MenuCommand.element. However, firefox lays out buttons with display:flex differently.
+                    // Firefox bug 1014285 (Button with display:inline-flex doesn't layout properly)
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1014285
+                    this._menuCommandLiner = this._element.firstElementChild;
+                    this._toggleSpan = this._menuCommandLiner.firstElementChild;
+                    this._labelSpan = this._toggleSpan.nextElementSibling;
+                    this._flyoutSpan = this._labelSpan.nextElementSibling;
+
                 },
 
-                _handleMenuClick: function MenuCommand_handleMenuClick(event) {
-                    /*jshint validthis: true */
-                    var command = this;
-                    if (command) {
-                        var hideParent = true;
-
-                        if (command._type === _Constants.typeToggle) {
-                            command.selected = !command.selected;
-                        } else if (command._type === _Constants.typeFlyout && command._flyout) {
-                            var flyout = command._flyout;
-                            // Flyout may not have processAll'd, so this may be a DOM object
-                            if (typeof flyout === "string") {
-                                flyout = _Global.document.getElementById(flyout);
-                            }
-                            if (!flyout.show) {
-                                flyout = flyout.winControl;
-                            }
-                            if (flyout && flyout.show) {
-                                if (command._parentFlyout) {
-                                    hideParent = false;
-                                    flyout.show(command._parentFlyout._currentAnchor, command._parentFlyout._currentPlacement, command._parentFlyout._currentAlignment);
-                                } else {
-                                    flyout.show(this.element);
-                                }
-                            }
-                        }
-
-                        if (command.onclick) {
-                            command.onclick(event);
-                        }
-                        // Dismiss parent flyout
-                        if (hideParent && command._parentFlyout) {
-                            command._parentFlyout.hide();
-                        }
+                _sendEvent: function MenuCommand_sendEvent(eventName, detail) {
+                    if (!this._disposed) {
+                        var event = _Global.document.createEvent("CustomEvent");
+                        event.initCustomEvent(eventName, true, true, (detail || {}));
+                        this._element.dispatchEvent(event);
                     }
                 },
 
-                _handleMouseOver: function MenuCommand_handleMouseOver() {
-                    /*jshint validthis: true */
-                    if (this && this.element && this.element.focus) {
-                        this.element.focus();
-
-                        this.element.addEventListener("mousemove", this._handleMouseMoveBound, false);
+                _handleClick: function MenuCommand_handleClick(clickEvent) {
+                    var that = this;
+                    function delegateClick() {
+                        that.onclick(clickEvent);
                     }
+
+                    //Bubble private 'invoked' event to Menu
+                    this._sendEvent(_Constants._menuCommandInvokedEvent, {
+                        command: this,
+                        delegate: this.onclick ? delegateClick : null
+                    });
                 },
 
-                _handleMouseMove: function MenuCommand_handleMouseMove() {
-                    /*jshint validthis: true */
-                    if (this && this.element && this.element.focus && this.element !== _Global.document.activeElement) {
-                        this.element.focus();
+                _handleKeyDown: function MenuCommand_handleKeyDown(event) {
+                    var Key = _ElementUtilities.Key,
+                        rtl = _Global.getComputedStyle(this.element).direction === "rtl",
+                        rightKey = rtl ? Key.leftArrow : Key.rightArrow;
+
+                    if (event.keyCode === rightKey && this.type === _Constants.typeFlyout) {
+                        // Bubble private 'invoked' event to Menu
+                        this._sendEvent(_Constants._menuCommandInvokedEvent, { command: this });
+
+                        // Prevent the page from scrolling
+                        event.preventDefault();
                     }
                 },
-
-                _handleMouseOut: function MenuCommand_handleMouseOut() {
-                    /*jshint validthis: true */
-                    var parentFlyout = this._getParentFlyout(this.element);
-                    if (parentFlyout
-                     && this.element === _Global.document.activeElement
-                     && _ElementUtilities.hasClass(parentFlyout, _Constants.menuClass)
-                     && parentFlyout.focus) {
-                        // Menu gives focus to the menu itself
-                        parentFlyout.focus();
-                    } else if (parentFlyout
-                            && this.element === _Global.document.activeElement
-                            && parentFlyout.children
-                            && parentFlyout.children.length > 0
-                            && parentFlyout.children[0]
-                            && _ElementUtilities.hasClass(parentFlyout.children[0], _Constants.firstDivClass)
-                            && parentFlyout.children[0].focus) {
-                        // Flyout gives focus to firstDiv
-                        parentFlyout.children[0].focus();
-                    }
-
-                    this.element.removeEventListener("mousemove", this._handleMouseMoveBound, false);
-                },
-
-                _getParentFlyout: function MenuCommand_getParentFlyout(element) {
-                    while (element && !_ElementUtilities.hasClass(element, _Constants.flyoutClass)) {
-                        element = element.parentElement;
-                    }
-
-                    return element;
-                }
-
             });
         })
     });

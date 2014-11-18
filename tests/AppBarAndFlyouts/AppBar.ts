@@ -125,7 +125,7 @@ module CorsicaTests {
             OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
             OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
             WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false
+            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
     }
 
         // Test AppBar Instantiation

@@ -45,7 +45,6 @@ define([
         typeButton: "button",
         typeToggle: "toggle",
         typeFlyout: "flyout",
-        menuCommandClass: "win-command",
         appBarCommandClass: "win-command",
         appBarCommandGlobalClass: "win-global",
         appBarCommandSelectionClass: "win-selection",
@@ -54,12 +53,22 @@ define([
         sectionPrimary: "primary",
         sectionSecondary: "secondary",
 
+        // Constants for Menus
+        menuCommandClass: "win-command",
+        menuCommandButtonClass: "win-command-button",
+        menuCommandToggleClass: "win-command-toggle",
+        menuCommandFlyoutClass: "win-command-flyout",
+        menuCommandSeparatorClass: "win-command-separator",
+        _menuCommandInvokedEvent: "_invoked", // Private event
+        menuClass: "win-menu",
+        menuContainsToggleCommandClass: "win-menu-containstogglecommand",
+        menuContainsFlyoutCommandClass: "win-menu-containsflyoutcommand",
+        menuCommandHoverDelay: 400,
+
         // Other class names
         overlayClass: "win-overlay",
         flyoutClass: "win-flyout",
         flyoutLightClass: "win-ui-light",
-        menuClass: "win-menu",
-        menuToggleClass: "win-menu-toggle",
         settingsFlyoutClass: "win-settingsflyout",
         scrollsClass: "win-scrolls",
 

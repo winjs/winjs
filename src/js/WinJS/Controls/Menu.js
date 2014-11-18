@@ -9,6 +9,7 @@ define([
     '../Core/_ErrorFromName',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
+    '../Promise',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_KeyboardBehavior',
@@ -16,7 +17,7 @@ define([
     './Flyout',
     './Flyout/_Overlay',
     './Menu/_Command'
-    ], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, Flyout, _Overlay, _Command) {
+], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -46,6 +47,23 @@ define([
                 get requiresCommands() { return "Invalid argument: commands must not be empty"; },
                 get nullCommand() { return "Invalid argument: command must not be null"; },
             };
+
+            function invokeSubFlyout(menuCommand) {
+                var subFlyout = menuCommand._flyout;
+                if (subFlyout) {
+                    // Flyout may not have processAll'd, so this may be a DOM object
+                    subFlyout = subFlyout.winControl || subFlyout;
+                    if (subFlyout && subFlyout.show) {
+                        subFlyout.show(menuCommand, "right");
+                    }
+                }
+            }
+
+            function isCommandInMenu(object) {
+                // Verifies that we have a menuCommand element and that it is in a Menu.
+                var element = object.element || object;
+                return _ElementUtilities._matchesSelector(element, "." + _Constants.menuClass + " " + "." + _Constants.menuCommandClass);
+            }
 
             var Menu = _Base.Class.derive(Flyout.Flyout, function Menu_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Menu.Menu">
@@ -95,7 +113,11 @@ define([
                 }
 
                 // Handle "esc" & "up/down" key presses
-                this._element.addEventListener("keydown", this._handleKeyDown, true);
+                this._element.addEventListener("keydown", this._handleKeyDown.bind(this), true);
+                this._element.addEventListener(_Constants._menuCommandInvokedEvent, this._handleCommandInvoked.bind(this), false);
+                this._element.addEventListener("mouseover", this._handleMouseOver.bind(this), false);
+                this._element.addEventListener("mouseout", this._handleMouseOut.bind(this), false);
+                //this._handleMouseMoveBound = this._handleMouseMove.bind(this);
 
                 // Attach our css class
                 _ElementUtilities.addClass(this._element, _Constants.menuClass);
@@ -179,9 +201,6 @@ define([
                     }
 
                     this._showCommands(commands, true);
-                    if (!this.hidden) {
-                        this._checkToggle();
-                    }
                 },
 
                 hideCommands: function (commands) {
@@ -199,9 +218,6 @@ define([
                     }
 
                     this._hideCommands(commands, true);
-                    if (!this.hidden) {
-                        this._checkToggle();
-                    }
                 },
 
                 showOnlyCommands: function (commands) {
@@ -245,15 +261,20 @@ define([
                 },
 
                 _show: function Menu_show(anchor, placement, alignment) {
-                    // Before we show, we also need to check for children flyouts needing anchors
-                    this._checkForFlyoutCommands();
-
                     // Call flyout show
                     this._baseFlyoutShow(anchor, placement, alignment);
 
-                    // We need to check for toggles after we send the beforeshow event,
-                    // so the developer has a chance to show or hide more commands.
+                    // We need to adjust MenuCommand layouts based on the various types of 
+                    // commands visible in our Menu, but only after we send the beforeshow 
+                    // event, so the developer has a chance to show or hide more commands.
                     // Flyout's _findPosition will make that call.
+                },
+
+                _hide: function Menu_hide() {
+                    if (this._hoverPromise) {
+                        this._hoverPromise.cancel();
+                    }
+                    Flyout.Flyout.prototype._hide.call(this);
                 },
 
                 _addCommand: function Menu_addCommand(command) {
@@ -274,59 +295,136 @@ define([
                     this._element.appendChild(command._element);
                 },
 
-                // Called by flyout's _findPosition so that application can update it status
-                // we do the test and we can then fix this last-minute before showing.
-                _checkToggle: function Menu_checkToggle() {
-                    var toggles = this._element.querySelectorAll(".win-command[aria-checked]");
-                    var hasToggle = false;
-                    if (toggles) {
-                        for (var i = 0; i < toggles.length; i++) {
-                            if (toggles[i] && toggles[i].winControl && !toggles[i].winControl.hidden) {
-                                // Found a visible toggle control
-                                hasToggle = true;
-                                break;
+                _dispose: function Menu_dispose() {
+                    if (this._hoverPromise) {
+                        this._hoverPromise.cancel();
+                    }
+                    Flyout.Flyout.prototype._dispose.call(this);
+
+                },
+
+                _commandsUpdated: function Menu_commandsUpdated() {
+                    if (!this.hidden) {
+                        this._checkMenuCommands();
+                    }
+                },
+
+                // Called when we show/hide commands or by flyout's _findPosition when the Menu is showing.
+                _checkMenuCommands: function Menu_checkMenuCommands() {
+                    var menuCommands = this._element.querySelectorAll(".win-command"),
+                        hasToggleCommands = false,
+                        hasFlyoutCommands = false;
+                    if (menuCommands) {
+                        for (var i = 0, len = menuCommands.length; i < len; i++) {
+                            var menuCommand = menuCommands[i].winControl;
+                            if (menuCommand && !menuCommand.hidden) {
+                                if (!hasToggleCommands && menuCommand.type === _Constants.typeToggle) {
+                                    hasToggleCommands = true;
+                                }
+                                if (!hasFlyoutCommands && menuCommand.type === _Constants.typeFlyout) {
+                                    hasFlyoutCommands = true;
+                                }
                             }
                         }
                     }
-                    if (hasToggle) {
-                        _ElementUtilities.addClass(this._element, _Constants.menuToggleClass);
-                    } else {
-                        _ElementUtilities.removeClass(this._element, _Constants.menuToggleClass);
-                    }
-                },
 
-                _checkForFlyoutCommands: function Menu_checkForFlyoutCommands() {
-                    var commands = this._element.querySelectorAll(".win-command");
-                    for (var count = 0; count < commands.length; count++) {
-                        if (commands[count].winControl) {
-                            // Remember our anchor in case it's a flyout
-                            commands[count].winControl._parentFlyout = this;
-                        }
-                    }
+                    _ElementUtilities[hasToggleCommands ? 'addClass' : 'removeClass'](this._element, _Constants.menuContainsToggleCommandClass);
+                    _ElementUtilities[hasFlyoutCommands ? 'addClass' : 'removeClass'](this._element, _Constants.menuContainsFlyoutCommandClass);
                 },
 
                 _handleKeyDown: function Menu_handleKeyDown(event) {
-                    var that = this;
                     if (event.keyCode === Key.escape) {
                         // Show a focus rect on what we move focus to
-                        this.winControl._keyboardInvoked = true;
-                        this.winControl._hide();
-                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
-                           && (this === _Global.document.activeElement)) {
-                        event.preventDefault();
-                        this.winControl.hide();
+                        this._keyboardInvoked = true;
+                        this._hide();
                     } else if (event.keyCode === Key.upArrow) {
-                        Menu._focusOnPreviousElement(that);
+                        Menu._focusOnPreviousElement(this.element);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
                     } else if (event.keyCode === Key.downArrow) {
-                        Menu._focusOnNextElement(that);
+                        Menu._focusOnNextElement(this.element);
 
                         // Prevent the page from scrolling
                         event.preventDefault();
+                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
+                           && (this.element === _Global.document.activeElement)) {
+                        event.preventDefault();
+                        this.hide();
                     } else if (event.keyCode === Key.tab) {
                         event.preventDefault();
+                    }
+                },
+
+                _handleCommandInvoked: function Menu_handleCommandInvoked(event) {
+                    var command = event.detail.command;
+                    if (isCommandInMenu(command)) {
+
+                        var shouldHide = true;
+
+                        if (command._type === _Constants.typeToggle) {
+                            command.selected = !command.selected;
+                        } else if (command._type === _Constants.typeFlyout && command._flyout) {
+                            invokeSubFlyout(command);
+                            shouldHide = false;
+                        }
+
+                        if (event.delegate) {
+                            event.delegate();
+                        }
+
+                        if (shouldHide) {
+                            this.hide();
+                        }
+
+                    }
+                },
+
+                _hoverPromise: null,
+                _handleMouseOver: function Menu_handleMouseOver(event) {
+                    var target = event.target;
+                    if (isCommandInMenu(target)) {
+                        var command = target.winControl,
+                            that = this;
+
+                        if (target.focus) {
+                            target.focus();
+
+                            if (command.type === _Constants.typeFlyout && command.flyout && command.flyout.hidden) {
+                                this._hoverPromise = this._hoverPromise || Promise.timeout(_Constants.menuCommandHoverDelay).then(
+                                    function () {
+                                        if (!that.hidden && !that._disposed) {
+                                            invokeSubFlyout(command);
+                                        }
+                                        that._hoverPromise = null;
+                                    },
+                                    function () {
+                                        that._hoverPromise = null;
+                                    });
+                            }
+
+                            this.element.addEventListener("mousemove", this._handleMouseMoveBound, false);
+                        }
+                    }
+                },
+
+                _handleMouseMove: function Menu_handleMouseMove() {
+                    if (this && this.element && this.element.focus && this.element !== _Global.document.activeElement) {
+                        this.element.focus();
+                    }
+                },
+
+                _handleMouseOut: function Menu_handleMouseOut(event) {
+                    var target = event.target;
+                    if (isCommandInMenu(target) && !target.contains(event.relatedTarget)) {
+                        if (target === _Global.document.activeElement) {
+                            // Menu gives focus to the menu itself
+                            this.element.focus();
+                        }
+                        if (this._hoverPromise) {
+                            this._hoverPromise.cancel();
+                        }
+                        this.element.removeEventListener("mousemove", this._handleMouseMoveBound, false);
                     }
                 },
 

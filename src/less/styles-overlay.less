@@ -559,14 +559,8 @@ Menu control.
     text-align: left; /* Set explicitly in case our parent has different alignment, like appbar overflow. */
     min-height: 46px; /* 44px -  2px in border = 46px */
     max-height: ~"calc(100% - 26px)";
-    max-width: none;
-}
-
-.win-menu {
-    /* Set explicitly in case our parent has different alignment, like appbar overflow. */
-    .RTL({
-        text-align: right;
-    });
+    min-width: 136px;
+    max-width: 456px;
 }
 
 /*
@@ -574,24 +568,73 @@ Menu commands.
 */
 .win-menu button.win-command {
     display: block;
-    padding: 10px 20px 12px 20px;
+    padding-top: 11px; 
+    padding-bottom: 13px;
     min-height: 44px;
     margin-left: 0;
     margin-right: 0;
-    float: none;
     text-align: left;
-    width: 100%;
     .win-type-body();
-}
 
-.win-menu button.win-command {
-    .RTL({
-        text-align: right;
-    });
-}
+    &:focus {
+        outline: none;
+    }
 
-.win-menu button.win-command:focus {
-    outline: none;
+    .win-menucommand-liner {
+        #flex > .display-flex();
+        #flex > .flex-direction(row);
+        #flex > .flex-wrap(nowrap);
+        #flex > .align-items(center);
+        width:100%;
+    
+        .win-toggleicon, .win-flyouticon {
+            #flex > .flex(0; 0; auto);
+            display: none;
+            visibility: hidden;
+            font-size: 16px;
+            font-family: "Segoe UI Symbol", "Symbols";
+        }
+        .win-toggleicon {
+            margin-left: 12px;
+            &::before {
+                content: "\E0E7";
+            }
+        }
+        .win-flyouticon {
+            margin-left: 12px;
+            margin-right: 16px;
+            &::before {
+                content: "\E26B"; 
+            }
+        }
+        .win-label {
+            #flex > .flex(1; 1; auto);
+            font-size: 15px;
+            line-height: inherit;
+            min-width: 112px;
+            max-width: none;
+            white-space: nowrap;
+            text-overflow: clip;
+            margin: 0px;
+            padding: 0px 12px;
+        }
+
+        .RTL({
+            text-align: right;
+
+            .win-toggleicon {
+                margin-left: 0px;
+                margin-right: 12px;
+            }
+            .win-flyouticon {
+                margin-left: 16px;
+                margin-right: 12px;
+                &::before {
+                    content: "\E26C"; 
+                }
+            }
+        });
+     }
 }
 
 .win-menu hr.win-command {
@@ -604,29 +647,15 @@ Menu commands.
 }
 
 /*
-Menu toggle buttons.
+Menu toggle and flyout commands.
 */
-.win-menu-toggle button.win-command::before {
-    font-family: "Segoe UI Symbol", "Symbols";
-    content: "\E0E7";
-    visibility: hidden;
-    padding-left: 0px;
-    padding-right: 12px;
+.win-menu-containstogglecommand button.win-command .win-menucommand-liner .win-toggleicon,
+.win-menu-containsflyoutcommand button.win-command .win-menucommand-liner .win-flyouticon {
+    display: inline-block;
 }
-
-.win-menu-toggle button[aria-checked=true].win-command::before {
-    /* Display a checkbox if aria-checked is set */
+.win-menu-containstogglecommand button.win-command-toggle[aria-checked=true] .win-menucommand-liner .win-toggleicon,
+.win-menu-containsflyoutcommand button.win-command-flyout .win-menucommand-liner .win-flyouticon {
     visibility: visible;
-}
-
-.win-menu-toggle button.win-command {
-    .RTL({
-        &::before {
-            padding-right: 0;
-            padding-left: 12px;
-            float: right;
-        }
-    });
 }
 
 /*

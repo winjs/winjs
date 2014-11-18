@@ -6,6 +6,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
@@ -14,7 +15,7 @@ define([
     '../Utilities/_Hoverable',
     './AppBar/_Constants',
     './Flyout/_Overlay'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -50,6 +51,120 @@ define([
                 get badPlacement() { return "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', 'auto', 'autohorizontal', or 'autovertical'."; },
                 get badAlignment() { return "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'."; }
             };
+
+
+            // Singleton class for managing cascading flyouts
+            var _CascadeManager = _Base.Class.define(function _CascadeManager_ctor() {
+                this._cascadingStack = [];
+                this._handleKeyDownInCascade_bound = this._handleKeyDownInCascade.bind(this);
+            },
+            {
+                appendFlyout: function _CascadeManager_appendFlyout(flyoutToAdd) {
+                    // PRECONDITION: flyoutToAdd must not already be in the cascade.
+                    _Log.log && this.indexOF(flyoutToAdd) >= 0 && _Log.log('_CascadeManager is attempting to append a Flyout that is already in the cascade.', "winjs _CascadeManager", "error");
+                    // PRECONDITION: this.reentrancyLock must be false. appendFlyout should only be called from baseFlyoutShow() which is the function responsible for preventing reentrancy.
+                    _Log.log && this.reentrancyLock && _Log.log('_CascadeManager is attempting to append a Flyout through reentrancy.', "winjs _CascadeManager", "error");
+
+                    // IF the anchor element for flyoutToAdd is contained within another flyout, 
+                    // && that flyout is currently in the cascadingStack, consider that flyout to be the parent of flyoutToAdd:
+                    //  Remove from the cascadingStack, any subflyout descendants of the parent flyout.
+                    // ELSE flyoutToAdd isn't anchored to any of the Flyouts in the existing cascade
+                    //  Collapse the entire cascadingStack to start a new cascade.
+                    // FINALLY: 
+                    //  add flyoutToAdd to the end of the cascading stack. Monitor it for events.
+                    var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._currentAnchor);
+                    if (indexOfParentFlyout >= 0) {
+                        this.collapseFlyout(this.getAt(indexOfParentFlyout + 1));
+                    } else {
+                        this.collapseAll();
+                    }
+
+                    flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
+                    this._cascadingStack.push(flyoutToAdd);
+                },
+                collapseFlyout: function _CascadeManager_collapseFlyout(flyout) {
+                    // Removes flyout param and its subflyout descendants from the _cascadingStack.
+                    if (!this.reentrancyLock && flyout && this.indexOf(flyout) >= 0) {
+                        this.reentrancyLock = true; 
+
+                        var subFlyout;
+                        while (this.length && flyout !== subFlyout) {
+                            subFlyout = this._cascadingStack.pop();
+                            subFlyout.element.removeEventListener("keydown", this._handleKeyDownInCascade_bound, false);
+                            subFlyout._hide(); // We use the reentrancyLock to prevent reentrancy here.
+                        }
+
+                        this.reentrancyLock = false;
+                    }
+                },
+                collapseAll: function _CascadeManager_collapseAll(keyboardInvoked) {
+                    // Empties the _cascadingStack and hides all flyouts.
+                    var headFlyout = this.getAt(0);
+                    if (headFlyout) {
+                        headFlyout._keyboardInvoked = keyboardInvoked;
+                        this.collapseFlyout(headFlyout);
+                    }
+                },
+                indexOf: function _CascadeManager_indexOf(flyout) {
+                    return this._cascadingStack.indexOf(flyout);
+                },
+                indexOfElement: function _CascadeManager_indexOfElement(el) {
+                    // Returns an index cooresponding to the Flyout in the cascade whose element contains the element in question.
+                    // Returns -1 if the element is not contained by any Flyouts in the cascade.
+                    var indexOfAssociatedFlyout = -1;
+                    for (var i = 0, len = this.length; i < len; i++) {
+                        var currentFlyout = this.getAt(i);
+                        if (currentFlyout.element.contains(el)) {
+                            indexOfAssociatedFlyout = i;
+                            break;
+                        }
+                    }
+                    return indexOfAssociatedFlyout;
+                },
+                length: {
+                    get: function _CascadeManager_getLength() {
+                        return this._cascadingStack.length;
+                    }
+                },
+                getAt: function _CascadeManager_getAt(index) {
+                    return this._cascadingStack[index];
+                },
+                handleFocusIntoFlyout: function _CascadeManager_handleFocusIntoFlyout(event) {
+                    // When a flyout in the cascade recieves focus, we close all subflyouts beneath it.
+                    var index = this.indexOfElement(event.target);
+                    if (index >= 0) {
+                        var subFlyout = this.getAt(index + 1);
+                        this.collapseFlyout(subFlyout);
+                    }
+                },
+                handleFocusOutOfCascade: function _CascadeManager_handleFocusOutOfCascade(event) {
+                    // Hide the entire cascade if focus has moved somewhere outside of it
+                    if (this.indexOfElement(event.relatedTarget) < 0) {
+                        this.collapseAll();
+                    }
+                },
+                _handleKeyDownInCascade: function _CascadeManager_handleKeyDownInCascade(event) {
+                    var rtl = _Global.getComputedStyle(event.target).direction === "rtl",
+                        leftKey = rtl ? Key.rightArrow : Key.leftArrow,
+                        target = event.target;
+
+                    if (event.keyCode === leftKey) {
+                        // Left key press in a SubFlyout will close that subFlyout and any subFlyouts cascading from it. 
+                        var index = this.indexOfElement(target);
+                        if (index >= 1) {
+                            var subFlyout = this.getAt(index);
+                            // Show a focus rect where focus is restored.
+                            subFlyout._keyboardInvoked = true;
+                            this.collapseFlyout(subFlyout);
+                            // Prevent document scrolling
+                            event.preventDefault();
+                        }
+                    } else if (event.keyCode === Key.alt || event.keyCode === Key.F10) {
+                        // Show a focus rect where focus is restored.
+                        this.collapseAll(true);
+                    }
+                },
+            });
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
@@ -127,6 +242,9 @@ define([
                     // Base animation is popIn, but our flyout has different arguments
                     this._currentAnimateIn = this._flyoutAnimateIn;
                     this._currentAnimateOut = this._flyoutAnimateOut;
+
+                    _ElementUtilities._addEventListener(this.element, "focusin", this._handleFocusIn.bind(this), false);
+                    _ElementUtilities._addEventListener(this.element, "focusout", this._handleFocusOut.bind(this), false);
 
                     // Make sure additional _Overlay event handlers are hooked up
                     this._handleOverlayEventsForFlyoutOrSettingsFlyout();
@@ -226,6 +344,11 @@ define([
                 },
 
                 _hide: function Flyout_hide() {
+
+                    // First close all subflyout descendants in the cascade.
+                    // Any calls to collapseFlyout through reentrancy should nop.
+                    Flyout._cascadeManager.collapseFlyout(this);
+
                     if (this._baseHide()) {
                         // Return focus if this or the flyout CED has focus
                         var active = _Global.document.activeElement;
@@ -281,6 +404,7 @@ define([
                     if (this.disabled) {
                         return;
                     }
+
                     // Pick up defaults
                     if (!anchor) {
                         anchor = this._anchor;
@@ -320,9 +444,9 @@ define([
                         _Overlay._Overlay._showClickEatingDivFlyout();
                     }
 
-                    // If we're animating (eg baseShow is going to fail), then don't mess up our current state.
-                    // Queue us up to wait for current animation to finish first.
-                    if (this._element.winAnimating) {
+                    // If we're animating (eg baseShow is going to fail), or the cascadeManager is in the middle of a updating the cascade,
+                    // then don't mess up our current state. Queue us up to wait for current operation to finish first.
+                    if (this._element.winAnimating || Flyout._cascadeManager.reentrancyLock) {
                         this._doNext = "show";
                         this._retryLast = true;
                         return;
@@ -358,8 +482,7 @@ define([
                             finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                         }
 
-                        // Hide all other flyouts
-                        this._hideAllOtherFlyouts(this);
+                        Flyout._cascadeManager.appendFlyout(this);
 
                         // Store what had focus before showing the Flyout.
                         // This must happen after we hide all other flyouts so that we store the correct element.
@@ -382,10 +505,12 @@ define([
                     }
                 },
 
+                _isLightDismissible: function Flyout_isLightDismissible() {
+                    return (!this.hidden);
+                },
+
                 _lightDismiss: function Flyout_lightDismiss() {
-                    if (this._isLightDismissible()) {
-                        _Overlay._Overlay._lightDismissFlyouts();
-                    }
+                    Flyout._cascadeManager.collapseAll();
                 },
 
                 // Find our new flyout position.
@@ -395,9 +520,9 @@ define([
                     this._hasScrolls = false;
                     this._keyboardSquishedUs = 0;
 
-                    // Make sure menu toggles behave
-                    if (this._checkToggle) {
-                        this._checkToggle();
+                    // Make sure menu commands display correctly
+                    if (this._checkMenuCommands) {
+                        this._checkMenuCommands();
                     }
 
                     // Update margins for this alignment and remove old scrolling
@@ -857,6 +982,21 @@ define([
                     }
                 },
 
+                _handleFocusIn: function Flyout_handleFocusIn(event) {
+                    if (!this.element.contains(event.relatedTarget)) {
+                        Flyout._cascadeManager.handleFocusIntoFlyout(event);
+                    }
+                    // Else focus is only moving between elements in the flyout. 
+                    // Doesn't need to be handled by cascadeManager.
+                },
+                _handleFocusOut: function Flyout_handleFocusOut(event) {
+                    if (!this.element.contains(event.relatedTarget)) {
+                        Flyout._cascadeManager.handleFocusOutOfCascade(event);
+                    }
+                    // Else focus is only moving between elements in the flyout.
+                    // Doesn't need to be handled by cascadeManager.
+                },
+
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {
                     var firstDiv = _Global.document.createElement("div");
@@ -896,6 +1036,9 @@ define([
                 _writeProfilerMark: function Flyout_writeProfilerMark(text) {
                     _WriteProfilerMark("WinJS.UI.Flyout:" + this._id + ":" + text);
                 }
+            },
+            {
+                _cascadeManager: new _CascadeManager(),
             });
             return Flyout;
         })

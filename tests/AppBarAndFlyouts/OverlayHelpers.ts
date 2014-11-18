@@ -4,27 +4,34 @@
 module OverlayHelpers {
     "use strict";
 
-    export function show(overlay) {
-        return Helper.waitForFocusWithin(overlay.element, function () { overlay.show(); });
-    }
+     export function show(overlay): WinJS.Promise<any> {
+         return new WinJS.Promise(function (c, e, p): void {
+             function afterShow(): void {
+                 overlay.removeEventListener("aftershow", afterShow, false);
+                 c();
+             };
+             overlay.addEventListener("aftershow", afterShow, false);
+             overlay.show();
+         });
+    };
 
     export function disposeAndRemove(element) {
-        if (element) {
-            if (element.dispose) {
-                element.dispose();
-            } else if (element.winControl) {
-                element.winControl.dispose();
-            } else {
-                WinJS.Utilities.disposeSubTree(element);
+            if (element) {
+                if (element.dispose) {
+                    element.dispose();
+                } else if (element.winControl) {
+                    element.winControl.dispose();
+                } else {
+                    WinJS.Utilities.disposeSubTree(element);
+                }
+                element.parentElement && element.parentElement.removeChild(element);
             }
-            element.parentElement && element.parentElement.removeChild(element);
         }
-    }
 
-    export function createBackClickEvent() {
-        var fakeWinRTBackPressedEvent = { handled: false };
-        return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
-    }
+        export function createBackClickEvent() {
+            var fakeWinRTBackPressedEvent = { handled: false };
+            return { type: 'backclick', _winRTBackPressedEvent: fakeWinRTBackPressedEvent };
+        }
 
     export module Assert {
         export function dismissesWhenLosingFocus(options) {

@@ -445,7 +445,7 @@ define([
 
                 _baseShow: function _Overlay_baseShow() {
                     // If we are already animating, just remember this for later
-                    if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard) {
+                    if (this._animating || this._needToHandleHidingKeyboard) {
                         this._doNext = "show";
                         return false;
                     }
@@ -453,7 +453,6 @@ define([
                     // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
                     this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._sizeOfDocument();
 
-                    // "hiding" would need to cancel.
                     if (this._element.style.visibility !== "visible") {
                         // Let us know we're showing.
                         this._element.winAnimating = "showing";
@@ -527,7 +526,7 @@ define([
 
                 _baseHide: function _Overlay_baseHide() {
                     // If we are already animating, just remember this for later
-                    if (this._animating || this._needToHandleShowingKeyboard) {
+                    if (this._animating) {
                         this._doNext = "hide";
                         return false;
                     }
@@ -538,7 +537,6 @@ define([
                         this._element.style.visibility = "";
                     }
 
-                    // "showing" would need to queue up.
                     if (this._element.style.visibility !== "hidden") {
                         // Let us know we're hiding, accessibility as well.
                         this._element.winAnimating = "hiding";
@@ -604,7 +602,7 @@ define([
 
                 _checkDoNext: function _Overlay_checkDoNext() {
                     // Do nothing if we're still animating
-                    if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard || this._disposed) {
+                    if (this._animating || this._needToHandleHidingKeyboard || this._disposed) {
                         return;
                     }
 
@@ -1171,10 +1169,6 @@ define([
                 },
 
                 _handleOverlayEventsForFlyoutOrSettingsFlyout: function _Overlay_handleOverlayEventsForFlyoutOrSettingsFlyout() {
-                    var that = this;
-                    // Need to hide ourselves if we lose focus
-                    _ElementUtilities._addEventListener(this._element, "focusout", function (e) { _Overlay._hideIfLostFocus(that, e); }, false);
-
                     // Need to handle right clicks that trigger edgy events in WWA
                     _ElementUtilities._addEventListener(this._element, "pointerdown", _Overlay._checkRightClickDown, true);
                     _ElementUtilities._addEventListener(this._element, "pointerup", _Overlay._checkRightClickUp, true);
@@ -1191,15 +1185,14 @@ define([
 
                 _lightDismissFlyouts: function _Overlay_lightDismissFlyouts() {
                     _Overlay._hideClickEatingDivFlyout();
+
                     var elements = _Global.document.body.querySelectorAll("." + _Constants.flyoutClass);
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
-                        var element = elements[i];
-                        if (element.style.visibility !== "hidden") {
-                            var flyout = element.winControl;
-                            if (flyout && (!flyout._sticky)) {
-                                flyout._hideOrDismiss();
-                            }
+                        var flyout = elements[i].winControl;
+                        if (flyout && flyout._isLightDismissible()) {
+                            flyout._lightDismiss();
+                            break;
                         }
                     }
                 },

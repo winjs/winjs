@@ -4,13 +4,14 @@
 // <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-/// <reference path="OverlayHelpers.ts" />
+// <reference path="../TestLib/Helper.ts"/>
+// <reference path="OverlayHelpers.ts" />
 
 module CorsicaTests {
+
     "use strict";
 
     export class MenuCommandTests {
-
 
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
@@ -35,22 +36,14 @@ module CorsicaTests {
             // We have no functions
         }
 
-
-
-
-
-    // Test MenuCommand Instantiation with null element
-    testMenuCommandNullInstantiation = function () {
+        // Test MenuCommand Instantiation with null element
+        testMenuCommandNullInstantiation = function () {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the MenuCommand with null element");
             var menuCommand = new WinJS.UI.MenuCommand(null, { type: 'separator' });
             LiveUnit.Assert.isNotNull(menuCommand, "MenuCommand instantiation was null when sent a null MenuCommand element.");
         }
 
-
-
-
-
-    // Test multiple instantiation of the same MenuCommand DOM element
+        // Test multiple instantiation of the same MenuCommand DOM element
         testMenuCommandMultipleInstantiation() {
             MenuCommandTests.prototype.testMenuCommandMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" };
             // Get the MenuCommand element from the DOM
@@ -67,11 +60,6 @@ module CorsicaTests {
                 OverlayHelpers.disposeAndRemove(menuCommandElement);
             }
         }
-
-
-
-
-
 
         // Test MenuCommand parameters
         testMenuCommandParams = function () {
@@ -147,11 +135,7 @@ module CorsicaTests {
             //testBadInitOption("element", {}, WinJS.UI.MenuCommand.badElement);
         }
 
-
-
-
-
-    testDefaultMenuCommandParameters = function () {
+        testDefaultMenuCommandParameters = function () {
             // Get the MenuCommand element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the MenuCommand element");
             var menuCommand = new WinJS.UI.MenuCommand(null, { label: 'test', icon: 'test.png' });
@@ -169,12 +153,8 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(menuCommand.selected, "Verifying that selected is false");
         }
 
-
-
-
-
-    // Simple Property tests
-    testSimpleMenuCommandProperties = function () {
+        // Simple Property tests
+        testSimpleMenuCommandProperties = function () {
             // Get the MenuCommand element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the MenuCommand element");
             var menuCommand = new WinJS.UI.MenuCommand(null, { label: 'test', icon: 'test.png', type: 'toggle', extraClass: 'extra' });
@@ -205,12 +185,8 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("unique", menuCommand.element.getAttribute("aria-owns"), "Verifying that aria-owns is set by flyout setter");
         }
 
-
-
-
-
-    // Hidden Property tests
-    testHiddenProperty = function () {
+        // Hidden Property tests
+        testHiddenProperty = function () {
             LiveUnit.LoggingCore.logComment("Attempt to test hidden property on menucommand");
             // Get the Menu element from the DOM
             var menuElement = document.createElement("div");
@@ -233,12 +209,8 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
         }
 
-
-
-
-
-    // Tests for dispose members and requirements
-    testMenuCommandDispose = function () {
+        // Tests for dispose members and requirements
+        testMenuCommandDispose = function () {
             var button = document.createElement("button");
             var mc = <WinJS.UI.PrivateMenuCommand>new WinJS.UI.MenuCommand(button);
             LiveUnit.Assert.isTrue(mc.dispose);
@@ -250,20 +222,16 @@ module CorsicaTests {
             mc.dispose();
         }
 
-
-
-    // Tests that previous innerHTML is cleared when we instantiate a new button.
-    testMenuCommandRemovesOldInnerHTML = function () {
+        // Tests that previous innerHTML is cleared when we instantiate a new button.
+        testMenuCommandRemovesOldInnerHTML = function () {
             var button = document.createElement("button");
             button.innerHTML = "<div id='testMenuCommandRemovesOldInnerHTML'>";
             LiveUnit.Assert.isTrue(button.querySelector("#testMenuCommandRemovesOldInnerHTML"));
             var mc = new WinJS.UI.MenuCommand(button);
-            LiveUnit.Assert.isFalse(button.querySelector("#testMenuCommandRemovesOldInnerHTML"), "MenuCommand butttons should lose previous innerHTML on control Instantiation");
+            LiveUnit.Assert.isFalse(button.querySelector("#testMenuCommandRemovesOldInnerHTML"), "MenuCommand buttons should lose previous innerHTML on control Instantiation");
 
         }
-
-
-}
+    }
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.MenuCommandTests");

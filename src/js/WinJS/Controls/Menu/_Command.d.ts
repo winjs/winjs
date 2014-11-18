@@ -41,11 +41,10 @@ export declare class MenuCommand {
     **/
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
-
     /**
      * Handles the menu click event
     **/
-    _handleMenuClick(event: any): void;
+    _handleClick(event: any): void;
 
 
     /**
