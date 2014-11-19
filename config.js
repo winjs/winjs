@@ -5,7 +5,7 @@
     var config = {};
     module.exports = config;
 
-    config.version = "3.1";
+    config.version = "4.0";
     config.buildDate = new Date();
     config.month = config.buildDate.getMonth() + 1;
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
