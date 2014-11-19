@@ -779,24 +779,36 @@ define([
 
                             break;
                         case Key.leftArrow: // Arrow Left
-                            if (rtlString === "rtl") {
+                            if (rtlString === "rtl" && this.userRating < this.maxRating - 1) {
                                 this._incrementRating();
-                            } else {
+                            } else if (rtlString !== "rtl" && this.userRating > 0) {
                                 this._decrementRating();
+                            } else {
+                                handled = false;
                             }
                             break;
                         case Key.upArrow: // Arrow Up
-                            this._incrementRating();
+                            if (this.userRating < this.maxRating - 1) {
+                                this._incrementRating();
+                            } else {
+                                handled = false;
+                            }
                             break;
                         case Key.rightArrow: // Arrow Right
-                            if (rtlString === "rtl") {
+                            if (rtlString === "rtl" && this.userRating > 0) {
                                 this._decrementRating();
-                            } else {
+                            } else if (rtlString !== "rtl" && this.userRating < this.maxRating - 1) {
                                 this._incrementRating();
+                            } else {
+                                handled = false;
                             }
                             break;
                         case Key.downArrow: // Arrow Down
-                            this._decrementRating();
+                            if (this.userRating > 0) {
+                                this._decrementRating();
+                            } else {
+                                handled = false;
+                            }
                             break;
                         default:
                             var number = 0;

@@ -45,6 +45,7 @@ define([
             // Navigates back when (alt + left) or BrowserBack keys are released.
             if ((event.keyCode === Key.leftArrow && event.altKey && !event.shiftKey && !event.ctrlKey) || (event.keyCode === Key.browserBack)) {
                 Navigation.back();
+                event.preventDefault();
             }
         }
 

@@ -737,23 +737,37 @@ define([
                             if (that._isHorizontal) {
                                 switch (event.keyCode) {
                                     case Key.leftArrow:
-                                        (that._rtl ? that.next() : that.previous());
-                                        handled = true;
+                                        if (!that._rtl && that.currentPage > 0) {
+                                            that.previous();
+                                            handled = true;
+                                        } else if (that._rtl && that.currentPage < that._pageManager._cachedSize - 1) {
+                                            that.next();
+                                            handled = true;
+                                        }
                                         break;
 
                                     case Key.pageUp:
-                                        that.previous();
-                                        handled = true;
+                                        if (that.currentPage > 0) {
+                                            that.previous();
+                                            handled = true;
+                                        }
                                         break;
 
                                     case Key.rightArrow:
-                                        (that._rtl ? that.previous() : that.next());
-                                        handled = true;
+                                        if (!that._rtl && that.currentPage < that._pageManager._cachedSize - 1) {
+                                            that.next();
+                                            handled = true;
+                                        } else if (that._rtl && that.currentPage > 0) {
+                                            that.previous();
+                                            handled = true;
+                                        }
                                         break;
 
                                     case Key.pageDown:
-                                        that.next();
-                                        handled = true;
+                                        if (that.currentPage < that._pageManager._cachedSize - 1) {
+                                            that.next();
+                                            handled = true;
+                                        }
                                         break;
 
                                         // Prevent scrolling pixel by pixel, but let the event bubble up
@@ -767,14 +781,18 @@ define([
                                 switch (event.keyCode) {
                                     case Key.upArrow:
                                     case Key.pageUp:
-                                        that.previous();
-                                        handled = true;
+                                        if (that.currentPage > 0) {
+                                            that.previous();
+                                            handled = true;
+                                        }
                                         break;
 
                                     case Key.downArrow:
                                     case Key.pageDown:
-                                        that.next();
-                                        handled = true;
+                                        if (that.currentPage < that._pageManager._cachedSize - 1) {
+                                            that.next();
+                                            handled = true;
+                                        }
                                         break;
 
                                     case Key.space:

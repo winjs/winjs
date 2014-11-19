@@ -563,8 +563,9 @@ function _handleKeyEvent(e: KeyboardEvent): void {
         var key = keys[i];
         var keyMappings = autoFocusMappings[key];
         if (keyMappings.indexOf(e.keyCode) >= 0) {
-            e.preventDefault();
-            _autoFocus(key, e.keyCode);
+            if (_autoFocus(key, e.keyCode)) {
+                e.preventDefault();
+            }
             return;
         }
     }

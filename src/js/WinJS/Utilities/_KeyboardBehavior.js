@@ -258,6 +258,8 @@ define([
                                 }
                             } else if (ev.keyCode === Key.home) {
                                 newIndex = 0;
+                            } else if (ev.keyCode === Key.end) {
+                                newIndex = this._element.children.length - 1;
                             }
                         }
 

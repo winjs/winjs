@@ -420,7 +420,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_UserRating_Cancel_Blur = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenBlurActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -439,7 +439,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_UserRating_Cancel_Escape = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEscapeActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -458,7 +458,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_UserRating_Commit_Enter = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEnterActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -477,7 +477,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_UserRating_Commit_Tab = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenTabActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -572,7 +572,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_Disabled_Cancel_Blur = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenBlurActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -591,7 +591,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_Disabled_Cancel_Escape = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEscapeActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -610,7 +610,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_Disabled_Commit_Enter = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEnterActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -629,7 +629,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_Disabled_Commit_Tab = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenTabActions(document.getElementById("rating"), WinJS.Utilities.Key.rightArrow);
@@ -724,7 +724,7 @@ module WinJSTests {
 
         testRating_Keyboard_Right_Multiple = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            var rating = RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            var rating = RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = new Object();
@@ -773,7 +773,7 @@ module WinJSTests {
         testRating_Keyboard_Right_Multiple_CustomMax = function (signalTestCaseCompleted) {
             // Setup the page for test case
             var max = RatingUtils.randomNewMaxRating(20, RatingUtils.defaultMaxRating);
-            var rating = RatingUtils.instantiate("rating", { maxRating: max, userRating: RatingUtils.randomInt(1, max - 1) });
+            var rating = RatingUtils.instantiate("rating", { maxRating: max, userRating: RatingUtils.randomInt(1, max - 2) });
 
             // Register the test actions we will be taking
             var actions = new Object();
@@ -975,7 +975,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_UserRating_Cancel_Blur = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenBlurActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -994,7 +994,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_UserRating_Cancel_Escape = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEscapeActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1013,7 +1013,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_UserRating_Commit_Enter = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEnterActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1032,7 +1032,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_UserRating_Commit_Tab = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenTabActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1127,7 +1127,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_Disabled_Cancel_Blur = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenBlurActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1146,7 +1146,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_Disabled_Cancel_Escape = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEscapeActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1165,7 +1165,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_Disabled_Commit_Enter = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenEnterActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1184,7 +1184,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_Disabled_Commit_Tab = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1), disabled: true });
+            RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2), disabled: true });
 
             // Register the test actions we will be taking
             var actions = RatingUtils.generateKeydownThenTabActions(document.getElementById("rating"), WinJS.Utilities.Key.upArrow);
@@ -1279,7 +1279,7 @@ module WinJSTests {
 
         testRating_Keyboard_Up_Multiple = function (signalTestCaseCompleted) {
             // Setup the page for test case
-            var rating = RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 1) });
+            var rating = RatingUtils.instantiate("rating", { userRating: RatingUtils.randomInt(1, RatingUtils.defaultMaxRating - 2) });
 
             // Register the test actions we will be taking
             var actions = new Object();
@@ -1329,7 +1329,7 @@ module WinJSTests {
         testRating_Keyboard_Up_Multiple_CustomMax = function (signalTestCaseCompleted) {
             // Setup the page for test case
             var max = RatingUtils.randomNewMaxRating(20, RatingUtils.defaultMaxRating);
-            var rating = RatingUtils.instantiate("rating", { maxRating: max, userRating: RatingUtils.randomInt(1, max - 1) });
+            var rating = RatingUtils.instantiate("rating", { maxRating: max, userRating: RatingUtils.randomInt(1, max - 2) });
 
             // Register the test actions we will be taking
             var actions = new Object();

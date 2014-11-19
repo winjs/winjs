@@ -1215,24 +1215,29 @@ define([
                         } else if (!eventObject.altKey) {
                             if (this._keyboardNavigationHandlers[keyCode]) {
                                 this._keyboardNavigationHandlers[keyCode](oldEntity).then(function (newEntity) {
-                                    var clampToBounds = that._keyboardNavigationHandlers[keyCode].clampToBounds;
-                                    if (newEntity.type !== _UI.ObjectType.groupHeader && eventObject.shiftKey && site._selectionAllowed() && site._multiSelection()) {
-                                        // Shift selection should work when shift or shift+ctrl are depressed
-                                        if (site._selection._pivot === _Constants._INVALID_INDEX) {
-                                            site._selection._pivot = oldEntity.index;
-                                        }
-                                        setNewFocus(newEntity, true, clampToBounds).then(function (newEntity) {
-                                            if (newEntity.index !== _Constants._INVALID_INDEX) {
-                                                var firstIndex = Math.min(newEntity.index, site._selection._pivot),
-                                                    lastIndex = Math.max(newEntity.index, site._selection._pivot),
-                                                    additive = (eventObject.ctrlKey || site._tap === _UI.TapBehavior.toggleSelect);
-                                                that._selectRange(firstIndex, lastIndex, additive);
+                                    if (newEntity.index !== oldEntity.index || newEntity.type !== oldEntity.type) {
+                                        var clampToBounds = that._keyboardNavigationHandlers[keyCode].clampToBounds;
+                                        if (newEntity.type !== _UI.ObjectType.groupHeader && eventObject.shiftKey && site._selectionAllowed() && site._multiSelection()) {
+                                            // Shift selection should work when shift or shift+ctrl are depressed
+                                            if (site._selection._pivot === _Constants._INVALID_INDEX) {
+                                                site._selection._pivot = oldEntity.index;
                                             }
-                                        });
+                                            setNewFocus(newEntity, true, clampToBounds).then(function (newEntity) {
+                                                if (newEntity.index !== _Constants._INVALID_INDEX) {
+                                                    var firstIndex = Math.min(newEntity.index, site._selection._pivot),
+                                                        lastIndex = Math.max(newEntity.index, site._selection._pivot),
+                                                        additive = (eventObject.ctrlKey || site._tap === _UI.TapBehavior.toggleSelect);
+                                                    that._selectRange(firstIndex, lastIndex, additive);
+                                                }
+                                            });
+                                        } else {
+                                            site._selection._pivot = _Constants._INVALID_INDEX;
+                                            setNewFocus(newEntity, false, clampToBounds);
+                                        }
                                     } else {
-                                        site._selection._pivot = _Constants._INVALID_INDEX;
-                                        setNewFocus(newEntity, false, clampToBounds);
+                                        handled = false;
                                     }
+
                                 });
                             } else if (!eventObject.ctrlKey && keyCode === Key.enter) {
                                 var element = oldEntity.type === _UI.ObjectType.groupHeader ? site._groups.group(oldEntity.index).header : site._view.items.itemBoxAt(oldEntity.index);
