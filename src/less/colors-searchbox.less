@@ -1,85 +1,64 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 .Colors(@theme) {
-    .mixin(dark) {
-        .win-searchbox-button {
-            color:rgba(0, 0, 0, 0.6);
-        }
+    .colorDefinitions(@theme);
 
-        .win-searchbox-button:active {
-            background-color:rgb(0, 0, 0);
-            color:rgb(255,255,255);
-        }
-
-        .win-searchbox-button-input-focus {
-            background-color: rgb(70, 23, 180);
-            color: rgb(255, 255, 255);
-        }
+    .win-searchbox-button {
+        color: @baseMid;
     }
-    .mixin(light) {
-        .win-searchbox-button {
-            color:rgba(0, 0, 0, 0.6);
-        }
 
-        .win-searchbox-button:active {
-            background-color:rgb(0, 0, 0);
-            color:rgb(255,255,255);
-        }
-
-        .win-searchbox-button-input-focus {
-            background-color: rgb(70, 23, 180);
-            color: rgb(255, 255, 255);
-        }
+    .win-searchbox-button-input-focus {
+        color: @blackMediumMid;
     }
-    .mixin(@theme);
+
+    .win-searchbox-button.win-searchbox-button:not(.win-searchbox-button-disabled):hover {
+        color: @accentColor;
+    }
+
+    .win-searchbox-button.win-searchbox-button:not(.win-searchbox-button-disabled):hover:active {
+        background-color: @accentColor;
+        color: @baseWhite;
+    }
 }
+
 .ColorsHover(@theme) {
-    .mixin(dark) {
-        .win-searchbox-button[disabled=false]:hover {
-            background-color: rgb(95, 55, 190);
-        }
+    .colorDefinitions(@theme);
 
-        .win-searchbox-button-input-focus:hover {
-            background-color: rgb(95, 55, 190);
-        }
+    .win-searchbox-button:not(.win-searchbox-button-disabled):hover {
+        color: @accentColor;
     }
-    .mixin(light) {
-        .win-searchbox-button[disabled=false]:hover {
-            background-color: rgb(95, 55, 190);
-        }
 
-        .win-searchbox-button-input-focus:hover {
-            background-color: rgb(95, 55, 190);
-        }
+    .win-searchbox-button:not(.win-searchbox-button-disabled):hover:active {
+        background-color: @accentColor;
+        color: @baseWhite;
     }
-    .mixin(@theme);
 }
 
 
 @media (-ms-high-contrast) {
     .win-searchbox-button {
-        background-color:ButtonFace;
-        color:ButtonText;
+        background-color: ButtonFace;
+        color: ButtonText;
     }
 
     html.win-hoverable .win-searchbox-button[disabled=false]:hover {
-        border-color:ButtonText;
-        background-color:HighLight;
-        color:HighLightText;
+        border-color: ButtonText;
+        background-color: HighLight;
+        color: HighLightText;
     }
 
     .win-searchbox-button-input-focus {
-        background-color:ButtonText;
-        color:ButtonFace;
+        background-color: ButtonText;
+        color: ButtonFace;
     }
 
     html.win-hoverable .win-searchbox-button-input-focus:hover {
-        border-color:ButtonText;
-        background-color:HighLight;
-        color:HighLightText;
+        border-color: ButtonText;
+        background-color: HighLight;
+        color: HighLightText;
     }
 
     .win-searchbox-button:active {
-        background-color:ButtonText;
-        color:ButtonFace;
+        background-color: ButtonText;
+        color: ButtonFace;
     }
 }

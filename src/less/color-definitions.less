@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-.colorDefinitions(@theme) {
+.colorDefinitions(@theme) {    
+    // Accent color
+    @accentColor: rgb(0, 120, 215);
+
     // Primary theme colors
     .mixin(light) {
         @altHigh: rgb(255, 255, 255);
@@ -8,6 +11,9 @@
         @chromeHigh: #ccc;
         @chromeMediumMid: #e6e6e6;
         @chromeLow: #f2f2f2;
+
+        @listSelectRest: fade(@accentColor, 40%);
+        @listSelectPress: fade(@accentColor, 70%);
 
         // One off colors
         @sliderThumbHover: #1f1f1f;
@@ -19,6 +25,9 @@
         @chromeHigh: #767676;
         @chromeMediumMid: #1f1f1f;
         @chromeLow: #171717;
+
+        @listSelectRest: fade(@accentColor, 60%);
+        @listSelectPress: fade(@accentColor, 90%);
 
         // One off colors
         @sliderThumbHover: #f9f9f9;
@@ -38,10 +47,8 @@
     @listHover: fade(@baseHigh, 10%);
     @listPress: fade(@baseHigh, 20%);
 
-    // Accent color
-    @accentColor: rgb(0, 120, 215);
-
     // Other colors not dependent on anything
     @baseWhite: #fff;
     @baseBlack: #000;
+    @blackMediumMid: fade(black, 40%);
 }
