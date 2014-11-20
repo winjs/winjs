@@ -351,10 +351,13 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid extraClass for custom command in the overflow area");
         }
 
-        testFlyoutMenuOverflowBehaviorOfButtonCommand() {
+        testFlyoutMenuOverflowBehaviorOfButtonCommand(complete) {
+
+            WinJS.Utilities.markSupportedForProcessing(complete);
+
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1", extraClass: "c1", disabled: true, onclick: Helper.ToolBar.getVisibleCommandsInElement }),
-                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true, onclick: Helper.ToolBar.getVisibleCommandsInElement }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: false, onclick: complete }),
             ]);
 
             this._element.style.width = "10px";
@@ -373,12 +376,32 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid menuCommand extraClass");
             LiveUnit.Assert.isTrue(menuCommand.disabled, "Invalid menuCommand disabled property value");
             LiveUnit.Assert.areEqual(Helper.ToolBar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
+
+            menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[1]["winControl"]);
+            LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeButton, menuCommand.type, "Invalid menuCommand type");
+            LiveUnit.Assert.isNull(menuCommand.flyout, "Flyout target for button should be null");
+            LiveUnit.Assert.areEqual("2", menuCommand.label, "Invalid menuCommand label");
+            LiveUnit.Assert.areEqual("c2", menuCommand.extraClass, "Invalid menuCommand extraClass");
+            LiveUnit.Assert.isFalse(menuCommand.disabled, "Invalid menuCommand disabled property value");
+            LiveUnit.Assert.areEqual(complete, menuCommand.onclick, "Invalid menuCommand onclick property value");
+
+            // Verify onclick calls complete
+            menuCommand.element.click();
         }
 
         testFlyoutMenuOverflowBehaviorOfToggleCommand() {
+
+            var clickWasHandled = false;
+            function test_handleClick(event) {
+                clickWasHandled = true;
+                LiveUnit.Assert.isFalse(event.target.winControl.selected, "Invalid menuCommand selected property value");
+            }
+
+            WinJS.Utilities.markSupportedForProcessing(test_handleClick);
+
             var data = new WinJS.Binding.List([
-                new Command(null, { type: Helper.ToolBar.Constants.typeToggle, label: "1", extraClass: "c1", selected: true, onclick: Helper.ToolBar.getVisibleCommandsInElement }),
-                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true, onclick: Helper.ToolBar.getVisibleCommandsInElement }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeToggle, label: "1", extraClass: "c1", selected: true, onclick: test_handleClick}),
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true, onclick: test_handleClick}),
             ]);
 
             this._element.style.width = "10px";
@@ -397,7 +420,11 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid menuCommand extraClass");
             LiveUnit.Assert.isFalse(menuCommand.disabled, "Invalid menuCommand disabled property value");
             LiveUnit.Assert.isTrue(menuCommand.selected, "Invalid menuCommand selected property value");
-            LiveUnit.Assert.areEqual(Helper.ToolBar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
+            LiveUnit.Assert.areEqual(test_handleClick, menuCommand.onclick, "Invalid menuCommand onclick property value");
+
+            menuCommand.element.click();
+            LiveUnit.Assert.isTrue(clickWasHandled, "menuCommand click behavior not functioning");
+
         }
 
         testOverflowBehaviorOfToggleChangingValues() {
@@ -425,12 +452,12 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(command.winControl.selected, "Invalid menuCommand selected property value");
         }
 
-        testFlyoutMenuOverflowBehaviorOfFlyoutCommand() {
+        testFlyoutMenuOverflowBehaviorOfFlyoutCommand(complete) {
             var flyout = new WinJS.UI.Flyout();
             this._element.appendChild(flyout.element);
 
             var data = new WinJS.Binding.List([
-                new Command(null, { type: Helper.ToolBar.Constants.typeFlyout, label: "1", extraClass: "c1", flyout: flyout, onclick: Helper.ToolBar.getVisibleCommandsInElement }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeFlyout, label: "1", extraClass: "c1", flyout: flyout}),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true }),
             ]);
 
@@ -449,7 +476,13 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("1", menuCommand.label, "Invalid menuCommand label");
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid menuCommand extraClass");
             LiveUnit.Assert.isFalse(menuCommand.disabled, "Invalid menuCommand disabled property value");
-            LiveUnit.Assert.areEqual(Helper.ToolBar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
+
+            menuCommand.element.click();
+
+            flyout.addEventListener("aftershow", function afterShow() {
+                flyout.removeEventListener("aftershow", afterShow, false);
+                complete();
+            }, false);
         }
 
         testFlyoutMenuOverflowBehaviorOfSeparatorCommand() {
