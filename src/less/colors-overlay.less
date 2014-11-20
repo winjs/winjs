@@ -1,53 +1,29 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 #win-overlay {
-    .variableDefs(dark) {
-        @accentColor: #0078D7;
-        @accentColorDefaultOpacity: 0.7;
-        @accentColorHoverOpacity: 0.8;
-        @accentColorActiveOpacity: 1;
-        @borderColor:rgb(255, 255, 255);
-        @textColor:rgb(255, 255, 255);
-        @textColorDisabled: rgba(255, 255, 255, 0.4);
-        @textColorActive: rgb(255, 255, 255);
-        @textColorSelected: rgb(255, 255, 255);
-        @textColorHover: rgb(255, 255, 255);
-        @separatorBackgroundColor: rgb(123, 123, 123);
-        @appbarBackgroundColor: rgb(43, 43, 43);
-        @appbarBorderColor: rgb(43, 43, 43);
-        @commandHoverBackgroundColor: rgb(85, 85, 85);
-        @commandActiveBackgroundColor: rgb(128, 128, 128);
-        @flyoutBorderColor: #0078D7;
-        @flyoutBackgroundColor: rgb(0, 0, 0);
-        @menuCommandActiveBackgroundColor: rgb(102, 102, 102);
-        @menuCommandHoverBackgroundColor: rgb(51, 51, 51);
-        @menuCommandDisabledColor: rgba(255, 255, 255, 0.4);
-        @settingsFlyoutBackgroundColor: rgb(0, 0, 0);
-        @settingsFlyoutBorderColor: #0078D7;
-    }
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
 
-    .variableDefs(light) {
-        @accentColor: #0078D7;
         @accentColorDefaultOpacity: 0.7;
         @accentColorHoverOpacity: 0.8;
         @accentColorActiveOpacity: 1;
-        @borderColor:rgb(0, 0, 0);
-        @textColor:rgb(0, 0, 0);
-        @textColorDisabled: rgba(0, 0, 0, 0.4);
-        @textColorActive: rgb(0, 0, 0);
-        @textColorSelected: rgb(0, 0, 0);
-        @textColorHover: rgb(0, 0, 0);
-        @separatorBackgroundColor: rgb(123, 123, 123);
-        @appbarBackgroundColor: rgb(230, 230, 230);
-        @appbarBorderColor: rgb(230, 230, 230);
-        @commandHoverBackgroundColor: rgb(184, 184, 184);
-        @commandActiveBackgroundColor: rgb(138, 138, 138);
-        @flyoutBorderColor: #0078D7;
-        @flyoutBackgroundColor: rgb(255, 255, 255);
-        @menuCommandActiveBackgroundColor: rgb(153, 153, 153);
-        @menuCommandHoverBackgroundColor: rgb(204, 204, 204);
-        @menuCommandDisabledColor: rgba(0, 0, 0, 0.4);
-        @settingsFlyoutBackgroundColor: rgb(255, 255, 255);
-        @settingsFlyoutBorderColor: #0078D7;
+        @borderColor: @baseHigh;
+        @textColor: @baseHigh;
+        @textColorDisabled: @baseLow;
+        @textColorActive:  @baseHigh;
+        @textColorSelected:  @baseHigh;
+        @textColorHover:  @baseHigh;
+        @separatorBackgroundColor: @baseMediumMid;
+        @appbarBackgroundColor: @chromeMediumMid;
+        @appbarBorderColor: @chromeMediumMid;
+        @commandHoverBackgroundColor: @listHover;
+        @commandActiveBackgroundColor: @listPress;
+        @flyoutBorderColor: @accentColor;
+        @flyoutBackgroundColor: @altHigh;
+        @menuCommandActiveBackgroundColor: @listPress;
+        @menuCommandHoverBackgroundColor: @listHover;
+        @menuCommandDisabledColor: @baseLow;
+        @settingsFlyoutBackgroundColor: @altHigh;
+        @settingsFlyoutBorderColor: @accentColor;
     }
 
     .variableDefs(highcontrast) {
@@ -107,7 +83,7 @@
         .win-commandimage {
             color: @textColor;
         }
-        
+
         button.win-command.win-command:enabled:hover:active,
         button.win-command.win-command:enabled:active {
             background-color: @commandActiveBackgroundColor;
