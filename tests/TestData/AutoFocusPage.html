@@ -21,12 +21,13 @@
         for (var i = 0; i < 2; i++) {
             for (var j = 0; j < 2; j++) {
                 var btn = document.createElement("BUTTON");
-                btn.textContent = "Button " + (i * 3 + j);
+                btn.textContent = i * 3 + j;
                 btn.style.position = "absolute";
-                btn.style.left = (j * 200 + 50) + "px";
-                btn.style.top = (i * 200 + 50) + "px";
-                btn.style.width = "150px";
-                btn.style.height = "150px";
+                btn.style.left = (j * 75 + 25) + "px";
+                btn.style.top = (i * 75 + 25) + "px";
+                btn.style.width = "50px";
+                btn.style.height = "50px";
+                btn.style.minHeight = btn.style.minWidth = "0px";
                 document.body.appendChild(btn);
             }
         }

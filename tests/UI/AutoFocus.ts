@@ -14,6 +14,7 @@ module WinJSTests {
         e.style.position = "absolute";
         e.style.width = width + "px";
         e.style.height = height + "px";
+        e.style.minWidth = e.style.minHeight = "0px";
         e.style.left = x + "px";
         e.style.top = y + "px";
         e.tabIndex = 0;
@@ -405,20 +406,20 @@ module WinJSTests {
 
             var layout = [
                 this.rootContainer,
-                createAndAppendFocusableElement(300, 50, this.rootContainer, "1"),
-                createAndAppendFocusableElement(500, 50, this.rootContainer, "2"),
+                createAndAppendFocusableElement(125, 25, this.rootContainer, "1", "button", 50, 50),
+                createAndAppendFocusableElement(200, 25, this.rootContainer, "2", "button", 50, 50),
 
-                createAndAppendFocusableElement(750, 300, this.rootContainer, "3"),
-                createAndAppendFocusableElement(750, 500, this.rootContainer, "4"),
+                createAndAppendFocusableElement(300, 125, this.rootContainer, "3", "button", 50, 50),
+                createAndAppendFocusableElement(300, 200, this.rootContainer, "4", "button", 50, 50),
 
-                createAndAppendFocusableElement(500, 750, this.rootContainer, "5"),
-                createAndAppendFocusableElement(300, 750, this.rootContainer, "6"),
+                createAndAppendFocusableElement(200, 300, this.rootContainer, "5", "button", 50, 50),
+                createAndAppendFocusableElement(125, 300, this.rootContainer, "6", "button", 50, 50),
 
-                createAndAppendFocusableElement(50, 500, this.rootContainer, "7"),
-                createAndAppendFocusableElement(50, 300, this.rootContainer, "8"),
+                createAndAppendFocusableElement(25, 200, this.rootContainer, "7", "button", 50, 50),
+                createAndAppendFocusableElement(25, 125, this.rootContainer, "8", "button", 50, 50),
 
             ];
-            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(250, 250, this.rootContainer, null, "iframe", 450, 450);
+            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "iframe", 175, 175);
             iframeEl.src = "AutoFocusPage.html";
             var iframeWin = (<HTMLIFrameElement>iframeEl).contentWindow;
             var iframeLayout: Array<HTMLButtonElement>;
