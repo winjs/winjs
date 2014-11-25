@@ -876,16 +876,20 @@ define([
                     }
                     return null;
                 },
-                _isHeaderInteractive: function hub_isHeaderInteractive(element) {
-                    // Helper method to skip keyboarding and clicks with a header's sub interactive content
-                    if (element.parentNode) {
-                        return _ElementUtilities._matchesSelector(element, ".win-interactive, .win-interactive *");
+                _isInteractive: function hub_isInteractive(element) {
+                    // Helper method to skip keyboarding and clicks
+
+                    while (element && element !== _Global.document.body) {
+                        if (element.classList.contains("win-interactive")) {
+                            return true;
+                        }
+                        element = element.parentElement;
                     }
                     return false;
                 },
                 _clickHandler: function hub_clickHandler(ev) {
                     var headerTabStopElement = this._findHeaderTabStop(ev.target);
-                    if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
+                    if (headerTabStopElement && !this._isInteractive(ev.target)) {
                         var section = headerTabStopElement.parentElement.parentElement.winControl;
                         if (!section.isHeaderStatic) {
                             var sectionIndex = this.sections.indexOf(section);
@@ -1075,7 +1079,7 @@ define([
                     // focus was caused by a pointer down event we skip the focus.
                     if (this._tabSeenLast) {
                         var headerTabStopElement = this._findHeaderTabStop(ev.target);
-                        if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
+                        if (headerTabStopElement && !this._isInteractive(ev.target)) {
                             var sectionIndex = this.sections.indexOf(headerTabStopElement.parentElement.parentElement.winControl);
                             if (sectionIndex > -1) {
                                 this._ensureVisible(sectionIndex, true);
@@ -1139,12 +1143,16 @@ define([
                     }
                 },
                 _keyDownHandler: function hub_keyDownHandler(ev) {
+                    if (this._isInteractive(ev.target)) {
+                        return;
+                    }
+                    
                     var leftKey = this._rtl ? Key.rightArrow : Key.leftArrow;
                     var rightKey = this._rtl ? Key.leftArrow : Key.rightArrow;
 
                     if (ev.keyCode === Key.upArrow || ev.keyCode === Key.downArrow || ev.keyCode === Key.leftArrow || ev.keyCode === Key.rightArrow || ev.keyCode === Key.pageUp || ev.keyCode === Key.pageDown) {
                         var headerTabStopElement = this._findHeaderTabStop(ev.target);
-                        if (headerTabStopElement && !this._isHeaderInteractive(ev.target)) {
+                        if (headerTabStopElement) {
                             var currentSection = this.sections.indexOf(headerTabStopElement.parentElement.parentElement.winControl);
                             var targetSectionIndex;
                             var useEnsureVisible = false;
