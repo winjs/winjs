@@ -359,7 +359,7 @@ define([
                         this._dragX = Math.max(2, this._dragX);
 
                         // Calculate if this pointermove constitutes switching to drag mode
-                        if (!this._dragging && Math.abs(this._dragX - this._dragXStart) > 3) {
+                        if (!this._dragging && Math.abs(localMouseX - this._dragXStart) > 3) {
                             this._dragging = true;
                             _ElementUtilities.addClass(this._domElement, classDragging);
                         }
