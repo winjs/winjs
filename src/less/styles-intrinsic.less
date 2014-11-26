@@ -189,7 +189,6 @@ input[type=file] {
 select {
     min-width: 296px;
     min-height: 32px;
-    padding: 5px 12px 7px 12px;
     margin: 8px 0;
     outline: 0;
     border-style: solid;
@@ -199,13 +198,14 @@ select {
     .win-type-body();
 
     &::-ms-value {
-        padding: 0;
+        padding: 5px 12px 7px 12px;
         margin: 0;
     }
 
     &::-ms-expand {
         border: none;
-        margin-right: -2px; // 10px total with padding
+        margin-right: 5px;
+        margin-left: 3px;
         margin-bottom: -2px; // 5px total with padding
         font-size: 20px;
     }
