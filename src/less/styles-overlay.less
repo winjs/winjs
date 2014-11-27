@@ -719,36 +719,38 @@ Settings Pane
     .win-back {
         width: 32px;
         height: 32px;
-        font-size: 12px;
+        font-size: 20px;
         line-height: 32px;
+    }
+
+    .win-header {
+        padding-top: 6px;
+        padding-bottom: 10px;
+        padding-left: 52px; /* 40px for the backbutton */
+        padding-right: 12px;
+        height: 32px;
+        position: relative;
+
+        .win-label {
+            display: inline-block;
+            .win-type-title(32px);
+            white-space: nowrap;
+        }
+
+        .win-backbutton,
+        .win-navigation-backbutton {
+            position: absolute;
+            left: 12px;
+        }
     }
 
     .win-content {
         overflow: auto;
-        padding-left: 12px;
-        padding-right: 12px;
-        height: 100%;
+        padding: 0px 12px;
 
         .win-label {
             .win-type-subtitle();
-        }
-
-        .win-header {
-            padding: 8px 40px;
-            height: 32px;
-            position: relative;
-
-            .win-label {
-                display: inline-block;
-                .win-type-title(32px);
-            }
-
-            .win-backbutton,
-            .win-navigation-backbutton {
-                position: absolute;
-                left: 0;
-            }
-        }
+        }        
 
         .win-settings-section {
             padding-top: 0;
