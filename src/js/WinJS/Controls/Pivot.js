@@ -459,13 +459,13 @@ define([
                             pivot._headersContainerElement.style.marginRight = "0px";
                             var leadingMargin = pivot._rtl ? "marginRight" : "marginLeft";
                             var firstHeader = pivot._headersContainerElement.children[0];
-                            var leadingSpace = _ElementUtilities.getTotalWidth(firstHeader);
+                            var leadingSpace = _ElementUtilities.getTotalWidth(firstHeader) - headersStates.common.headersContainerLeadingMargin;
                             if (firstHeader !== pivot._headersContainerElement.children[0]) {
                                 // Calling getTotalWidth caused a layout which can trigger a synchronous resize which in turn
                                 // calls renderHeaders. We can ignore this one since its the old headers which are not in the DOM.
                                 return;
                             }
-                            pivot._headersContainerElement.style[leadingMargin] = (-1 * leadingSpace + headersStates.common.headersContainerLeadingMargin) + "px";
+                            pivot._headersContainerElement.style[leadingMargin] = (-1 * leadingSpace) + "px";
 
                             // Create header track nav button elements
                             pivot._prevButton = _Global.document.createElement("button");

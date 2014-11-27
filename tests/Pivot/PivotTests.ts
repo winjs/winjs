@@ -1277,10 +1277,10 @@ module WinJSTests {
                 firePointerEvent("pointerenter", pivot._headersContainerElement, 0, 0, PT_MOUSE);
                 LiveUnit.Assert.isTrue(pivot._headersContainerElement.classList.contains(Pivot._ClassName.pivotShowNavButtons));
 
-                var leftButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + 20, pivot.element.offsetTop + 40);
+                var leftButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + 10, pivot.element.offsetTop + 40);
                 LiveUnit.Assert.isTrue(leftButton.classList.contains(Pivot._ClassName.pivotNavButtonPrev));
 
-                var rightButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 20, pivot.element.offsetTop + 40);
+                var rightButton = <HTMLElement> document.elementFromPoint(pivot.element.offsetLeft + pivot.element.offsetWidth - 10, pivot.element.offsetTop + 40);
                 LiveUnit.Assert.isTrue(rightButton.classList.contains(Pivot._ClassName.pivotNavButtonNext));
 
                 complete();
