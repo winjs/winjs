@@ -18,24 +18,6 @@ export class _MenuCommand extends _MenuCommandBase.MenuCommand {
 
     _handleClick(event: any) {
         this._beforeOnClick && this._beforeOnClick(event);
-        var command = this;
-
-        if (command.type === _Constants.typeToggle) {
-            command.selected = !command.selected;
-
-        } else if (command.type === _Constants.typeFlyout && command.flyout) {
-            var flyout: any = command.flyout;
-            if (!flyout.show) {
-                flyout = flyout.winControl;
-
-            }
-            if (flyout && flyout.show) {
-                flyout.show(this.element, "right");
-            }
-        }
-
-        if (command.onclick) {
-            command.onclick(event);
-        }
+        super._handleClick(event);
     }
 }

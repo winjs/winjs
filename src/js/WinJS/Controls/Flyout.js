@@ -164,7 +164,7 @@ define([
                         this.collapseAll(true);
                     }
                 },
-            });
+            });                  
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
@@ -484,25 +484,27 @@ define([
 
                         Flyout._cascadeManager.appendFlyout(this);
 
-                        // Store what had focus before showing the Flyout.
-                        // This must happen after we hide all other flyouts so that we store the correct element.
+                        // Store what had focus before showing the Flyout. This must happen after we've appended this 
+                        // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to 
+                        // collapse, so that focus has already been restored to the correct element by the previous 
+                        // branch before we try to record it here.
                         this._previousFocus = _Global.document.activeElement;
+
+                        if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
+                            // Put focus on the first child in the Flyout
+                            this._focusOnFirstFocusableElementOrThis();
+                        } else {
+                            // Make sure the menu has focus, but don't show a focus rect
+                            _Overlay._Overlay._trySetActive(this._element);
+                        }
                     }
                 },
 
                 _endShow: function Flyout_endShow() {
                     // Remember if the IHM was up since we may need to hide it when the flyout hides.
-                    // This check needs to happen after the IHM has a chance to hide itself after we force hide
-                    // all other visible Flyouts.
+                    // This check needs to happen after we've hidden any other visible flyouts from 
+                    // the cascasde as a result of showing this flyout.
                     this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
-
-                    if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
-                        // Put focus on the first child in the Flyout
-                        this._focusOnFirstFocusableElementOrThis();
-                    } else {
-                        // Make sure the menu has focus, but don't show a focus rect
-                        _Overlay._Overlay._trySetActive(this._element);
-                    }
                 },
 
                 _isLightDismissible: function Flyout_isLightDismissible() {
@@ -972,6 +974,7 @@ define([
                          && (this === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
+                        this.winControl._keyboardInvoked = true;
                         this.winControl.hide();
                     } else if (event.shiftKey && event.keyCode === Key.tab
                           && this === _Global.document.activeElement
@@ -996,6 +999,7 @@ define([
                     // Else focus is only moving between elements in the flyout.
                     // Doesn't need to be handled by cascadeManager.
                 },
+
 
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {

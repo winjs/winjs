@@ -4,7 +4,9 @@
 module OverlayHelpers {
     "use strict";
 
-     export function show(overlay): WinJS.Promise<any> {
+    var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
+
+    export function show(overlay): WinJS.Promise<any> {
          return new WinJS.Promise(function (c, e, p): void {
              function afterShow(): void {
                  overlay.removeEventListener("aftershow", afterShow, false);
@@ -12,6 +14,17 @@ module OverlayHelpers {
              };
              overlay.addEventListener("aftershow", afterShow, false);
              overlay.show();
+         });
+    };
+
+    export function hide(overlay): WinJS.Promise<any> {
+         return new WinJS.Promise(function (c, e, p): void {
+             function afterHide(): void {
+                 overlay.removeEventListener("afterhide", afterHide, false);
+                 c();
+             };
+             overlay.addEventListener("afterhide", afterHide, false);
+             overlay._hideOrDismiss();
          });
     };
 
@@ -71,6 +84,19 @@ module OverlayHelpers {
                         complete();
                     });
             });
+        }
+
+        export function verifyMenuFlyoutCommandDeactivated(command: WinJS.UI.PrivateMenuCommand, errorMsg: string = "") {
+            // Deactivated is defined as a MenuCommand that does not have the activated class and whose flyout property is falsey or returns a subFlyout that is hidden.
+            LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(command.element, _Constants.menuCommandFlyoutActivatedClass), errorMsg);
+            LiveUnit.Assert.isTrue(!command.flyout || command.flyout.hidden, errorMsg);
+        }
+
+        export function verifyMenuFlyoutCommandActivated(command: WinJS.UI.PrivateMenuCommand, errorMsg: string = "") {
+            // Activated is defined as a MenuCommand that has the activated class and whose flyout property returns a subFlyout that is not hidden.
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(command.element, _Constants.menuCommandFlyoutActivatedClass), errorMsg);
+            LiveUnit.Assert.isTrue(command.flyout, errorMsg);
+            LiveUnit.Assert.isFalse(command.flyout.hidden, errorMsg);
         }
     }
 }

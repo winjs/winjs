@@ -59,14 +59,6 @@
 }
 
 .ColorsHover(@theme) {
-    .mixin(dark) {
-        @listSelectHover: fade(@accentColor, 80%);
-    }
-
-    .mixin(light) {
-        @listSelectHover: fade(@accentColor, 60%);
-    }
-
     .colorDefinitions(@theme);
     .mixin(@theme);
 

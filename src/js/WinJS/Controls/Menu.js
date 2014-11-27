@@ -48,17 +48,6 @@ define([
                 get nullCommand() { return "Invalid argument: command must not be null"; },
             };
 
-            function invokeSubFlyout(menuCommand) {
-                var subFlyout = menuCommand._flyout;
-                if (subFlyout) {
-                    // Flyout may not have processAll'd, so this may be a DOM object
-                    subFlyout = subFlyout.winControl || subFlyout;
-                    if (subFlyout && subFlyout.show) {
-                        subFlyout.show(menuCommand, "right");
-                    }
-                }
-            }
-
             function isCommandInMenu(object) {
                 // Verifies that we have a menuCommand element and that it is in a Menu.
                 var element = object.element || object;
@@ -117,7 +106,6 @@ define([
                 this._element.addEventListener(_Constants._menuCommandInvokedEvent, this._handleCommandInvoked.bind(this), false);
                 this._element.addEventListener("mouseover", this._handleMouseOver.bind(this), false);
                 this._element.addEventListener("mouseout", this._handleMouseOut.bind(this), false);
-                //this._handleMouseMoveBound = this._handleMouseMove.bind(this);
 
                 // Attach our css class
                 _ElementUtilities.addClass(this._element, _Constants.menuClass);
@@ -356,27 +344,35 @@ define([
                     }
                 },
 
+                _handleFocusIn: function Menu_handleFocusIn(event) {
+                    // Menu focuses commands on mouseover. We need to handle cases involving activated flyout commands 
+                    // to ensure that mousing over different commands in a menu closes that command's sub flyout.
+                    var target = event.target;
+                    if (isCommandInMenu(target)) {
+                        var command = target.winControl;
+                        if (_ElementUtilities.hasClass(command.element, _Constants.menuCommandFlyoutActivatedClass)) {
+                            // If it's an activated 'flyout' typed command, move focus onto the command's subFlyout.
+                            // We expect this will collapse all decendant Flyouts of the subFlyout from the cascade.
+                            command.flyout.element.focus();
+                        } else {
+                            // Deactivate any currently activated command in the Menu to subsequently trigger all subFlyouts descendants to collapse.
+                            var activatedSiblingCommand = this.element.querySelector("." + _Constants.menuCommandFlyoutActivatedClass);
+                            if (activatedSiblingCommand) {
+                                _Command.MenuCommand._deactivateFlyoutCommand(activatedSiblingCommand);
+                            }
+                        }
+                    } else if (target === this.element) {
+                        // The Menu itself is receiving focus. Rely on the Flyout base implementation to notify the cascadeManager.
+                        // We expect this will only happen when other Menu event handling code causes the Menu to focus itself.
+                        Flyout.Flyout.prototype._handleFocusIn.call(this, event);
+                    }
+                },
+
                 _handleCommandInvoked: function Menu_handleCommandInvoked(event) {
+                    // Menu hides when invoking a command commits an action, not when a subFlyout is invoked.
                     var command = event.detail.command;
-                    if (isCommandInMenu(command)) {
-
-                        var shouldHide = true;
-
-                        if (command._type === _Constants.typeToggle) {
-                            command.selected = !command.selected;
-                        } else if (command._type === _Constants.typeFlyout && command._flyout) {
-                            invokeSubFlyout(command);
-                            shouldHide = false;
-                        }
-
-                        if (event.delegate) {
-                            event.delegate();
-                        }
-
-                        if (shouldHide) {
-                            this.hide();
-                        }
-
+                    if (command._type !== _Constants.typeFlyout) {
+                        this._hide();
                     }
                 },
 
@@ -389,12 +385,14 @@ define([
 
                         if (target.focus) {
                             target.focus();
+                            // remove keyboard focus rect since focus has been triggered by mouse over.
+                            _ElementUtilities.removeClass(target, "win-keyboard");
 
                             if (command.type === _Constants.typeFlyout && command.flyout && command.flyout.hidden) {
                                 this._hoverPromise = this._hoverPromise || Promise.timeout(_Constants.menuCommandHoverDelay).then(
                                     function () {
                                         if (!that.hidden && !that._disposed) {
-                                            invokeSubFlyout(command);
+                                            command._invoke(event);
                                         }
                                         that._hoverPromise = null;
                                     },
@@ -402,15 +400,7 @@ define([
                                         that._hoverPromise = null;
                                     });
                             }
-
-                            this.element.addEventListener("mousemove", this._handleMouseMoveBound, false);
                         }
-                    }
-                },
-
-                _handleMouseMove: function Menu_handleMouseMove() {
-                    if (this && this.element && this.element.focus && this.element !== _Global.document.activeElement) {
-                        this.element.focus();
                     }
                 },
 
@@ -424,7 +414,6 @@ define([
                         if (this._hoverPromise) {
                             this._hoverPromise.cancel();
                         }
-                        this.element.removeEventListener("mousemove", this._handleMouseMoveBound, false);
                     }
                 },
 

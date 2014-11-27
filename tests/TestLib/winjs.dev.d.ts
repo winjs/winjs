@@ -493,6 +493,8 @@ declare module WinJS {
             _toggleSpan;
             _labelSpan;
             _flyoutSpan;
+            _invoke;
+            static _activateFlyoutCommand;
         }
 
         class PrivateMenu extends Menu {

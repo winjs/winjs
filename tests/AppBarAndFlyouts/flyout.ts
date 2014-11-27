@@ -9,10 +9,11 @@
 module CorsicaTests {
     "use strict";
 
-    var _element;
+    var Key = WinJS.Utilities.Key,
+        _element;
 
-    var expectedDistanceFromAnchor = 5;
-    var anchorStyling = "position:absolute; top:50%; left:50%; height:10px; width:10px; background-color: red;"
+    var expectedDistanceFromAnchor = 5,
+        anchorStyling = "position:absolute; top:50%; left:50%; height:10px; width:10px; background-color: red;"
 
     export class FlyoutTests {
 
@@ -503,6 +504,69 @@ module CorsicaTests {
             flyout.show(document.body);
         };
 
+        testEscapeKeyClosesFlyout = function (complete) {
+            // Verifies that ESC key hides a Flyout
+
+            function afterHide() {
+                flyout.removeEventListener, ("afterhide", afterHide, false);
+                complete();
+            }
+
+            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+            flyout.addEventListener("afterhide", afterHide, false);
+
+            OverlayHelpers.show(flyout).then(() => {
+                var msg = "ESC key should hide the flyout.";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                Helper.keydown(flyout.element, Key.escape);
+            });
+        };
+
+        testShowAndHideMovesFocusWithoutWaitingForAnimationToComplete = function (complete) {
+            // Verifies Flyout.show and Flyout.hide moves focus synchronously after beginning the animation.
+            var button = document.createElement("button");
+            document.body.appendChild(button);
+
+            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+
+            var msg = "",
+                test1Ran = false,
+                test2Ran = false;
+
+            button.focus();
+            LiveUnit.Assert.areEqual(document.activeElement, button, "TEST ERROR: button should have focus");
+
+            function beforeShow() {
+                flyout.removeEventListener("beforeshow", beforeShow, false);
+                WinJS.Promise.timeout(0).then(() => {
+                    LiveUnit.Assert.areEqual(document.activeElement, _element, msg);
+                    test1Ran = true;
+                });
+            };
+            flyout.addEventListener("beforeshow", beforeShow, false);
+
+            function beforeHide() {
+                flyout.removeEventListener("beforehide", beforeHide, false);
+                WinJS.Promise.timeout(0).then(() => {
+                    LiveUnit.Assert.areEqual(document.activeElement, button, msg);
+                    test2Ran = true;
+                });
+            }
+            flyout.addEventListener("beforehide", beforeHide, false);
+
+            msg = "Flyout.show should take focus synchronously after the 'beforeshow' event";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            OverlayHelpers.show(flyout).then(() => {
+                LiveUnit.Assert.isTrue(test1Ran, "TEST ERROR: Test 1 did not run.");
+
+                msg = "Flyout.show should take focus synchronously after the 'beforeshow' event";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                return OverlayHelpers.hide(flyout);
+            }).then(() => {
+                LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
+                complete();
+            });
+        }
     }
 }
 // register the object as a test class by passing in the name

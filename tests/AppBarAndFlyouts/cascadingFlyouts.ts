@@ -238,7 +238,7 @@ module CorsicaTests {
                 // Hide Flyout in the middle of the cascade
                 index = Math.floor(flyoutChain.length / 2)
                 flyout = flyoutChain[index];
-                expectedFocusTarget = flyout._previousFocus; // TODO what's the right pattern for this in TS?
+                expectedFocusTarget = flyout._previousFocus;
                 expectedCascadeAfterHiding = flyoutChain.slice(0, index);
                 return hideFlyout(flyout);
 
@@ -300,8 +300,8 @@ module CorsicaTests {
             showFlyoutChain(flyoutChain).then(() => {
                 return showFlyout(otherFlyout);
             }).then(() => {
-                    verifyCascade([otherFlyout]);
-                    return hideFlyout(otherFlyout);
+                verifyCascade([otherFlyout]);
+                return hideFlyout(otherFlyout);
             }).done(() => {
                 LiveUnit.Assert.isTrue(_rootAnchor.contains(<HTMLElement>document.activeElement), "Hiding all flyouts in the cascade should return focus to the element that originally had it.");
                 complete();
@@ -387,7 +387,7 @@ module CorsicaTests {
 
                 verifyCascade([flyout]);
 
-                LiveUnit.LoggingCore.logComment("Test: " + msg);               
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
                 flyout.addEventListener("beforehide", beforeHide, false);
                 Helper.keydown(flyout.element, Key.leftArrow);
 
