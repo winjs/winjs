@@ -7804,8 +7804,8 @@ declare module WinJS.UI {
 /**
  * Provides utility functions for generic directional focus movement
 **/
-declare module WinJS.UI.AutoFocus {
-    export interface AutoFocusOptions {
+declare module WinJS.UI.DirectionalFocus {
+    export interface DirectionalFocusOptions {
         /**
          * The focus scope, only children of this element are considered in the calculation.
         **/
@@ -7837,30 +7837,30 @@ declare module WinJS.UI.AutoFocus {
         width: number;
     }
 
-    export interface AutoFocusEvent extends CustomEvent {
+    export interface DirectionalFocusEvent extends CustomEvent {
         detail: { nextFocusElement: HTMLElement; keyCode: number; previousFocusElement: HTMLElement };
     }
 
-    export var autoFocusMappings: { [key: string]: number[] };
+    export var directionalFocusMappings: { [key: string]: number[] };
     export var focusRoot: HTMLElement;
 
     export function addEventListener(type: string, handler: EventListener, capture?: boolean);
     export function removeEventListener(type: string, handler: EventListener, capture?: boolean);
 
-    export function findNextFocusElement(direction: "left", options?: AutoFocusOptions): HTMLElement;
-    export function findNextFocusElement(direction: "right", options?: AutoFocusOptions): HTMLElement;
-    export function findNextFocusElement(direction: "up", options?: AutoFocusOptions): HTMLElement;
-    export function findNextFocusElement(direction: "down", options?: AutoFocusOptions): HTMLElement;
-    export function findNextFocusElement(direction: string, options?: AutoFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
+    export function findNextFocusElement(direction: string, options?: DirectionalFocusOptions): HTMLElement;
 
-    export function moveFocus(direction: "left", options?: AutoFocusOptions): HTMLElement;
-    export function moveFocus(direction: "right", options?: AutoFocusOptions): HTMLElement;
-    export function moveFocus(direction: "up", options?: AutoFocusOptions): HTMLElement;
-    export function moveFocus(direction: "down", options?: AutoFocusOptions): HTMLElement;
-    export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement;
+    export function moveFocus(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
+    export function moveFocus(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
+    export function moveFocus(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
+    export function moveFocus(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
+    export function moveFocus(direction: string, options?: DirectionalFocusOptions): HTMLElement;
 
-    export function enableAutoFocus(): void;
-    export function disableAutoFocus(): void;
+    export function enableDirectionalFocus(): void;
+    export function disableDirectionalFocus(): void;
 }
 /**
  * Provides functions to load HTML content programmatically.

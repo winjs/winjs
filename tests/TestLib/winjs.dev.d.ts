@@ -771,8 +771,8 @@ declare module WinJS {
         var _Overlay;
         var _AppBarCommandsLayout;
 
-        module AutoFocus {
-            function _autoFocus(direction: string, referenceRect?: IRect): void;
+        module DirectionalFocus {
+            function _dFocus(direction: string, referenceRect?: IRect): void;
         }
 
         module Pages {

@@ -18,12 +18,12 @@ var ClassNames = {
 };
 
 var CrossDomainMessageConstants = {
-    messageDataProperty: "msWinJSAutoFocusControlMessage",
+    messageDataProperty: "msWinJSDFocusControlMessage",
 
     register: "register",
     unregister: "unregister",
-    autoFocusEnter: "autoFocusEnter",
-    autoFocusExit: "autoFocusExit"
+    dFocusEnter: "dFocusEnter",
+    dFocusExit: "dFocusExit"
 };
 
 var DirectionNames = {
@@ -67,7 +67,7 @@ interface FindNextFocusResult {
     usedOverride: boolean;
 }
 
-export interface AutoFocusOptions {
+export interface DirectionalFocusOptions {
     /**
      * The focus scope, only children of this element are considered in the calculation.
     **/
@@ -99,7 +99,7 @@ export interface IRect {
     width: number;
 }
 
-export var autoFocusMappings: { [key: string]: number[] } = {
+export var directionalFocusMappings: { [key: string]: number[] } = {
     left: [_ElementUtilities.Key.leftArrow],
     right: [_ElementUtilities.Key.rightArrow],
     up: [_ElementUtilities.Key.upArrow],
@@ -107,22 +107,22 @@ export var autoFocusMappings: { [key: string]: number[] } = {
 };
 export var focusRoot: HTMLElement;
 
-export function findNextFocusElement(direction: "left", options?: AutoFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "right", options?: AutoFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "up", options?: AutoFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "down", options?: AutoFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: string, options?: AutoFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: string, options?: AutoFocusOptions): HTMLElement {
+export function findNextFocusElement(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: string, options?: DirectionalFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: string, options?: DirectionalFocusOptions): HTMLElement {
     var result = _findNextFocusElementInternal(direction, options);
     return result ? result.target : null;
 }
 
-export function moveFocus(direction: "left", options?: AutoFocusOptions): HTMLElement;
-export function moveFocus(direction: "right", options?: AutoFocusOptions): HTMLElement;
-export function moveFocus(direction: "up", options?: AutoFocusOptions): HTMLElement;
-export function moveFocus(direction: "down", options?: AutoFocusOptions): HTMLElement;
-export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement;
-export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLElement {
+export function moveFocus(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
+export function moveFocus(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
+export function moveFocus(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
+export function moveFocus(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: DirectionalFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: DirectionalFocusOptions): HTMLElement {
     var result = findNextFocusElement(direction, options);
     if (result) {
         var previousFocusElement = _Global.document.activeElement;
@@ -134,50 +134,50 @@ export function moveFocus(direction: string, options?: AutoFocusOptions): HTMLEl
     }
 }
 
-export function enableAutoFocus() {
-    if (!_autoFocusEnabled) {
+export function enableDirectionalFocus() {
+    if (!_dFocusEnabled) {
         _Global.document.addEventListener("keydown", _handleKeyEvent);
-        _autoFocusEnabled = true;
+        _dFocusEnabled = true;
     }
 }
 
-export function disableAutoFocus() {
-    if (_autoFocusEnabled) {
+export function disableDirectionalFocus() {
+    if (_dFocusEnabled) {
         _Global.document.removeEventListener("keydown", _handleKeyEvent);
-        _autoFocusEnabled = false;
+        _dFocusEnabled = false;
     }
 }
 
 
 // Privates
-var _autoFocusEnabled = false;
-var _lastAutoFocusTarget: HTMLElement;
-var _cachedLastAutoFocusTargetRect: IRect;
+var _dFocusEnabled = false;
+var _lastTarget: HTMLElement;
+var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
 var _afEnabledFrames: Window[] = [];
-function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
-    // If focus has moved since the last AutoFocus movement, scrolling occured, or an explicit
+function _dFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
+    // If focus has moved since the last DirectionalFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
-    if (referenceRect || _Global.document.activeElement !== _lastAutoFocusTarget) {
+    if (referenceRect || _Global.document.activeElement !== _lastTarget) {
         _historyRect = null;
-        _lastAutoFocusTarget = null;
-        _cachedLastAutoFocusTargetRect = null;
-    } else if (_lastAutoFocusTarget && _cachedLastAutoFocusTargetRect) {
-        var lastTargetRect = _lastAutoFocusTarget.getBoundingClientRect();
-        if (lastTargetRect.left !== _cachedLastAutoFocusTargetRect.left || lastTargetRect.top !== _cachedLastAutoFocusTargetRect.top) {
+        _lastTarget = null;
+        _cachedLastTargetRect = null;
+    } else if (_lastTarget && _cachedLastTargetRect) {
+        var lastTargetRect = _lastTarget.getBoundingClientRect();
+        if (lastTargetRect.left !== _cachedLastTargetRect.left || lastTargetRect.top !== _cachedLastTargetRect.top) {
             _historyRect = null;
-            _lastAutoFocusTarget = null;
-            _cachedLastAutoFocusTargetRect = null;
+            _lastTarget = null;
+            _cachedLastTargetRect = null;
         }
     }
 
     var activeElement = _Global.document.activeElement;
-    var lastAutoFocusTarget = _lastAutoFocusTarget;
+    var lastTarget = _lastTarget;
 
     var result = _findNextFocusElementInternal(direction, {
         focusRoot: focusRoot,
         historyRect: _historyRect,
-        referenceElement: _lastAutoFocusTarget,
+        referenceElement: _lastTarget,
         referenceRect: referenceRect
     });
 
@@ -189,8 +189,8 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
         } else {
             updateHistoryRect(direction, result);
         }
-        _lastAutoFocusTarget = result.target;
-        _cachedLastAutoFocusTargetRect = result.targetRect;
+        _lastTarget = result.target;
+        _cachedLastTargetRect = result.targetRect;
 
         if (result.target.tagName === "IFRAME") {
             var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
@@ -206,7 +206,7 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
 
                 var message = {};
                 message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
-                    type: CrossDomainMessageConstants.autoFocusEnter,
+                    type: CrossDomainMessageConstants.dFocusEnter,
                     direction: direction,
                     referenceRect: refRect
                 };
@@ -226,7 +226,7 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
 
             var message = {};
             message[CrossDomainMessageConstants.messageDataProperty] = <ICrossDomainMessage>{
-                type: CrossDomainMessageConstants.autoFocusExit,
+                type: CrossDomainMessageConstants.dFocusExit,
                 direction: direction,
                 referenceRect: refRect
             };
@@ -281,7 +281,7 @@ function _autoFocus(direction: string, keyCode: number, referenceRect?: IRect): 
     }
 }
 
-function _findNextFocusElementInternal(direction: string, options?: AutoFocusOptions): FindNextFocusResult {
+function _findNextFocusElementInternal(direction: string, options?: DirectionalFocusOptions): FindNextFocusResult {
     options = options || {};
     options.focusRoot = options.focusRoot || focusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
@@ -461,8 +461,8 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
 
         if ((!referenceElement && !referenceRect) || (referenceElement && referenceElement.tabIndex === -1) || (referenceElement && !referenceElement.parentNode)) {
             // Note: We need to check to make sure 'parentNode' is not null otherwise there is a case  
-            // where _lastAutoFocusTarget is defined, but calling getBoundingClientRect will throw a native exception.  
-            // This case happens if the innerHTML of the parent of the _lastAutoFocusTarget is set to "".  
+            // where _lastTarget is defined, but calling getBoundingClientRect will throw a native exception.  
+            // This case happens if the innerHTML of the parent of the _lastTarget is set to "".  
 
             // If no valid reference is supplied, we'll use _Global.document.activeElement unless it's the body
             if (_Global.document.activeElement !== _Global.document.body) {
@@ -492,7 +492,7 @@ function _findNextFocusElementInternal(direction: string, options?: AutoFocusOpt
         }
 
         if (elementTagName === "IFRAME" && _afEnabledFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
-            // Skip IFRAMEs without compatible AutoFocus implementation
+            // Skip IFRAMEs without compatible DirectionalFocus implementation
             return false;
         }
 
@@ -557,13 +557,13 @@ function _handleKeyEvent(e: KeyboardEvent): void {
         return;
     }
 
-    var keys = Object.keys(autoFocusMappings);
+    var keys = Object.keys(directionalFocusMappings);
     for (var i = 0; i < keys.length; i++) {
         // Note: key is 'left', 'right', 'up', or 'down'
         var key = keys[i];
-        var keyMappings = autoFocusMappings[key];
+        var keyMappings = directionalFocusMappings[key];
         if (keyMappings.indexOf(e.keyCode) >= 0) {
-            if (_autoFocus(key, e.keyCode)) {
+            if (_dFocus(key, e.keyCode)) {
                 e.preventDefault();
             }
             return;
@@ -589,15 +589,15 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
             }
             break;
 
-        case CrossDomainMessageConstants.autoFocusEnter:
+        case CrossDomainMessageConstants.dFocusEnter:
             // The coordinates stored in data.refRect are already in this frame's coordinate system.
-            // When we get this message we will force-enable AutoFocus to support scenarios where
-            // websites running WinJS are put into an IFRAME and the parent frame has AutoFocus enabled.
-            enableAutoFocus();
-            _autoFocus(data.direction, -1, data.referenceRect);
+            // When we get this message we will force-enable DirectionalFocus to support scenarios where
+            // websites running WinJS are put into an IFRAME and the parent frame has DirectionalFocus enabled.
+            enableDirectionalFocus();
+            _dFocus(data.direction, -1, data.referenceRect);
             break;
 
-        case CrossDomainMessageConstants.autoFocusExit:
+        case CrossDomainMessageConstants.dFocusExit:
             var iframe = _getIFrameFromWindow(e.source);
             if (_Global.document.activeElement !== iframe) {
                 // Since postMessage is async, by the time we get this message, the user may have
@@ -610,14 +610,14 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
             var refRect: IRect = data.referenceRect;
             refRect.left += iframe.offsetLeft;
             refRect.top += iframe.offsetTop;
-            _autoFocus(data.direction, -1, refRect);
+            _dFocus(data.direction, -1, refRect);
             break;
     }
 });
 
 _Global.document.addEventListener("DOMContentLoaded", () => {
     if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
-        enableAutoFocus();
+        enableDirectionalFocus();
     }
 
     // If we are running within an iframe, we send a registration message to the parent window  
@@ -634,7 +634,7 @@ _Global.document.addEventListener("DOMContentLoaded", () => {
 
 // Publish to WinJS namespace
 var toPublish = {
-    autoFocusMappings: autoFocusMappings,
+    directionalFocusMappings: directionalFocusMappings,
     focusRoot: {
         get: function () {
             return focusRoot;
@@ -644,14 +644,14 @@ var toPublish = {
         }
     },
 
-    enableAutoFocus: enableAutoFocus,
-    disableAutoFocus: disableAutoFocus,
+    enableDirectionalFocus: enableDirectionalFocus,
+    disableDirectionalFocus: disableDirectionalFocus,
     findNextFocusElement: findNextFocusElement,
     moveFocus: moveFocus,
 
-    _autoFocus: _autoFocus
+    _dFocus: _dFocus
 };
 toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
 toPublish["_listeners"] = {};
 var eventSrc = <_Events.eventMixin><any>toPublish;
-_Base.Namespace.define("WinJS.UI.AutoFocus", toPublish);
+_Base.Namespace.define("WinJS.UI.DirectionalFocus", toPublish);
