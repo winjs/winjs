@@ -249,7 +249,7 @@ define([
                             this._element.setAttribute("aria-owns", id);
                         }
 
-                        if(this._flyout !== value) {
+                        if (this._flyout !== value) {
                             MenuCommand._deactivateFlyoutCommand(this);
                         }
 
