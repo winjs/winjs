@@ -72,12 +72,12 @@ input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
     border-style: solid;
     border-width: 2px;
     margin: 8px 0px;
-    width: 292px;
+    width: 296px;
     min-width: 64px;
     min-height: 28px;
     background-clip: border-box;
     box-sizing: border-box;
-    padding: 3px 10px 5px 10px; // Subtract 2 from padding values due to border
+    padding: 3px 6px 5px 10px;
     outline: 0;
     .win-type-body();
 }
@@ -130,8 +130,12 @@ button, input[type=button], input[type=reset], input[type=submit], button[type=s
 }
 
 input::-ms-clear, input::-ms-reveal {
+    padding-right: 2px;
     margin-right: -8px;
     margin-left: 2px;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    height: 32px;
 }
 input {
     .RTL({
