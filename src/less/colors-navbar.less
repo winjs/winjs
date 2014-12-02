@@ -16,6 +16,10 @@
     @navBarCommandHover: overlay(@listHover, @listHover);
     @navBarCommandPress: overlay(@listPress, @listHover);
     
+    @openSplitRest: @listSelectRest;
+    @openSplitHover: @listSelectHover;
+    @openSplitPress: @listSelectPress;
+    
     .win-navbarcontainer-pageindicator {
         background-color: @baseLow;
     }
@@ -36,12 +40,18 @@
     .win-navbarcommand-splitbutton {
         background-color: @navBarCommandRest;
         color: @baseHigh;
+        
+        &.win-pressed {
+            background-color: @navBarCommandPress;
+        }
     }
     
-    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened,
-    .win-navbarcommand-button.win-pressed,
-    .win-navbarcommand-splitbutton.win-pressed {
-        background-color: @navBarCommandPress;
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened {
+        background-color: @openSplitRest;
+        
+        &.win-pressed {
+            background-color: @openSplitPress;
+        }
     }
     
     .win-navbarcommand-button.win-keyboard:focus::before {
@@ -70,12 +80,18 @@
     .win-navbarcommand-button:hover,
     .win-navbarcommand-splitbutton:hover {
         background-color: @navBarCommandHover;
+        
+        &.win-pressed {
+            background-color: @navBarCommandPress;
+        }
     }
     
-    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover,
-    .win-navbarcommand-button.win-pressed:hover,
-    .win-navbarcommand-splitbutton.win-pressed:hover {
-        background-color: @navBarCommandPress;
+    .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover {
+        background-color: @openSplitHover;
+        
+        &.win-pressed {
+            background-color: @openSplitPress;
+        }
     }
 }
 
