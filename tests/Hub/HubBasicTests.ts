@@ -22,7 +22,8 @@ module HubTests {
     function InitTest(testHost, config) {
         var control = testHost.querySelector(".win-hub").winControl;
         LiveUnit.LoggingCore.logComment("Waiting for control...");
-        return WinJS.Promise.timeout(WinJS.UI._animationTimeAdjustment(500)).then(function () {
+
+        return HubUtils.waitForReady(control)().then(() => {
             LiveUnit.LoggingCore.logComment("Verifying...");
 
             HubUtils.verifyOrientation(control, config.orientation);
