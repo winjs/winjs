@@ -1259,7 +1259,6 @@ define([
                                     this._fireInvokeEvent(oldEntity, element);
                                 }
                             } else if (oldEntity.type !== _UI.ObjectType.groupHeader && ((eventObject.ctrlKey && keyCode === Key.enter) || keyCode === Key.space)) {
-                                // TODO: See if this actually selected before
                                 this._itemEventsHandler.toggleSelectionIfAllowed(oldEntity.index);
                                 site._changeFocus(oldEntity, true, ctrlKeyDown, false, true);
                             } else if (keyCode === Key.escape && site._selection.count() > 0) {

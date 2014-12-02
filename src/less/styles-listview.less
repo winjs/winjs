@@ -247,6 +247,11 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     left: 2px;
     right: auto;
 }
+.win-listview.win-selectionstylefilled .win-surface .win-itembox::after,
+.win-listview.win-selectionstylefilled .win-surface .win-selectioncheckmarkbackground,
+.win-listview.win-selectionstylefilled .win-surface .win-selectioncheckmark {
+    display: none;
+}
 .win-selectioncheckmark {
     position: absolute;
     margin: 0;
@@ -261,9 +266,13 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     right: auto;
     left: 0px;
 }
-.win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
-.win-itemcontainer.win-selectionmode.win-container .win-itembox::after,
-.win-listview .win-surface.win-selectionmode .win-itembox::after {
+.win-selectionstylefilled.win-container,
+.win-selectionstylefilled .win-container {
+    overflow: hidden;
+}
+.win-selectionstylefilled .win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
+.win-selectionstylefilled.win-selectionmode.win-itemcontainer.win-container .win-itembox::after,
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox::after {
     content: "";
     position: absolute;
     width: 18px;
@@ -273,38 +282,33 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     top: 2px;
     z-index: 3;
 }
-.win-rtl .win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
-.win-itemcontainer.win-rtl.win-selectionmode.win-container .win-itembox::after,
-.win-listview.win-rtl .win-surface.win-selectionmode .win-itembox::after {
+.win-selectionstylefilled .win-rtl .win-selectionmode .win-itemcontainer.win-container .win-itembox::after,
+.win-itemcontainer.win-selectionstylefilled.win-rtl.win-selectionmode.win-container .win-itembox::after,
+.win-listview.win-selectionstylefilled.win-rtl .win-surface.win-selectionmode .win-itembox::after {
     right: auto;
     left: 2px;
 }
-.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-itembox::after,
-.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-selectioncheckmarkbackground,
-.win-listview .win-vertical.win-selectionstylefilled .win-surface.win-listlayout .win-selectioncheckmark {
-    display: none;
-}
-.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-item {
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-item {
     animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     -webkit-animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: translate(40px, 0px);
 }
-.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-item {
+.win-listview.win-rtl.win-selectionstylefilled .win-surface.win-selectionmode .win-item {
     animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     -webkit-animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: translate(-40px, 0px);
 }
-.win-listview .win-vertical .win-surface.win-hidingselectionmode.win-listlayout .win-item {
+.win-listview.win-selectionstylefilled .win-surface.win-hidingselectionmode .win-item {
     animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     -webkit-animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: none;
 }
-.win-listview.win-rtl .win-vertical .win-surface.win-hideselectionmode.win-listlayout .win-item {
+.win-listview.win-rtl.win-selectionstylefilled .win-surface.win-hideselectionmode .win-item {
     animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     -webkit-animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: none;
 }
-.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox::after {
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox::after {
     left: 12px;
     right: auto;
     top: 50%;
@@ -314,11 +318,11 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     width: 16px;
     height: 16px;
 }
-.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox::after {
+.win-listview.win-selectionstylefilled.win-rtl .win-surface.win-selectionmode .win-itembox::after {
     left: auto;
     right: 12px;
 }
-.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmarkbackground {
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-selectioncheckmarkbackground {
     left: 12px;
     top: 50%;
     margin-top: -9px;
@@ -327,11 +331,11 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     width: 16px;
     height: 16px;
 }
-.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout  .win-selectioncheckmarkbackground {
+.win-listview.win-selectionstylefilled.win-rtl .win-surface.win-selectionmode  .win-selectioncheckmarkbackground {
     left: auto;
     right: 12px;
 }
-.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmark {
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-selectioncheckmark {
     left: 10px;
     top: 50%;
     margin-top: -11px;
@@ -339,15 +343,14 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     width: 14px;
     height: 14px;
 }
-.win-listview.win-rtl .win-vertical .win-surface.win-selectionmode.win-listlayout .win-selectioncheckmark {
+.win-listview.win-selectionstylefilled.win-rtl .win-surface.win-selectionmode .win-selectioncheckmark {
     left: 0;
     right: 10px;
 }
-.win-selectionmode .win-itemcontainer.win-container .win-itembox.win-selected::after,
-.win-itemcontainer.win-selectionmode.win-container .win-itembox.win-selected::after,
-.win-listview .win-surface.win-selectionmode .win-itembox.win-nonselectable::after,
-.win-listview .win-surface.win-selectionmode .win-itembox.win-selected::after,
-.win-listview .win-vertical .win-surface.win-selectionmode.win-listlayout .win-itembox.win-selected::after {
+.win-selectionmode .win-itemcontainer.win-selectionstylefilled.win-container .win-itembox.win-selected::after,
+.win-itemcontainer.win-selectionmode.win-selectionstylefilled.win-container .win-itembox.win-selected::after,
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox.win-nonselectable::after,
+.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox.win-selected::after {
     display: none;
 }
 .win-listview .win-progress {
