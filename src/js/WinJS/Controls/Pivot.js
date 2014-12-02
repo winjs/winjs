@@ -1132,6 +1132,7 @@ define([
                                 that._showPivotItem(item.element, goPrevious);
                             }
                         }
+
                         var recenterPromise;
                         if (zooming) {
                             if (!that._stoppedAndRecenteredSignal) {
@@ -1139,7 +1140,7 @@ define([
                             }
                             recenterPromise = that._stoppedAndRecenteredSignal.promise;
                         } else {
-                            recenterPromise = Promise.wrap();
+                            recenterPromise = (that._stoppedAndRecenteredSignal && that._stoppedAndRecenteredSignal.promise) || Promise.wrap();
                         }
                         Promise.join([that._slideHeadersAnimation, that._showPivotItemAnimation, that._hidePivotItemAnimation]).then(function () {
                             recenterPromise.then(function () {
@@ -1205,7 +1206,7 @@ define([
                                 this._stoppedAndRecenteredSignal = null;
                             }
                         });
-                    } else if (this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
+                    } else if (this._navMode !== Pivot._NavigationModes.api && this._currentManipulationState === MSManipulationEventStates.MS_MANIPULATION_STATE_INERTIA) {
                         var destinationX = ev.inertiaDestinationX;
                         if (+destinationX === destinationX) {
                             _Log.log && _Log.log('MSManipulation: inertiaDestinationX: ' + destinationX);
