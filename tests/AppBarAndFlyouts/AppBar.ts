@@ -2069,6 +2069,22 @@ module CorsicaTests {
             newRect = appBar.element.getBoundingClientRect();
             verifyPositionChanged(oldRect, newRect);
         }
+
+        testAppBarWithMenuLayoutCustomBackgrounColorPercolates() {
+            // Verifies that the background color of the entire AppBar changes when styling the appbar element.
+
+            var root = document.getElementById("appBarDiv");
+            var appBar = new WinJS.UI.AppBar(null, {layout: "menu"});
+            root.appendChild(appBar.element);
+
+            appBar.element.style.backgroundColor = "rgb(255, 100, 05)";
+            var appBarStyle = getComputedStyle(appBar.element),
+                toolBarStyle = getComputedStyle(appBar.element.querySelector(".win-toolbar"));
+
+            var msg = "AppBar menu layout's ToolBar element should match the color of the AppBar element";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, toolBarStyle.backgroundColor, msg);
+        }
     };
 }
 // register the object as a test class by passing in the name
