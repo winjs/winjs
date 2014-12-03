@@ -17,29 +17,24 @@
 .win-hub-viewport {
     height: 100%;
     width: 100%;
-    /* Allow win-hub-surface margin/padding right to work */
-    #flex > .display-flex();
-    #flex > .flex(0; 0; auto);
     -ms-scroll-snap-type: proximity;
 }
 .win-hub-horizontal .win-hub-viewport {
     overflow-x: auto;
     overflow-y: hidden;
+    white-space: nowrap;
 }
 .win-hub-vertical .win-hub-viewport {
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
-    #flex > .flex-direction(column);
 }
 .win-hub-surface {
-    #flex > .display-flex();
-    #flex > .flex(0; 0; auto);
+    display: inline-block;
 }
 .win-hub-vertical .win-hub-surface {
     width: 100%;
     padding: 15px 0;
-    #flex > .flex-direction(column);
 }
 .win-hub-horizontal .win-hub-surface {
     height: 100%;
@@ -48,9 +43,10 @@
 
 
 .win-hub-section {
-    #flex > .display-flex();
-    #flex > .flex-direction(column);
+    display: inline-block;
     padding: 0 40px;
+    vertical-align: top;
+    white-space: normal;
 }
 .win-hub-horizontal {
     .win-hub-section {
@@ -72,10 +68,10 @@
     }
 }
 .win-hub-section-header {
-    #flex > .flex(@shrink: 0);
     margin: 4px 0;
     font-size: 20pt;
     text-align: left;
+    height: 51px;
 
     .RTL({
         text-align: right;
@@ -116,7 +112,6 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
     outline: none;
 }
 .win-hub-section-header-content {
-    display: inline-block;
     #flex > .flex(@grow: 1);
 }
 .win-hub-section-header-chevron {
@@ -143,10 +138,13 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
     });
 }
 .win-hub-section-content {
-    #flex > .flex(@grow: 1);
 }
 .win-hub-horizontal .win-hub-section-content {
-    height: ~"calc(100% - 44px)";
+    // We want 44px of 'padding' between the bottom of section content and
+    // the bottom of the hub surface. 228px represents the 129px of margin
+    // above section header + 4px below + 51px of height of section header
+    // + the 44px.
+    height: ~"calc(100% - 228px)";
 }
 .win-hub-vertical .win-hub-section-content {
     width: 100%;
