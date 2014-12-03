@@ -11,6 +11,7 @@ import _ErrorFromName = require('../../Core/_ErrorFromName');
 import _Events = require('../../Core/_Events');
 import _Global = require('../../Core/_Global');
 import _Hoverable = require('../../Utilities/_Hoverable');
+import _LightDismissService = require('../../_LightDismissService');
 import Promise = require('../../Promise');
 import _Signal = require('../../_Signal');
 import _TransitionAnimation = require('../../Animations/_TransitionAnimation');
@@ -259,7 +260,13 @@ module States {
             interruptible(this, (ready) => {
                 return ready.then(() => {
                     options = options || {};
-
+                    
+                    this.splitView._dismissable = new _LightDismissService.LightDismissableElement({
+                        element: this.splitView._dom.paneWrapper,
+                        lightDismiss: () => {
+                            this.splitView.hidePane();
+                        }
+                    });
                     this.splitView._cachedHiddenPaneThickness = null;
 
                     this.splitView.paneHidden = true;
@@ -507,6 +514,7 @@ export class SplitView {
         panePlaceholder: HTMLElement; // Shouldn't have any margin, padding, or border.
         content: HTMLElement;
     };
+    _dismissable: _LightDismissService.ILightDismissable;
     _isShownMode: boolean; // Is ClassNames.paneShown present on the SplitView?
     _rtl: boolean;
     _cachedHiddenPaneThickness: IThickness;
@@ -698,7 +706,8 @@ export class SplitView {
             shownDisplayMode: undefined,
             panePlacement: undefined,
             panePlaceholderWidth: undefined,
-            panePlaceholderHeight: undefined
+            panePlaceholderHeight: undefined,
+            isOverlayShown: undefined
         };
     }
 
@@ -974,6 +983,7 @@ export class SplitView {
         panePlacement: string;
         panePlaceholderWidth: string;
         panePlaceholderHeight: string;
+        isOverlayShown: boolean;
     }
     _updateDomImpl(): void {
         var paneShouldBeFirst = this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.top;
@@ -1019,12 +1029,14 @@ export class SplitView {
             addClass(this._dom.root, shownDisplayModeClassMap[this.shownDisplayMode]);
             this._rendered.shownDisplayMode = this.shownDisplayMode;
         }
-
+        
+        var isOverlayShown = this._isShownMode && this.shownDisplayMode === ShownDisplayMode.overlay;
+        
         // panePlaceholder's purpose is to take up the amount of space occupied by the
         // hidden pane while the pane is shown in overlay mode. Without this, the content
         // would shift as the pane shows and hides in overlay mode.
         var width: string, height: string;
-        if (this._isShownMode && this.shownDisplayMode === ShownDisplayMode.overlay) {
+        if (isOverlayShown) {
             var hiddenPaneThickness = this._getHiddenPaneThickness();
             if (this._horizontal) {
                 width = hiddenPaneThickness.total + "px";
@@ -1043,6 +1055,15 @@ export class SplitView {
             style.height = height;
             this._rendered.panePlaceholderWidth = width;
             this._rendered.panePlaceholderHeight = height;
+        }
+        
+        if (this._rendered.isOverlayShown !== isOverlayShown) {
+            if (isOverlayShown) {
+                _LightDismissService.shown(this._dismissable);
+            } else {
+                _LightDismissService.hidden(this._dismissable);
+            }
+            this._rendered.isOverlayShown = isOverlayShown;
         }
     }
 }
