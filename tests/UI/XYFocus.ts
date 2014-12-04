@@ -72,7 +72,7 @@ module WinJSTests {
         return spinWait(() => w.document.activeElement === e);
     }
 
-    export class DirectionalFocusTests {
+    export class XYFocusTests {
         rootContainer: HTMLDivElement;
 
         setUp() {
@@ -80,19 +80,19 @@ module WinJSTests {
             this.rootContainer = document.createElement("div");
             this.rootContainer.style.position = "relative";
             document.body.appendChild(this.rootContainer);
-            WinJS.UI.DirectionalFocus.focusRoot = this.rootContainer;
+            WinJS.UI.XYFocus.focusRoot = this.rootContainer;
         }
 
         tearDown() {
             document.body.removeChild(highlightStyle);
             this.rootContainer.parentElement.removeChild(this.rootContainer);
             this.rootContainer = null;
-            WinJS.UI.DirectionalFocus.focusRoot = null;
-            WinJS.UI.DirectionalFocus.disableDirectionalFocus();
+            WinJS.UI.XYFocus.focusRoot = null;
+            WinJS.UI.XYFocus.disableXYFocus();
 
             // Clear event listeners
-            WinJS.UI.DirectionalFocus["_listeners"].focuschanging = [];
-            WinJS.UI.DirectionalFocus["_listeners"].focuschanged = [];
+            WinJS.UI.XYFocus["_listeners"].focuschanging = [];
+            WinJS.UI.XYFocus["_listeners"].focuschanged = [];
         }
 
         testFindNextFocusElement() {
@@ -101,32 +101,32 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            var target = WinJS.UI.DirectionalFocus.findNextFocusElement("left");
+            var target = WinJS.UI.XYFocus.findNextFocusElement("left");
             LiveUnit.Assert.areEqual(layout[2], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("right");
+            target = WinJS.UI.XYFocus.findNextFocusElement("right");
             LiveUnit.Assert.areEqual(layout[4], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("up");
+            target = WinJS.UI.XYFocus.findNextFocusElement("up");
             LiveUnit.Assert.areEqual(layout[1], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("down");
+            target = WinJS.UI.XYFocus.findNextFocusElement("down");
             LiveUnit.Assert.areEqual(layout[5], target);
         }
 
         testFindNextFocusElementWithReferenceElement() {
             var layout = createCrossLayout(this.rootContainer);
 
-            var target = WinJS.UI.DirectionalFocus.findNextFocusElement("left", { referenceElement: layout[4] });
+            var target = WinJS.UI.XYFocus.findNextFocusElement("left", { referenceElement: layout[4] });
             LiveUnit.Assert.areEqual(layout[3], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("right", { referenceElement: layout[2] });
+            target = WinJS.UI.XYFocus.findNextFocusElement("right", { referenceElement: layout[2] });
             LiveUnit.Assert.areEqual(layout[3], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("up", { referenceElement: layout[5] });
+            target = WinJS.UI.XYFocus.findNextFocusElement("up", { referenceElement: layout[5] });
             LiveUnit.Assert.areEqual(layout[3], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("down", { referenceElement: layout[1] });
+            target = WinJS.UI.XYFocus.findNextFocusElement("down", { referenceElement: layout[1] });
             LiveUnit.Assert.areEqual(layout[3], target);
         }
 
@@ -136,7 +136,7 @@ module WinJSTests {
             document.body.focus();
             LiveUnit.Assert.areEqual(document.body, document.activeElement);
 
-            var target = WinJS.UI.DirectionalFocus.findNextFocusElement("right");
+            var target = WinJS.UI.XYFocus.findNextFocusElement("right");
             LiveUnit.Assert.isNotNull(target);
         }
 
@@ -146,19 +146,19 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            var target = WinJS.UI.DirectionalFocus.moveFocus("left");
+            var target = WinJS.UI.XYFocus.moveFocus("left");
             LiveUnit.Assert.areEqual(document.activeElement, target);
             LiveUnit.Assert.areEqual(layout[2], document.activeElement);
 
-            target = WinJS.UI.DirectionalFocus.moveFocus("right");
+            target = WinJS.UI.XYFocus.moveFocus("right");
             LiveUnit.Assert.areEqual(document.activeElement, target);
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            target = WinJS.UI.DirectionalFocus.moveFocus("up");
+            target = WinJS.UI.XYFocus.moveFocus("up");
             LiveUnit.Assert.areEqual(document.activeElement, target);
             LiveUnit.Assert.areEqual(layout[1], document.activeElement);
 
-            target = WinJS.UI.DirectionalFocus.moveFocus("down");
+            target = WinJS.UI.XYFocus.moveFocus("down");
             LiveUnit.Assert.areEqual(document.activeElement, target);
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
@@ -175,27 +175,27 @@ module WinJSTests {
             left[3].focus();
             LiveUnit.Assert.areEqual(left[3], document.activeElement);
 
-            WinJS.UI.DirectionalFocus.moveFocus("right");
+            WinJS.UI.XYFocus.moveFocus("right");
             LiveUnit.Assert.areEqual(left[4], document.activeElement);
 
             // Moving right should NOT move out of the left container
-            var target = WinJS.UI.DirectionalFocus.moveFocus("right", { focusRoot: left[0] });
+            var target = WinJS.UI.XYFocus.moveFocus("right", { focusRoot: left[0] });
             LiveUnit.Assert.areEqual(left[4], document.activeElement);
             LiveUnit.Assert.isNull(target);
 
             // Try the same as above using global focus root settings
-            WinJS.UI.DirectionalFocus.focusRoot = left[0];
-            target = WinJS.UI.DirectionalFocus.moveFocus("right");
+            WinJS.UI.XYFocus.focusRoot = left[0];
+            target = WinJS.UI.XYFocus.moveFocus("right");
             LiveUnit.Assert.areEqual(left[4], document.activeElement);
             LiveUnit.Assert.isNull(target);
 
             // Focus should move across containers w/o focus root settings
-            WinJS.UI.DirectionalFocus.focusRoot = null;
-            target = WinJS.UI.DirectionalFocus.moveFocus("right");
+            WinJS.UI.XYFocus.focusRoot = null;
+            target = WinJS.UI.XYFocus.moveFocus("right");
             LiveUnit.Assert.areEqual(right[2], document.activeElement);
         }
 
-        testDirectionalFocusHistory() {
+        testXYFocusHistory() {
             /**
              * ??????????????? ??????????????? 
              * ?      1      ? ?             ?
@@ -220,20 +220,20 @@ module WinJSTests {
             // Move focus left from 3
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
-            WinJS.UI.DirectionalFocus.moveFocus("left");
+            WinJS.UI.XYFocus.moveFocus("left");
             LiveUnit.Assert.areEqual(layout[2], document.activeElement);
 
             // Move focus right from 1, then left and we should end up at 1 again
             layout[1].focus();
-            WinJS.UI.DirectionalFocus._dFocus("right");
+            WinJS.UI.XYFocus._dFocus("right");
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
-            WinJS.UI.DirectionalFocus._dFocus("left");
+            WinJS.UI.XYFocus._dFocus("left");
             LiveUnit.Assert.areEqual(layout[1], document.activeElement);
         }
 
-        testPreventDirectionalFocus() {
+        testPreventXYFocus() {
             var eventReceived = false;
-            WinJS.UI.DirectionalFocus.addEventListener("focuschanging", (e: WinJS.UI.DirectionalFocus.DirectionalFocusEvent) => {
+            WinJS.UI.XYFocus.addEventListener("focuschanging", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(layout[1], e.detail.nextFocusElement);
                 e.preventDefault();
                 eventReceived = true;
@@ -244,7 +244,7 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            WinJS.UI.DirectionalFocus.moveFocus("up");
+            WinJS.UI.XYFocus.moveFocus("up");
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
             LiveUnit.Assert.isTrue(eventReceived);
         }
@@ -259,31 +259,31 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            var target = WinJS.UI.DirectionalFocus.findNextFocusElement("up");
+            var target = WinJS.UI.XYFocus.findNextFocusElement("up");
             LiveUnit.Assert.areEqual(layout[5], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("down");
+            target = WinJS.UI.XYFocus.findNextFocusElement("down");
             LiveUnit.Assert.areEqual(layout[1], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("left");
+            target = WinJS.UI.XYFocus.findNextFocusElement("left");
             LiveUnit.Assert.areEqual(layout[4], target);
 
-            target = WinJS.UI.DirectionalFocus.findNextFocusElement("right");
+            target = WinJS.UI.XYFocus.findNextFocusElement("right");
             LiveUnit.Assert.areEqual(layout[2], target);
         }
 
-        testDirectionalFocusWithDisabledElements() {
+        testXYFocusWithDisabledElements() {
             var layout = createCrossLayout(this.rootContainer);
             layout[3].disabled = true;
 
             layout[5].focus();
             LiveUnit.Assert.areEqual(layout[5], document.activeElement);
 
-            WinJS.UI.DirectionalFocus.moveFocus("up");
+            WinJS.UI.XYFocus.moveFocus("up");
             LiveUnit.Assert.areEqual(layout[1], document.activeElement);
         }
 
-        testDirectionalFocusEnabled(complete) {
+        testXYFocusEnabled(complete) {
             function doKeydown(targetElement: HTMLElement, keyCode: number, expNextEl: HTMLElement) {
                 expectedKeyCode = keyCode;
                 expectedNextElement = expNextEl;
@@ -293,7 +293,7 @@ module WinJSTests {
             var numEventsReceived = 0;
             var expectedKeyCode = -1;
             var expectedNextElement: HTMLElement;
-            WinJS.UI.DirectionalFocus.addEventListener("focuschanging", (e: WinJS.UI.DirectionalFocus.DirectionalFocusEvent) => {
+            WinJS.UI.XYFocus.addEventListener("focuschanging", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(expectedKeyCode, e.detail.keyCode);
                 LiveUnit.Assert.areEqual(expectedNextElement, e.detail.nextFocusElement);
                 numEventsReceived++;
@@ -306,10 +306,10 @@ module WinJSTests {
 
             doKeydown(layout[3], WinJS.Utilities.Key.upArrow, layout[1]);
             setTimeout(() => {
-                // Make sure DirectionalFocus did not move focus w/o being enabled
+                // Make sure XYFocus did not move focus w/o being enabled
                 LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-                WinJS.UI.DirectionalFocus.enableDirectionalFocus();
+                WinJS.UI.XYFocus.enableXYFocus();
 
                 doKeydown(layout[3], WinJS.Utilities.Key.upArrow, layout[1]);
                 waitForFocus(window, layout[1])
@@ -323,8 +323,8 @@ module WinJSTests {
                         doKeydown(layout[2], WinJS.Utilities.Key.rightArrow, layout[3]);
                         return waitForFocus(window, layout[3]);
                     }).then(() => {
-                        // Disable DirectionalFocus and check that subsequent keypresses don't move focus
-                        WinJS.UI.DirectionalFocus.disableDirectionalFocus();
+                        // Disable XYFocus and check that subsequent keypresses don't move focus
+                        WinJS.UI.XYFocus.disableXYFocus();
                         doKeydown(layout[3], WinJS.Utilities.Key.upArrow, layout[1]);
                         return WinJS.Promise.timeout(1000);
                     }).done(() => {
@@ -334,7 +334,7 @@ module WinJSTests {
             }, 1000);
         }
 
-        testDirectionalFocusWithCustomKeyMappings(complete) {
+        testXYFocusWithCustomKeyMappings(complete) {
             function doKeydown(targetElement: HTMLElement, keyCode: number, expNextEl: HTMLElement) {
                 expectedKeyCode = keyCode;
                 expectedNextElement = expNextEl;
@@ -344,17 +344,17 @@ module WinJSTests {
             var numEventsReceived = 0;
             var expectedKeyCode = -1;
             var expectedNextElement: HTMLElement;
-            WinJS.UI.DirectionalFocus.addEventListener("focuschanging", (e: WinJS.UI.DirectionalFocus.DirectionalFocusEvent) => {
+            WinJS.UI.XYFocus.addEventListener("focuschanging", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(expectedKeyCode, e.detail.keyCode);
                 LiveUnit.Assert.areEqual(expectedNextElement, e.detail.nextFocusElement);
                 numEventsReceived++;
             });
 
-            WinJS.UI.DirectionalFocus.enableDirectionalFocus();
-            WinJS.UI.DirectionalFocus.directionalFocusMappings["up"].push(WinJS.Utilities.Key.w);
-            WinJS.UI.DirectionalFocus.directionalFocusMappings["down"].push(WinJS.Utilities.Key.s);
-            WinJS.UI.DirectionalFocus.directionalFocusMappings["left"].push(WinJS.Utilities.Key.a);
-            WinJS.UI.DirectionalFocus.directionalFocusMappings["right"].push(WinJS.Utilities.Key.d);
+            WinJS.UI.XYFocus.enableXYFocus();
+            WinJS.UI.XYFocus.keyCodeMap["up"].push(WinJS.Utilities.Key.w);
+            WinJS.UI.XYFocus.keyCodeMap["down"].push(WinJS.Utilities.Key.s);
+            WinJS.UI.XYFocus.keyCodeMap["left"].push(WinJS.Utilities.Key.a);
+            WinJS.UI.XYFocus.keyCodeMap["right"].push(WinJS.Utilities.Key.d);
             var layout = createCrossLayout(this.rootContainer);
 
             layout[3].focus();
@@ -378,8 +378,8 @@ module WinJSTests {
         }
 
         testFocusChangedEvent(complete) {
-            WinJS.UI.DirectionalFocus.enableDirectionalFocus();
-            WinJS.UI.DirectionalFocus.addEventListener("focuschanged", (e: WinJS.UI.DirectionalFocus.DirectionalFocusEvent) => {
+            WinJS.UI.XYFocus.enableXYFocus();
+            WinJS.UI.XYFocus.addEventListener("focuschanged", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(layout[3], e.detail.previousFocusElement);
                 LiveUnit.Assert.areEqual(layout[1], document.activeElement);
                 LiveUnit.Assert.areEqual(WinJS.Utilities.Key.upArrow, e.detail.keyCode);
@@ -394,7 +394,7 @@ module WinJSTests {
             Helper.keydown(layout[3], WinJS.Utilities.Key.upArrow);
         }
 
-        testDirectionalFocusInIFrame(complete) {
+        testXYFocusInIFrame(complete) {
             /**
              *        1 2
              *      ???????
@@ -420,7 +420,7 @@ module WinJSTests {
 
             ];
             var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "iframe", 175, 175);
-            iframeEl.src = "DirectionalFocusPage.html";
+            iframeEl.src = "XYFocusPage.html";
             var iframeWin = (<HTMLIFrameElement>iframeEl).contentWindow;
             var iframeLayout: Array<HTMLButtonElement>;
 
@@ -432,76 +432,76 @@ module WinJSTests {
                 layout[1].focus();
                 LiveUnit.Assert.areEqual(layout[1], document.activeElement);
 
-                WinJS.UI.DirectionalFocus._dFocus("down");
+                WinJS.UI.XYFocus._dFocus("down");
                 LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                 waitForFocus(iframeWin, iframeLayout[0])
                     .then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("right");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("right");
                         return waitForFocus(iframeWin, iframeLayout[1]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("up");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("up");
                         return waitForFocus(window, layout[2]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("down");
+                        WinJS.UI.XYFocus._dFocus("down");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[1]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("right");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("right");
                         return waitForFocus(window, layout[3]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("left");
+                        WinJS.UI.XYFocus._dFocus("left");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[1]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("down");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("down");
                         return waitForFocus(iframeWin, iframeLayout[3]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("right");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("right");
                         return waitForFocus(window, layout[4]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("left");
+                        WinJS.UI.XYFocus._dFocus("left");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[3]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("down");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("down");
                         return waitForFocus(window, layout[5]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("up");
+                        WinJS.UI.XYFocus._dFocus("up");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[3]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("left");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("left");
                         return waitForFocus(iframeWin, iframeLayout[2]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("down");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("down");
                         return waitForFocus(window, layout[6]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("up");
+                        WinJS.UI.XYFocus._dFocus("up");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[2]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("left");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("left");
                         return waitForFocus(window, layout[7]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("right");
+                        WinJS.UI.XYFocus._dFocus("right");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[2]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("up");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("up");
                         return waitForFocus(iframeWin, iframeLayout[0]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("left");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("left");
                         return waitForFocus(window, layout[8]);
                     }).then(() => {
-                        WinJS.UI.DirectionalFocus._dFocus("right");
+                        WinJS.UI.XYFocus._dFocus("right");
                         LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
                         return waitForFocus(iframeWin, iframeLayout[0]);
                     }).then(() => {
-                        iframeWin["WinJS"].UI.DirectionalFocus._dFocus("up");
+                        iframeWin["WinJS"].UI.XYFocus._dFocus("up");
                         return waitForFocus(window, layout[1]);
                     }).done(complete);
             });
         }
     }
 }
-LiveUnit.registerTestClass("WinJSTests.DirectionalFocusTests");
+LiveUnit.registerTestClass("WinJSTests.XYFocusTests");

@@ -18,7 +18,7 @@ var ClassNames = {
 };
 
 var CrossDomainMessageConstants = {
-    messageDataProperty: "msWinJSDFocusControlMessage",
+    messageDataProperty: "msWinJSXYFocusControlMessage",
 
     register: "register",
     unregister: "unregister",
@@ -67,7 +67,7 @@ interface FindNextFocusResult {
     usedOverride: boolean;
 }
 
-export interface DirectionalFocusOptions {
+export interface XYFocusOptions {
     /**
      * The focus scope, only children of this element are considered in the calculation.
     **/
@@ -99,7 +99,7 @@ export interface IRect {
     width: number;
 }
 
-export var directionalFocusMappings: { [key: string]: number[] } = {
+export var keyCodeMap: { [key: string]: number[] } = {
     left: [_ElementUtilities.Key.leftArrow],
     right: [_ElementUtilities.Key.rightArrow],
     up: [_ElementUtilities.Key.upArrow],
@@ -107,22 +107,22 @@ export var directionalFocusMappings: { [key: string]: number[] } = {
 };
 export var focusRoot: HTMLElement;
 
-export function findNextFocusElement(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: string, options?: DirectionalFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: string, options?: DirectionalFocusOptions): HTMLElement {
+export function findNextFocusElement(direction: "left", options?: XYFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "right", options?: XYFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "up", options?: XYFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: "down", options?: XYFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: string, options?: XYFocusOptions): HTMLElement;
+export function findNextFocusElement(direction: string, options?: XYFocusOptions): HTMLElement {
     var result = _findNextFocusElementInternal(direction, options);
     return result ? result.target : null;
 }
 
-export function moveFocus(direction: "left", options?: DirectionalFocusOptions): HTMLElement;
-export function moveFocus(direction: "right", options?: DirectionalFocusOptions): HTMLElement;
-export function moveFocus(direction: "up", options?: DirectionalFocusOptions): HTMLElement;
-export function moveFocus(direction: "down", options?: DirectionalFocusOptions): HTMLElement;
-export function moveFocus(direction: string, options?: DirectionalFocusOptions): HTMLElement;
-export function moveFocus(direction: string, options?: DirectionalFocusOptions): HTMLElement {
+export function moveFocus(direction: "left", options?: XYFocusOptions): HTMLElement;
+export function moveFocus(direction: "right", options?: XYFocusOptions): HTMLElement;
+export function moveFocus(direction: "up", options?: XYFocusOptions): HTMLElement;
+export function moveFocus(direction: "down", options?: XYFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElement;
+export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElement {
     var result = findNextFocusElement(direction, options);
     if (result) {
         var previousFocusElement = _Global.document.activeElement;
@@ -134,14 +134,14 @@ export function moveFocus(direction: string, options?: DirectionalFocusOptions):
     }
 }
 
-export function enableDirectionalFocus() {
+export function enableXYFocus() {
     if (!_dFocusEnabled) {
         _Global.document.addEventListener("keydown", _handleKeyEvent);
         _dFocusEnabled = true;
     }
 }
 
-export function disableDirectionalFocus() {
+export function disableXYFocus() {
     if (_dFocusEnabled) {
         _Global.document.removeEventListener("keydown", _handleKeyEvent);
         _dFocusEnabled = false;
@@ -156,7 +156,7 @@ var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
 var _afEnabledFrames: Window[] = [];
 function _dFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
-    // If focus has moved since the last DirectionalFocus movement, scrolling occured, or an explicit
+    // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
     if (referenceRect || _Global.document.activeElement !== _lastTarget) {
         _historyRect = null;
@@ -281,7 +281,7 @@ function _dFocus(direction: string, keyCode: number, referenceRect?: IRect): boo
     }
 }
 
-function _findNextFocusElementInternal(direction: string, options?: DirectionalFocusOptions): FindNextFocusResult {
+function _findNextFocusElementInternal(direction: string, options?: XYFocusOptions): FindNextFocusResult {
     options = options || {};
     options.focusRoot = options.focusRoot || focusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
@@ -492,7 +492,7 @@ function _findNextFocusElementInternal(direction: string, options?: DirectionalF
         }
 
         if (elementTagName === "IFRAME" && _afEnabledFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
-            // Skip IFRAMEs without compatible DirectionalFocus implementation
+            // Skip IFRAMEs without compatible XYFocus implementation
             return false;
         }
 
@@ -557,11 +557,11 @@ function _handleKeyEvent(e: KeyboardEvent): void {
         return;
     }
 
-    var keys = Object.keys(directionalFocusMappings);
+    var keys = Object.keys(keyCodeMap);
     for (var i = 0; i < keys.length; i++) {
         // Note: key is 'left', 'right', 'up', or 'down'
         var key = keys[i];
-        var keyMappings = directionalFocusMappings[key];
+        var keyMappings = keyCodeMap[key];
         if (keyMappings.indexOf(e.keyCode) >= 0) {
             if (_dFocus(key, e.keyCode)) {
                 e.preventDefault();
@@ -591,9 +591,9 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
 
         case CrossDomainMessageConstants.dFocusEnter:
             // The coordinates stored in data.refRect are already in this frame's coordinate system.
-            // When we get this message we will force-enable DirectionalFocus to support scenarios where
-            // websites running WinJS are put into an IFRAME and the parent frame has DirectionalFocus enabled.
-            enableDirectionalFocus();
+            // When we get this message we will force-enable XYFocus to support scenarios where
+            // websites running WinJS are put into an IFRAME and the parent frame has XYFocus enabled.
+            enableXYFocus();
             _dFocus(data.direction, -1, data.referenceRect);
             break;
 
@@ -617,7 +617,7 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
 
 _Global.document.addEventListener("DOMContentLoaded", () => {
     if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
-        enableDirectionalFocus();
+        enableXYFocus();
     }
 
     // If we are running within an iframe, we send a registration message to the parent window  
@@ -634,7 +634,7 @@ _Global.document.addEventListener("DOMContentLoaded", () => {
 
 // Publish to WinJS namespace
 var toPublish = {
-    directionalFocusMappings: directionalFocusMappings,
+    keyCodeMap: keyCodeMap,
     focusRoot: {
         get: function () {
             return focusRoot;
@@ -644,8 +644,8 @@ var toPublish = {
         }
     },
 
-    enableDirectionalFocus: enableDirectionalFocus,
-    disableDirectionalFocus: disableDirectionalFocus,
+    enableXYFocus: enableXYFocus,
+    disableXYFocus: disableXYFocus,
     findNextFocusElement: findNextFocusElement,
     moveFocus: moveFocus,
 
@@ -654,4 +654,4 @@ var toPublish = {
 toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
 toPublish["_listeners"] = {};
 var eventSrc = <_Events.eventMixin><any>toPublish;
-_Base.Namespace.define("WinJS.UI.DirectionalFocus", toPublish);
+_Base.Namespace.define("WinJS.UI.XYFocus", toPublish);
