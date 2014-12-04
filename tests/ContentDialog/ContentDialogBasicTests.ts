@@ -95,16 +95,16 @@ module ContentDialogTests {
 
         var beforeHideReason;
         dialog.onbeforehide = function (eventObject) {
-            beforeHideReason = eventObject.detail.reason;
+            beforeHideReason = eventObject.detail.result;
         };
         var afterHideReason;
         dialog.onafterhide = function (eventObject) {
-            afterHideReason = eventObject.detail.reason;
+            afterHideReason = eventObject.detail.result;
         };
 
         var showReason;
         dialog.show().then(function (hideInfo) {
-            showReason = hideInfo.reason;
+            showReason = hideInfo.result;
         });
         hideAction(dialog);
         LiveUnit.Assert.areEqual(expectedReason, beforeHideReason,

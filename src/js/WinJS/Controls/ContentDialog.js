@@ -69,17 +69,17 @@ define([
                 get controlDisposed() { return "Cannot interact with the control after it has been disposed"; },
                 get contentDialogAlreadyShowing() { return "Cannot show a ContentDialog if there is already a ContentDialog that is showing"; }
             };
-            var DismissalReason = {
-                /// <field locid="WinJS.UI.ContentDialog.none" helpKeyword="WinJS.UI.ContentDialog.none">
+            var DismissalResult = {
+                /// <field locid="WinJS.UI.ContentDialog.DismissalResult.none" helpKeyword="WinJS.UI.ContentDialog.DismissalResult.none">
                 /// The dialog was dismissed without the user selecting any of the commands. The user may have
                 /// dismissed the dialog by hitting the escape key or pressing the hardware back button.
                 /// </field>
                 none: "none",
-                /// <field locid="WinJS.UI.ContentDialog.primary" helpKeyword="WinJS.UI.ContentDialog.primary">
+                /// <field locid="WinJS.UI.ContentDialog.DismissalResult.primary" helpKeyword="WinJS.UI.ContentDialog.DismissalResult.primary">
                 /// The user dismissed the dialog by pressing the primary command.
                 /// </field>
                 primary: "primary",
-                /// <field locid="WinJS.UI.ContentDialog.secondary" helpKeyword="WinJS.UI.ContentDialog.secondary">
+                /// <field locid="WinJS.UI.ContentDialog.DismissalResult.secondary" helpKeyword="WinJS.UI.ContentDialog.DismissalResult.secondary">
                 /// The user dismissed the dialog by pressing the secondary command.
                 /// </field>
                 secondary: "secondary"
@@ -264,9 +264,9 @@ define([
             //     // ContentDialog's public API surface
             //     hidden: boolean;
             //     show();
-            //     hide(reason);
+            //     hide(dismissalResult);
             //     // Events
-            //     onCommandClicked(reason);
+            //     onCommandClicked(dismissalResult);
             //     onInputPaneShown(eventObject);
             //     onInputPaneHidden();
             //     // Provided by _setState for use within the state
@@ -278,7 +278,7 @@ define([
                 Init: _Base.Class.define(null, {
                     name: "Init",
                     hidden: true,
-                    enter: function ContentDialog_InitState_enter(reason) {
+                    enter: function ContentDialog_InitState_enter() {
                         this.dialog._dismissedSignal = null; // The signal will be created on demand when show() is called
                         this.dialog._setState(States.Hidden, false);
                     },
@@ -381,15 +381,15 @@ define([
                     exit: cancelInterruptibles,
                     show: function ContentDialog_ShowingState_show() {
                         if (this._pendingHide) {
-                            var reason = this._pendingHide.reason;
+                            var dismissalResult = this._pendingHide.dismissalResult;
                             this._pendingHide = null;
-                            return this.dialog._resetDismissalPromise(reason, new _Signal()).promise;
+                            return this.dialog._resetDismissalPromise(dismissalResult, new _Signal()).promise;
                         } else {
                             return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                         }
                     },
-                    hide: function ContentDialog_ShowingState_hide(reason) {
-                        this._pendingHide = { reason: reason };
+                    hide: function ContentDialog_ShowingState_hide(dismissalResult) {
+                        this._pendingHide = { dismissalResult: dismissalResult };
                     },
                     onCommandClicked: _,
                     onInputPaneShown: onInputPaneShown,
@@ -401,18 +401,18 @@ define([
                     hidden: false,
                     enter: function ContentDialog_ShownState_enter(pendingHide) {
                          if (pendingHide) {
-                             this.hide(pendingHide.reason);
+                             this.hide(pendingHide.dismissalResult);
                          }
                     },
                     exit: _,
                     show: function ContentDialog_ShownState_show() {
                         return Promise.wrapError(new _ErrorFromName("WinJS.UI.ContentDialog.ContentDialogAlreadyShowing", Strings.contentDialogAlreadyShowing));
                     },
-                    hide: function ContentDialog_ShownState_hide(reason) {
-                        this.dialog._setState(States.BeforeHide, reason);
+                    hide: function ContentDialog_ShownState_hide(dismissalResult) {
+                        this.dialog._setState(States.BeforeHide, dismissalResult);
                     },
-                    onCommandClicked: function ContentDialog_ShownState_onCommandClicked(reason) {
-                        this.hide(reason);
+                    onCommandClicked: function ContentDialog_ShownState_onCommandClicked(dismissalResult) {
+                        this.hide(dismissalResult);
                     },
                     onInputPaneShown: onInputPaneShown,
                     onInputPaneHidden: onInputPaneHidden
@@ -421,13 +421,13 @@ define([
                 BeforeHide: _Base.Class.define(null, {
                     name: "BeforeHide",
                     hidden: false,
-                    enter: function ContentDialog_BeforeHideState_enter(reason) {
+                    enter: function ContentDialog_BeforeHideState_enter(dismissalResult) {
                         interruptible(this, function (that, ready) {
                             return ready.then(function () {
-                                return that.dialog._fireBeforeHide(reason); // Give opportunity for chain to be canceled when calling into app code
+                                return that.dialog._fireBeforeHide(dismissalResult); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function (shouldHide) {
                                 if (shouldHide) {
-                                    that.dialog._setState(States.Hiding, reason);
+                                    that.dialog._setState(States.Hiding, dismissalResult);
                                 } else {
                                     that.dialog._setState(States.Shown, null);
                                 }
@@ -451,18 +451,18 @@ define([
                             return !this._showIsPending;
                         }
                     },
-                    enter: function ContentDialog_HidingState_enter(reason) {
+                    enter: function ContentDialog_HidingState_enter(dismissalResult) {
                         interruptible(this, function (that, ready) {
                             return ready.then(function () {
                                 that._showIsPending = false;
-                                that.dialog._resetDismissalPromise(reason, null); // Give opportunity for chain to be canceled when calling into app code
+                                that.dialog._resetDismissalPromise(dismissalResult, null); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
                                 return that.dialog._playExitAnimation();
                             }).then(function () {
                                 that.dialog._removeExternalListeners();
                                 _ElementUtilities.removeClass(that.dialog._dom.root, ClassNames._visible);
                                 that.dialog._clearInputPaneRendering();
-                                that.dialog._fireAfterHide(reason); // Give opportunity for chain to be canceled when calling into app code
+                                that.dialog._fireAfterHide(dismissalResult); // Give opportunity for chain to be canceled when calling into app code
                             }).then(function () {
                                 that.dialog._setState(States.Hidden, that._showIsPending);
                             });
@@ -478,10 +478,10 @@ define([
                             return this.dialog._dismissedSignal.promise;
                         }
                     },
-                    hide: function ContentDialog_HidingState_hide(reason) {
+                    hide: function ContentDialog_HidingState_hide(dismissalResult) {
                         if (this._showIsPending) {
                             this._showIsPending = false;
-                            this.dialog._resetDismissalPromise(reason, null);
+                            this.dialog._resetDismissalPromise(dismissalResult, null);
                         }
                     },
                     onCommandClicked: _,
@@ -680,7 +680,7 @@ define([
                     /// </summary>
                     /// <returns type="WinJS.Promise" locid="WinJS.UI.ContentDialog.show_returnValue">
                     /// A promise which is successfully fulfilled when the dialog is dismissed. The
-                    /// completion value indicates the reason that the dialog was dismissed. This may
+                    /// completion value indicates the dialog's dismissal result. This may
                     /// be 'primary', 'secondary', 'none', or whatever custom value was passed to hide.
                     /// If this ContentDialog cannot be shown because a ContentDialog is already showing
                     /// or the ContentDialog is disposed, then the return value is a promise which is in
@@ -691,17 +691,17 @@ define([
                     return this._state.show();
                 },
 
-                hide: function ContentDialog_hide(reason) {
+                hide: function ContentDialog_hide(result) {
                     /// <signature helpKeyword="WinJS.UI.ContentDialog.hide">
                     /// <summary locid="WinJS.UI.ContentDialog.hide">
                     /// Hides the ContentDialog.
                     /// </summary>
-                    /// <param name="reason" locid="WinJS.UI.ContentDialog.hide_p:reason">
+                    /// <param name="result" locid="WinJS.UI.ContentDialog.hide_p:result">
                     /// A value indicating why the dialog is being hidden. The promise returned
                     /// by show will be fulfilled with this value.
                     /// </param>
                     /// </signature>
-                    this._state.hide(reason === undefined ? DismissalReason.none : reason);
+                    this._state.hide(result === undefined ? DismissalResult.none : result);
                 },
 
                 _initializeDom: function ContentDialog_initializeDom(root) {
@@ -763,8 +763,8 @@ define([
                     dom.root.addEventListener("click", this._onClick.bind(this));
                     _ElementUtilities._addEventListener(dom.startBodyTab, "focusin", this._onStartBodyTabFocusIn.bind(this));
                     _ElementUtilities._addEventListener(dom.endBodyTab, "focusin", this._onEndBodyTabFocusIn.bind(this));
-                    dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalReason.primary));
-                    dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalReason.secondary));
+                    dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalResult.primary));
+                    dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalResult.secondary));
                 },
 
                 _updateCommandsUI: function ContentDialog_updateCommandsUI() {
@@ -815,8 +815,8 @@ define([
                     }
                 },
 
-                _onCommandClicked: function ContentDialog_onCommandClicked(reason) {
-                    this._state.onCommandClicked(reason);
+                _onCommandClicked: function ContentDialog_onCommandClicked(dismissalResult) {
+                    this._state.onCommandClicked(dismissalResult);
                 },
 
                 _onPointerDown: function ContentDialog_onPointerDown(eventObject) {
@@ -857,7 +857,7 @@ define([
                         if (eventObject.keyCode === _ElementUtilities.Key.tab) {
                             this._updateTabIndices();
                         } else if (eventObject.keyCode === _ElementUtilities.Key.escape) {
-                            this.hide(DismissalReason.none);
+                            this.hide(DismissalResult.none);
                             eventObject.preventDefault();
                             eventObject.stopImmediatePropagation();
                         } else if (!this._elementInDialog(_Global.document.activeElement)) {
@@ -892,7 +892,7 @@ define([
 
                 _onBackClick: function ContentDialog_onBackClick(eventObject) {
                     if (this._isTopLevel) {
-                        this.hide(DismissalReason.none);
+                        this.hide(DismissalResult.none);
                         eventObject.preventDefault();
                     }
                 },
@@ -927,10 +927,10 @@ define([
                 },
 
                 // Calls into arbitrary app code
-                _resetDismissalPromise: function ContentDialog_resetDismissalPromise(reason, newSignal) {
+                _resetDismissalPromise: function ContentDialog_resetDismissalPromise(dismissalResult, newSignal) {
                     var dismissedSignal = this._dismissedSignal;
                     var newDismissedSignal = this._dismissedSignal = newSignal;
-                    dismissedSignal.complete({ reason: reason });
+                    dismissedSignal.complete({ result: dismissalResult });
                     return newDismissedSignal;
                 },
 
@@ -961,17 +961,17 @@ define([
                 },
 
                 // Calls into arbitrary app code
-                _fireBeforeHide: function ContentDialog_fireBeforeHide(reason) {
+                _fireBeforeHide: function ContentDialog_fireBeforeHide(dismissalResult) {
                     return this._fireEvent(EventNames.beforeHide, {
-                        detail: { reason: reason },
+                        detail: { result: dismissalResult },
                         cancelable: true
                     });
                 },
 
                 // Calls into arbitrary app code
-                _fireAfterHide: function ContentDialog_fireAfterHide(reason) {
+                _fireAfterHide: function ContentDialog_fireAfterHide(dismissalResult) {
                     this._fireEvent(EventNames.afterHide, {
-                        detail: { reason: reason }
+                        detail: { result: dismissalResult }
                     });
                 },
 
@@ -1063,10 +1063,10 @@ define([
                     _ElementUtilities._focusFirstFocusableElement(this._dom.content) || this._dom.dialog.focus();
                 }
             }, {
-                /// <field locid="WinJS.UI.ContentDialog.DismissalReason" helpKeyword="WinJS.UI.ContentDialog.DismissalReason">
-                /// Specifies the reason that the ContentDialog was dismissed.
+                /// <field locid="WinJS.UI.ContentDialog.DismissalResult" helpKeyword="WinJS.UI.ContentDialog.DismissalResult">
+                /// Specifies the result of dismissing the ContentDialog.
                 /// </field>
-                DismissalReason: DismissalReason,
+                DismissalResult: DismissalResult,
 
                 _ClassNames: ClassNames
             });

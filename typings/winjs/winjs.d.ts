@@ -4085,6 +4085,154 @@ declare module WinJS.UI {
         //#endregion Properties
 
     }
+    
+    /**
+     * Data associated with hiding a dialog.
+    **/
+    interface ContentDialogHideInfo {
+        /***
+         * The dialog's dismissal result. May be 'primary', 'secondary', 'none', or whatever custom value was passed to hide.
+        **/
+        result: string
+    }
+    
+    /**
+     * Event object associated with hiding a dialog.
+    **/
+    interface ContentDialogHideEvent extends Event {
+        detail: ContentDialogHideInfo
+    }
+    
+    /**
+     * Displays a modal dialog which can display arbitrary HTML content.
+    **/
+    class ContentDialog {
+        /**
+         * Specifies the result of dismissing the ContentDialog.
+        **/
+        static DismissalResult: {
+            /**
+              * The dialog was dismissed without the user selecting any of the commands. The user may have dismissed the dialog by hitting the escape key or pressing the hardware back button.
+            **/
+            none: string;
+            /**
+             * The user dismissed the dialog by pressing the primary command.
+            **/
+            primary: string;
+            /**
+             * The user dismissed the dialog by pressing the secondary command.
+            **/
+            secondary: string
+        }
+        
+        /**
+         * Creates a new ContentDialog control.
+         * @constructor 
+         * @param The DOM element that hosts the ContentDialog control.
+         * @param options An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's properties or events.
+        **/
+        constructor(element?: HTMLElement, options?: any);
+        
+        /**
+         * Gets the DOM element that hosts the ContentDialog control.
+        **/
+        element: HTMLElement;
+        
+        /**
+         * Read only. True if the dialog is currently not visible.
+        **/
+        hidden: boolean;
+        
+        /**
+         * The text displayed as the title of the dialog.
+        **/
+        title: string;
+        
+        /**
+         * The text displayed on the primary command's button.
+        **/
+        primaryCommandText: string;
+        
+        /**
+         * Indicates whether the button representing the primary command is currently disabled.
+        **/
+        primaryCommandDisabled: boolean;
+        
+        /**
+         * The text displayed on the secondary command's button.
+        **/
+        secondaryCommandText: string;
+        
+        /**
+         * Indicates whether the button representing the secondary command is currently disabled.
+        **/
+        secondaryCommandDisabled: boolean;
+        
+        /**
+         * Shows the ContentDialog. Only one ContentDialog may be shown at a time. If another ContentDialog is already shown, this ContentDialog will remain hidden.
+         * @returns  A promise which is successfully fulfilled when the dialog is dismissed. The completion value indicates the dialog's dismissal result. This may be 'primary', 'secondary', 'none', or whatever custom value was passed to hide. If this ContentDialog cannot be shown because a ContentDialog is already showing or the ContentDialog is disposed, then the return value is a promise which is in an error state. If preventDefault() is called on the beforeshow event, then this promise will be canceled.
+        **/
+        show(): Promise<ContentDialogHideInfo>;
+        
+        /**
+         * Hides the ContentDialog.
+         * @param result A value indicating why the dialog is being hidden. The promise returned by show will be fulfilled with this value.
+        **/
+        hide(result?: any): void;
+        
+        /**
+         * Disposes this control.
+        **/
+        dispose(): void;
+        
+        /**
+         * Registers an event handler for the specified event.
+         * @param eventName The name of the event to handle. Note that you drop the "on" when specifying the event name. For example, instead of specifying "onclick", you specify "click".
+         * @param eventHandler The event handler function to associate with the event.
+         * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
+        **/
+        addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+        
+        /**
+         * Removes an event handler that the addEventListener method registered.
+         * @param eventName The name of the event that the event handler is registered for.
+         * @param eventCallback The event handler function to remove.
+         * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+        **/
+        removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
+        
+        /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(type: string, eventProperties: any): boolean;
+        
+        /**
+         * Raised just before showing a dialog. Call preventDefault on this event to stop the dialog from being shown.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onbeforeshow(eventInfo: Event): void;
+        
+        /**
+         * Raised immediately after a dialog is fully shown.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onaftershow(eventInfo: Event): void;
+        
+        /**
+         * Raised just before hiding a dialog. Call preventDefault on this event to stop the dialog from being hidden.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onbeforehide(eventInfo: ContentDialogHideEvent): void;
+        
+        /**
+         * Raised immediately after a dialog is fully hidden.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        onafterhide(eventInfo: ContentDialogHideEvent): void;
+    }
 
     /**
      * Allows users to pick a date value.
