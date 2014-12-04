@@ -619,6 +619,27 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(customLoad, Page.prototype.load);
 
         };
+
+        testHandleRenderErrors = function (complete) {
+            var fragfile = "<not real>";
+
+            WinJS.UI.Pages._remove(fragfile);
+            var errorHandled = false;
+
+            var d = document.createElement("div");
+            WinJS.UI.Pages.render(fragfile, d).then(null, function(err) {
+                    return err.page.readyComplete;
+                }).
+                then(null, function(err) {
+                    errorHandled = true;
+                }).
+                then(function () {
+                    // cleanup
+                    WinJS.UI.Pages._remove(fragfile);
+                    LiveUnit.Assert.isTrue(errorHandled);
+                }).
+                then(complete);
+        };
     };
 }
 LiveUnit.registerTestClass("WinJSTests.FragmentControl");

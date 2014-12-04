@@ -163,7 +163,12 @@ define([
         /// </signature>
         var Ctor = get(uri);
         var control = new Ctor(element, options, null, parentedPromise);
-        return control.renderComplete;
+        return control.renderComplete.then(null, function (err) {
+            return Promise.wrapError({
+                error: err,
+                page: control
+            });
+        });
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI.Pages", {
