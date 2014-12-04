@@ -79,21 +79,21 @@ export var LightDismissalPolicies = {
 };
 
 export interface ILightDismissInfo {
-	reason: string;
+    reason: string;
     topLevel: boolean;
-	stopPropagation(): void;
-	preventDefault(): void;
+    stopPropagation(): void;
+    preventDefault(): void;
 }
 
 export interface ILightDismissable {
-	setZIndex(zIndex: string): void;
-	containsElement(element: HTMLElement): boolean;
-	requiresClickEater(): boolean;
+    setZIndex(zIndex: string): void;
+    containsElement(element: HTMLElement): boolean;
+    requiresClickEater(): boolean;
     becameTopLevel(): void;
     hidden(): void;
-	shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
-	
-	lightDismiss(info: ILightDismissInfo): void;
+    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
+    
+    lightDismiss(info: ILightDismissInfo): void;
 }
 
 function moveToFront(array: Array<ILightDismissable>, item: ILightDismissable) {
@@ -109,24 +109,24 @@ function removeItem(array: Array<ILightDismissable>, item: ILightDismissable) {
 }
 
 class LightDismissService {
-	private _clickEaterEl: HTMLElement;
-	private _clients: ILightDismissable[];
-	private _currentTopLevel: ILightDismissable;
-	private _focusOrder: ILightDismissable[];
-	private _notifying: boolean;
-	
-	constructor() {
-		this._clickEaterEl = this._createClickEater();
+    private _clickEaterEl: HTMLElement;
+    private _clients: ILightDismissable[];
+    private _currentTopLevel: ILightDismissable;
+    private _focusOrder: ILightDismissable[];
+    private _notifying: boolean;
+    
+    constructor() {
+        this._clickEaterEl = this._createClickEater();
         this._clients = [];
         this._currentTopLevel = null;
         //this._isLive = false;
         //this._listeners = {};
         this._focusOrder = [];
-		this._rendered = {
-			clickEaterInDom: false,
-			attachedFocusListener: false
-		};
-		this._notifying = false;
+        this._rendered = {
+            clickEaterInDom: false,
+            attachedFocusListener: false
+        };
+        this._notifying = false;
         
         //this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
         //this._onEdgyCompletedBound = this._onEdgyCompleted.bind(this);
@@ -149,16 +149,16 @@ class LightDismissService {
         //_Global.addEventListener("blur", this._onWindowBlur.bind(this));
 
         //this.shown(new LightDismissableBody());
-	}
-	
-	shown(client: ILightDismissable) {
+    }
+    
+    shown(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index === -1) {
             this._clients.push(client);
             this._updateDom();
         }
     }
-	
+    
     hidden(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
@@ -169,9 +169,9 @@ class LightDismissService {
             this._updateDom();
         }
     }
-	
-	private _createClickEater(): HTMLElement {
-   		var clickEater = _Global.document.createElement("section");
+    
+    private _createClickEater(): HTMLElement {
+           var clickEater = _Global.document.createElement("section");
         clickEater.className = ClassNames._clickEater;
         _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
         _ElementUtilities._addEventListener(clickEater, "pointerup", this._onClickEaterPointerUp.bind(this), true);
@@ -182,17 +182,17 @@ class LightDismissService {
         // Prevent CED from removing any current selection
         clickEater.setAttribute("unselectable", "on");
         return clickEater;
-	}
-	
-	private _rendered: {
-		clickEaterInDom: boolean;
-		attachedFocusListener: boolean;
-	}
+    }
+    
+    private _rendered: {
+        clickEaterInDom: boolean;
+        attachedFocusListener: boolean;
+    }
     private _updateDom() {
         if (this._notifying) {
             return;
         }
-		 
+         
         var clickEaterIndex = -1;
         this._clients.forEach(function (c, i) {
             if (c.requiresClickEater()) {
@@ -203,26 +203,26 @@ class LightDismissService {
         if (clickEaterIndex !== -1) {
             this._clickEaterEl.style.zIndex = "" + (baseZIndex + clickEaterIndex * 2);
         }
-		
-		var clickEaterInDom = clickEaterIndex !== -1;
-		if (clickEaterInDom !== this._rendered.clickEaterInDom) {
-			if (clickEaterInDom) {
-				_Global.document.body.appendChild(this._clickEaterEl);
-			} else {
-				var parent = this._clickEaterEl.parentNode;
-				parent && parent.removeChild(this._clickEaterEl);
-			}
-			this._rendered.clickEaterInDom = clickEaterInDom;
-		}
-		
-		var attachedFocusListener = this._clients.length > 0;
-		if (attachedFocusListener !== this._rendered.attachedFocusListener) {
-			if (attachedFocusListener) {
-				//_ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-			} else {
-				//_ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-			}
-		}
+        
+        var clickEaterInDom = clickEaterIndex !== -1;
+        if (clickEaterInDom !== this._rendered.clickEaterInDom) {
+            if (clickEaterInDom) {
+                _Global.document.body.appendChild(this._clickEaterEl);
+            } else {
+                var parent = this._clickEaterEl.parentNode;
+                parent && parent.removeChild(this._clickEaterEl);
+            }
+            this._rendered.clickEaterInDom = clickEaterInDom;
+        }
+        
+        var attachedFocusListener = this._clients.length > 0;
+        if (attachedFocusListener !== this._rendered.attachedFocusListener) {
+            if (attachedFocusListener) {
+                //_ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+            } else {
+                //_ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+            }
+        }
 
         var topLevel: ILightDismissable = null;
         if (this._clients.length > 0) {
@@ -243,23 +243,23 @@ class LightDismissService {
             this._currentTopLevel && this._currentTopLevel.becameTopLevel();
         }
     }
-	
+    
     private _dispatchLightDismiss(reason: string, clients?: ILightDismissable[]) {
-		if (this._notifying) {
+        if (this._notifying) {
             _Log.log && _Log.log('_LightDismissService ignored dismiss trigger to avoid re-entrancy: "' + reason + '"', "winjs _LightDismissService", "warning");
-			 return;
-		 }
-		
+             return;
+         }
+        
         this._notifying = true;
         clients = clients || this._clients.slice(0);
         var lightDismissInfo = {
             reason: reason,
             topLevel: true,
-			_stop: false,
+            _stop: false,
             stopPropagation: function () {
                 this._stop = true;
             },
-			_doDefault: true,
+            _doDefault: true,
             preventDefault: function () {
                 this._doDefault = false;  
             }
@@ -270,8 +270,8 @@ class LightDismissService {
             }
             lightDismissInfo.topLevel = false;
         }
-		
-		this._notifying = false;
+        
+        this._notifying = false;
         this._updateDom();
         
         return lightDismissInfo._doDefault;
@@ -331,14 +331,14 @@ export interface LightDismissableElementArgs {
     element: HTMLElement;
     context?: any;
     
-	setZIndex?(zIndex: string): void;
-	containsElement?(element: HTMLElement): boolean;
-	requiresClickEater?(): boolean;
+    setZIndex?(zIndex: string): void;
+    containsElement?(element: HTMLElement): boolean;
+    requiresClickEater?(): boolean;
     becameTopLevel?(): void;
     hidden?(): void;
-	shouldReceiveLightDismiss?(info: ILightDismissInfo): boolean;
-	
-	lightDismiss?(info: ILightDismissInfo): void;
+    shouldReceiveLightDismiss?(info: ILightDismissInfo): boolean;
+    
+    lightDismiss?(info: ILightDismissInfo): void;
 }
 
 export class LightDismissableElement<T> implements ILightDismissable {
@@ -368,10 +368,10 @@ export class LightDismissableElement<T> implements ILightDismissable {
     setZIndex(zIndex: string) {
         this.element.style.zIndex = zIndex;
     }
-	containsElement(element: HTMLElement): boolean {
+    containsElement(element: HTMLElement): boolean {
         return this.element.contains(element);
     }
-	requiresClickEater(): boolean {
+    requiresClickEater(): boolean {
         return true;
     }
     becameTopLevel(): void {
@@ -388,11 +388,11 @@ export class LightDismissableElement<T> implements ILightDismissable {
         this._winCurrentFocus = null;
         this._winHidden && this._winHidden();
     }
-	shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
         return LightDismissalPolicies.light(info);
     }
-	
-	lightDismiss(info: ILightDismissInfo): void {
+    
+    lightDismiss(info: ILightDismissInfo): void {
         
     }
     
