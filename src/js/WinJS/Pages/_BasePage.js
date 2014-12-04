@@ -230,11 +230,10 @@ define([
                     //
                     this.renderComplete.then(callComplete, callComplete);
 
-                    this.readyComplete = this.renderComplete.then(function () {
+                    this.renderComplete.then(function () {
                         return parentedPromise;
                     }).then(function Pages_ready() {
                         that.ready(element, options);
-                        return that;
                     }).then(
                         null,
                         function Pages_error(err) {
