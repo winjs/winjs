@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+import _Base = require('./Core/_Base');
 import _ElementUtilities = require('./Utilities/_ElementUtilities');
 import _Global = require('./Core/_Global');
 import _Log = require('./Core/_Log');
@@ -43,9 +44,43 @@ var LightDismissalReasons = {
     // rotation
     // page navigation?
 };
+export var LightDismissalPolicies = {
+    light: function LightDismissalPolicies_light_shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+        switch (info.reason) {
+            case LightDismissalReasons.tap:
+            case LightDismissalReasons.escape:
+                if (info.topLevel) {
+                    return true;
+                } else {
+                    info.stopPropagation();
+                    return false;
+                }
+                break;
+            case LightDismissalReasons.hardwareBackButton:
+                if (info.topLevel) {
+                    info.preventDefault(); // prevent backwards navigation in the app
+                    return true;
+                } else {
+                    info.stopPropagation();
+                    return false;
+                }
+                break;
+            case LightDismissalReasons.lostFocus:
+            case LightDismissalReasons.windowResize:
+            case LightDismissalReasons.windowBlur:
+            case LightDismissalReasons.edgy:
+                return true;
+        }
+    },
+    sticky: function LightDismissalPolicies_sticky_shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+        info.stopPropagation(); // TODO: Maybe we shouldn't stopPropagation here
+        return false;
+    }  
+};
 
 export interface ILightDismissInfo {
 	reason: string;
+    topLevel: boolean;
 	stopPropagation(): void;
 	preventDefault(): void;
 }
@@ -55,6 +90,7 @@ export interface ILightDismissable {
 	containsElement(element: HTMLElement): boolean;
 	requiresClickEater(): boolean;
     becameTopLevel(): void;
+    hidden(): void;
 	shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
 	
 	lightDismiss(info: ILightDismissInfo): void;
@@ -129,6 +165,7 @@ class LightDismissService {
             this._clients.splice(index, 1);
             removeItem(this._focusOrder, client);
             client.setZIndex("");
+            client.hidden();
             this._updateDom();
         }
     }
@@ -217,6 +254,7 @@ class LightDismissService {
         clients = clients || this._clients.slice(0);
         var lightDismissInfo = {
             reason: reason,
+            topLevel: true,
 			_stop: false,
             stopPropagation: function () {
                 this._stop = true;
@@ -230,6 +268,7 @@ class LightDismissService {
             if (clients[i].shouldReceiveLightDismiss(lightDismissInfo)) {
                 clients[i].lightDismiss(lightDismissInfo);
             }
+            lightDismissInfo.topLevel = false;
         }
 		
 		this._notifying = false;
@@ -296,6 +335,7 @@ export interface LightDismissableElementArgs {
 	containsElement?(element: HTMLElement): boolean;
 	requiresClickEater?(): boolean;
     becameTopLevel?(): void;
+    hidden?(): void;
 	shouldReceiveLightDismiss?(info: ILightDismissInfo): boolean;
 	
 	lightDismiss?(info: ILightDismissInfo): void;
@@ -305,6 +345,9 @@ export class LightDismissableElement<T> implements ILightDismissable {
     element: HTMLElement;
     context: T;
     
+    private _winCurrentFocus: HTMLElement;
+    private _winHidden: () => void;
+    
     constructor(args: LightDismissableElementArgs) {
         this.element = args.element;
         this.context = args.context;
@@ -312,7 +355,12 @@ export class LightDismissableElement<T> implements ILightDismissable {
         if (args.setZIndex) { this.setZIndex = args.setZIndex; }
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
-        if (args.becameTopLevel) { this.becameTopLevel = args.becameTopLevel; }
+        if (args.becameTopLevel) {
+            this.becameTopLevel = args.becameTopLevel;
+        } else {
+            _ElementUtilities._addEventListener(this.element, "focusin", this._onFocusIn.bind(this));
+        }
+        this._winHidden = args.hidden;
         if (args.shouldReceiveLightDismiss) { this.shouldReceiveLightDismiss = args.shouldReceiveLightDismiss; }
         if (args.lightDismiss) { this.lightDismiss = args.lightDismiss; }
     }
@@ -327,17 +375,39 @@ export class LightDismissableElement<T> implements ILightDismissable {
         return true;
     }
     becameTopLevel(): void {
-        
+        var activeElement = <HTMLElement>_Global.document.activeElement;
+        if (activeElement && this.containsElement(activeElement)) {
+            this._winCurrentFocus = activeElement;
+        } else {
+            (this._winCurrentFocus && this.containsElement(this._winCurrentFocus) && _ElementUtilities._tryFocus(this._winCurrentFocus)) ||
+                _ElementUtilities._focusFirstFocusableElement(this.element) ||
+                _ElementUtilities._tryFocus(this.element);
+        }
+    }
+    hidden(): void {
+        this._winCurrentFocus = null;
+        this._winHidden && this._winHidden();
     }
 	shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
-        return true;
+        return LightDismissalPolicies.light(info);
     }
 	
 	lightDismiss(info: ILightDismissInfo): void {
         
+    }
+    
+    private _onFocusIn(eventObject: FocusEvent) {
+        this._winCurrentFocus = <HTMLElement>eventObject.target;
     }
 }
 
 var service = new LightDismissService();
 export var shown = service.shown.bind(service);
 export var hidden = service.hidden.bind(service);
+
+_Base.Namespace.define("WinJS.UI._LightDismissService", {
+    shown: shown,
+    hidden: hidden,
+    LightDismissableElement: LightDismissableElement,
+    LightDismissalPolicies: LightDismissalPolicies
+});
