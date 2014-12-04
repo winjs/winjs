@@ -1,17 +1,15 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 
 module CorsicaTests {
 
-    // If the AppBar has the invokeButton (ie closedDisplayMode !== 'none', then the AppBar also has reserved some right padding 
-    // to keep other contents in the flow of the AppBar DOM from overlaying it. 
+    // If the AppBar has the invokeButton (ie closedDisplayMode !== 'none', then the AppBar also has reserved some right padding
+    // to keep other contents in the flow of the AppBar DOM from overlaying it.
     var rightPaddingReservedForInvokeButton = 32;
 
-    // This is the element that will contain the AppBars for all of these tests. 
-    // Normally AppBars should be a direct descendant of the body element, but to be able to test our window resize handlers, 
+    // This is the element that will contain the AppBars for all of these tests.
+    // Normally AppBars should be a direct descendant of the body element, but to be able to test our window resize handlers,
     // we fake it by putting the AppBar in an element we can resize ourselves.
     var host;
 
@@ -25,7 +23,7 @@ module CorsicaTests {
     var testHelperPromiseComplete;
 
     function testHelper() {
-        // Return the width that would be available to the AppBar when full size. Full size AppBar always has 0 left padding. 
+        // Return the width that would be available to the AppBar when full size. Full size AppBar always has 0 left padding.
         // If it doesn't have invokeButton because of closedDisplayMode 'none', Full-sized AppBar has 0 right padding, otherwise it will have some right padding.
 
         if (testHelperPromise) {
@@ -199,7 +197,7 @@ module CorsicaTests {
         };
 
         testHideShowAndShowOnlyCommandsWhileClosed = function (complete) {
-            // This test verifies that any changes to commands while the AppBar is closed get 
+            // This test verifies that any changes to commands while the AppBar is closed get
             // reflected by AppBar Scalability just before the next time the AppBar is opened.
 
             function getRandomCommands(cmdArr) {
@@ -299,7 +297,7 @@ module CorsicaTests {
 
             function verifyCommandSizesAtShowTime() {
                 verifyCommandSizes(topAppBar.element, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
-                // Verify that AppBar scalability tracks calls to the showCommands, hideCommands, 
+                // Verify that AppBar scalability tracks calls to the showCommands, hideCommands,
                 // and showOnlyCommands api's while closed, and sizes the buttons correctly.
                 topAppBar.addEventListener("afterhide", testOrder[nextTestIndex], false);
                 topAppBar.hide();
@@ -349,7 +347,7 @@ module CorsicaTests {
             // Set up event listener to check for correct command sizes when the AppBar is opening.
             topAppBar.addEventListener("beforeshow", verifyCommandSizesAtShowTime, false);
 
-            // Need to force the AppBar to measure the contentCommand we added. The AppBar does this lazily upon construction or whenever it is opened. 
+            // Need to force the AppBar to measure the contentCommand we added. The AppBar does this lazily upon construction or whenever it is opened.
             // Open the AppBar to run our 'beforeshow' handler and verify that the commands set in the constructor are scaled correctly.
             topAppBar.show();
 
@@ -454,7 +452,7 @@ module CorsicaTests {
             // Set up event listener to check for correct command sizes when the AppBar is opening.
             topAppBar.addEventListener("beforeshow", verifyCommandSizesAtShowTime, false);
 
-            // Need to force the AppBar to measure the contentCommand we added. The AppBar does this lazily upon construction or whenever it is opened. 
+            // Need to force the AppBar to measure the contentCommand we added. The AppBar does this lazily upon construction or whenever it is opened.
             // Open the AppBar to run our 'beforeshow' handler and verify that the commands set in the constructor are scaled correctly.
             topAppBar.show();
         };
@@ -512,8 +510,8 @@ module CorsicaTests {
                     appBarVisibleCommandCount++;
                     verifyCommandSizes(topAppBarElem, appBarVisibleCommandCount, appBarVisibleSeparatorCount, appBarVisibleContentWidth);
 
-                    // Simultaneously hide Button0 while showing every other command button and command separator, resulting 
-                    // in an overall Net gain in AppBar visible content width. verify that the commands scale correctly.        
+                    // Simultaneously hide Button0 while showing every other command button and command separator, resulting
+                    // in an overall Net gain in AppBar visible content width. verify that the commands scale correctly.
                     LiveUnit.LoggingCore.logComment("Verify that when a call to AppBar.showOnlyCommands() on a visible AppBar results in a net decrease of content width, the command size changes do not happen synchronously");
                     return waitForCommandAnimations(topAppBar, function () { topAppBar.showOnlyCommands([commands[3], commands[4], commands[5], commands[6], commands[7], commands[8], commands[9]]); });
                 }).then(function () {

@@ -40,8 +40,7 @@ define([
         /// <event name="afterhide" locid="WinJS.UI.NavBar_e:afterhide">Raised immediately after the NavBar is fully hidden.</event>
         /// <event name="childrenprocessed" locid="WinJS.UI.NavBar_e:childrenprocessed">Fired when children of NavBar control have been processed from a WinJS.UI.processAll call.</event>
         /// <part name="navbar" class="win-navbar" locid="WinJS.UI.NavBar_part:navbar">Styles the entire NavBar.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         NavBar: _Base.Namespace._lazy(function () {
             var childrenProcessedEventName = "childrenprocessed";

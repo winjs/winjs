@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
@@ -677,7 +677,7 @@ module CorsicaTests {
                 // Normally this would run after the yielded job since it is at the same priority level, however
                 //  we are going to pause the yielding job so this will end up running first. We will then resume
                 //  the job and we can see that it gets put back at the end of the queue.
-                // 
+                //
                 S.schedule(function () {
                     j.resume();
                     LiveUnit.Assert.areEqual(1, count);
@@ -793,7 +793,7 @@ module CorsicaTests {
             var j = S.schedule(function (info) {
                 LiveUnit.Assert.areEqual(0, count);
                 count++;
-                // schedule low pri job and this shouldn't change shouldYield 
+                // schedule low pri job and this shouldn't change shouldYield
                 var j1 = S.schedule(function (info) {
                     LiveUnit.Assert.areEqual(1, count);
                     count++;
@@ -846,7 +846,7 @@ module CorsicaTests {
 
         testHighPriJobBetweenLowPriYieldingJobs = async(function () {
             var count = 0;
-            // schedule max winjs job and exhaust its time slice to yield to platform job  
+            // schedule max winjs job and exhaust its time slice to yield to platform job
             var j = S.schedule(function (info) {
                 LiveUnit.Assert.areEqual(0, count);
                 count++;
@@ -2290,7 +2290,7 @@ module CorsicaTests {
             });
         });
 
-        // Verifies that the scheduler yielding to high proirity job 
+        // Verifies that the scheduler yielding to high proirity job
         //  when in drain mode.
         //
         testYeildingInDrain = async(function () {
@@ -2966,7 +2966,7 @@ module CorsicaTests {
             }));
                 // We pause the job before the promise is completed. This means that the next scheduled job should
                 //  run which can then resume the job.
-                // 
+                //
                 j.pause();
             });
             var j2 = S.schedule(function () {
@@ -3044,7 +3044,7 @@ module CorsicaTests {
                 count++;
                 // We pause the job before the promise is completed. This means that the next scheduled job should
                 //  run which can then resume the job.
-                // 
+                //
                 j.pause();
             });
 
@@ -3086,7 +3086,7 @@ module CorsicaTests {
                 count++;
                 // We pause the job before the promise is completed. This means that the next scheduled job should
                 //  run which can then resume the job.
-                // 
+                //
                 j.pause();
             });
 
@@ -3127,7 +3127,7 @@ module CorsicaTests {
             }));
                 // We pause the job before the promise is completed. This means that the next scheduled job should
                 //  run which can then resume the job.
-                // 
+                //
                 j.pause();
             });
 

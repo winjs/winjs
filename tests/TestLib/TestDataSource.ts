@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 
@@ -84,7 +82,7 @@ module Helper.ItemsManager {
                 countBefore = (countBeforeOverride >= 0 ? countBeforeOverride : Math.max(countBefore + countBeforeDelta, 0));
                 countAfter = (countAfterOverride >= 0 ? countAfterOverride : Math.max(countAfter + countAfterDelta, 0));
 
-                // returnCount simulate a datasource that is changing size. 
+                // returnCount simulate a datasource that is changing size.
                 // If returnCount is defined, then the maximum number of items can be retrived from this dataSource is returnCount.
 
                 if (index >= maxLength) {
@@ -581,9 +579,9 @@ module Helper.ItemsManager {
                 else if (propertyName === "returnCountBeforePromise")
                     // when value is defined, returnCount is calcualted before promise created; otherwise calculated when promise executed.
                     // By default, returnCountBeforePromise is undefined; and all the previous test is using the value calculated when promise executed and the value is array.length
-                    // Thus, adding this varible does not break existing test. 
-                    // This value should be set at beginning of a test; and should not be changed in the test. 
-                    // If you change it during a test, then the promise still in process will use the new value. 
+                    // Thus, adding this varible does not break existing test.
+                    // This value should be set at beginning of a test; and should not be changed in the test.
+                    // If you change it during a test, then the promise still in process will use the new value.
                     controller.returnCountBeforePromise = value;
             },
 

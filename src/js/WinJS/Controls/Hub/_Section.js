@@ -31,8 +31,7 @@ define([
         /// <part name="headercontent" class="win-hub-section-header-content" locid="WinJS.UI.HubSection_part:headercontent">The content region of the header region of the HubSection.</part>
         /// <part name="headerchevron" class="win-hub-section-header-chevron" locid="WinJS.UI.HubSection_part:headerchevron">The chevron region of the header region of the HubSection.</part>
         /// <part name="content" class="win-hub-section-content" locid="WinJS.UI.HubSection_part:content">The content region of the HubSection.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         HubSection: _Base.Namespace._lazy(function () {
             var strings = {

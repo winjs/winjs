@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
 /// <reference path="ContentDialogUtilities.ts" />
@@ -9,12 +7,12 @@
 
 module ContentDialogTests {
     "use strict";
-    
+
     var ContentDialog = <typeof WinJS.UI.PrivateContentDialog>WinJS.UI.ContentDialog;
     var testRoot: HTMLElement;
     var Utils = ContentDialogTests.Utilities;
     var createDialog;
-    
+
     export class FocusTests {
         setUp() {
             Helper.initUnhandledErrors();
@@ -22,7 +20,7 @@ module ContentDialogTests {
             createDialog = Utils.makeCreateDialog(testRoot);
             document.body.appendChild(testRoot);
         }
-        
+
         tearDown() {
             Helper.cleanupUnhandledErrors();
             WinJS.Utilities.disposeSubTree(testRoot);
@@ -32,7 +30,7 @@ module ContentDialogTests {
 
         testInitialFocusWithoutFocusableContent(complete) {
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: "Some text" }));
-            
+
             Helper.waitForFocusWithin(dialog.element, function () { dialog.show(); }).then(function () {
                 LiveUnit.Assert.areEqual(
                     dialog.element.querySelector("." + ContentDialog._ClassNames.dialog),
@@ -44,16 +42,16 @@ module ContentDialogTests {
                 complete();
             });
         }
-        
+
         testInitialFocusWithFocusableContent(complete) {
             var innerHTML =
                 'Some text' +
                 '<button class="customButton1">Custom Button 1</button>' +
                 '<button class="customButton2">Custom Button 2</button>' +
                 '<button class="customButton3">Custom Button 3</button>';
-            
+
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: innerHTML }));
-            
+
             Helper.waitForFocusWithin(dialog.element, function () { dialog.show(); }).then(function () {
                 LiveUnit.Assert.areEqual(
                     dialog.element.querySelector(".customButton1"),
@@ -65,7 +63,7 @@ module ContentDialogTests {
                 complete();
             });
         }
-        
+
         testFocusIsRestoredAfterHiding(complete) {
             testRoot.innerHTML =
                 'Some text' +
@@ -73,14 +71,14 @@ module ContentDialogTests {
                 '<button class="externalButton2">External Button 2</button>' +
                 '<button class="externalButton3">External Button 3</button>';
             var externalButton2 = <HTMLElement>testRoot.querySelector(".externalButton2");
-            
+
             var innerHTML =
                 'Some text' +
                 '<button class="customButton1">Custom Button 1</button>' +
                 '<button class="customButton2">Custom Button 2</button>' +
                 '<button class="customButton3">Custom Button 3</button>';
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: innerHTML }));
-            
+
             Helper.focus(externalButton2).then(function () {
                 LiveUnit.Assert.areEqual(externalButton2, document.activeElement,
                     "externalButton2 should have received focus");

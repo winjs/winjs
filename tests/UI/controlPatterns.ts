@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <deploy src="../TestData/" />
 
@@ -11,19 +9,19 @@ module CorsicaTests {
 
     //
     // Validate WinJS controls subscribe to WinJS control patterns.
-    // 
-    // The same set of tests is run against each control.  Tests include scenarios where the host element 
+    //
+    // The same set of tests is run against each control.  Tests include scenarios where the host element
     // is appended to document body and not.
-    // 
+    //
     // Test covers controls from controls.js, uicollections.js (searching for "element,.*options").
-    // 
+    //
     // 1. validateEmptyConstructor - expecting default host element to be created
-    // 2. validateHostElementProvided - create control with predefined host element, validate element and winControl properties    
+    // 2. validateHostElementProvided - create control with predefined host element, validate element and winControl properties
     //
 
 
     // additional test ideas:
-    //    with WinJS.validation, 
+    //    with WinJS.validation,
     //    strict?
 
     function validateEmptyConstructor(ctor, appendControl) {
@@ -59,7 +57,7 @@ module CorsicaTests {
 
     function validateHostElementProvided(ctor, appendControl) {
         // Create control with predefined host element, validate element and winControl properties:
-        //    a) element property === host element  
+        //    a) element property === host element
         //    b) host element .winControl retrieves the control
 
         var hostElement = document.createElement("div");
@@ -119,13 +117,13 @@ module CorsicaTests {
             validatePatterns("WinJS.UI.Menu");
         }
 
-        // testing this "private" class because it could still be copied and used by 
+        // testing this "private" class because it could still be copied and used by
         // users so it should be compliant with proper control patterns
         test_Overlay() {
             validatePatterns("WinJS.UI._Overlay");
         }
 
-        // this "userControl" is a special case as it is not a control by itself, but hosts a fragment.  
+        // this "userControl" is a special case as it is not a control by itself, but hosts a fragment.
         // A fragment needs to be supplied to get the constructor.
         testPages() {
             var ctor;

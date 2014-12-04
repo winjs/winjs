@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
 
@@ -24,7 +22,7 @@ module Helper.ItemsManager {
     };
 
     var seed = 0;
-    
+
     export function seedPseudorandom(n) {
         seed = n;
     };
@@ -32,7 +30,7 @@ module Helper.ItemsManager {
     export function pseudorandom(nMax) {
         seed = (seed + 0.81282849124) * 2375.238208308;
         seed -= Math.floor(seed);
-        
+
         return Math.floor(seed * nMax);
     };
 
@@ -261,7 +259,7 @@ module Helper.ItemsManager {
             moved: function (item, previous, next) {
                 assertUnexpected("moved");
             },
-    
+
             removed: function (item, mirage) {
                 assertUnexpected("removed");
             },
@@ -289,7 +287,7 @@ module Helper.ItemsManager {
             }
         };
     };
-    
+
     export function verifyRequestCount(testDataSource, expectedCount) {
         LiveUnit.Assert.areEqual(expectedCount, testDataSource.testDataAdapter.requestCount(), "Unexpected number of outstanding requests");
     };
@@ -413,7 +411,7 @@ module Helper.ItemsManager {
             moved: function (item, previousHandle, nextHandle) {
                 assertUnexpected("moved");
             },
-    
+
             removed: function (handle, mirage) {
                 assertUnexpected("removed");
             },
@@ -487,7 +485,7 @@ module Helper.ItemsManager {
 
         containerHead.next = containerTail;
         containerTail.prev = containerHead;
-        
+
         var handleMap = {},
             indexMap = [];
 
@@ -769,7 +767,7 @@ module Helper.ItemsManager {
             LiveUnit.Assert.isTrue(!!handleMap[handle], "Item is not in list");
 
             removeContainer(container, mergeAdjacent);
-            
+
             delete handleMap[handle];
         }
 
@@ -894,7 +892,7 @@ module Helper.ItemsManager {
 
         handler.releaseSomeItems = function () {
             var keys = Object.keys(handleMap);
-            
+
             if (keys.length > 0) {
                 var handle = keys[Helper.ItemsManager.pseudorandom(keys.length)];
 

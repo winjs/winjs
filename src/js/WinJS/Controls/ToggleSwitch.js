@@ -29,8 +29,7 @@ define([
             /// <part name="title" class="win-toggleswitch-header" locid="WinJS.UI.ToggleSwitch_part:title">The main text for the ToggleSwitch control.</part>
             /// <part name="label-on" class="win-toggleswitch-value" locid="WinJS.UI.ToggleSwitch_part:label-on">The text for when the switch is on.</part>
             /// <part name="label-off" class="win-toggleswitch-value" locid="WinJS.UI.ToggleSwitch_part:label-off:">The text for when the switch is off.</part>
-            /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-            /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+            /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
             /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
             ToggleSwitch: _Base.Namespace._lazy(function () {
 

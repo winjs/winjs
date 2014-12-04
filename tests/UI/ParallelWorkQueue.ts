@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 
 module WinJSTests {
 
@@ -65,14 +63,14 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(1, log[0]);
                     LiveUnit.Assert.areEqual(1, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
                     LiveUnit.Assert.areEqual(4, log[1]);
                     LiveUnit.Assert.areEqual(2, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
@@ -80,7 +78,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(3, log[2]);
                     LiveUnit.Assert.areEqual(3, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
@@ -108,14 +106,14 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(1, log[0]);
                     LiveUnit.Assert.areEqual(1, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
                     LiveUnit.Assert.areEqual(2, log[1]);
                     LiveUnit.Assert.areEqual(2, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
@@ -123,7 +121,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(3, log[2]);
                     LiveUnit.Assert.areEqual(3, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
@@ -152,7 +150,7 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(2, log[1]);
                     LiveUnit.Assert.areEqual(2, log.length);
                 }).
-                then(schedule). // double post is for the async "runNext" that happens when a 
+                then(schedule). // double post is for the async "runNext" that happens when a
                 then(post).     // work item doesn't complete synchronously
                 then(function () {
                     LiveUnit.Assert.areEqual(1, log[0]);
@@ -299,7 +297,7 @@ module WinJSTests {
             var log = [];
             var q = new WinJS.UI._ParallelWorkQueue(6);
             function push(v) {
-                return function () { 
+                return function () {
                 return post().
                         then(post).
                         then(function () {

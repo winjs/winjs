@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 
 module CorsicaTests {
@@ -361,7 +359,7 @@ module CorsicaTests {
     };
 
     export class TimePickerDecl {
-        
+
 
         testCorrectBackEndValue(complete) {
 
@@ -379,7 +377,7 @@ module CorsicaTests {
                 .then(complete, complete);
         }
 
-       
+
         testBackEndAtNoon(complete) {
             // bug 437064
             var cleanup;
@@ -398,7 +396,7 @@ module CorsicaTests {
                 .then(complete, complete);
         }
 
-        
+
         // create default picker.  Note, this test uses runtime date/time value so needs to be smart as the date
         // value will change between runs and locales.  before/after noon, etc..
         testSimpleTime(complete) {
@@ -921,7 +919,7 @@ module CorsicaTests {
                 .then(complete, complete);
         }
 
-        
+
 
         testImplicit12Format(complete) {
             var cleanup;
@@ -1336,7 +1334,7 @@ module CorsicaTests {
             }
         }
 
-        
+
 
         testCustomInformationProvider12HourClock = function (complete) {
             if (!isWinRTEnabled()) {

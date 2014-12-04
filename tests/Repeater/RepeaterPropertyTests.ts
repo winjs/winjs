@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="repeaterUtils.ts"/>
 
@@ -133,7 +132,7 @@ module WinJSTests {
             // Update the template property
             repeater.template = <any>createRenderer("new-template");
 
-            // Verify the DOM for new-template generated data 
+            // Verify the DOM for new-template generated data
             verifyDOM(elem, data, ".new-template");
 
             // Verify the itemsloaded fired twice

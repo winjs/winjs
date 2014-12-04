@@ -70,8 +70,7 @@ var strings = {
 /// <part name="toolbar" class="win-toolbar" locid="WinJS.UI.ToolBar_part:toolbar">The entire ToolBar control.</part>
 /// <part name="toolbar-overflowbutton" class="win-toolbar-overflowbutton" locid="WinJS.UI.ToolBar_part:ToolBar-overflowbutton">The toolbar overflow button.</part>
 /// <part name="toolbar-overflowarea" class="win-toolbar-overflowarea" locid="WinJS.UI.ToolBar_part:ToolBar-overflowarea">The container for toolbar commands that overflow.</part>
-/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
 /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
 export class ToolBar {
     private _id: string;

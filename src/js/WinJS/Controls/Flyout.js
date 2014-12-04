@@ -35,8 +35,7 @@ define([
         /// <event name="beforehide" locid="WinJS.UI.Flyout_e:beforehide">Raised just before hiding a flyout.</event>
         /// <event name="afterhide" locid="WinJS.UI.Flyout_e:afterhide">Raised immediately after a flyout is fully hidden.</event>
         /// <part name="flyout" class="win-flyout" locid="WinJS.UI.Flyout_part:flyout">The Flyout control itself.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Flyout: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
@@ -65,12 +64,12 @@ define([
                     // PRECONDITION: this.reentrancyLock must be false. appendFlyout should only be called from baseFlyoutShow() which is the function responsible for preventing reentrancy.
                     _Log.log && this.reentrancyLock && _Log.log('_CascadeManager is attempting to append a Flyout through reentrancy.', "winjs _CascadeManager", "error");
 
-                    // IF the anchor element for flyoutToAdd is contained within another flyout, 
+                    // IF the anchor element for flyoutToAdd is contained within another flyout,
                     // && that flyout is currently in the cascadingStack, consider that flyout to be the parent of flyoutToAdd:
                     //  Remove from the cascadingStack, any subflyout descendants of the parent flyout.
                     // ELSE flyoutToAdd isn't anchored to any of the Flyouts in the existing cascade
                     //  Collapse the entire cascadingStack to start a new cascade.
-                    // FINALLY: 
+                    // FINALLY:
                     //  add flyoutToAdd to the end of the cascading stack. Monitor it for events.
                     var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._currentAnchor);
                     if (indexOfParentFlyout >= 0) {
@@ -85,7 +84,7 @@ define([
                 collapseFlyout: function _CascadeManager_collapseFlyout(flyout) {
                     // Removes flyout param and its subflyout descendants from the _cascadingStack.
                     if (!this.reentrancyLock && flyout && this.indexOf(flyout) >= 0) {
-                        this.reentrancyLock = true; 
+                        this.reentrancyLock = true;
 
                         var subFlyout;
                         while (this.length && flyout !== subFlyout) {
@@ -149,7 +148,7 @@ define([
                         target = event.target;
 
                     if (event.keyCode === leftKey) {
-                        // Left key press in a SubFlyout will close that subFlyout and any subFlyouts cascading from it. 
+                        // Left key press in a SubFlyout will close that subFlyout and any subFlyouts cascading from it.
                         var index = this.indexOfElement(target);
                         if (index >= 1) {
                             var subFlyout = this.getAt(index);
@@ -164,7 +163,7 @@ define([
                         this.collapseAll(true);
                     }
                 },
-            });                  
+            });
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
@@ -484,9 +483,9 @@ define([
 
                         Flyout._cascadeManager.appendFlyout(this);
 
-                        // Store what had focus before showing the Flyout. This must happen after we've appended this 
-                        // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to 
-                        // collapse, so that focus has already been restored to the correct element by the previous 
+                        // Store what had focus before showing the Flyout. This must happen after we've appended this
+                        // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
+                        // collapse, so that focus has already been restored to the correct element by the previous
                         // branch before we try to record it here.
                         this._previousFocus = _Global.document.activeElement;
 
@@ -502,7 +501,7 @@ define([
 
                 _endShow: function Flyout_endShow() {
                     // Remember if the IHM was up since we may need to hide it when the flyout hides.
-                    // This check needs to happen after we've hidden any other visible flyouts from 
+                    // This check needs to happen after we've hidden any other visible flyouts from
                     // the cascasde as a result of showing this flyout.
                     this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
                 },
@@ -989,7 +988,7 @@ define([
                     if (!this.element.contains(event.relatedTarget)) {
                         Flyout._cascadeManager.handleFocusIntoFlyout(event);
                     }
-                    // Else focus is only moving between elements in the flyout. 
+                    // Else focus is only moving between elements in the flyout.
                     // Doesn't need to be handled by cascadeManager.
                 },
                 _handleFocusOut: function Flyout_handleFocusOut(event) {

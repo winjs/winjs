@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 // <reference path="../TestLib/Helper.ts"/>
 // <reference path="OverlayHelpers.ts" />
@@ -302,7 +300,7 @@ module CorsicaTests {
             menuCommand._invoke();
         }
 
-        
+
         // Tests that setting the hidden property, of an activated flyout MenuCommand to true, will deactivate it.
         testHiddenPropertyDeactivatesFlyoutCommands = function (complete) {
             var msg = "Setting the hidden property, of an activated flyout MenuCommand to true, should deactivate it.";
@@ -321,7 +319,7 @@ module CorsicaTests {
         testFlyoutPropertyDeactivatesFlyoutCommands = function (complete) {
             var msg = "Setting the flyout property of an activated flyout MenuCommand should deactivate it.";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
-            verifyPropertyChangeDeactivatesFlyoutMenuCommand("flyout", null, msg).then(complete); 
+            verifyPropertyChangeDeactivatesFlyoutMenuCommand("flyout", null, msg).then(complete);
         }
 
     }

@@ -46,5 +46,10 @@ define([
     ], function (_WinJS) {
     "use strict";
 
+    _WinJS.Namespace.define("WinJS.Utilities", {
+        _require: require,
+        _define: define
+    });
+
     return _WinJS;
 });

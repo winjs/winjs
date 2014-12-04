@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="repeaterUtils.ts"/>
 
@@ -48,7 +47,7 @@ module WinJSTests {
     export class RepeaterEditingTests {
 
 
-        // This is the setup function that will be called at the beginning of 
+        // This is the setup function that will be called at the beginning of
         // each test function.
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
@@ -458,7 +457,7 @@ module WinJSTests {
             }
         }
 
-        // Tests for only removes 
+        // Tests for only removes
         for (var start = 0; start < oldDataLength; start++) {
             for (var count = 0; count <= oldDataLength; count++) {
                 RepeaterEditingTests.prototype["testSpliceRemovesStartAt" + start + "Count" + count] = generateTest(start, count);

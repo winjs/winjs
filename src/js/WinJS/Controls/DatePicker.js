@@ -24,8 +24,7 @@ define([
         /// <icon src="ui_winjs.ui.datepicker.16x16.png" width="16" height="16" />
         /// <htmlSnippet><![CDATA[<div data-win-control="WinJS.UI.DatePicker"></div>]]></htmlSnippet>
         /// <event name="change" locid="WinJS.UI.DatePicker_e:change">Occurs when the current date changes.</event>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         DatePicker: _Base.Namespace._lazy(function () {
             // Constants definition

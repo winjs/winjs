@@ -27,8 +27,7 @@ define([
         /// <icon src="ui_winjs.ui.repeater.16x16.png" width="16" height="16" />
         /// <htmlSnippet><![CDATA[<div data-win-control="WinJS.UI.Repeater"></div>]]></htmlSnippet>
         /// <part name="repeater" class="win-repeater" locid="WinJS.UI.Repeater_part:repeater">The Repeater control itself</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Repeater: _Base.Namespace._lazy(function () {
 

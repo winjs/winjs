@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 
 module CorsicaTests {
@@ -162,7 +160,7 @@ module CorsicaTests {
                     // Ensure state for both buttons is the same
                     LiveUnit.Assert.isTrue(isDisabled(outerButtonElement) === false, "Even after a manual refresh, Outer BackButton should still be enabled after navigating away from Home page");
                     LiveUnit.Assert.isTrue(isDisabled(innerButtonElement) === false, "Even after a manual refresh, Inner BackButton should still be enabled after navigating away from Home page");
-                    
+
 
                     LiveUnit.LoggingCore.logComment("Navigate back to Home page.");
                     nav.back().then(function () {

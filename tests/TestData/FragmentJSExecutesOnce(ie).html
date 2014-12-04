@@ -2,14 +2,14 @@
 <!DOCTYPE html>
 <!-- saved from url=(0014)about:internet -->
 <html>
-<head>    
+<head>
     <title>FragmentJSExecutesOnce fragment</title>
 
-    <script type="text/javascript" src="source/base.js"></script>
+    <script type="text/javascript" src="source/WinJS.js"></script>
     <script type="text/javascript">
 //        debugger;
 
-        // waiting for DOMContentLoaded only necessary if running under IE, as is 
+        // waiting for DOMContentLoaded only necessary if running under IE, as is
         // including script tag for base.js inside fragment to define WinJS.Utilities.ready()
         if (typeof (WinJS) !== "undefined") {
             WinJS.Utilities.ready(function () {

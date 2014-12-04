@@ -7,9 +7,6 @@
     var config = require("../../config.js");
     var grunt = config.grunt;
 
-    var desktopBase = config.desktopOutput + "js/base.js";
-    var desktopUI = config.desktopOutput + "js/ui.js";
-
     var bundles = {};
 
     function generatePublicModules() {
@@ -129,8 +126,6 @@
         done();
     }
 
-    var desktopBaseFiles = [];
-
     var rootPath = path.resolve();
     var realFileNames = [];
 
@@ -150,20 +145,8 @@
         }
     }
 
-    function checkDuplicates(bundle1, bundle2, bundle2Name) {
-        bundle1.forEach(function (file) {
-            if (bundle2.indexOf(file) !== -1) {
-                grunt.fail.warn("File duplicated in build output:\n " + file + ". Duplicate location:\n " + bundle2Name);
-            }
-        });
-    }
-
     function startsWith(str, target) {
         return str.indexOf(target) === 0;
-    }
-
-    function endsWith(str, target) {
-        return str.indexOf(target, str.length - target.length) !== -1;
     }
 
     // ensure that the files discovered by requireJS have appropriate
@@ -171,7 +154,6 @@
     function done(done, output) {
 
         var lines = output.split('\n');
-        var bundle = lines[1];
         lines.splice(0, 3);
         lines.pop();
 
@@ -183,12 +165,6 @@
         lines = lines.filter(function (line) {
             return line.indexOf("require-json!") === -1;
         });
-
-        if (endsWith(bundle, desktopBase)) {
-            desktopBaseFiles = lines;
-        } else if (endsWith(bundle, desktopUI)) {
-            checkDuplicates(desktopBaseFiles, lines, bundle);
-        }
 
         lines = lines.map(function (line) {
             return path.normalize(line.replace("require-style!", ""));
@@ -249,20 +225,12 @@
         //  onefile grunt task and thus are not listed here
         //
 
-        // UI just has to specify that it is expected to depend on base and it is someone
-        //  else's job to ensure that base was loaded first.
-        ui: {
-            options: {
-                exclude: ['./base'],
-            }
-        },
-
         // Modules built for people who want to use custom builds
         publicModules: {
             options: {
                 skipDirOptimize: true,
                 removeCombined: true,
-                fileExclusionRegExp: /^(library|base.js|ui.js|\w+\.(md|htm|txt))$/i,
+                fileExclusionRegExp: /^(library|\w+\.(md|htm|txt))$/i,
                 dir: config.modulesOutput,
                 modules: publicModules,
                 done: moduleDone

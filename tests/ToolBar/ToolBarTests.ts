@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
 /// <reference path="../TestLib/Helper.ToolBar.ts"/>
@@ -295,12 +293,12 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(2, toolbar._primaryCommands.length, "Primary commands array has an invalid length");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be not hidden when there are secondary commands");
-            
+
             // Obtain the dimensions of 1 command + the overflow button
             this._element.style.display = "";
             toolbar.forceLayout();
             this._element.style.width = toolbar._standardCommandWidth + toolbar._overflowButtonWidth + "px";
-            
+
             // Now that we have changed the parent's size to fit 1 command + the overflow button, let's ensure that one primary command goes to the overflow area
             WinJS.Utilities._resizeNotifier._handleResize();
             LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");

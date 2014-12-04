@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <deploy src="../TestData/" />
 
@@ -132,13 +130,13 @@ module CorsicaTests {
             function simulateBackClick() {
                 backClickEvent = OverlayHelpers.createBackClickEvent();
                 LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application 
+                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
 
                 WinJS.Application.addEventListener("verification", verify, true);
                 WinJS.Application.queueEvent({ type: 'verification' });
             };
 
-            // Verify 
+            // Verify
             function verify() {
                 LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "SettingsFlyout should have handled the 'backclick' event");
                 LiveUnit.Assert.isTrue(settingsFlyout.hidden, "SettingsFlyout should be hidden after light dismiss");
@@ -149,7 +147,7 @@ module CorsicaTests {
             function cleanup() {
                 WinJS.Application.removeEventListener("verification", verify, true);
                 WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object. 
+                // Application.stop() kills all listeners on the Application object.
                 // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
                 WinJS.UI._Overlay._globalEventListeners.reset();
                 complete();

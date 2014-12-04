@@ -42,8 +42,7 @@ define([
         /// <part name="autosuggestbox-suggestion-result" class="win-autosuggestbox-suggestion-result" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Result">Styles the result type suggestion.</part>
         /// <part name="autosuggestbox-suggestion-selected" class="win-autosuggestbox-suggestion-selected" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Selected">Styles the currently selected suggestion.</part>
         /// <part name="autosuggestbox-suggestion-separator" class="win-autosuggestbox-suggestion-separator" locid="WinJS.UI.AutoSuggestBox_part:Suggestion_Separator">Styles the separator type suggestion.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AutoSuggestBox: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;

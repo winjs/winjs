@@ -459,8 +459,7 @@ module States {
 /// <part name="splitview" class="win-splitview" locid="WinJS.UI.SplitView_part:splitview">The entire SplitView control.</part>
 /// <part name="splitview-pane" class="win-splitview-pane" locid="WinJS.UI.SplitView_part:splitview-pane">The element which hosts the SplitView's pane.</part>
 /// <part name="splitview-content" class="win-splitview-content" locid="WinJS.UI.SplitView_part:splitview-content">The element which hosts the SplitView's content.</part>
-/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
 /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
 export class SplitView {
     /// <field locid="WinJS.UI.SplitView.ShownDisplayMode" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode">
@@ -617,7 +616,7 @@ export class SplitView {
         /// </signature>
         this._state.hidePane();
     }
-    
+
     togglePane(): void {
         /// <signature helpKeyword="WinJS.UI.SplitView.togglePane">
         /// <summary locid="WinJS.UI.SplitView.togglePane">

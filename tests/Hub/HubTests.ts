@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
 
@@ -20,7 +18,7 @@ module WinJSTests {
         }
         static supportedForProcessing = true;
     }
-    
+
     // Changes its width while being processed (similar to what might happen with a Repeater)
     export class HubTestsFakeDynamicControl {
         constructor(element, options) {
@@ -594,7 +592,7 @@ module WinJSTests {
                     complete();
                 });
         };
-        
+
         // Verifies that the Hub scrolls to the correct location when a developer sets the scroll position after loadingState=complete and:
         // - The scroll position is within an off screen section
         // - The section changed size during processing (a Repeater can change size during processing)
@@ -618,7 +616,7 @@ module WinJSTests {
             document.body.appendChild(hubEl);
 
             var hub = new Hub(hubEl);
-            
+
             hubLoaded(hub).then(() => {
                 hub.scrollPosition = 5123;
                 LiveUnit.Assert.areEqual(5123, hub._viewportElement.scrollLeft, "Hub didn't scroll to the correct location");

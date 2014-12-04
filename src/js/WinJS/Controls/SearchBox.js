@@ -41,8 +41,7 @@ define([
         /// <part name="searchbox-suggestion-selected" class="win-searchbox-suggestion-selected" locid="WinJS.UI.SearchBox_part:Suggestion_Selected">
         /// Styles the currently selected suggestion.
         /// </part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         SearchBox: _Base.Namespace._lazy(function () {
 

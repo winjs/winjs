@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 
 declare var Windows;
@@ -31,7 +29,7 @@ module CorsicaTests {
     function createPickerWithAppend(options?) {
         var dateObject = null;
         if (options && options.current) {
-            // NOTE: If the 'current' property is a string, then we want to 
+            // NOTE: If the 'current' property is a string, then we want to
             // set the property declaratively. If it is a date object, we
             // set it imperatively. This is because stringifying the date
             // object and reparsing it yields different results on different
@@ -696,9 +694,9 @@ module CorsicaTests {
         }
         return maxValue === controls.dateSelect.length;
     }
-    
+
     export class DatePickerDecl {
-        
+
 
         xtestKnownDayWithIndependentStateofSamoa = function (complete) {
 
@@ -1381,7 +1379,7 @@ module CorsicaTests {
                 .then(complete, complete);
         };
 
-    
+
 
         testFireMonthchangeEvent = function (complete) {
             createPickerWithAppend({
@@ -1593,9 +1591,9 @@ module CorsicaTests {
                 .then(complete, complete);
         };
 
-        
 
-        
+
+
 
         testHijriCalender = function (complete) {
             //BugID: 446784
@@ -2271,7 +2269,7 @@ module CorsicaTests {
                 complete();
         };
 
-        
+
 
         testTaiwanCalendarNumOfDays = function (complete) {
             //BugID: 628192
@@ -2379,7 +2377,7 @@ module CorsicaTests {
                 complete();
         };
 
-        
+
         testDateWithObviousFormat = function (complete) {
             //BugID: 538276
             if (isWinRTEnabled()) {

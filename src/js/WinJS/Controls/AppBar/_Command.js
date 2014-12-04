@@ -32,8 +32,7 @@ define([
         /// <part name="appBarCommandIcon" class="win-commandicon" locid="WinJS.UI.AppBarCommand_part:appBarCommandIcon">The AppBarCommand's icon box.</part>
         /// <part name="appBarCommandImage" class="win-commandimage" locid="WinJS.UI.AppBarCommand_part:appBarCommandImage">The AppBarCommand's icon's image formatting.</part>
         /// <part name="appBarCommandLabel" class="win-label" locid="WinJS.UI.AppBarCommand_part:appBarCommandLabel">The AppBarCommand's label</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBarCommand: _Base.Namespace._lazy(function () {
 
@@ -281,11 +280,11 @@ define([
                     },
                     set: function (value) {
                         if (value === undefined || (typeof value === "number" && value >= 0)) {
-                            this._priority = value; 
+                            this._priority = value;
                         } else {
                             throw new _ErrorFromName("WinJS.UI.AppBarCommand.BadPriority", _Resources._formatString(strings.badPriority, "AppBarCommand"));
                         }
-                        
+
                     }
                 },
 

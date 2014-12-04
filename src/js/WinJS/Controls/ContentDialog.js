@@ -61,8 +61,7 @@ define([
         /// <part name="contentdialog-commands" class="win-contentdialog-commands" locid="WinJS.UI.ContentDialog_part:contentdialog-commands">The element which contains the dialog's primary and secondary commands.</part>
         /// <part name="contentdialog-primarycommand" class="win-contentdialog-primarycommand" locid="WinJS.UI.ContentDialog_part:contentdialog-primarycommand">The dialog's primary button.</part>
         /// <part name="contentdialog-secondarycommand" class="win-contentdialog-secondarycommand" locid="WinJS.UI.ContentDialog_part:contentdialog-secondarycommand">The dialog's secondary button.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ContentDialog: _Base.Namespace._lazy(function () {
             var Strings = {

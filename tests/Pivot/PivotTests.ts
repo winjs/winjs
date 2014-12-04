@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
@@ -43,7 +41,7 @@ module WinJSTests {
 
     function fireKeyEvent(type, element, key, locale?) {
         var event: any = document.createEvent("Event");
-        //KeyboardEvent.initKeyboardEvent(typeArg, canBubbleArg, cancelableArg, viewArg, keyArg, locationArg, modifiersListArg, repeat, locale); 
+        //KeyboardEvent.initKeyboardEvent(typeArg, canBubbleArg, cancelableArg, viewArg, keyArg, locationArg, modifiersListArg, repeat, locale);
         event.initEvent(type, true, true);
         event.keyCode = key;
         event.locale = locale || "en-US";
@@ -51,7 +49,7 @@ module WinJSTests {
     }
 
     function firePointerEvent(type, element, clientX, clientY, pointerType) {
-        //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary); 
+        //PointerEvent.initPointerEvent(typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary);
         var elementRect = element.getBoundingClientRect();
         var event = document.createEvent(pointerName + "Event");
         WinJS.Utilities["_" + initFuncName](event, type, true, true, window, {}, clientX + window.screenLeft, clientY + window.screenTop, clientX, clientY, false, false, false, false, 0, document.querySelector(".win-pivot"), elementRect.width / 2, elementRect.height / 2, 20, 20, 0, 0, 0, 0, 0, pointerType, Date.now(), true);

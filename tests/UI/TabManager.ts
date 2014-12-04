@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 
 module CorsicaTests {
 
@@ -47,7 +47,7 @@ module CorsicaTests {
     }
 
     export class TabManager {
-        
+
         setUp(complete) {
             LiveUnit.LoggingCore.logComment("In setup");
             var newNode = document.createElement("div");

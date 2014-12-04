@@ -1,7 +1,5 @@
  // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 
 
 module Tests {
@@ -3740,7 +3738,7 @@ module Tests {
                 LiveUnit.Assert.areEqual(4, sorted.getAt(0).b, "incorrect placement of an element");
                 LiveUnit.Assert.areEqual(3, sorted.getAt(1).b, "incorrect placement of an element");
             }
-            
+
             testSortedListWithProxy() {
                 var data:any = [{ a: 1, b: 2 }, { a: 2, b: 3 }, { a: -1, b: 3 }, { a: 0, b: 4 }];
                 var list = new List<any>(data, { proxy: true });
@@ -4153,7 +4151,7 @@ module Tests {
                     LiveUnit.Assert.isTrue(verifySortedArr(descSorted, [10, 3, 2, 1, 0, -4, -5]), "making sure that array is sorted descendingly");
                 }
             }
-            
+
             testBaseFunctionsInSortedProjection() {
 
                 var options = [undefined, { proxy: true }, { proxy: true, binding: true }, { binding: true }];
@@ -5031,7 +5029,7 @@ module Tests {
 
             }
 
-            
+
 
             testDifferentMutationsOnFiltersOfGroups() {
 
@@ -6067,7 +6065,7 @@ module Tests {
                 var observable = WinJS.Binding.as(obj);
                 observable.myList.push(10);
                 LiveUnit.Assert.areEqual(10, observable.myList.getAt(0), "testing the first element of the list in observable");
-                
+
             }
             testBindingWithClassDefine() {
                 var someClass = WinJS.Class.define(
@@ -6103,7 +6101,7 @@ module Tests {
             }
         };
 
-      
+
 }
 
 LiveUnit.registerTestClass("Tests.ListTest");

@@ -36,8 +36,7 @@ define([
         /// <event name="beforehide" locid="WinJS.UI.Menu_e:beforehide">Raised just before hiding a menu.</event>
         /// <event name="afterhide" locid="WinJS.UI.Menu_e:afterhide">Raised immediately after a menu is fully hidden.</event>
         /// <part name="menu" class="win-menu" locid="WinJS.UI.Menu_part:menu">The Menu control itself</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Menu: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
@@ -252,8 +251,8 @@ define([
                     // Call flyout show
                     this._baseFlyoutShow(anchor, placement, alignment);
 
-                    // We need to adjust MenuCommand layouts based on the various types of 
-                    // commands visible in our Menu, but only after we send the beforeshow 
+                    // We need to adjust MenuCommand layouts based on the various types of
+                    // commands visible in our Menu, but only after we send the beforeshow
                     // event, so the developer has a chance to show or hide more commands.
                     // Flyout's _findPosition will make that call.
                 },
@@ -345,7 +344,7 @@ define([
                 },
 
                 _handleFocusIn: function Menu_handleFocusIn(event) {
-                    // Menu focuses commands on mouseover. We need to handle cases involving activated flyout commands 
+                    // Menu focuses commands on mouseover. We need to handle cases involving activated flyout commands
                     // to ensure that mousing over different commands in a menu closes that command's sub flyout.
                     var target = event.target;
                     if (isCommandInMenu(target)) {

@@ -1,5 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 /// <reference path="../TestLib/Helper.ts" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
@@ -3029,7 +3029,7 @@ module CorsicaTests {
                     // other browsers prefix uncaught error message strings
                     LiveUnit.Assert.areNotEqual(-1, error.errorMessage.indexOf("error from then()"));
                     LiveUnit.Assert.areEqual(undefined, error.promise);
-                    LiveUnit.Assert.isTrue(error.errorUrl.indexOf("base.js") > 0);
+                    LiveUnit.Assert.isTrue(error.errorUrl.indexOf("WinJS.js") > 0);
                     complete();
                 });
             }
@@ -3643,7 +3643,7 @@ module CorsicaTests {
 
                     // this is the error that came from done()
                     LiveUnit.Assert.areNotEqual(-1, errorFromDone.detail.errorMessage.indexOf("exception from promise"));
-                    LiveUnit.Assert.isTrue(errorFromDone.detail.errorUrl.indexOf("base.js") > 0);
+                    LiveUnit.Assert.isTrue(errorFromDone.detail.errorUrl.indexOf("WinJS.js") > 0);
 
 
                     complete();

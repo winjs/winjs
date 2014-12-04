@@ -131,8 +131,7 @@ define([
         /// <part name="selectioncheckmark" class="win-selectioncheckmark" locid="WinJS.UI.ListView_part:selectioncheckmark">A selection checkmark.</part>
         /// <part name="groupHeader" class="win-groupheader" locid="WinJS.UI.ListView_part:groupHeader">The header of a group.</part>
         /// <part name="progressbar" class="win-progress" locid="WinJS.UI.ListView_part:progressbar">The progress indicator of the ListView.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         ListView: _Base.Namespace._lazy(function () {
             var AffectedRange = _Base.Class.define(function () {

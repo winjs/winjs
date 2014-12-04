@@ -35,7 +35,7 @@ define([
         /// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.Binding.Template"><div>Place content here</div></div>]]></htmlSnippet>
         /// <icon src="base_winjs.ui.template.12x12.png" width="12" height="12" />
         /// <icon src="base_winjs.ui.template.16x16.png" width="16" height="16" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Template: _Base.Namespace._lazy(function () {
             function interpretedRender(template, dataContext, container) {

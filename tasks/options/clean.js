@@ -13,13 +13,6 @@
             config.modulesOutput,
             config.compiledTsOutput
         ],
-        base: [
-            config.desktopOutput + "js/base.js"
-        ],
-        ui: [
-            config.desktopOutput + "js/ui.js",
-            config.desktopOutput + "js/" + config.localeFolder + "/ui.strings.js"
-        ],
         tests: [
             config.testsOutput
         ],

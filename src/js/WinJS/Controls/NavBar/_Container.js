@@ -56,8 +56,7 @@ define([
         /// <part name="navigationArrow" class="win-navbarcontainer-navarrow" locid="WinJS.UI.NavBarContainer_part:navigationArrow">Styles left and right navigation arrows.</part>
         /// <part name="leftNavigationArrow" class="win-navbarcontainer-navleft" locid="WinJS.UI.NavBarContainer_part:leftNavigationArrow">Styles the left navigation arrow.</part>
         /// <part name="rightNavigationArrow" class="win-navbarcontainer-navright" locid="WinJS.UI.NavBarContainer_part:rightNavigationArrow">Styles the right navigation arrow.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         NavBarContainer: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;

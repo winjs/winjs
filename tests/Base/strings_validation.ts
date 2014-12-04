@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
@@ -15,7 +14,7 @@ module WinJSTests {
 
         testStrings() {
             Object.keys(strings).forEach(function (k) {
-                // Comments are generally _foo.comment strings, validate them differently than other strings. 
+                // Comments are generally _foo.comment strings, validate them differently than other strings.
                 if (k.indexOf('.comment') < 0) {
                     var s = WinJS.Resources.getString(k);
                     LiveUnit.Assert.areEqual(s.value, strings[k], k + " is not set correctly");

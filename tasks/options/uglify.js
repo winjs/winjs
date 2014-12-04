@@ -8,14 +8,6 @@
             sourceMap: true,
             banner: config.copyright
         },
-        baseDesktop: {
-            src: [config.desktopOutput + "js/base.js"],
-            dest: config.desktopOutput + "js/base.min.js"
-        },
-        uiDesktop: {
-            src: [config.desktopOutput + "js/ui.js"],
-            dest: config.desktopOutput + "js/ui.min.js"
-        },
         singleFile: {
             src: [config.desktopOutput + "js/WinJS.js"],
             dest: config.desktopOutput + "js/WinJS.min.js"

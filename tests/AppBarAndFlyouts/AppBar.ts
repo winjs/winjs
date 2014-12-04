@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
 /// <reference path="../TestLib/Helper.ToolBar.ts"/>
@@ -1299,7 +1297,7 @@ module CorsicaTests {
                     failures;
 
                 var invokeButton = appBar.querySelector(".win-appbar-invokebutton");
-                if (appBar.winControl.layout === _Constants.appBarLayoutMenu && 
+                if (appBar.winControl.layout === _Constants.appBarLayoutMenu &&
                     getComputedStyle(invokeButton).visibility === "hidden") {
                     invokeButton = appBar.querySelector("." + _ToolBarConstants.overflowButtonCssClass);
                 }

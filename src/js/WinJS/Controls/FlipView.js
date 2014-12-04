@@ -44,8 +44,7 @@ define([
         /// <part name="rightNavigationButton" class="win-navright" locid="WinJS.UI.FlipView_part:rightNavigationButton">The right navigation button.</part>
         /// <part name="topNavigationButton" class="win-navtop" locid="WinJS.UI.FlipView_part:topNavigationButton">The top navigation button.</part>
         /// <part name="bottomNavigationButton" class="win-navbottom" locid="WinJS.UI.FlipView_part:bottomNavigationButton">The bottom navigation button.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         FlipView: _Base.Namespace._lazy(function () {
 

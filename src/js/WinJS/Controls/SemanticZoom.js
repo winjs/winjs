@@ -33,8 +33,7 @@ define([
         /// <icon src="ui_winjs.ui.semanticzoom.16x16.png" width="16" height="16" />
         /// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI.SemanticZoom"><div class="zoomedInContainer" data-win-control="WinJS.UI.ListView"></div><div class="zoomedOutContainer" data-win-control="WinJS.UI.ListView"></div></div>]]></htmlSnippet>
         /// <part name="semanticZoom" class="win-semanticzoom" locid="WinJS.UI.SemanticZoom_part:semanticZoom">The entire SemanticZoom control.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         SemanticZoom: _Base.Namespace._lazy(function () {
             var browserStyleEquivalents = _BaseUtils._browserStyleEquivalents;

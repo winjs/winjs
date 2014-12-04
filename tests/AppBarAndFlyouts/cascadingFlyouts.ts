@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 // <reference path="../TestLib/Helper.ts"/>
 // <reference path="OverlayHelpers.ts" />
@@ -25,7 +23,7 @@ module CorsicaTests {
     }
 
     function hideFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
-        // Hides the specified flyout and returns a promise that completes when 
+        // Hides the specified flyout and returns a promise that completes when
         // it and all of its subFlyouts in the cascade are hidden.
 
         var p: WinJS.Promise<any>;

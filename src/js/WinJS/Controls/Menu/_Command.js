@@ -27,8 +27,7 @@ define([
         /// <icon src="ui_winjs.ui.menucommand.16x16.png" width="16" height="16" />
         /// <htmlSnippet><![CDATA[<button data-win-control="WinJS.UI.MenuCommand" data-win-options="{type:'button',label:'Button'}"></button>]]></htmlSnippet>
         /// <part name="MenuCommand" class="win-command" locid="WinJS.UI.MenuCommand_name">The MenuCommand control itself</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         MenuCommand: _Base.Namespace._lazy(function () {
 
@@ -512,7 +511,7 @@ define([
 
                 _deactivateFlyoutCommand: function MenuCommand_deactivateFlyoutCommand(menuCommand) {
                     // Deactivates the associated Flyout command and returns a promise once complete.
-                    // A command is considered to be deactivated once the proper CSS class has been applied and its associated flyout has begun to hide. 
+                    // A command is considered to be deactivated once the proper CSS class has been applied and its associated flyout has begun to hide.
                     return new Promise(function (c) {
                         menuCommand = menuCommand.winControl || menuCommand;
                         _ElementUtilities.removeClass(menuCommand.element, _Constants.menuCommandFlyoutActivatedClass);

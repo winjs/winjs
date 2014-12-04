@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="repeaterUtils.ts"/>
 
@@ -386,7 +385,7 @@ module WinJSTests {
             LiveUnit.LoggingCore.logComment("Repeater control created");
 
             // When a template is not provided, repeater is populated with JSON text from the item
-            // wrapped in divs. 
+            // wrapped in divs.
             // Verify the number of children div elements and complete
             LiveUnit.Assert.areEqual(data.length, elem.childElementCount,
                 "The DOM size is not equal to the number of data items");
@@ -395,7 +394,7 @@ module WinJSTests {
 
 
 
-        // WinBlue: 66929 
+        // WinBlue: 66929
         testNestedRepeaterInlineTemplate = function (complete) {
             var outerList = createNestedData(),
                 str = "",
@@ -579,7 +578,7 @@ module WinJSTests {
                 LiveUnit.LoggingCore.logComment("Creating the control");
                 var ctrl = new control(elem, { itemDataSource: ds, itemTemplate: renderer });
 
-                // Wait till the control is ready and call complete                
+                // Wait till the control is ready and call complete
                 if (control === WinJS.UI.ListView) {
                     // ListView
                     repeaterUtils.waitForReady(ctrl)()

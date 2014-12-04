@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="OverlayHelpers.ts" />
 
@@ -343,7 +341,7 @@ module CorsicaTests {
                 return OverlayHelpers.hide(menu);
             }).then(() => {
                 LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
-                
+
                 OverlayHelpers.disposeAndRemove(menuElement);
                 complete();
             });
@@ -514,7 +512,7 @@ module CorsicaTests {
                 complete();
             });
         };
-        
+
         testCommandsDeactivateWhenContainingMenuHides = function (complete) {
             // Verifies that hiding a Menu will deactivate any 'flyout' typed commands that it contains.
             var msg = "";
@@ -534,10 +532,10 @@ module CorsicaTests {
             document.body.appendChild(menu3Element);
             var menu3 = new Menu(menu3Element);
 
-            var c1 = new MenuCommand(null, { id: 'menu1Cmd', type: 'flyout', flyout: menu2 }), 
+            var c1 = new MenuCommand(null, { id: 'menu1Cmd', type: 'flyout', flyout: menu2 }),
                 c2 = new MenuCommand(null, { id: 'menu2Cmd', type: 'flyout', flyout: menu3 }),
-                c3 = new MenuCommand(null, { id: 'menu3Cmd', type: 'button' }); 
-                
+                c3 = new MenuCommand(null, { id: 'menu3Cmd', type: 'button' });
+
             menu1.commands = [c1];
             menu2.commands = [c2];
             menu3.commands = [c3];
@@ -565,9 +563,9 @@ module CorsicaTests {
 
         testParentMenuMovesFocusToSubMenuWhenActivatedMenuCommandIsFocused = function(complete) {
             // Verifies that when a Menu contains a 'flyout' typed MenuCommand that is already activated, and that MenuCommand recieves focus,
-            // then the Menu should move focus onto the element of the MenuCommand's subMenu and all of the subMenu's 'flyout' typed commands 
+            // then the Menu should move focus onto the element of the MenuCommand's subMenu and all of the subMenu's 'flyout' typed commands
             // should be deactivated.
-            // A real world scenario is a user mousing back into a parent or grandparent Menu across the activated MenuCommand in that Menu. 
+            // A real world scenario is a user mousing back into a parent or grandparent Menu across the activated MenuCommand in that Menu.
             // Mouseover on MenuCommands in a Menu, focuses that command, but when the MenuCommand is already activated we want to put focus
             // into that command's subMenu and let the cascade Manager close the subSubMenu + descendants.
 
@@ -602,10 +600,10 @@ module CorsicaTests {
             }
             subSubMenu.addEventListener("afterhide", afterSubSubMenuHide, false);
 
-            var c1 = new MenuCommand(null, { id: 'c1', type: 'flyout', flyout: subMenu }), 
+            var c1 = new MenuCommand(null, { id: 'c1', type: 'flyout', flyout: subMenu }),
                 c2 = new MenuCommand(null, { id: 'c2', type: 'flyout', flyout: subSubMenu }),
-                c3 = new MenuCommand(null, { id: 'c3', type: 'button' }); 
-                
+                c3 = new MenuCommand(null, { id: 'c3', type: 'button' });
+
             parentMenu.commands = [c1];
             subMenu.commands = [c2];
             subSubMenu.commands = [c3];

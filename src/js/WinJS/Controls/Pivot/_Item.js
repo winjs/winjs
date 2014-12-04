@@ -28,8 +28,7 @@ define([
         /// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI.PivotItem" data-win-options="{header: 'PivotItem Header'}">PivotItem Content</div>]]></htmlSnippet>
         /// <part name="pivotitem" class="win-pivot-item" locid="WinJS.UI.PivotItem_part:pivotitem">The entire PivotItem control.</part>
         /// <part name="content" class="win-pivot-item-content" locid="WinJS.UI.PivotItem_part:content">The content region of the PivotItem.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         PivotItem: _Base.Namespace._lazy(function () {
             var strings = {

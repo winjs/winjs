@@ -44,8 +44,7 @@ define([
         /// <part name="progress" class="win-hub-progress" locid="WinJS.UI.Hub_part:progress">The progress indicator for the Hub.</part>
         /// <part name="viewport" class="win-hub-viewport" locid="WinJS.UI.Hub_part:viewport">The viewport of the Hub.</part>
         /// <part name="surface" class="win-hub-surface" locid="WinJS.UI.Hub_part:surface">The scrollable region of the Hub.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Hub: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
@@ -1146,7 +1145,7 @@ define([
                     if (this._isInteractive(ev.target)) {
                         return;
                     }
-                    
+
                     var leftKey = this._rtl ? Key.rightArrow : Key.leftArrow;
                     var rightKey = this._rtl ? Key.leftArrow : Key.rightArrow;
 

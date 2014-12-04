@@ -38,8 +38,7 @@ define([
         /// <part name="tentative-full" class="win-star win-tentative win-full" locid="WinJS.UI.Rating_part:tentative-full">The full star when the Rating control shows the tentative rating.</part>
         /// <part name="disabled-empty" class="win-star win-disabled win-empty" locid="WinJS.UI.Rating_part:disabled-empty">The empty star when the control is disabled.</part>
         /// <part name="disabled-full" class="win-star win-disabled win-full" locid="WinJS.UI.Rating_part:disabled-full">The full star when the control is disabled.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         Rating: _Base.Namespace._lazy(function () {
             var createEvent = _Events._createEventProperty;

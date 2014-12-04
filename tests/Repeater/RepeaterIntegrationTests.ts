@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="repeaterUtils.ts"/>
 
@@ -114,7 +113,7 @@ module WinJSTests {
             });
             LiveUnit.LoggingCore.logComment("Repeater control created");
 
-            // Verify 
+            // Verify
             var numberOfRows = tbody.querySelectorAll(".row").length;
             LiveUnit.Assert.areEqual(data.length, numberOfRows, "Unexpected number of rows in the table");
             complete();

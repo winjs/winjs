@@ -42,8 +42,7 @@ define([
         /// <event name="beforehide" locid="WinJS.UI.SettingsFlyout_e:beforehide">Raised just before hiding a SettingsFlyout.</event>
         /// <event name="afterhide" locid="WinJS.UI.SettingsFlyout_e:afterhide">Raised immediately after a SettingsFlyout is fully hidden.</event>
         /// <part name="settings" class="win-settingsflyout" locid="WinJS.UI.SettingsFlyout_part:settings">The SettingsFlyout control itself.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         SettingsFlyout: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;

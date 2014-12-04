@@ -93,8 +93,7 @@ define([
         /// <htmlSnippet><![CDATA[<button data-win-control="WinJS.UI.BackButton"></button>]]></htmlSnippet>
         /// <part name="BackButton" class="win-navigation-backbutton" locid="WinJS.UI.BackButton_part:BackButton">The BackButton control itself</part>
         /// <part name="BackArrowGlyph" class="win-back" locid="WinJS.UI.BackButton_part:BackArrowGlyph">The Back Arrow glyph</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         BackButton: _Base.Namespace._lazy(function () {
             // Statics

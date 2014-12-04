@@ -1,7 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/en-us/ui.strings.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
 /// <reference path="ContentDialogUtilities.ts" />
@@ -9,7 +7,7 @@
 
 module ContentDialogTests {
     "use strict";
-    
+
     enum Position {center, top}
 
     interface IPositioningAndSizingAssertions {
@@ -23,11 +21,11 @@ module ContentDialogTests {
         expectedDialogHorizontalPosition: Position;
         expectedDialogVerticalPosition: Position;
     }
-    
+
     var testRoot: HTMLElement;
     var Utils = ContentDialogTests.Utilities;
     var createDialog;
-    
+
     var defaultMinDialogWidth = 320;
     var defaultMaxDialogWidth = 456;
     var defaultMinDialogHeight = 184;
@@ -38,12 +36,12 @@ module ContentDialogTests {
         var style = getComputedStyle(element);
         return style.display !== "none" && style.visibility === "visible" && +style.opacity === 1;
     }
-    
+
     function assertDialogIsDisposed(dialog: WinJS.UI.PrivateContentDialog) {
         LiveUnit.Assert.isTrue(dialog._disposed, "ContentDialog didn't mark itself as disposed");
         LiveUnit.Assert.areEqual("Disposed", dialog._state.name, "ContentDialog didn't move into the disposed state");
     }
-    
+
     function assertAreBoundingClientRectValuesEqual(expected, actual, message) {
         // Use a tolerance of 1 because Safari truncates floats returned by getBoundingClientRect while
         // other browsers return the floating point value.
@@ -92,9 +90,9 @@ module ContentDialogTests {
     function testHide(args) {
         var expectedReason = args.expectedReason;
         var hideAction = args.hideAction;
-        
+
         var dialog = Utils.useSynchronousAnimations(createDialog());
-        
+
         var beforeHideReason;
         dialog.onbeforehide = function (eventObject) {
             beforeHideReason = eventObject.detail.reason;
@@ -116,12 +114,12 @@ module ContentDialogTests {
         LiveUnit.Assert.areEqual(expectedReason, showReason,
             "show's promise completed with unexpected dismissal reason");
     }
-    
+
     function verifyTabIndices(dialog: WinJS.UI.PrivateContentDialog, lowestTabIndex: number, highestTabIndex: number) {
         // lowest tab index
         LiveUnit.Assert.areEqual(lowestTabIndex, +dialog._dom.startBodyTab.tabIndex,
             "startBodyTab doesn't match content's lowest tab index");
-        
+
         // highest tab index
         LiveUnit.Assert.areEqual(highestTabIndex, +dialog._dom.commands[0].tabIndex,
             "primaryCommand doesn't match content's highest tab index");
@@ -130,7 +128,7 @@ module ContentDialogTests {
         LiveUnit.Assert.areEqual(highestTabIndex, dialog._dom.endBodyTab.tabIndex,
             "endBodyTab doesn't match content's highest tab index");
     }
-    
+
     export class BasicTests {
         setUp() {
             Helper.initUnhandledErrors();
@@ -186,11 +184,11 @@ module ContentDialogTests {
                 LiveUnit.Assert.isTrue(isVisible(dialog.element), "show's promise: dialog should be visible on screen");
             });
         }
-        
+
         testBeforeShowIsCancelable() {
             var dialog = Utils.useSynchronousAnimations(createDialog());
             var showCanceled = false;
-            
+
             dialog.onbeforeshow = function (eventObject) {
                 eventObject.preventDefault();
             };
@@ -203,7 +201,7 @@ module ContentDialogTests {
             dialog.onafterhide = function (eventObject) {
                 LiveUnit.Assert.fail("afterhide shouldn't have fired due to beforeshow being canceled");
             };
-            
+
             dialog.show().then(function () {
                 LiveUnit.Assert.fail("Show should not have completed successfully");
             }, function (e) {
@@ -214,14 +212,14 @@ module ContentDialogTests {
             LiveUnit.Assert.isTrue(showCanceled, "show's cancelation handler should have run");
             Helper.validateUnhandledErrors();
         }
-        
+
         testBeforeHideIsCancelable() {
             function showShouldNotHaveCompleted() {
                 LiveUnit.Assert.fail("show should not have completed");
             }
-            
+
             var dialog = Utils.useSynchronousAnimations(createDialog());
-            
+
             dialog.show().then(showShouldNotHaveCompleted, showShouldNotHaveCompleted);
             dialog.onbeforehide = function (eventObject) {
                 eventObject.preventDefault();
@@ -233,7 +231,7 @@ module ContentDialogTests {
             LiveUnit.Assert.isFalse(dialog.hidden, "ContentDialog should still be shown");
             Helper.validateUnhandledErrors();
         }
-        
+
         testPrimaryClick() {
             testHide({
                 expectedReason: "primary",
@@ -273,7 +271,7 @@ module ContentDialogTests {
             });
             Helper.validateUnhandledErrors();
         }
-        
+
         testHideWithEscapeKey() {
             testHide({
                 expectedReason: "none",
@@ -283,13 +281,13 @@ module ContentDialogTests {
             });
             Helper.validateUnhandledErrors();
         }
-        
+
         testHideWithHardwareBackButton() {
             var backClickEvent = {
                 type: 'backclick',
                 _winRTBackPressedEvent: { handled: false }
             };
-            
+
             testHide({
                 expectedReason: "none",
                 hideAction: function (dialog) {
@@ -300,7 +298,7 @@ module ContentDialogTests {
                 "ContentDialog should have marked the backclick event as handled");
             Helper.validateUnhandledErrors();
         }
-        
+
         testDisposeWhileShown() {
             var errorHandler1Ran = false;
             var errorHandler2Ran = false;
@@ -328,7 +326,7 @@ module ContentDialogTests {
             dialog.dispose();
             Helper.validateUnhandledErrors();
         }
-        
+
         testDisposeWhileHidden() {
             var errorHandler1Ran = false;
             var errorHandler2Ran = false;
@@ -342,8 +340,8 @@ module ContentDialogTests {
             dialog.dispose();
             Helper.validateUnhandledErrors();
         }
-        
-        testInitializingProperties() {            
+
+        testInitializingProperties() {
             var optionsRecords = [
                 null,
                 { title: "A title" },
@@ -410,7 +408,7 @@ module ContentDialogTests {
             });
             Helper.validateUnhandledErrors();
         }
-        
+
         testTabIndexOfZeroIsHighest() {
             var innerHTML =
                 '<div tabIndex="4">4</div>' +
@@ -425,14 +423,14 @@ module ContentDialogTests {
                 '<div tabIndex="3">3</div>';
             var lowestTabIndex = 2;
             var highestTabIndex = 0;
-                
+
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: innerHTML }));
-            
+
             dialog.show();
             verifyTabIndices(dialog, lowestTabIndex, highestTabIndex);
             Helper.validateUnhandledErrors();
         }
-        
+
         testTabIndices() {
             var innerHTML =
                 '<div tabIndex="4">4</div>' +
@@ -446,12 +444,12 @@ module ContentDialogTests {
                 '<div tabIndex="3">3</div>';
             var lowestTabIndex = 2;
             var highestTabIndex = 8;
-                
+
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: innerHTML }));
-            
+
             dialog.show();
             verifyTabIndices(dialog, lowestTabIndex, highestTabIndex);
-            
+
             // Test that dialog updates its tab indices after the user presses
             // the tab key
             //
@@ -463,14 +461,14 @@ module ContentDialogTests {
             newHighest.tabIndex = highestTabIndex;
             dialog._dom.content.appendChild(newHighest);
             dialog.element.querySelector(".aParent").appendChild(newLowest);
-            
+
             // Tab key should cause the dialog to update its tab indices
             Helper.keydown(dialog.element, WinJS.Utilities.Key.tab);
-            
+
             verifyTabIndices(dialog, lowestTabIndex, highestTabIndex);
             Helper.validateUnhandledErrors();
         }
-        
+
         testPositioningAndSizing(complete) {
             function testCasesWithLimits(limits: { minDialogWidth: number; maxDialogWidth: number; minDialogHeight: number; maxDialogHeight: number }) {
                 return [
@@ -571,7 +569,7 @@ module ContentDialogTests {
                         expectedDialogHorizontalPosition: undefined,
                         expectedDialogVerticalPosition: undefined
                     };
-                    
+
                     Helper.Assert.areKeysValid(providedValues, Object.keys(defaultValues));
                     var values: IPositioningAndSizingAssertions = WinJS.Utilities._merge(defaultValues, providedValues);
                     return values;
@@ -584,7 +582,7 @@ module ContentDialogTests {
                 }
                 function assertValues(values) {
                     var bodyRect = dialog.element.querySelector("." + ContentDialog._ClassNames.dialog).getBoundingClientRect();
-                    
+
                     // Width
                     if (values.expectedDialogWidth !== undefined) {
                         assertAreBoundingClientRectValuesEqual(values.expectedDialogWidth, bodyRect.width,

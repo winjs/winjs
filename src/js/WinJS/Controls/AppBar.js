@@ -44,8 +44,7 @@ define([
         /// <event name="afterhide" locid="WinJS.UI.AppBar_e:afterhide">Raised immediately after the AppBar is fully hidden.</event>
         /// <part name="appbar" class="win-commandlayout" locid="WinJS.UI.AppBar_part:appbar">The AppBar control itself.</part>
         /// <part name="appBarCustom" class="win-appbar" locid="WinJS.UI.AppBar_part:appBarCustom">Style for a custom layout AppBar.</part>
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/base.js" shared="true" />
-        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/ui.js" shared="true" />
+        /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBar: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
@@ -823,7 +822,7 @@ define([
                             if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
                                 _storePreviousFocus(_Global.document.activeElement);
                             }
-                            
+
                             this._layout.setFocusOnShow();
                         }
                     }

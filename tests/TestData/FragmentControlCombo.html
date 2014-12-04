@@ -2,18 +2,17 @@
 <!DOCTYPE html>
 <!-- saved from url=(0014)about:internet -->
 <html>
-<head>    
+<head>
     <title>bug repro</title>
     <!-- WinJS references -->
     <link href="//$(TargetFramework)/css/ui-dark.css" rel="stylesheet" />
-    <script src="//$(TargetFramework)/js/base.js"></script>
-    <script src="//$(TargetFramework)/js/ui.js"></script>
+    <script src="//$(TargetFramework)/js/WinJS.js"></script>
 
-    <!-- goal here is to load this as a fragment and then 
+    <!-- goal here is to load this as a fragment and then
         a) verify init code only runs once (count === 1 after being loaded)
         b) event handlers hooked up: fireOnchange(), then check count
     -->
-    
+
     <script type="text/javascript">
         function fcc_incrementCount() {
             // store the counter inside this element which will be removed when test cleans up
@@ -26,11 +25,11 @@
             chk.checked = true;
             fcc_addRemoveHandler(chk);
         }
-        
+
         function fcc_getCount() {
             return parseInt(document.querySelectorAll("#fcc_count")[0].textContent);
         }
-        
+
 
         function fcc_initialize2() {
             // check the boxes and wire up eventhandlers
@@ -40,10 +39,10 @@
             // increment counter to make sure init() only called once.
             fcc_incrementCount();
         }
-        
+
         function fcc_initialize() {
             WinJS.UI.processAll();
-            
+
             fcc_initialize2();
         }
 
@@ -76,8 +75,8 @@
 </head>
 
 <body>
-    <div id="selectElement" >    
-      test select 
+    <div id="selectElement" >
+      test select
       <select id='fcc_testSelect'>
         <option>1</option>
         <option>2</option>
@@ -88,22 +87,22 @@
         <option>7</option>
         <option>8</option>
       </select>
-    </div>  
+    </div>
     <br/>
     <button id="fireSelectChange" onclick="fcc_fireOnchange(document.getElementById('testSelect'));">fire change event for test select</button>
     onchange handler for test select
-    <input name="fcc_enableSelectChangeHandler" type="checkbox" onclick="fcc_addRemoveHandler(this);"  value="selectElement" /><br />        
+    <input name="fcc_enableSelectChangeHandler" type="checkbox" onclick="fcc_addRemoveHandler(this);"  value="selectElement" /><br />
 
     <br/>
     <hr/>
     <br/>
 
-    <div id="datepicker" data-win-control="WinJS.UI.DatePicker">datepicker(default)</div> 
+    <div id="datepicker" data-win-control="WinJS.UI.DatePicker">datepicker(default)</div>
     <br/>
     <button id="fireMonthChange" onclick="fcc_fireOnchange(datepicker.querySelector('.win-month'));">fire change event for datepicker month</button>
-    onchange handler for datepicker 
-    <input name="fcc_enableDatePickerChangeHandler" type="checkbox" onclick="fcc_addRemoveHandler(this);"  value="datepicker" /><br />    
-    
+    onchange handler for datepicker
+    <input name="fcc_enableDatePickerChangeHandler" type="checkbox" onclick="fcc_addRemoveHandler(this);"  value="datepicker" /><br />
+
     <hr/>
     <div id="fcc_count">0</div>
     <div id="fcc_output"></div>

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-// <reference path="ms-appx://$(TargetFramework)/js/base.js" />
-// <reference path="ms-appx://$(TargetFramework)/js/ui.js" />
+// <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 ///<reference path="../../typings/typings.d.ts" />
 ///<reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 ///<reference path="../TestLib/winjs.dev.d.ts" />
@@ -65,7 +64,7 @@ module CorsicaTests {
 
     MyCustomControlDeclarativeControlContainer.isDeclarativeControlContainer = WinJS.Utilities.markSupportedForProcessing(MyCustomControlDeclarativeControlContainer.isDeclarativeControlContainer);
     global.MyCustomControlDeclarativeControlContainer = MyCustomControlDeclarativeControlContainer;
-    // Random control used by tests that need a control. Give it whatever surface area you 
+    // Random control used by tests that need a control. Give it whatever surface area you
     //  desire for testing purposes.
     //
     class MyCustomControl {
@@ -727,7 +726,7 @@ module CorsicaTests {
 
         testInvalidBindings = async(function () {
 
-            // add this, id, and multi attribute 
+            // add this, id, and multi attribute
             var templateDiv = document.createElement("div");
             templateDiv.innerHTML = "<div>\
     <div class='one' data-win-bind='id: text1; this: text2; foo: text3; bar.baz: text4 WinJS.Binding.setAttributeOneTime'></div>\
@@ -1002,7 +1001,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("function", typeof template._renderImpl);
 
             var string = template._renderImpl.toString();
-            // Because these need to setup reoccurant bindings we should find evidence in the form of 
+            // Because these need to setup reoccurant bindings we should find evidence in the form of
             //  the parsed binding expressions.
             //
             LiveUnit.Assert.areNotEqual(-1, string.indexOf('["style","backgroundColor"]'));
