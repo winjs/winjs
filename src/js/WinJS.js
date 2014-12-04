@@ -6,7 +6,7 @@ define([
     'WinJS/_Signal',
     'WinJS/Scheduler',
     'WinJS/Utilities',
-    'WinJS/Utilities/_DirectionalFocus',
+    'WinJS/Utilities/_XYFocus',
     'WinJS/Fragments',
     'WinJS/Application',
     'WinJS/Navigation',
