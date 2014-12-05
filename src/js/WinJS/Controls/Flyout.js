@@ -46,7 +46,7 @@ define([
 
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/flyoutAriaLabel").value; },
-                get noAnchor() { return "Invalid argument: Showing flyout requires a DOM element as its parameter."; },
+                get noAnchor() { return "Invalid argument: Flyout anchor element not found in DOM."; },
                 get badPlacement() { return "Invalid argument: Flyout placement should be 'top' (default), 'bottom', 'left', 'right', 'auto', 'autohorizontal', or 'autovertical'."; },
                 get badAlignment() { return "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'."; }
             };
@@ -592,9 +592,17 @@ define([
                 //   - this is because right handed users would be more likely to obscure a flyout on the right of the anchor.
                 // All three auto placements will add a vertical scrollbar if necessary.
                 _getTopLeft: function Flyout_getTopLeft() {
-                    var anchorRawRectangle = this._currentAnchor.getBoundingClientRect(),
+
+                    var anchorRawRectangle,
                         flyout = {},
                         anchor = {};
+
+                    try {
+                        anchorRawRecteangle = this._currentAnchor.getBoundingClientRect()
+                    }
+                    catch (e) {
+                        throw new _ErrorFromName("WinJS.UI.Flyout.NoAnchor", strings.noAnchor);
+                    }
 
                     // Adjust for the anchor's margins.
                     anchor.top = anchorRawRectangle.top;
@@ -824,18 +832,21 @@ define([
 
                 _resize: function Flyout_resize() {
                     // If hidden and not busy animating, then nothing to do
-                    if (this.hidden && !this._animating) {
-                        return;
-                    }
+                    if (!this.hidden || this._animating) {
 
-                    // This should only happen if the IHM is dismissing,
-                    // the only other way is for viewstate changes, which
-                    // would dismiss any flyout.
-                    if (this._needToHandleHidingKeyboard) {
-                        // Hiding keyboard, update our position, giving the anchor a chance to update first.
-                        var that = this;
-                        _BaseUtils._setImmediate(function () { that._findPosition(); });
-                        this._needToHandleHidingKeyboard = false;
+                        // This should only happen if the IHM is dismissing,
+                        // the only other way is for viewstate changes, which
+                        // would dismiss any flyout.
+                        if (this._needToHandleHidingKeyboard) {
+                            // Hiding keyboard, update our position, giving the anchor a chance to update first.
+                            var that = this;
+                            _BaseUtils._setImmediate(function () {
+                                if (!that.hidden || that._animating) {
+                                    that._findPosition();
+                                }
+                            });
+                            this._needToHandleHidingKeyboard = false;
+                        }
                     }
                 },
 
@@ -882,19 +893,22 @@ define([
                 _hidingKeyboard: function Flyout_hidingKeyboard() {
                     // If we aren't visible and not animating, or haven't been repositioned, then nothing to do
                     // We don't know if the keyboard moved the anchor, so _keyboardMovedUs doesn't help here
-                    if (this.hidden && !this._animating) {
-                        return;
-                    }
+                    if (!this.hidden || this._animating) {
 
-                    // Snap to the final position
-                    // We'll either just reveal the current space or resize the window
-                    if (_Overlay._Overlay._keyboardInfo._isResized) {
-                        // Flag resize that we'll need an updated position
-                        this._needToHandleHidingKeyboard = true;
-                    } else {
-                        // Not resized, update our final position, giving the anchor a chance to update first.
-                        var that = this;
-                        _BaseUtils._setImmediate(function () { that._findPosition(); });
+                        // Snap to the final position
+                        // We'll either just reveal the current space or resize the window
+                        if (_Overlay._Overlay._keyboardInfo._isResized) {
+                            // Flag resize that we'll need an updated position
+                            this._needToHandleHidingKeyboard = true;
+                        } else {
+                            // Not resized, update our final position, giving the anchor a chance to update first.
+                            var that = this;
+                            _BaseUtils._setImmediate(function () {
+                                if (!that.hidden || that._animating) {
+                                    that._findPosition();
+                                }
+                            });
+                        }
                     }
                 },
 
