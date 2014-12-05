@@ -7199,17 +7199,31 @@ declare module WinJS.UI {
         }
         
         /**
-         * Display options for a SplitView's pane.
+         * Display options for a SplitView's pane when it is hidden.
+        **/
+        static HiddenDisplayMode: {
+            /**
+             * When the pane is hidden, it is not visible and doesn't take up any space.
+            **/
+            none: string;
+            /**
+             * When the pane is hidden, it occupies space leaving less room for the SplitView's content.
+            **/
+            inline: string;
+        }
+        
+        /**
+         * Display options for a SplitView's pane when it is shown.
         **/
         static ShownDisplayMode: {
-            /**
-             * When the pane is shown, it doesn't take up any space and it is light dismissable.
-            **/
-            overlay: string;
             /**
              * When the pane is shown, it occupies space leaving less room for the SplitView's content.
             **/
             inline: string;
+            /**
+             * When the pane is shown, it doesn't take up any space and it is light dismissable.
+            **/
+            overlay: string;
         }
         
         /**
@@ -7241,7 +7255,12 @@ declare module WinJS.UI {
         panePlacement: string;
         
         /**
-         * Gets or sets the display mode of the SplitView's pane.
+         * Gets or sets the display mode of the SplitView's pane when it is hidden.
+        **/
+        hiddenDisplayMode: string;
+        
+        /**
+         * Gets or sets the display mode of the SplitView's pane when it is shown.
         **/
         shownDisplayMode: string;
         
@@ -7259,11 +7278,6 @@ declare module WinJS.UI {
          * Hides the SplitView's pane.
         **/
         hidePane(): void;
-        
-        /**
-         * Toggles the SplitView's pane, hiding it if it's currently shown and showing it if it's currently hidden.
-        **/
-        togglePane(): void;
         
         /**
          * Disposes this control.

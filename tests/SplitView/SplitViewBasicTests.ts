@@ -12,14 +12,15 @@ module SplitViewTests {
     "use strict";
 
     // Horizontal (placement left/right)
-    var defaultHiddenPaneWidth = 0;
+    var defaultHiddenPaneWidth = 48;
     var defaultShownPaneWidth = 320;
     // Vertical (placement top/bottom)
-    var defaultHiddenPaneHeight = 0;
-    var defaultShownPaneHeight = 320;
+    var defaultHiddenPaneHeight = 24;
+    var defaultShownPaneHeight = 60;
 
     var defaultOptions: ISplitViewOptions = {
         panePlacement: SplitView.PanePlacement.left,
+        hiddenDisplayMode: SplitView.ShownDisplayMode.inline,
         shownDisplayMode: SplitView.ShownDisplayMode.overlay,
         paneHidden: true
     };
@@ -72,12 +73,22 @@ module SplitViewTests {
         hiddenPaneHeight: number;
         shownPaneHeight: number;
         panePlacement: string;
+        hiddenDisplayMode: string;
         shownDisplayMode: string;
         paneHidden: boolean;
         rtl: boolean;
     }
 
     function expectedPaneRect(config: ILayoutConfig): IRect {
+        if (config.paneHidden && config.hiddenDisplayMode === "none") {
+            return {
+                left: 0,
+                top: 0,
+                width: 0,
+                height: 0
+            };
+        }
+        
         var placementLeft = config.rtl ? SplitView.PanePlacement.right : SplitView.PanePlacement.left;
         var placementRight = config.rtl ? SplitView.PanePlacement.left : SplitView.PanePlacement.right;
 
@@ -128,8 +139,13 @@ module SplitViewTests {
         var paneWidth: number;
         var paneHeight: number;
         if (config.paneHidden || config.shownDisplayMode === SplitView.ShownDisplayMode.overlay) {
-            paneWidth = config.hiddenPaneWidth;
-            paneHeight = config.hiddenPaneHeight;
+            if (config.hiddenDisplayMode === "none") {
+                paneWidth = 0;
+                paneHeight = 0;
+            } else {
+                paneWidth = config.hiddenPaneWidth;
+                paneHeight = config.hiddenPaneHeight;
+            }
         } else {
             paneWidth = config.shownPaneWidth;
             paneHeight = config.shownPaneHeight;
@@ -189,26 +205,30 @@ module SplitViewTests {
             var splitView = Utils.useSynchronousAnimations(createSplitView(splitViewOptions));
 
             ["left", "right", "top", "bottom"].forEach((panePlacement) => { // panePlacement
-                ["inline", "overlay"].forEach((shownDisplayMode) => { // shownDisplayMode
-                    [true, false].forEach((paneHidden) => { // paneHidden
-                        splitView.panePlacement = panePlacement;
-                        splitView.shownDisplayMode = shownDisplayMode;
-                        splitView.paneHidden = paneHidden;
-
-                        var config = {
-                            panePlacement: panePlacement,
-                            shownDisplayMode: shownDisplayMode,
-                            paneHidden: paneHidden,
-                            rootWidth: args.rootWidth,
-                            rootHeight: args.rootHeight,
-                            hiddenPaneWidth: args.hiddenPaneWidth,
-                            hiddenPaneHeight: args.hiddenPaneHeight,
-                            shownPaneWidth: args.shownPaneWidth,
-                            shownPaneHeight: args.shownPaneHeight,
-                            rtl: rtl
-                        };
-
-                        assertLayoutCorrect(splitView, config);
+                ["none", "inline"].forEach((hiddenDisplayMode) => { // hiddenDisplayMode
+                    ["inline", "overlay"].forEach((shownDisplayMode) => { // shownDisplayMode
+                        [true, false].forEach((paneHidden) => { // paneHidden
+                            splitView.panePlacement = panePlacement;
+                            splitView.hiddenDisplayMode = hiddenDisplayMode;
+                            splitView.shownDisplayMode = shownDisplayMode;
+                            splitView.paneHidden = paneHidden;
+    
+                            var config = {
+                                panePlacement: panePlacement,
+                                hiddenDisplayMode: hiddenDisplayMode,
+                                shownDisplayMode: shownDisplayMode,
+                                paneHidden: paneHidden,
+                                rootWidth: args.rootWidth,
+                                rootHeight: args.rootHeight,
+                                hiddenPaneWidth: args.hiddenPaneWidth,
+                                hiddenPaneHeight: args.hiddenPaneHeight,
+                                shownPaneWidth: args.shownPaneWidth,
+                                shownPaneHeight: args.shownPaneHeight,
+                                rtl: rtl
+                            };
+    
+                            assertLayoutCorrect(splitView, config);
+                        });
                     });
                 });
             });
@@ -227,6 +247,7 @@ module SplitViewTests {
 
         LiveUnit.Assert.areEqual(options.paneHidden, splitView.paneHidden, "splitView.paneHidden incorrect");
         LiveUnit.Assert.areEqual(options.panePlacement, splitView.panePlacement, "splitView.panePlacement incorrect");
+        LiveUnit.Assert.areEqual(options.hiddenDisplayMode, splitView.hiddenDisplayMode, "splitView.hiddenDisplayMode incorrect");
         LiveUnit.Assert.areEqual(options.shownDisplayMode, splitView.shownDisplayMode, "splitView.shownDisplayMode incorrect");
     }
 
@@ -442,13 +463,16 @@ module SplitViewTests {
             var rootWidth = 1000;
             var optionsRecords = [
                 null,
+                { paneHidden: false },
                 { panePlacement: "top" },
+                { hiddenDisplayMode: "none" },
+                { hiddenDisplayMode: "inline" },
                 { shownDisplayMode: "overlay" },
                 { shownDisplayMode: "overlay", paneHidden: false },
                 { shownDisplayMode: "inline" },
                 { shownDisplayMode: "inline", paneHidden: false },
-                { panePlacement: "right", shownDisplayMode: "inline", paneHidden: false },
-                { panePlacement: "left", shownDisplayMode: "inline", paneHidden: true },
+                { panePlacement: "right", hiddenDisplayMode: "inline", shownDisplayMode: "inline", paneHidden: false },
+                { panePlacement: "left", hiddenDisplayMode: "none", shownDisplayMode: "inline", paneHidden: true },
                 { panePlacement: "bottom", shownDisplayMode: "overlay", paneHidden: false },
                 { panePlacement: "bottom", shownDisplayMode: "overlay" }
             ];
@@ -492,19 +516,24 @@ module SplitViewTests {
                  options.panePlacement = splitView.panePlacement = panePlacement;
                  verify();
             });
+            
+            ["none", "inline"].forEach((hiddenDisplayMode) => {
+                 options.hiddenDisplayMode = splitView.hiddenDisplayMode = hiddenDisplayMode;
+                 verify();
+            });
 
             ["overlay", "inline"].forEach((shownDisplayMode) => {
                  options.shownDisplayMode = splitView.shownDisplayMode = shownDisplayMode;
                  verify();
             });
-
+            
             [false, true].forEach((paneHidden) => {
                  options.paneHidden = splitView.paneHidden = paneHidden;
                  verify();
             });
         }
 
-        testTogglePane() {
+        testTogglingPane() {
             var rootHeight = 500;
             var rootWidth = 1000;
             var splitView = Utils.useSynchronousAnimations(createSplitView());
@@ -527,12 +556,12 @@ module SplitViewTests {
             // Pane should initially be hidden
             verify({ paneHidden: true });
 
-            // After toggleShown, pane should be shown
-            splitView.togglePane();
+            // After toggling pane, pane should be shown
+            splitView.paneHidden = !splitView.paneHidden;
             verify({ paneHidden: false });
 
-            // After toggleShown, pane should be hidden
-            splitView.togglePane();
+            // After toggling pane, pane should be hidden
+            splitView.paneHidden = !splitView.paneHidden;
             verify({ paneHidden: true });
         }
 
@@ -543,8 +572,8 @@ module SplitViewTests {
             var allConfigs = Helper.pairwise({
                 rtl: [true, false],
                 panePlacement: ["left", "right", "top", "bottom"],
-                shownDisplayMode: ["inline", "overlay"],
-                peek: [true, false]
+                hiddenDisplayMode: ["none", "inline"],
+                shownDisplayMode: ["inline", "overlay"]
             });
 
             var testConfig = (index) => {
@@ -555,8 +584,8 @@ module SplitViewTests {
                     var fullConfig = WinJS.Utilities._merge(config, {
                         rootHeight: rootHeight,
                         rootWidth: rootWidth,
-                        hiddenPaneWidth: config.peek ? 48 : 0,
-                        hiddenPaneHeight: config.peek ? 53 : 0,
+                        hiddenPaneWidth: defaultHiddenPaneWidth,
+                        hiddenPaneHeight: defaultHiddenPaneHeight,
                         shownPaneWidth: defaultShownPaneWidth,
                         shownPaneHeight: defaultShownPaneHeight,
                         paneHidden: false
@@ -568,15 +597,9 @@ module SplitViewTests {
                     } else {
                         document.documentElement.removeAttribute("lang");
                     }
-                    if (config.peek) {
-                        WinJS.Utilities.addClass(testRoot, "file-splitviewstyles-less");
-                        WinJS.Utilities.addClass(testRoot, "animations-pane-peek");
-                    } else {
-                        WinJS.Utilities.removeClass(testRoot, "file-splitviewstyles-less");
-                        WinJS.Utilities.removeClass(testRoot, "animations-pane-peek");
-                    }
                     var splitView = createSplitView({
                         panePlacement: config.panePlacement,
+                        hiddenDisplayMode: config.hiddenDisplayMode,
                         shownDisplayMode: config.shownDisplayMode
                     });
 

@@ -53,9 +53,12 @@ var ClassNames = {
     _placementRight: "win-splitview-placementright",
     _placementTop: "win-splitview-placementtop",
     _placementBottom: "win-splitview-placementbottom",
-    // display mode
-    _inlineMode: "win-splitview-inlinemode",
-    _overlayMode: "win-splitview-overlaymode"
+    // hidden display mode
+    _hiddenDisplayNone: "win-splitview-hiddendisplaynone",
+    _hiddenDisplayInline: "win-splitview-hiddendisplayinline",
+    // shown display mode
+    _shownDisplayInline: "win-splitview-showndisplayinline",
+    _shownDisplayOverlay: "win-splitview-showndisplayoverlay"
 };
 var EventNames = {
     beforeShow: "beforeshow",
@@ -68,15 +71,25 @@ var Dimension = {
     height: "height"
 };
 
-var ShownDisplayMode = {
-    /// <field locid="WinJS.UI.SplitView.ShownDisplayMode.overlay" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode.overlay">
-    /// When the pane is shown, it doesn't take up any space and it is light dismissable.
+var HiddenDisplayMode = {
+    /// <field locid="WinJS.UI.SplitView.HiddenDisplayMode.none" helpKeyword="WinJS.UI.SplitView.HiddenDisplayMode.none">
+    /// When the pane is hidden, it is not visible and doesn't take up any space.
     /// </field>
-    overlay: "overlay",
+    none: "none",
+    /// <field locid="WinJS.UI.SplitView.HiddenDisplayMode.inline" helpKeyword="WinJS.UI.SplitView.HiddenDisplayMode.inline">
+    /// When the pane is hidden, it occupies space leaving less room for the SplitView's content.
+    /// </field>
+    inline: "inline"
+};
+var ShownDisplayMode = {
     /// <field locid="WinJS.UI.SplitView.ShownDisplayMode.inline" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode.inline">
     /// When the pane is shown, it occupies space leaving less room for the SplitView's content.
     /// </field>
-    inline: "inline"
+    inline: "inline",
+    /// <field locid="WinJS.UI.SplitView.ShownDisplayMode.overlay" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode.overlay">
+    /// When the pane is shown, it doesn't take up any space and it is light dismissable.
+    /// </field>
+    overlay: "overlay"
 };
 var PanePlacement = {
     /// <field locid="WinJS.UI.SplitView.PanePlacement.left" helpKeyword="WinJS.UI.SplitView.PanePlacement.left">
@@ -96,9 +109,12 @@ var PanePlacement = {
     /// </field>
     bottom: "bottom"
 };
+var hiddenDisplayModeClassMap = {};
+hiddenDisplayModeClassMap[HiddenDisplayMode.none] = ClassNames._hiddenDisplayNone;
+hiddenDisplayModeClassMap[HiddenDisplayMode.inline] = ClassNames._hiddenDisplayInline;
 var shownDisplayModeClassMap = {};
-shownDisplayModeClassMap[ShownDisplayMode.overlay] = ClassNames._overlayMode;
-shownDisplayModeClassMap[ShownDisplayMode.inline] = ClassNames._inlineMode;
+shownDisplayModeClassMap[ShownDisplayMode.overlay] = ClassNames._shownDisplayOverlay;
+shownDisplayModeClassMap[ShownDisplayMode.inline] = ClassNames._shownDisplayInline;
 var panePlacementClassMap = {};
 panePlacementClassMap[PanePlacement.left] = ClassNames._placementLeft;
 panePlacementClassMap[PanePlacement.right] = ClassNames._placementRight;
@@ -247,6 +263,7 @@ module States {
                     this.splitView._cachedHiddenPaneThickness = null;
 
                     this.splitView.paneHidden = true;
+                    this.splitView.hiddenDisplayMode = HiddenDisplayMode.inline;
                     this.splitView.shownDisplayMode = ShownDisplayMode.overlay;
                     this.splitView.panePlacement = PanePlacement.left;
                     _Control.setOptions(this.splitView, options);
@@ -462,8 +479,13 @@ module States {
 /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
 /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
 export class SplitView {
+    /// <field locid="WinJS.UI.SplitView.HiddenDisplayMode" helpKeyword="WinJS.UI.SplitView.HiddenDisplayMode">
+    /// Display options for a SplitView's pane when it is hidden.
+    /// </field>
+    static HiddenDisplayMode = HiddenDisplayMode;
+    
     /// <field locid="WinJS.UI.SplitView.ShownDisplayMode" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode">
-    /// Display options for a SplitView's pane.
+    /// Display options for a SplitView's pane when it is shown.
     /// </field>
     static ShownDisplayMode = ShownDisplayMode;
 
@@ -539,10 +561,25 @@ export class SplitView {
     get contentElement(): HTMLElement {
         return this._dom.content;
     }
+    
+    private _hiddenDisplayMode: string;
+    /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.HiddenDisplayMode" locid="WinJS.UI.SplitView.HiddenDisplayMode" helpKeyword="WinJS.UI.SplitView.HiddenDisplayMode">
+    /// Gets or sets the display mode of the SplitView's pane when it is hidden.
+    /// </field>
+    get hiddenDisplayMode(): string {
+        return this._hiddenDisplayMode;
+    }
+    set hiddenDisplayMode(value: string) {
+        if (HiddenDisplayMode[value] && this._hiddenDisplayMode !== value) {
+            this._hiddenDisplayMode = value;
+            this._cachedHiddenPaneThickness = null;
+            this._state.updateDom();
+        }
+    }
 
     private _shownDisplayMode: string;
     /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.ShownDisplayMode" locid="WinJS.UI.SplitView.shownDisplayMode" helpKeyword="WinJS.UI.SplitView.shownDisplayMode">
-    /// Gets or sets the display mode of the SplitView's pane.
+    /// Gets or sets the display mode of the SplitView's pane when it is shown.
     /// </field>
     get shownDisplayMode(): string {
         return this._shownDisplayMode;
@@ -617,15 +654,6 @@ export class SplitView {
         this._state.hidePane();
     }
 
-    togglePane(): void {
-        /// <signature helpKeyword="WinJS.UI.SplitView.togglePane">
-        /// <summary locid="WinJS.UI.SplitView.togglePane">
-        /// Toggles the SplitView's pane, hiding it if it's currently shown and showing it if it's currently hidden.
-        /// </summary>
-        /// </signature>
-        this.paneHidden = !this.paneHidden;
-    }
-
     private _initializeDom(root: HTMLElement): void {
         // The first child is the pane
         var paneEl = <HTMLElement>root.firstElementChild || _Global.document.createElement("div");
@@ -666,6 +694,7 @@ export class SplitView {
         this._rendered = {
             paneIsFirst: undefined,
             isShownMode: undefined,
+            hiddenDisplayMode: undefined,
             shownDisplayMode: undefined,
             panePlacement: undefined,
             panePlaceholderWidth: undefined,
@@ -936,6 +965,7 @@ export class SplitView {
     private _rendered: {
         paneIsFirst: boolean;
         isShownMode: boolean;
+        hiddenDisplayMode: string;
         shownDisplayMode: string;
         panePlacement: string;
         panePlaceholderWidth: string;
@@ -972,6 +1002,12 @@ export class SplitView {
             removeClass(this._dom.root, panePlacementClassMap[this._rendered.panePlacement]);
             addClass(this._dom.root, panePlacementClassMap[this.panePlacement]);
             this._rendered.panePlacement = this.panePlacement;
+        }
+        
+        if (this._rendered.hiddenDisplayMode !== this.hiddenDisplayMode) {
+            removeClass(this._dom.root, hiddenDisplayModeClassMap[this._rendered.hiddenDisplayMode]);
+            addClass(this._dom.root, hiddenDisplayModeClassMap[this.hiddenDisplayMode]);
+            this._rendered.hiddenDisplayMode = this.hiddenDisplayMode;
         }
 
         if (this._rendered.shownDisplayMode !== this.shownDisplayMode) {
