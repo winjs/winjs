@@ -854,15 +854,19 @@ export class SplitView {
 
     _getHiddenPaneThickness(): IThickness {
         if (this._cachedHiddenPaneThickness === null) {
-            if (this._isShownMode) {
-                _ElementUtilities.removeClass(this._dom.root, ClassNames.paneShown);
-                _ElementUtilities.addClass(this._dom.root, ClassNames.paneHidden);
-            }
-            var size = this._measureElement(this._dom.pane);
-            this._cachedHiddenPaneThickness = rectToThickness(size, this._horizontal ? Dimension.width : Dimension.height);
-            if (this._isShownMode) {
-                _ElementUtilities.removeClass(this._dom.root, ClassNames.paneHidden);
-                _ElementUtilities.addClass(this._dom.root, ClassNames.paneShown);
+            if (this._hiddenDisplayMode === HiddenDisplayMode.none) {
+                this._cachedHiddenPaneThickness = { content: 0, total: 0 };
+            } else {
+                if (this._isShownMode) {
+                    _ElementUtilities.removeClass(this._dom.root, ClassNames.paneShown);
+                    _ElementUtilities.addClass(this._dom.root, ClassNames.paneHidden);
+                }
+                var size = this._measureElement(this._dom.pane);
+                this._cachedHiddenPaneThickness = rectToThickness(size, this._horizontal ? Dimension.width : Dimension.height);
+                if (this._isShownMode) {
+                    _ElementUtilities.removeClass(this._dom.root, ClassNames.paneHidden);
+                    _ElementUtilities.addClass(this._dom.root, ClassNames.paneShown);
+                }
             }
         }
 
