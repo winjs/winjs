@@ -179,7 +179,9 @@ module WinJSTests {
                     preventDefault: function () { },
                     get detail() { return { originalEvent: this }; },
                     pageX: toggleThumbRect.left + 1,
-                    pageY: toggleThumbRect.top + 1
+                    pageY: toggleThumbRect.top + 1,
+                    pointerId: 1,
+                    pointerType: WinJS.Utilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH
                 };
 
                 // Send a pointer down event to begin the drag
