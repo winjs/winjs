@@ -598,7 +598,7 @@ define([
                         anchor = {};
 
                     try {
-                        anchorRawRecteangle = this._currentAnchor.getBoundingClientRect()
+                        anchorRawRectangle = this._currentAnchor.getBoundingClientRect();
                     }
                     catch (e) {
                         throw new _ErrorFromName("WinJS.UI.Flyout.NoAnchor", strings.noAnchor);

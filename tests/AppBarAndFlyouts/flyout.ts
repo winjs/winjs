@@ -217,14 +217,14 @@ module CorsicaTests {
             try {
                 flyout.show();
             } catch (e) {
-                LiveUnit.Assert.areEqual("Invalid argument: Showing flyout requires a DOM element as its parameter.", e.message);
+                LiveUnit.Assert.areEqual("Invalid argument: Flyout anchor element not found in DOM.", e.message);
             }
 
             LiveUnit.LoggingCore.logComment("Calling show() with null should throw");
             try {
                 flyout.show(null);
             } catch (e) {
-                LiveUnit.Assert.areEqual("Invalid argument: Showing flyout requires a DOM element as its parameter.", e.message);
+                LiveUnit.Assert.areEqual("Invalid argument: Flyout anchor element not found in DOM.", e.message);
             }
 
             complete();
