@@ -711,7 +711,9 @@ define([
                     _ElementUtilities._reparentChildren(root, contentEl);
 
                     root.winControl = this;
-                    root.className = ClassNames.contentDialog + " " + ClassNames._verticalAlignment + " win-disposable";
+                    _ElementUtilities.addClass(root, ClassNames.contentDialog);
+                    _ElementUtilities.addClass(root, ClassNames._verticalAlignment);
+                    _ElementUtilities.addClass(root, "win-disposable");
                     root.innerHTML =
                         '<div class="' + ClassNames.backgroundOverlay + '"></div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +
