@@ -77,7 +77,7 @@ module WinJSTests {
     }
 
     function sectionOnScreenTest(complete, rtl) {
-        var startEndMargins = 80;
+        var startEndPadding = 12 + 12;
         var hubWidth = 1024;
         var hubHeight = 768;
         var sectionWidth = 700;
@@ -109,7 +109,7 @@ module WinJSTests {
 
             hub.sectionOnScreen = 1;
             LiveUnit.Assert.areEqual(1, hub.sectionOnScreen, "Section1");
-            LiveUnit.Assert.areEqual(sectionWidth + startEndMargins, hub.scrollPosition, "Section1 scrollPos");
+            LiveUnit.Assert.areEqual(sectionWidth + startEndPadding, hub.scrollPosition, "Section1 scrollPos");
 
             hub.scrollPosition = hub.sections.getAt(0).element.offsetWidth + hub.sections.getAt(1).element.offsetWidth;
             LiveUnit.Assert.areEqual(2, hub.sectionOnScreen, "Section2");
@@ -227,7 +227,7 @@ module WinJSTests {
             hub.addEventListener(Hub._EventName.contentAnimating, function () {
                 LiveUnit.Assert.isFalse(called, "Called once");
                 called = true;
-                LiveUnit.Assert.areEqual(3, instances, "Correct # of instances found when starting fade in");
+                LiveUnit.Assert.areEqual(2, instances, "Correct # of instances found when starting fade in");
             });
             hubLoaded(hub).done(function () {
                 if (WinJS.UI.isAnimationEnabled()) {
@@ -373,7 +373,6 @@ module WinJSTests {
         };
 
         testKeyboarding = function (complete) {
-            var startEndMargins = 80;
             var hubWidth = 1024;
             var hubHeight = 768;
             var sectionWidth = 700;
@@ -411,8 +410,8 @@ module WinJSTests {
                 var middleSection = hub.sections.getAt(middleIndex);
 
                 function testSmallSections() {
-                    var scrollPositionToSeeEndEdge = middleSection.element.offsetLeft + middleSection.element.offsetWidth - hubWidth + startEndMargins + 1;
-                    var scrollPositionToSeeStartEdge = middleSection.element.offsetLeft - startEndMargins;
+                    var scrollPositionToSeeEndEdge = middleSection.element.offsetLeft + middleSection.element.offsetWidth - hubWidth + 1;
+                    var scrollPositionToSeeStartEdge = middleSection.element.offsetLeft;
 
                     hub.sections.getAt(middleIndex - 1)._headerTabStopElement.focus();
                     hub.scrollPosition = 0;
@@ -432,8 +431,8 @@ module WinJSTests {
                 }
 
                 function testLargeSections() {
-                    var scrollPositionToSeeEndEdge = middleSection.element.offsetLeft + middleSection.element.offsetWidth - hubWidth + startEndMargins + 1;
-                    var scrollPositionToSeeStartEdge = middleSection.element.offsetLeft - startEndMargins;
+                    var scrollPositionToSeeEndEdge = middleSection.element.offsetLeft + middleSection.element.offsetWidth - hubWidth + 1;
+                    var scrollPositionToSeeStartEdge = middleSection.element.offsetLeft;
 
                     hub.sections.getAt(middleIndex - 1)._headerTabStopElement.focus();
                     hub.scrollPosition = 0;
@@ -554,22 +553,23 @@ module WinJSTests {
             document.body.appendChild(hubEl);
 
             var hub = new Hub(hubEl);
-            // Reminder first 80px are for section 2, and then it is section 3.
             hub.sectionOnScreen = 3;
             hubLoaded(hub).then(function () {
-                hub.zoomableView.setCurrentItem(150, 150);
+                hub.zoomableView.setCurrentItem(70, 70);
                 return hub.zoomableView.getCurrentItem();
             }).then(function (sezoObject) {
                     var item = sezoObject.item;
                     LiveUnit.Assert.areEqual(3, item.index, "Correct item 3");
 
-                    hub.zoomableView.setCurrentItem(79, 79);
+                    // Here we are making sure that the difference between a single pixel at the expected
+                    // scrollposition changes which section is the first visible section
+                    hub.zoomableView.setCurrentItem(-1, -1);
                     return hub.zoomableView.getCurrentItem();
                 }).then(function (sezoObject) {
                     var item = sezoObject.item;
                     LiveUnit.Assert.areEqual(2, item.index, "Correct item 2");
 
-                    hub.zoomableView.setCurrentItem(80, 80);
+                    hub.zoomableView.setCurrentItem(0, 0);
                     return hub.zoomableView.getCurrentItem();
                 }).then(function (sezoObject) {
                     var item = sezoObject.item;
