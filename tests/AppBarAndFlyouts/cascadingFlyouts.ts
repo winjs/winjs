@@ -7,124 +7,127 @@
 module CorsicaTests {
     "use strict";
 
-    var Key = WinJS.Utilities.Key,
+    var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants"),
+        Key = WinJS.Utilities.Key,
         Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout,
-        _rootAnchor: HTMLElement,
+        Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,
+        MenuCommand = <typeof WinJS.UI.PrivateMenuCommand> WinJS.UI.MenuCommand,
+        _defaultAnchor: HTMLElement,
         cascadeManager = Flyout._cascadeManager,
         chainCounter;
 
     var DEFAULT_CHAIN_SIZE = 6;
 
-
-    function showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
-        return OverlayHelpers.show(flyout).then(function verifyFlyoutContainsFocusAfterShowing() {
-            LiveUnit.Assert.isTrue(flyout.element.contains(<HTMLElement>document.activeElement), "Flyout should contain focus after showing");
-        });
+    var listenOnce = (flyout: WinJS.UI.PrivateFlyout, eventName: string, callback: () => any): void => {
+        flyout.addEventListener(eventName, function handler() {
+            flyout.removeEventListener(eventName, handler, false);
+            callback();
+        }, false);
     }
 
-    function hideFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
-        // Hides the specified flyout and returns a promise that completes when
-        // it and all of its subFlyouts in the cascade are hidden.
+    export class _BaseCascadingTests {
+        private abstractMethodFail() {
+            LiveUnit.Assert.fail("Test Error: This method is abstract. Descendant classes need to provide implementation.");
+        }
 
-        var p: WinJS.Promise<any>;
+        showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
+            this.abstractMethodFail();
+            return WinJS.Promise.wrapError(null); // Appease the compiler.
+        }
 
-        var index = cascadeManager.indexOf(flyout);
-        if (index >= 0) {
-            // Identify all the subFlyouts that should hide when the specified flyout is hidden.
-            var hidingFlyouts: Array<WinJS.UI.PrivateFlyout> = cascadeManager._cascadingStack.slice(index, cascadeManager.length);
+        generateFlyoutChain(numFlyouts?: number): Array<WinJS.UI.PrivateFlyout> {
+            this.abstractMethodFail();
+            return []; // Appease the compiler.
+        }
 
-            var hidingPromises: Array<WinJS.Promise<any>> = hidingFlyouts.map((flyout): WinJS.Promise<any> => {
-                return new WinJS.Promise((c, e, p) => {
-                    function afterHide() {
-                        flyout.removeEventListener("afterhide", afterHide, false);
-                        c();
-                    };
+        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
+            this.abstractMethodFail();
+        }
 
-                    flyout.addEventListener("afterhide", afterHide, false);
+        hideFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
+            // Hides the specified flyout and returns a promise that completes when
+            // it and all of its subFlyouts in the cascade are hidden.
+
+            var p: WinJS.Promise<any>;
+
+            var index = cascadeManager.indexOf(flyout);
+            if (index >= 0) {
+                // Identify all the subFlyouts that should hide when the specified flyout is hidden.
+                var hidingFlyouts: Array<WinJS.UI.PrivateFlyout> = cascadeManager._cascadingStack.slice(index, cascadeManager.length);
+
+                var hidingPromises: Array<WinJS.Promise<any>> = hidingFlyouts.map((flyout): WinJS.Promise<any> => {
+                    return new WinJS.Promise((c, e, p) => {
+                        function afterHide() {
+                            flyout.removeEventListener("afterhide", afterHide, false);
+                            c();
+                        };
+
+                        flyout.addEventListener("afterhide", afterHide, false);
+                    });
+                });
+                hidingFlyouts[0].hide();
+                p = WinJS.Promise.join(hidingPromises);
+            } else {
+                p = WinJS.Promise.wrap();
+            }
+
+            return p;
+        }
+
+        showFlyoutChain(flyoutChain: Array<WinJS.UI.PrivateFlyout>, sentinelFlyout?: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
+            // Shows all flyouts in the specified flyoutChain until the sentinel flyout is shown.
+            // If no sentinel is specified, the entire chain is shown.
+            // Returns a promise that is completed when the last flyout is finished showing.
+
+            var verifyFlyoutContainsFocusAfterShowing = (flyout: WinJS.UI.PrivateFlyout) => {
+                LiveUnit.Assert.isTrue(flyout.element.contains(<HTMLElement>document.activeElement), "Flyout should contain focus after showing");
+            }
+
+            var index = flyoutChain.indexOf(sentinelFlyout);
+            flyoutChain = (index < 0) ? flyoutChain : flyoutChain.slice(0, index + 1);
+
+            var p = WinJS.Promise.wrap();
+            flyoutChain.forEach((flyout) => {
+                p = p.then((): WinJS.Promise<any> => {
+                    return this.showFlyout(flyout).then(() => {
+                        verifyFlyoutContainsFocusAfterShowing(flyout);
+                    });
                 });
             });
-            hidingFlyouts[0].hide();
-            p = WinJS.Promise.join(hidingPromises);
-        } else {
-            p = WinJS.Promise.wrap();
+
+            return p;
         }
 
-        return p;
-    }
+        verifyCascade(expectedCascade: Array<WinJS.UI.PrivateFlyout>): void {
+            // Verifies that the Flyouts currently in the cascade and the Flyouts that are currently visible line up with the chain of flyouts we are expecting.
+            var msg = "The Flyouts in the cascade should match the chain of Flyouts we were expecting.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(expectedCascade.length, cascadeManager.length, msg);
+            for (var i = 0, len = expectedCascade.length; i < len; i++) {
+                LiveUnit.Assert.areEqual(expectedCascade[i], cascadeManager.getAt(i), msg);
+            }
 
-    function showFlyoutChain(flyoutChain: Array<WinJS.UI.PrivateFlyout>, sentinelFlyout?: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
-        // Shows all flyouts in the specified flyoutChain until the sentinel flyout is shown.
-        // If no sentinel is specified, the entire chain is shown.
-        // Returns a promise that is completed when the last flyout is finished showing.
-
-        var index = flyoutChain.indexOf(sentinelFlyout);
-        flyoutChain = (index < 0) ? flyoutChain : flyoutChain.slice(0, index + 1);
-
-        var p = WinJS.Promise.wrap();
-        flyoutChain.forEach((flyout, index: number) => {
-            p = p.then((): WinJS.Promise<any> => {
-                return showFlyout(flyoutChain[index]);
+            msg = "The Flyouts that are visible should match the chain of Flyouts we were expecting.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            var visibleFlyoutElements: Array<HTMLElement> = Array.prototype.filter.call(document.querySelectorAll(".win-flyout"), function (flyoutElement) {
+                return !flyoutElement.winControl.hidden;
             });
-        });
-
-        return p;
-    }
-
-    function generateFlyoutChain(anchor: HTMLElement, numFlyouts?: number): Array<WinJS.UI.PrivateFlyout> {
-        // Creates and returns an Array of Flyouts. Each Flyout in the chain has its anchor property set to the HTMLElement of the previous flyout.
-        var flyoutChain = [],
-            chainClass = "chain_" + ++chainCounter,
-            prevFlyout;
-
-        // Default fallback.
-        numFlyouts = numFlyouts || DEFAULT_CHAIN_SIZE;
-
-        for (var i = 0; i < numFlyouts; i++) {
-            anchor = prevFlyout ? prevFlyout.element : anchor;
-
-            var flyout = new Flyout(null, { anchor: anchor });
-            document.body.appendChild(flyout.element);
-            WinJS.Utilities.addClass(flyout.element, chainClass);
-            flyout.element.id = (i + 1) + "of" + numFlyouts;
-
-            flyoutChain.push(flyout);
-            prevFlyout = flyout;
+            LiveUnit.Assert.areEqual(expectedCascade.length, visibleFlyoutElements.length, msg);
+            for (var i = 0, len = expectedCascade.length; i < len; i++) {
+                LiveUnit.Assert.isTrue(visibleFlyoutElements.indexOf(expectedCascade[i].element) >= 0, msg);
+            }
         }
-        return flyoutChain;
-    }
-
-    function verifyCascade(expectedCascade: Array<WinJS.UI.PrivateFlyout>): void {
-        // Verifies that the Flyouts currently in the cascade and the Flyouts that are currently visible line up with the chain of flyouts we are expecting.
-        var msg = "The Flyouts in the cascade should match the chain of Flyouts we were expecting.";
-        LiveUnit.LoggingCore.logComment("Test: " + msg);
-        LiveUnit.Assert.areEqual(expectedCascade.length, cascadeManager.length, msg);
-        for (var i = 0, len = expectedCascade.length; i < len; i++) {
-            LiveUnit.Assert.areEqual(expectedCascade[i], cascadeManager.getAt(i), msg);
-        }
-
-        msg = "The Flyouts that are visible should match the chain of Flyouts we were expecting.";
-        LiveUnit.LoggingCore.logComment("Test: " + msg);
-        var visibleFlyoutElements: Array<HTMLElement> = Array.prototype.filter.call(document.querySelectorAll(".win-flyout"), function (flyoutElement) {
-            return !flyoutElement.winControl.hidden;
-        });
-        LiveUnit.Assert.areEqual(expectedCascade.length, visibleFlyoutElements.length, msg);
-        for (var i = 0, len = expectedCascade.length; i < len; i++) {
-            LiveUnit.Assert.isTrue(visibleFlyoutElements.indexOf(expectedCascade[i].element) >= 0, msg);
-        }
-    }
-
-    export class CascadingFlyoutTests {
 
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
             chainCounter = 0;
 
-            _rootAnchor = document.createElement('button');
-            _rootAnchor.id = "rootanchor";
-            _rootAnchor.textContent = "rootanchor";
-            _rootAnchor.tabIndex = 1;
-            document.body.appendChild(_rootAnchor);
-            _rootAnchor.focus();
+            _defaultAnchor = document.createElement('button');
+            _defaultAnchor.id = "defaultanchor";
+            _defaultAnchor.textContent = "defaultanchor";
+            _defaultAnchor.tabIndex = 1;
+            document.body.appendChild(_defaultAnchor);
+            _defaultAnchor.focus();
         }
 
         tearDown() {
@@ -138,7 +141,7 @@ module CorsicaTests {
                 element = null;
             });
 
-            OverlayHelpers.disposeAndRemove(_rootAnchor);
+            OverlayHelpers.disposeAndRemove(_defaultAnchor);
             OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
             OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
             WinJS.UI._Overlay._clickEatingAppBarDiv = false;
@@ -174,14 +177,12 @@ module CorsicaTests {
 
                 var msg = "Hiding all flyouts in the cascade should leave focus in the app.";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
-                LiveUnit.Assert.isTrue(_rootAnchor.contains(<HTMLElement>document.activeElement), msg);
+                LiveUnit.Assert.isTrue(_defaultAnchor.contains(<HTMLElement>document.activeElement), msg);
 
                 complete();
             };
 
-            var flyoutElement = document.createElement("div");
-            document.body.appendChild(flyoutElement);
-            var flyout = new Flyout(flyoutElement, { anchor: _rootAnchor });
+            var flyout = this.generateFlyoutChain(1)[0];
 
             var msg = "The cascade should be empty when no flyouts are showing";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
@@ -196,10 +197,10 @@ module CorsicaTests {
         testChainedFlyoutsWillAppendToTheCascadeWhenShownInOrder = function (complete) {
             // Verifies that showing chained flyouts, one after the other, in order, will cause them all show in the cascade, in order.
 
-            var flyoutChain = generateFlyoutChain(_rootAnchor);
+            var flyoutChain = this.generateFlyoutChain();
 
-            showFlyoutChain(flyoutChain).then(() => {
-                verifyCascade(flyoutChain);
+            this.showFlyoutChain(flyoutChain).then(() => {
+                this.verifyCascade(flyoutChain);
                 complete();
             });
         }
@@ -209,10 +210,10 @@ module CorsicaTests {
             // Verifies that each time a flyout is hidden, focus is restored to whichever element the specified flyout originally took focus from.
 
             // Explicitly set initial focus:
-            _rootAnchor.focus();
+            _defaultAnchor.focus();
 
             var requiredSize = 3,
-                flyoutChain = generateFlyoutChain(_rootAnchor);
+                flyoutChain = this.generateFlyoutChain();
             LiveUnit.Assert.isTrue(flyoutChain.length >= requiredSize, "ERROR: Test requires input size of at least " + requiredSize);
 
             var index: number,
@@ -220,43 +221,43 @@ module CorsicaTests {
                 expectedFocusTarget: HTMLElement,
                 expectedCascadeAfterHiding: Array<WinJS.UI.PrivateFlyout>;
 
-            return showFlyoutChain(flyoutChain).then(() => {
+            return this.showFlyoutChain(flyoutChain).then(() => {
 
                 // Hide Flyout at the end of the cascade
                 index = flyoutChain.length - 1;
                 flyout = flyoutChain[index];
                 expectedFocusTarget = flyout._previousFocus,
                 expectedCascadeAfterHiding = flyoutChain.slice(0, index);
-                return hideFlyout(flyout);
+                return this.hideFlyout(flyout);
 
             }).then(() => {
-                verifyCascade(expectedCascadeAfterHiding);
-                LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
+                    this.verifyCascade(expectedCascadeAfterHiding);
+                    LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
 
-                // Hide Flyout in the middle of the cascade
-                index = Math.floor(flyoutChain.length / 2)
+                    // Hide Flyout in the middle of the cascade
+                    index = Math.floor(flyoutChain.length / 2)
                 flyout = flyoutChain[index];
-                expectedFocusTarget = flyout._previousFocus;
-                expectedCascadeAfterHiding = flyoutChain.slice(0, index);
-                return hideFlyout(flyout);
+                    expectedFocusTarget = flyout._previousFocus;
+                    expectedCascadeAfterHiding = flyoutChain.slice(0, index);
+                    return this.hideFlyout(flyout);
 
-            }).then(() => {
-                verifyCascade(expectedCascadeAfterHiding);
-                LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
+                }).then(() => {
+                    this.verifyCascade(expectedCascadeAfterHiding);
+                    LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
 
-                // Hide Flyout at the beginning of the cascade
-                index = 0;
-                flyout = flyoutChain[index];
-                expectedFocusTarget = _rootAnchor;
-                expectedCascadeAfterHiding = flyoutChain.slice(0, index);
-                return hideFlyout(flyout);
+                    // Hide Flyout at the beginning of the cascade
+                    index = 0;
+                    flyout = flyoutChain[index];
+                    expectedFocusTarget = _defaultAnchor;
+                    expectedCascadeAfterHiding = flyoutChain.slice(0, index);
+                    return this.hideFlyout(flyout);
 
-            }).then(() => {
-                verifyCascade(expectedCascadeAfterHiding);
-                LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
+                }).then(() => {
+                    this.verifyCascade(expectedCascadeAfterHiding);
+                    LiveUnit.Assert.areEqual(document.activeElement, expectedFocusTarget, "The flyout specified to hide should have put focus on whatever element it had originally taken it from.");
 
-                complete();
-            });
+                    complete();
+                });
         }
 
         testShowingAFlyout_AnchoredToAFlyoutInTheMiddleOfTheCascade_HidesOtherSubFlyouts = function (complete) {
@@ -264,19 +265,19 @@ module CorsicaTests {
             // 1) Removes all subflyouts after "B" from the cascade, making "B" the new end.
             // 2) Appends "A" to the end of the cascade after "B".
 
-            var flyoutChain = generateFlyoutChain(_rootAnchor),
+            var flyoutChain = this.generateFlyoutChain(),
                 requiredSize = 2;
             LiveUnit.Assert.isTrue(flyoutChain.length >= requiredSize, "ERROR: Test requires input size of at least " + requiredSize);
 
-            showFlyoutChain(flyoutChain).then(() => {
+            this.showFlyoutChain(flyoutChain).then(() => {
 
-                // Create a single Flyout anchored to a flyout already in the cascade
-                var anchor = flyoutChain[requiredSize - 2].element,
-                    otherFlyout = generateFlyoutChain(anchor, 1)[0];
+                // Create a single Flyout and chain it to a flyout in the middle of the cascade.
+                var otherFlyout = this.generateFlyoutChain(1)[0];
+                this.chainFlyouts(flyoutChain[requiredSize - 2], otherFlyout);
 
-                showFlyout(otherFlyout).then(() => {
+                this.showFlyout(otherFlyout).then(() => {
                     var expectedCascade = flyoutChain.slice(0, requiredSize - 1).concat(otherFlyout);
-                    verifyCascade(expectedCascade);
+                    this.verifyCascade(expectedCascade);
                     complete();
                 });
             });
@@ -287,43 +288,42 @@ module CorsicaTests {
             // Also Verifies that then hiding (A) will restore focus back to the element in the App that had focus before the any of the flyouts were opened.
 
             // Explicitly set initial focus:
-            _rootAnchor.focus();
+            _defaultAnchor.focus();
 
             // Chain of flyouts to initially show in the cascade.
-            var flyoutChain = generateFlyoutChain(_rootAnchor);
+            var flyoutChain = this.generateFlyoutChain();
 
-            // Single flyout anchored to the <body>
-            var otherFlyout = generateFlyoutChain(document.body, 1)[0];
+            // Single flyout from a new chain.
+            var otherFlyout = this.generateFlyoutChain(1)[0];
 
-            showFlyoutChain(flyoutChain).then(() => {
-                return showFlyout(otherFlyout);
+            this.showFlyoutChain(flyoutChain).then(() => {
+                return this.showFlyout(otherFlyout);
             }).then(() => {
-                verifyCascade([otherFlyout]);
-                return hideFlyout(otherFlyout);
-            }).done(() => {
-                LiveUnit.Assert.isTrue(_rootAnchor.contains(<HTMLElement>document.activeElement), "Hiding all flyouts in the cascade should return focus to the element that originally had it.");
-                complete();
-            });
+                    this.verifyCascade([otherFlyout]);
+                    return this.hideFlyout(otherFlyout);
+                }).done(() => {
+                    LiveUnit.Assert.isTrue(_defaultAnchor.contains(<HTMLElement>document.activeElement), "Hiding all flyouts in the cascade should return focus to the element that originally had it.");
+                    complete();
+                });
         }
 
         testFlyoutAlwaysHidesSubFlyoutsWhenItReceivesFocus = function (complete) {
-            // Verifies that when focus moves into a flyout from somewhere that was outside of that flyout, all of it's subflyout descendants  get removed from the cascade.
+            // Verifies that when focus moves into a flyout from somewhere that was outside of that flyout, all of it's subflyout descendants get removed from the cascade.
 
-            var flyoutChain = generateFlyoutChain(_rootAnchor),
+            var flyoutChain = this.generateFlyoutChain(),
                 requiredSize = 3;
             LiveUnit.Assert.isTrue(flyoutChain.length >= requiredSize, "ERROR: Test requires input size of at least " + requiredSize);
 
-            showFlyoutChain(flyoutChain).then(() => {
+            this.showFlyoutChain(flyoutChain).then(() => {
                 var index = 1,
                     flyoutToFocus = flyoutChain[index],
                     firstSubFlyoutToHide = flyoutChain[index + 1],
                     expectedChain = flyoutChain.slice(0, index + 1);
 
-                firstSubFlyoutToHide.addEventListener("afterhide", function afterHide() {
-                    firstSubFlyoutToHide.removeEventListener, ("afterhide", afterHide, false);
-                    verifyCascade(expectedChain);
+                listenOnce(firstSubFlyoutToHide, "afterhide", () => {
+                    this.verifyCascade(expectedChain);
                     complete();
-                }, false);
+                });
 
                 LiveUnit.Assert.isFalse(flyoutToFocus.element.contains(<HTMLElement>document.activeElement),
                     "Test Error: focus needs to be outside of the element, before we focus it.");
@@ -335,35 +335,33 @@ module CorsicaTests {
         testEntireCascadeHidesWhenAllFlyoutsLoseFocus = function (complete) {
             // Verifies that the entire cascade hides when all flyouts lose focus.
 
-            var flyoutChain = generateFlyoutChain(_rootAnchor);
-            showFlyoutChain(flyoutChain).then(() => {
+            var flyoutChain = this.generateFlyoutChain();
+            this.showFlyoutChain(flyoutChain).then(() => {
 
-                flyoutChain[0].addEventListener("afterhide", function afterHide() {
-                    flyoutChain[0].removeEventListener("afterhide", afterHide, false);
-                    verifyCascade([]);
+                listenOnce(flyoutChain[0], "afterhide", () => {
+                    this.verifyCascade([]);
                     complete();
-                }, false);
+                });
 
                 LiveUnit.Assert.isTrue(cascadeManager.indexOfElement(document.activeElement) >= 0,
                     "Test Error: focus needs to be inside of one of the flyouts in the cascade before we move focus outside of the cascade.");
-                _rootAnchor.focus();
+                _defaultAnchor.focus();
             });
 
         }
 
         testLeftArrowKeyHidesCurrentSubFlyout = function (complete) {
             // Verifies that the left arrow key will hide any flyout that is a subFlyout.
-            var flyoutChain = generateFlyoutChain(_rootAnchor);
-            showFlyoutChain(flyoutChain).then(() => {
+            var flyoutChain = this.generateFlyoutChain();
+            this.showFlyoutChain(flyoutChain).then(() => {
 
                 var endFlyout = flyoutChain[flyoutChain.length - 1],
                     expectedCascade = flyoutChain.slice(0, flyoutChain.length - 1);
 
-                endFlyout.addEventListener("afterhide", function afterHide() {
-                    endFlyout.removeEventListener, ("afterhide", afterHide, false);
-                    verifyCascade(expectedCascade);
+                listenOnce(endFlyout, "afterhide", () => { 
+                    this.verifyCascade(expectedCascade);
                     complete();
-                }, false);
+                });
 
                 Helper.keydown(endFlyout.element, Key.leftArrow);
             });
@@ -371,9 +369,7 @@ module CorsicaTests {
 
         testLeftArrowKeyDoesNotHideFlyoutWhenOnlyOneFlyoutIsShowing = function (complete) {
             // Verifies that the left arrow key will not hide a Flyout, if that Flyout is not a subFlyout of another shown flyout.
-            var flyoutElement = document.createElement("div");
-            document.body.appendChild(flyoutElement);
-            var flyout = new Flyout(flyoutElement, { anchor: _rootAnchor });
+            var flyout = this.generateFlyoutChain(1)[0];
             var msg = "Left arrow key should not hide the current flyout if it is not the subFlyout of another shown flyout.";
 
             function beforeHide() {
@@ -381,9 +377,9 @@ module CorsicaTests {
                 LiveUnit.Assert.fail(msg);
             }
 
-            showFlyout(flyout).then(() => {
+            this.showFlyout(flyout).then(() => {
 
-                verifyCascade([flyout]);
+                this.verifyCascade([flyout]);
 
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 flyout.addEventListener("beforehide", beforeHide, false);
@@ -391,27 +387,26 @@ module CorsicaTests {
 
                 return WinJS.Promise.timeout();
             }).then(function () {
-                flyout.removeEventListener("beforehide", beforeHide, false);
-                complete();
-            });
+                    flyout.removeEventListener("beforehide", beforeHide, false);
+                    complete();
+                });
         }
 
         testAltAndF10WillCollapseTheEntireCascade = function (complete) {
             // Verifies that both "alt" and "F10" keys when pressed inside a flyout will collapse the entire cascade.
-            var flyoutChain = generateFlyoutChain(_rootAnchor);
+            var flyoutChain = this.generateFlyoutChain();
 
-            function verifyKeyCollapsesTheCascade(keyCode: number, keyName: string) {
+            var verifyKeyCollapsesTheCascade = (keyCode: number, keyName: string) => {
                 return new WinJS.Promise((completePromise) => {
-                    showFlyoutChain(flyoutChain).then(() => {
+                    this.showFlyoutChain(flyoutChain).then(() => {
 
                         var headFlyout = flyoutChain[0],
                             tailFlyout = flyoutChain[flyoutChain.length - 1];
 
-                        headFlyout.addEventListener("afterhide", function afterHide() {
-                            headFlyout.removeEventListener, ("afterhide", afterHide, false);
-                            verifyCascade([]);
+                        listenOnce(headFlyout, "afterhide", () => { 
+                            this.verifyCascade([]);
                             completePromise();
-                        }, false);
+                        });
 
                         var msg = "The entire cascade should hide whenever " + keyName + " is pressed inside a Flyout";
                         LiveUnit.LoggingCore.logComment("Test: " + msg);
@@ -425,7 +420,126 @@ module CorsicaTests {
             }).done(complete);
         }
     }
+
+    export class CascadingFlyoutTests extends _BaseCascadingTests {
+        showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
+            return OverlayHelpers.show(flyout);           
+        }
+
+        generateFlyoutChain(numFlyouts?: number): Array<WinJS.UI.PrivateFlyout> {
+            // Creates and returns an Array of Flyouts. Each Flyout in the chain has its anchor property set to the HTMLElement of the previous flyout.
+            var flyoutChain = [],
+                chainClass = "chain_" + ++chainCounter,
+                anchor,
+                prevFlyout;
+
+            // Default fallback.
+            numFlyouts = numFlyouts || DEFAULT_CHAIN_SIZE;
+
+            for (var i = 0; i < numFlyouts; i++) {
+                anchor = prevFlyout ? prevFlyout.element : _defaultAnchor;
+
+                var flyout = new Flyout(null, { anchor: anchor });
+                document.body.appendChild(flyout.element);
+                WinJS.Utilities.addClass(flyout.element, chainClass);
+                flyout.element.id = (i + 1) + "of" + numFlyouts;
+
+                flyoutChain.push(flyout);
+                prevFlyout = flyout;
+            }
+            return flyoutChain;
+        }
+
+        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
+            // Chain the tail Flyout to the head Flyout.
+            tail.anchor = head.element;
+        }
+    }
+
+    export class CascadingMenuTests extends _BaseCascadingTests {
+        private firstCommandId = "flyoutCmd1";
+        private secondCommandId = "flyoutCmd2";
+
+        showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
+            // If my anchor isn't in the cascade, just call overlayhelpers.show
+            // else call menucommand._activateFlyoutCommand(flyout)
+
+            var cascadingStack = cascadeManager._cascadingStack;
+            for (var cascadeIndex = cascadingStack.length - 1; cascadeIndex >= 0; cascadeIndex--) {
+
+                var currentFlyout = cascadingStack[cascadeIndex],
+                    currentFlyoutCommands = currentFlyout.element.querySelectorAll("." + _Constants.menuCommandFlyoutClass),
+                    parentFlyoutCommand;
+
+                for (var i = 0, len = currentFlyoutCommands.length; i < len; i++) {
+                    var flyoutCommand = currentFlyoutCommands[i].winControl;
+                    if (flyoutCommand && flyoutCommand.flyout === flyout) {
+                        parentFlyoutCommand = flyoutCommand;
+                    }
+                }
+
+                if (parentFlyoutCommand) {
+                    break;
+                }
+            }
+
+            var result;
+            if (parentFlyoutCommand) {
+                result = MenuCommand._activateFlyoutCommand(parentFlyoutCommand);
+            } else {
+                result = OverlayHelpers.show(flyout);
+            }
+
+            return result.then(function verifyFlyoutContainsFocusAfterShowing() {
+                LiveUnit.Assert.isTrue(flyout.element.contains(<HTMLElement>document.activeElement), "Flyout should contain focus after showing");
+            });
+        }
+
+        generateFlyoutChain(numMenus?: number): Array<WinJS.UI.PrivateFlyout> {
+            // Creates and returns an Array of Menu Flyouts. Each Menu in the chain has its anchor property set to the HTMLElement of parent Menu's flyout MenuCommand
+            var flyoutChain = [],
+                chainClass = "chain_" + ++chainCounter,
+                anchor,
+                prevMenu;
+
+            // Default fallback.
+            numMenus = numMenus || DEFAULT_CHAIN_SIZE;
+
+            for (var i = 0; i < numMenus; i++) {
+
+                var menu = new Menu(null, {});
+                document.body.appendChild(menu.element);
+                WinJS.Utilities.addClass(menu.element, chainClass);
+                menu.element.id = (i + 1) + "of" + numMenus;
+
+                if (prevMenu) {
+                    // Set commands in the previous Menu in order to chain it to the current Menu, via the MenuCommand 'flyout' property.
+                    var prevMenuCommands = [
+                        // First command opens the current Menu. 
+                        // Second command can be used by tests for any reason.
+                        new MenuCommand(null, { id: this.firstCommandId, label: this.firstCommandId, type: _Constants.typeFlyout, flyout: menu }),
+                        new MenuCommand(null, { id: this.secondCommandId, label: this.secondCommandId, type: _Constants.typeFlyout, flyout: null }),
+                    ];
+                    prevMenu.commands = prevMenuCommands;
+                    menu.anchor = prevMenuCommands[0].element;
+                } else {
+                    menu.anchor = _defaultAnchor;
+                }
+
+                flyoutChain.push(menu);
+                prevMenu = menu;
+            }
+            return flyoutChain;
+        }
+
+        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
+            // Chain the tail Menu to the head Menu.
+            var menuCommand = head.element.querySelector("#" + this.secondCommandId).winControl;
+            menuCommand.flyout = tail;
+        }
+    }
 }
 
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.CascadingFlyoutTests");
+LiveUnit.registerTestClass("CorsicaTests.CascadingMenuTests");

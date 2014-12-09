@@ -485,8 +485,8 @@ define([
 
                         // Store what had focus before showing the Flyout. This must happen after we've appended this
                         // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
-                        // collapse, so that focus has already been restored to the correct element by the previous
-                        // branch before we try to record it here.
+                        // collapse. Ensures that focus has already been restored to the correct element by the 
+                        // previous branch before we try to record it here.
                         this._previousFocus = _Global.document.activeElement;
 
                         if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
