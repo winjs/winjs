@@ -90,6 +90,7 @@ export interface ILightDismissable {
     containsElement(element: HTMLElement): boolean;
     requiresClickEater(): boolean;
     becameTopLevel(): void;
+    receivedFocus(element: HTMLElement): void;
     hidden(): void;
     shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
     
@@ -115,6 +116,9 @@ class LightDismissService {
     private _focusOrder: ILightDismissable[];
     private _notifying: boolean;
     
+    private _onFocusInBound: (eventObject: FocusEvent) => void;
+    private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
+    
     constructor() {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
@@ -124,9 +128,12 @@ class LightDismissService {
         this._focusOrder = [];
         this._rendered = {
             clickEaterInDom: false,
-            attachedFocusListener: false
+            serviceActive: false
         };
         this._notifying = false;
+        
+        this._onFocusInBound = this._onFocusIn.bind(this);
+        this._onKeyDownBound = this._onKeyDown.bind(this);
         
         //this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
         //this._onEdgyCompletedBound = this._onEdgyCompleted.bind(this);
@@ -160,14 +167,21 @@ class LightDismissService {
     }
     
     hidden(client: ILightDismissable) {
+        if (this._removeClient(client)) {
+            this._updateDom();
+        }
+    }
+    
+    private _removeClient(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
             this._clients.splice(index, 1);
             removeItem(this._focusOrder, client);
             client.setZIndex("");
             client.hidden();
-            this._updateDom();
+            return true;
         }
+        return false;
     }
     
     private _createClickEater(): HTMLElement {
@@ -186,11 +200,19 @@ class LightDismissService {
     
     private _rendered: {
         clickEaterInDom: boolean;
-        attachedFocusListener: boolean;
+        serviceActive: boolean;
     }
     private _updateDom() {
         if (this._notifying) {
             return;
+        }
+        
+        var serviceActive = this._rendered.serviceActive ? this._clients.length > 1 : this._clients.length > 0;
+        if (serviceActive !== this._rendered.serviceActive && serviceActive) {
+            this._clients.unshift(new LightDismissableBody(<HTMLElement>_Global.document.activeElement));
+            _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+            _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+            this._rendered.serviceActive = serviceActive;
         }
          
         var clickEaterIndex = -1;
@@ -214,15 +236,6 @@ class LightDismissService {
             }
             this._rendered.clickEaterInDom = clickEaterInDom;
         }
-        
-        var attachedFocusListener = this._clients.length > 0;
-        if (attachedFocusListener !== this._rendered.attachedFocusListener) {
-            if (attachedFocusListener) {
-                //_ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-            } else {
-                //_ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-            }
-        }
 
         var topLevel: ILightDismissable = null;
         if (this._clients.length > 0) {
@@ -241,6 +254,13 @@ class LightDismissService {
         if (this._currentTopLevel !== topLevel) {
             this._currentTopLevel = topLevel;
             this._currentTopLevel && this._currentTopLevel.becameTopLevel();
+        }
+        
+        if (serviceActive !== this._rendered.serviceActive && !serviceActive) {
+            this._removeClient(this._clients[0]);
+            _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+            _ElementUtilities._removeEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+            this._rendered.serviceActive = serviceActive;
         }
     }
     
@@ -275,6 +295,39 @@ class LightDismissService {
         this._updateDom();
         
         return lightDismissInfo._doDefault;
+    }
+    
+    private _onFocusIn(eventObject: FocusEvent) {
+        // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
+        // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
+        //if (active &&
+        //        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
+        //         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
+        //    return;
+        //}
+
+        var target = <HTMLElement>eventObject.target;
+        for (var i = this._clients.length - 1; i >= 0; i--) {
+            if (this._clients[i].containsElement(target)) {
+                break;
+            }
+        }
+        if (i !== -1) {
+            moveToFront(this._focusOrder, this._clients[i]);
+            this._clients[i].receivedFocus(target);
+        }
+
+        this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
+    }
+    
+    private _onKeyDown(eventObject: KeyboardEvent) {
+        // TODO: Original would set _keyboardInvoked to true for escape here.
+        // TODO: preventDefault, stopPropagation even if nobody dismisses?
+        if (eventObject.keyCode === _ElementUtilities.Key.escape) {
+            eventObject.preventDefault();
+            eventObject.stopPropagation();
+            this._dispatchLightDismiss(LightDismissalReasons.escape);
+        }
     }
     
     private _onClickEaterPointerDown(eventObject: PointerEvent) {
@@ -335,10 +388,44 @@ export interface LightDismissableElementArgs {
     containsElement?(element: HTMLElement): boolean;
     requiresClickEater?(): boolean;
     becameTopLevel?(): void;
+    receivedFocus?(element: HTMLElement): void;
     hidden?(): void;
     shouldReceiveLightDismiss?(info: ILightDismissInfo): boolean;
     
     lightDismiss?(info: ILightDismissInfo): void;
+}
+
+function _() { }
+
+class LightDismissableBody implements ILightDismissable {    
+    private _currentFocus: HTMLElement;
+    
+    constructor(currentFocus: HTMLElement) {
+        this._currentFocus = currentFocus;
+    }
+    
+    setZIndex = _;
+    containsElement(element: HTMLElement): boolean {
+        return _Global.document.body.contains(element);
+    }
+    requiresClickEater(): boolean {
+        return false;
+    }
+    becameTopLevel(): void {
+        (this._currentFocus && this.containsElement(this._currentFocus) && _ElementUtilities._tryFocus(this._currentFocus)) ||
+            _ElementUtilities._focusFirstFocusableElement(_Global.document.body) ||
+            _ElementUtilities._tryFocus(_Global.document.body);
+    }
+    receivedFocus(element: HTMLElement): void {
+        this._currentFocus = element;
+    }
+    hidden(): void {
+        this._currentFocus = null;
+    }
+    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+        return false;
+    }
+    lightDismiss = _;
 }
 
 export class LightDismissableElement<T> implements ILightDismissable {
@@ -346,6 +433,8 @@ export class LightDismissableElement<T> implements ILightDismissable {
     context: T;
     
     private _winCurrentFocus: HTMLElement;
+    
+    private _winReceivedFocus: (element: HTMLElement) => void;
     private _winHidden: () => void;
     
     constructor(args: LightDismissableElementArgs) {
@@ -355,11 +444,8 @@ export class LightDismissableElement<T> implements ILightDismissable {
         if (args.setZIndex) { this.setZIndex = args.setZIndex; }
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
-        if (args.becameTopLevel) {
-            this.becameTopLevel = args.becameTopLevel;
-        } else {
-            _ElementUtilities._addEventListener(this.element, "focusin", this._onFocusIn.bind(this));
-        }
+        if (args.becameTopLevel) { this.becameTopLevel = args.becameTopLevel; }
+        this._winReceivedFocus = args.receivedFocus;
         this._winHidden = args.hidden;
         if (args.shouldReceiveLightDismiss) { this.shouldReceiveLightDismiss = args.shouldReceiveLightDismiss; }
         if (args.lightDismiss) { this.lightDismiss = args.lightDismiss; }
@@ -384,6 +470,10 @@ export class LightDismissableElement<T> implements ILightDismissable {
                 _ElementUtilities._tryFocus(this.element);
         }
     }
+    receivedFocus(element: HTMLElement): void {
+        this._winCurrentFocus = element;
+        this._winReceivedFocus && this._winReceivedFocus(element);
+    }
     hidden(): void {
         this._winCurrentFocus = null;
         this._winHidden && this._winHidden();
@@ -394,10 +484,6 @@ export class LightDismissableElement<T> implements ILightDismissable {
     
     lightDismiss(info: ILightDismissInfo): void {
         
-    }
-    
-    private _onFocusIn(eventObject: FocusEvent) {
-        this._winCurrentFocus = <HTMLElement>eventObject.target;
     }
 }
 
