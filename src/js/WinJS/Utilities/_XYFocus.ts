@@ -10,7 +10,8 @@ import _OptionsParser = require("../ControlProcessor/_OptionsParser");
 "use strict";
 
 var AttributeNames = {
-    focusOverride: "data-win-focus"
+    focusOverride: "data-win-xyfocus",
+    focusOverrideLegacy: "data-win-focus"
 };
 
 var ClassNames = {
@@ -135,27 +136,27 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
 }
 
 export function enableXYFocus() {
-    if (!_dFocusEnabled) {
+    if (!_xyFocusEnabled) {
         _Global.document.addEventListener("keydown", _handleKeyEvent);
-        _dFocusEnabled = true;
+        _xyFocusEnabled = true;
     }
 }
 
 export function disableXYFocus() {
-    if (_dFocusEnabled) {
+    if (_xyFocusEnabled) {
         _Global.document.removeEventListener("keydown", _handleKeyEvent);
-        _dFocusEnabled = false;
+        _xyFocusEnabled = false;
     }
 }
 
 
 // Privates
-var _dFocusEnabled = false;
+var _xyFocusEnabled = false;
 var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
 var _afEnabledFrames: Window[] = [];
-function _dFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
+function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
     // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
     if (referenceRect || _Global.document.activeElement !== _lastTarget) {
@@ -291,7 +292,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
 
     // Handle override
     if (refObj.element) {
-        var manualOverrideOptions = refObj.element.getAttribute(AttributeNames.focusOverride);
+        var manualOverrideOptions = refObj.element.getAttribute(AttributeNames.focusOverride) || refObj.element.getAttribute(AttributeNames.focusOverrideLegacy);
         if (manualOverrideOptions) {
             var parsedOptions = _OptionsParser.optionsParser(manualOverrideOptions);
 
@@ -502,7 +503,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
         }
 
         var style = getComputedStyle(element);
-        if (element.tabIndex === -1 || style.display === "none" || style.visibility === "hidden" || element.disabled) {
+        if (element.getAttribute("tabIndex") === "-1" || style.display === "none" || style.visibility === "hidden" || element.disabled) {
             // Skip elements that are hidden  
             // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.  
             return false;
@@ -563,7 +564,7 @@ function _handleKeyEvent(e: KeyboardEvent): void {
         var key = keys[i];
         var keyMappings = keyCodeMap[key];
         if (keyMappings.indexOf(e.keyCode) >= 0) {
-            if (_dFocus(key, e.keyCode)) {
+            if (_xyFocus(key, e.keyCode)) {
                 e.preventDefault();
             }
             return;
@@ -594,7 +595,7 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
             // When we get this message we will force-enable XYFocus to support scenarios where
             // websites running WinJS are put into an IFRAME and the parent frame has XYFocus enabled.
             enableXYFocus();
-            _dFocus(data.direction, -1, data.referenceRect);
+            _xyFocus(data.direction, -1, data.referenceRect);
             break;
 
         case CrossDomainMessageConstants.dFocusExit:
@@ -610,7 +611,7 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
             var refRect: IRect = data.referenceRect;
             refRect.left += iframe.offsetLeft;
             refRect.top += iframe.offsetTop;
-            _dFocus(data.direction, -1, refRect);
+            _xyFocus(data.direction, -1, refRect);
             break;
     }
 });
@@ -649,7 +650,7 @@ var toPublish = {
     findNextFocusElement: findNextFocusElement,
     moveFocus: moveFocus,
 
-    _dFocus: _dFocus
+    _xyFocus: _xyFocus
 };
 toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
 toPublish["_listeners"] = {};

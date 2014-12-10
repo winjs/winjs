@@ -744,7 +744,7 @@ declare module WinJS {
         var _AppBarCommandsLayout;
 
         module XYFocus {
-            function _dFocus(direction: string, referenceRect?: IRect): void;
+            function _xyFocus(direction: string, referenceRect?: IRect): void;
         }
 
         module Pages {
