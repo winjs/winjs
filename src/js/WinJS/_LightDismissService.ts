@@ -507,6 +507,11 @@ export var shown = service.shown.bind(service);
 export var hidden = service.hidden.bind(service);
 
 _Base.Namespace.define("WinJS.UI._LightDismissService", {
+    _clients: {
+        get: () => {
+            return service["_clients"];
+        }  
+    },
     shown: shown,
     hidden: hidden,
     LightDismissableElement: LightDismissableElement,

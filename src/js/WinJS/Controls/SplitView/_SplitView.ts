@@ -459,6 +459,7 @@ module States {
         splitView: SplitView;
         name = "Disposed";
         enter() {
+            _LightDismissService.hidden(this.splitView._dismissable);
         }
         exit = _;
         paneHidden = true;
