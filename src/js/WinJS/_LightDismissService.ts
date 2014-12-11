@@ -122,6 +122,7 @@ class LightDismissService {
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
+    private _onWindowResizeBound: (eventObject: Event) => void;
     private _onClickEaterPointerUpBound: (eventObject: PointerEvent) => void;
     private _onClickEaterPointerCancelBound: (eventObject: PointerEvent) => void;
     
@@ -141,6 +142,7 @@ class LightDismissService {
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
+        this._onWindowResizeBound = this._onWindowResize.bind(this);
         this._onClickEaterPointerUpBound = this._onClickEaterPointerUp.bind(this);
         this._onClickEaterPointerCancelBound = this._onClickEaterPointerCancel.bind(this);
         
@@ -184,7 +186,7 @@ class LightDismissService {
     }
     
     private _createClickEater(): HTMLElement {
-           var clickEater = _Global.document.createElement("section");
+       var clickEater = _Global.document.createElement("section");
         clickEater.className = ClassNames._clickEater;
         _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
         clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
@@ -209,11 +211,13 @@ class LightDismissService {
         if (serviceActive !== this._rendered.serviceActive) {
             if (serviceActive) {
                 _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-                _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+                _Global.document.documentElement.addEventListener("keydown", this._onKeyDownBound);
+                _Global.window.addEventListener("resize", this._onWindowResizeBound);
                 this._bodyClient.currentFocus = <HTMLElement>_Global.document.activeElement;
             } else {
                 _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-                _ElementUtilities._removeEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+                _Global.document.documentElement.removeEventListener("keydown", this._onKeyDownBound);
+                _Global.window.removeEventListener("resize", this._onWindowResizeBound);
             }
             this._rendered.serviceActive = serviceActive;
         }
@@ -318,6 +322,10 @@ class LightDismissService {
             eventObject.stopPropagation();
             this._dispatchLightDismiss(LightDismissalReasons.escape);
         }
+    }
+    
+    private _onWindowResize(eventObject: Event) {
+        this._dispatchLightDismiss(LightDismissalReasons.windowResize);
     }
     
     //
