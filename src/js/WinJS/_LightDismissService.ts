@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+import Application = require('./Application');
 import _Base = require('./Core/_Base');
 import _BaseUtils = require('./Core/_BaseUtils');
 import _ElementUtilities = require('./Utilities/_ElementUtilities');
@@ -146,6 +147,9 @@ class LightDismissService {
         this._onClickEaterPointerUpBound = this._onClickEaterPointerUp.bind(this);
         this._onClickEaterPointerCancelBound = this._onClickEaterPointerCancel.bind(this);
         
+        // Register for infrequent events.
+        Application.addEventListener("backclick", this._onBackClick.bind(this));
+        
         this.shown(this._bodyClient);
         
         //this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
@@ -196,6 +200,7 @@ class LightDismissService {
         
         var serviceActive = this._clients.length > 1;
         if (serviceActive !== this._rendered.serviceActive) {
+            // Unregister/register for events that occur frequently.
             if (serviceActive) {
                 _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.documentElement.addEventListener("keydown", this._onKeyDownBound);
@@ -317,6 +322,11 @@ class LightDismissService {
     
     private _onWindowResize(eventObject: Event) {
         this._dispatchLightDismiss(LightDismissalReasons.windowResize);
+    }
+    
+    private _onBackClick(eventObject: any) {
+        var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
+        return !doDefault; // Returns whether or not the event was handled.
     }
     
     //
