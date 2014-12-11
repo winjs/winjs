@@ -121,6 +121,8 @@ class LightDismissService {
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
+    private _onClickEaterPointerUpBound: (eventObject: PointerEvent) => void;
+    private _onClickEaterPointerCancelBound: (eventObject: PointerEvent) => void;
     
     constructor() {
         this._clickEaterEl = this._createClickEater();
@@ -138,6 +140,8 @@ class LightDismissService {
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
+        this._onClickEaterPointerUpBound = this._onClickEaterPointerUp.bind(this);
+        this._onClickEaterPointerCancelBound = this._onClickEaterPointerCancel.bind(this);
         
         this.shown(this._bodyClient);
         
@@ -182,7 +186,6 @@ class LightDismissService {
            var clickEater = _Global.document.createElement("section");
         clickEater.className = ClassNames._clickEater;
         _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
-        _ElementUtilities._addEventListener(clickEater, "pointerup", this._onClickEaterPointerUp.bind(this), true);
         clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
         // Tell Aria that it's clickable
         clickEater.setAttribute("role", "menuitem");
@@ -332,6 +335,7 @@ class LightDismissService {
     
     private _clickEaterPointerId: number;
     private _skipClickEaterClick: boolean;
+    private _registeredClickEaterCleanUp: boolean;
     
     private _onClickEaterPointerDown(eventObject: PointerEvent) {
         eventObject.stopPropagation();
@@ -339,6 +343,11 @@ class LightDismissService {
         
         if (eventObject.button !== rightButton) {
             this._clickEaterPointerId = eventObject.pointerId;
+            if (!this._registeredClickEaterCleanUp) {
+                _ElementUtilities._addEventListener(_Global.window, "pointerup", this._onClickEaterPointerUpBound);
+                _ElementUtilities._addEventListener(_Global.window, "pointercancel", this._onClickEaterPointerCancelBound);
+                this._registeredClickEaterCleanUp = true;
+            }
         }
     }
 
@@ -348,10 +357,9 @@ class LightDismissService {
         eventObject.preventDefault();
         
         if (eventObject.pointerId === this._clickEaterPointerId) {
-            this._clickEaterPointerId = null;
+            this._resetClickEaterPointerState();
             var element = _Global.document.elementFromPoint(eventObject.clientX, eventObject.clientY);
             
-            // Need to ensure that the pointerup was over the click eater in case pointer capture is set.
             if (element === this._clickEaterEl) {
                 this._skipClickEaterClick = true;
                 _BaseUtils._yieldForEvents(() => {
@@ -374,6 +382,21 @@ class LightDismissService {
             // light dismiss here? original implementation seemed to dismiss in up and click
             this._dispatchLightDismiss(LightDismissalReasons.tap);
         }
+    }
+    
+    private _onClickEaterPointerCancel(eventObject: PointerEvent) {
+        if (eventObject.pointerId === this._clickEaterPointerId) {
+            this._resetClickEaterPointerState();
+        }
+    }
+    
+    private _resetClickEaterPointerState() {
+        if (this._registeredClickEaterCleanUp) {
+            _ElementUtilities._removeEventListener(_Global.window, "pointerup", this._onClickEaterPointerUpBound);
+            _ElementUtilities._removeEventListener(_Global.window, "pointercancel", this._onClickEaterPointerCancelBound);
+        }
+        this._clickEaterPointerId = null;
+        this._registeredClickEaterCleanUp = false;
     }
 }
 
