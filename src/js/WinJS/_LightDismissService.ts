@@ -78,6 +78,7 @@ export var LightDismissalPolicies = {
         return false;
     }  
 };
+var rightButton = 2;
 
 export interface ILightDismissInfo {
     reason: string;
@@ -117,7 +118,6 @@ class LightDismissService {
     private _focusOrder: ILightDismissable[];
     private _notifying: boolean;
     private _bodyClient: LightDismissableBody;
-    private _skipClickEaterClick: boolean;
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
@@ -135,7 +135,6 @@ class LightDismissService {
         };
         this._notifying = false;
         this._bodyClient = new LightDismissableBody();
-        this._skipClickEaterClick = false;
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
@@ -290,6 +289,10 @@ class LightDismissService {
         return lightDismissInfo._doDefault;
     }
     
+    //
+    // Light dismiss triggers
+    //
+    
     private _onFocusIn(eventObject: FocusEvent) {
         // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
         // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
@@ -323,48 +326,40 @@ class LightDismissService {
         }
     }
     
+    //
+    // Click eater light dismiss triggers
+    //
+    
+    private _clickEaterPointerId: number;
+    private _skipClickEaterClick: boolean;
+    
     private _onClickEaterPointerDown(eventObject: PointerEvent) {
-        var target = eventObject.currentTarget;
-        if (target) {
-            try {
-                // Remember pointer id and remember right mouse
-                target["_winPointerId"] = eventObject.pointerId;
-                // Cache right mouse if that was what happened
-                target["_winRightMouse"] = (eventObject.button === 2);
-            } catch (e) { }
-        }
-
-        if (!target["_winRightMouse"]) {
-            eventObject.stopPropagation();
-            eventObject.preventDefault();
+        eventObject.stopPropagation();
+        eventObject.preventDefault();
+        
+        if (eventObject.button !== rightButton) {
+            this._clickEaterPointerId = eventObject.pointerId;
         }
     }
 
     // Make sure that if we have an up we had an earlier down of the same kind
     private _onClickEaterPointerUp(eventObject: PointerEvent) {
-        this._skipClickEaterClick = true;
-        _BaseUtils._yieldForEvents(() => {
-            this._skipClickEaterClick = false;
-        });
+        eventObject.stopPropagation();
+        eventObject.preventDefault();
         
-        var rightMouse = false,
-            target = eventObject.currentTarget;
-
-        // Same pointer we were watching?
-        try {
-            if (target && target["_winPointerId"] === eventObject.pointerId) {
-                // Same pointer
-                rightMouse = target["_winRightMouse"];
+        if (eventObject.pointerId === this._clickEaterPointerId) {
+            this._clickEaterPointerId = null;
+            var element = _Global.document.elementFromPoint(eventObject.clientX, eventObject.clientY);
+            
+            // Need to ensure that the pointerup was over the click eater in case pointer capture is set.
+            if (element === this._clickEaterEl) {
+                this._skipClickEaterClick = true;
+                _BaseUtils._yieldForEvents(() => {
+                    this._skipClickEaterClick = false;
+                });
+                this._dispatchLightDismiss(LightDismissalReasons.tap);
             }
-        } catch (e) { }
-
-        if (!rightMouse) {
-            eventObject.stopPropagation();
-            eventObject.preventDefault();
-            // light dismiss here? original implementation seemed to dismiss in up and click
-            //target._winHideClickEater(event);
         }
-        this._dispatchLightDismiss(LightDismissalReasons.tap);
     }
 
     // TODO: Think about edgy
@@ -374,6 +369,7 @@ class LightDismissService {
     private _onClickEaterClick(eventObject: PointerEvent) {
         eventObject.stopPropagation();
         eventObject.preventDefault();
+        
         if (!this._skipClickEaterClick) {
             // light dismiss here? original implementation seemed to dismiss in up and click
             this._dispatchLightDismiss(LightDismissalReasons.tap);
