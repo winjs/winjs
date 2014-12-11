@@ -115,6 +115,7 @@ class LightDismissService {
     private _currentTopLevel: ILightDismissable;
     private _focusOrder: ILightDismissable[];
     private _notifying: boolean;
+    private _bodyClient: LightDismissableBody;
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
@@ -131,9 +132,12 @@ class LightDismissService {
             serviceActive: false
         };
         this._notifying = false;
+        this._bodyClient = new LightDismissableBody();
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
+        
+        this.shown(this._bodyClient);
         
         //this._onEdgyStartingBound = this._onEdgyStarting.bind(this);
         //this._onEdgyCompletedBound = this._onEdgyCompleted.bind(this);
@@ -145,17 +149,12 @@ class LightDismissService {
         //    edgy.addEventListener("canceled", this._onEdgyCanceledBound);
         //}
         
-        //this._onFocusInBound = this._onFocusIn.bind(this);
-        //_ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-        //_ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDown.bind(this));
         //Application.addEventListener("backclick", this._onBackClick.bind(this));
         //_Global.addEventListener("resize", this._onWindowResize.bind(this));
         // Focus handlers generally use WinJS.Utilities._addEventListener with focusout/focusin. This
         // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
         // on window.
         //_Global.addEventListener("blur", this._onWindowBlur.bind(this));
-
-        //this.shown(new LightDismissableBody());
     }
     
     shown(client: ILightDismissable) {
@@ -167,21 +166,14 @@ class LightDismissService {
     }
     
     hidden(client: ILightDismissable) {
-        if (this._removeClient(client)) {
-            this._updateDom();
-        }
-    }
-    
-    private _removeClient(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
             this._clients.splice(index, 1);
             removeItem(this._focusOrder, client);
             client.setZIndex("");
             client.hidden();
-            return true;
+            this._updateDom();
         }
-        return false;
     }
     
     private _createClickEater(): HTMLElement {
@@ -207,11 +199,16 @@ class LightDismissService {
             return;
         }
         
-        var serviceActive = this._rendered.serviceActive ? this._clients.length > 1 : this._clients.length > 0;
-        if (serviceActive !== this._rendered.serviceActive && serviceActive) {
-            this._clients.unshift(new LightDismissableBody(<HTMLElement>_Global.document.activeElement));
-            _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-            _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+        var serviceActive = this._clients.length > 1;
+        if (serviceActive !== this._rendered.serviceActive) {
+            if (serviceActive) {
+                _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+                _ElementUtilities._addEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+                this._bodyClient.currentFocus = <HTMLElement>_Global.document.activeElement;
+            } else {
+                _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
+                _ElementUtilities._removeEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
+            }
             this._rendered.serviceActive = serviceActive;
         }
          
@@ -254,13 +251,6 @@ class LightDismissService {
         if (this._currentTopLevel !== topLevel) {
             this._currentTopLevel = topLevel;
             this._currentTopLevel && this._currentTopLevel.becameTopLevel();
-        }
-        
-        if (serviceActive !== this._rendered.serviceActive && !serviceActive) {
-            this._removeClient(this._clients[0]);
-            _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
-            _ElementUtilities._removeEventListener(_Global.document.documentElement, "keydown", this._onKeyDownBound);
-            this._rendered.serviceActive = serviceActive;
         }
     }
     
@@ -398,11 +388,7 @@ export interface LightDismissableElementArgs {
 function _() { }
 
 class LightDismissableBody implements ILightDismissable {    
-    private _currentFocus: HTMLElement;
-    
-    constructor(currentFocus: HTMLElement) {
-        this._currentFocus = currentFocus;
-    }
+    currentFocus: HTMLElement;
     
     setZIndex = _;
     containsElement(element: HTMLElement): boolean {
@@ -412,15 +398,15 @@ class LightDismissableBody implements ILightDismissable {
         return false;
     }
     becameTopLevel(): void {
-        (this._currentFocus && this.containsElement(this._currentFocus) && _ElementUtilities._tryFocus(this._currentFocus)) ||
+        (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus)) ||
             _ElementUtilities._focusFirstFocusableElement(_Global.document.body) ||
             _ElementUtilities._tryFocus(_Global.document.body);
     }
     receivedFocus(element: HTMLElement): void {
-        this._currentFocus = element;
+        this.currentFocus = element;
     }
     hidden(): void {
-        this._currentFocus = null;
+        this.currentFocus = null;
     }
     shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
         return false;
