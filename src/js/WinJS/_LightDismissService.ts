@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 import _Base = require('./Core/_Base');
+import _BaseUtils = require('./Core/_BaseUtils');
 import _ElementUtilities = require('./Utilities/_ElementUtilities');
 import _Global = require('./Core/_Global');
 import _Log = require('./Core/_Log');
@@ -116,6 +117,7 @@ class LightDismissService {
     private _focusOrder: ILightDismissable[];
     private _notifying: boolean;
     private _bodyClient: LightDismissableBody;
+    private _skipClickEaterClick: boolean;
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
@@ -133,6 +135,7 @@ class LightDismissService {
         };
         this._notifying = false;
         this._bodyClient = new LightDismissableBody();
+        this._skipClickEaterClick = false;
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
@@ -339,6 +342,11 @@ class LightDismissService {
 
     // Make sure that if we have an up we had an earlier down of the same kind
     private _onClickEaterPointerUp(eventObject: PointerEvent) {
+        this._skipClickEaterClick = true;
+        _BaseUtils._yieldForEvents(() => {
+            this._skipClickEaterClick = false;
+        });
+        
         var rightMouse = false,
             target = eventObject.currentTarget;
 
@@ -356,6 +364,7 @@ class LightDismissService {
             // light dismiss here? original implementation seemed to dismiss in up and click
             //target._winHideClickEater(event);
         }
+        this._dispatchLightDismiss(LightDismissalReasons.tap);
     }
 
     // TODO: Think about edgy
@@ -365,8 +374,10 @@ class LightDismissService {
     private _onClickEaterClick(eventObject: PointerEvent) {
         eventObject.stopPropagation();
         eventObject.preventDefault();
-        // light dismiss here? original implementation seemed to dismiss in up and click
-        this._dispatchLightDismiss(LightDismissalReasons.tap);
+        if (!this._skipClickEaterClick) {
+            // light dismiss here? original implementation seemed to dismiss in up and click
+            this._dispatchLightDismiss(LightDismissalReasons.tap);
+        }
     }
 }
 
