@@ -4,6 +4,7 @@ import _Base = require('./Core/_Base');
 import _BaseUtils = require('./Core/_BaseUtils');
 import _ElementUtilities = require('./Utilities/_ElementUtilities');
 import _Global = require('./Core/_Global');
+import _KeyboardBehavior = require('./Utilities/_KeyboardBehavior');
 import _Log = require('./Core/_Log');
 import _Resources = require('./Core/_Resources');
 
@@ -297,14 +298,6 @@ class LightDismissService {
     //
     
     private _onFocusIn(eventObject: FocusEvent) {
-        // Commented out code is from _Overlay.js. Think if we need to handle this case in the service.
-        // Do not hide focus if focus moved to a CED. Let the click handler on the CED take care of hiding us.
-        //if (active &&
-        //        (_ElementUtilities.hasClass(active, _Constants._clickEatingFlyoutClass) ||
-        //         _ElementUtilities.hasClass(active, _Constants._clickEatingAppBarClass))) {
-        //    return;
-        //}
-
         var target = <HTMLElement>eventObject.target;
         for (var i = this._clients.length - 1; i >= 0; i--) {
             if (this._clients[i].containsElement(target)) {
@@ -320,8 +313,6 @@ class LightDismissService {
     }
     
     private _onKeyDown(eventObject: KeyboardEvent) {
-        // TODO: Original would set _keyboardInvoked to true for escape here.
-        // TODO: preventDefault, stopPropagation even if nobody dismisses?
         if (eventObject.keyCode === _ElementUtilities.Key.escape) {
             eventObject.preventDefault();
             eventObject.stopPropagation();
@@ -428,9 +419,13 @@ class LightDismissableBody implements ILightDismissable {
         return false;
     }
     becameTopLevel(): void {
-        (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus)) ||
-            _ElementUtilities._focusFirstFocusableElement(_Global.document.body) ||
-            _ElementUtilities._tryFocus(_Global.document.body);
+        // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+        // Otherwise, use setActive() so no focus visual is drawn.
+        var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+        
+        (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus, useSetActive)) ||
+            _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
+            _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
     }
     receivedFocus(element: HTMLElement): void {
         this.currentFocus = element;
@@ -481,9 +476,13 @@ export class LightDismissableElement<T> implements ILightDismissable {
         if (activeElement && this.containsElement(activeElement)) {
             this._winCurrentFocus = activeElement;
         } else {
-            (this._winCurrentFocus && this.containsElement(this._winCurrentFocus) && _ElementUtilities._tryFocus(this._winCurrentFocus)) ||
-                _ElementUtilities._focusFirstFocusableElement(this.element) ||
-                _ElementUtilities._tryFocus(this.element);
+            // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+            // Otherwise, use setActive() so no focus visual is drawn.
+            var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+            
+            (this._winCurrentFocus && this.containsElement(this._winCurrentFocus) && _ElementUtilities._tryFocus(this._winCurrentFocus, useSetActive)) ||
+                _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
+                _ElementUtilities._tryFocus(this.element, useSetActive);
         }
     }
     receivedFocus(element: HTMLElement): void {
