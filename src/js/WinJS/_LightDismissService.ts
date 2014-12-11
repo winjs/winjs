@@ -185,19 +185,6 @@ class LightDismissService {
         }
     }
     
-    private _createClickEater(): HTMLElement {
-       var clickEater = _Global.document.createElement("section");
-        clickEater.className = ClassNames._clickEater;
-        _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
-        clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
-        // Tell Aria that it's clickable
-        clickEater.setAttribute("role", "menuitem");
-        clickEater.setAttribute("aria-label", Strings.closeOverlay);
-        // Prevent CED from removing any current selection
-        clickEater.setAttribute("unselectable", "on");
-        return clickEater;
-    }
-    
     private _rendered: {
         clickEaterInDom: boolean;
         serviceActive: boolean;
@@ -301,6 +288,10 @@ class LightDismissService {
     // Light dismiss triggers
     //
     
+    private _clickEaterTapped() {
+        this._dispatchLightDismiss(LightDismissalReasons.tap);
+    }
+    
     private _onFocusIn(eventObject: FocusEvent) {
         var target = <HTMLElement>eventObject.target;
         for (var i = this._clients.length - 1; i >= 0; i--) {
@@ -329,12 +320,25 @@ class LightDismissService {
     }
     
     //
-    // Click eater light dismiss triggers
+    // Click eater
     //
     
     private _clickEaterPointerId: number;
     private _skipClickEaterClick: boolean;
     private _registeredClickEaterCleanUp: boolean;
+    
+    private _createClickEater(): HTMLElement {
+       var clickEater = _Global.document.createElement("section");
+        clickEater.className = ClassNames._clickEater;
+        _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
+        clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
+        // Tell Aria that it's clickable
+        clickEater.setAttribute("role", "menuitem");
+        clickEater.setAttribute("aria-label", Strings.closeOverlay);
+        // Prevent CED from removing any current selection
+        clickEater.setAttribute("unselectable", "on");
+        return clickEater;
+    }
     
     private _onClickEaterPointerDown(eventObject: PointerEvent) {
         eventObject.stopPropagation();
@@ -364,7 +368,7 @@ class LightDismissService {
                 _BaseUtils._yieldForEvents(() => {
                     this._skipClickEaterClick = false;
                 });
-                this._dispatchLightDismiss(LightDismissalReasons.tap);
+                this._clickEaterTapped();
             }
         }
     }
@@ -378,8 +382,7 @@ class LightDismissService {
         eventObject.preventDefault();
         
         if (!this._skipClickEaterClick) {
-            // light dismiss here? original implementation seemed to dismiss in up and click
-            this._dispatchLightDismiss(LightDismissalReasons.tap);
+            this._clickEaterTapped();
         }
     }
     
