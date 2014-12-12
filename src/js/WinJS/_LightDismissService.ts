@@ -334,8 +334,26 @@ class LightDismissService {
     }
     
     private _onWindowBlur(eventObject: FocusEvent) {
-        // TODO: Handle iframe case like _GlobalListener_windowBlur in _Overlay.js.
-        this._dispatchLightDismiss(LightDismissalReasons.windowBlur);
+        // Want to trigger a light dismiss on window blur.
+        // We get blur if we click off the window, including into an iframe within our window.
+        // Both blurs call this function, but fortunately document.hasFocus is true if either
+        // the document window or our iframe window has focus.
+        if (!_Global.document.hasFocus()) {
+            // The document doesn't have focus, so they clicked off the app, so light dismiss.
+            this._dispatchLightDismiss(LightDismissalReasons.windowBlur);
+        } else {
+            // We were trying to unfocus the window, but document still has focus,
+            // so make sure the iframe that took the focus will check for blur next time.
+            var active = _Global.document.activeElement;
+            if (active && active.tagName === "IFRAME" && !active["msLightDismissBlur"]) {
+                // - This will go away when the IFRAME goes away, and we only create one.
+                // - This only works in IE because other browsers don't fire focus events on iframe elements.
+                // - Can't use _ElementUtilities._addEventListener's focusout because it doesn't fire when an
+                //   iframe loses focus due to changing windows.
+                active.addEventListener("blur", this._onWindowBlur.bind(this), false);
+                active["msLightDismissBlur"] = true;
+            }
+        }
     }
     
     //
