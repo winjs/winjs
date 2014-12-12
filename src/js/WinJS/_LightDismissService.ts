@@ -149,6 +149,10 @@ class LightDismissService {
         
         // Register for infrequent events.
         Application.addEventListener("backclick", this._onBackClick.bind(this));
+        // Focus handlers generally use _ElementUtilities._addEventListener with focusout/focusin. This
+        // uses the browser's blur event directly beacuse _addEventListener doesn't support focusout/focusin
+        // on window.
+        _Global.window.addEventListener("blur", this._onWindowBlur.bind(this));
         
         this.shown(this._bodyClient);
         
@@ -320,13 +324,18 @@ class LightDismissService {
         }
     }
     
+    private _onBackClick(eventObject: any) {
+        var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
+        return !doDefault; // Returns whether or not the event was handled.
+    }
+    
     private _onWindowResize(eventObject: Event) {
         this._dispatchLightDismiss(LightDismissalReasons.windowResize);
     }
     
-    private _onBackClick(eventObject: any) {
-        var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
-        return !doDefault; // Returns whether or not the event was handled.
+    private _onWindowBlur(eventObject: FocusEvent) {
+        // TODO: Handle iframe case like _GlobalListener_windowBlur in _Overlay.js.
+        this._dispatchLightDismiss(LightDismissalReasons.windowBlur);
     }
     
     //
