@@ -202,27 +202,46 @@ class LightDismissableBody implements ILightDismissable {
     lightDismiss(info: ILightDismissInfo): void { }
 }
 
-function moveToFront(array: Array<ILightDismissable>, item: ILightDismissable) {
-    removeItem(array, item);
-    array.unshift(item);
-}
-
-function removeItem(array: Array<ILightDismissable>, item: ILightDismissable) {
-    var index = array.indexOf(item);
-    if (index !== -1) {
-        array.splice(index, 1);
-    }
-}
-
 //
 // Light dismiss service
 //
+
+class OrderedCache<T> {
+    // The item that was most recently touched appears at index 0.
+    private _orderedCache: T[];
+    
+    constructor() {
+        this._orderedCache = [];
+    }
+    
+    touch(item: T) {
+        this.remove(item);
+        this._orderedCache.unshift(item);
+    }
+    
+    remove(item: T) {
+        var index = this._orderedCache.indexOf(item);
+        if (index !== -1) {
+            this._orderedCache.splice(index, 1);
+        }
+    }
+    
+    // Returns the item in *candidates* that was most recently touched.
+    mostRecentlyTouched(candidates: T[]) {
+        for (var i = 0, len = this._orderedCache.length; i < len; i++) {
+            if (candidates.indexOf(this._orderedCache[i]) !== -1) {
+                return this._orderedCache[i];
+            }
+        }
+        return null;
+    }
+}
 
 class LightDismissService {
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[];
     private _currentTopLevel: ILightDismissable;
-    private _focusOrder: ILightDismissable[];
+    private _focusCache: OrderedCache<ILightDismissable>;
     private _notifying: boolean;
     private _bodyClient: LightDismissableBody;
     
@@ -236,7 +255,7 @@ class LightDismissService {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
         this._currentTopLevel = null;
-        this._focusOrder = [];
+        this._focusCache = new OrderedCache<ILightDismissable>();
         this._rendered = {
             clickEaterInDom: false,
             serviceActive: false
@@ -272,7 +291,7 @@ class LightDismissService {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
             this._clients.splice(index, 1);
-            removeItem(this._focusOrder, client);
+            this._focusCache.remove(client);
             client.setZIndex("");
             client.hidden();
             this._updateDom();
@@ -325,19 +344,21 @@ class LightDismissService {
             }
             this._rendered.clickEaterInDom = clickEaterInDom;
         }
-
+        
+        // Which dismissable should receive focus? In the easy case, there is only one dismissable above the click eater
+        // so this dismissable should receive focus. However, which one should receive focus if multiple dismissables
+        // are above the click eater? Our answer is the dismissable which is above the click eater which had focus most
+        // recently. Here's an example scenario. Suppose there are 2 dismissables and no click eater: the body and a sticky
+        // AppBar. Then:
+        //   - If a Flyout is launched by clicking a button in the body, then the body should receive focus when the
+        //     Flyout dismisses.
+        //   - If a Flyout is launched by clicking a button in the AppBar, then the AppBar should receive focus when the
+        //     Flyout dismisses.
         var topLevel: ILightDismissable = null;
         if (this._clients.length > 0) {
             var startIndex = clickEaterIndex === -1 ? 0 : clickEaterIndex;
             var candidates = this._clients.slice(startIndex);
-            for (var i = 0, len = this._focusOrder.length; i < len && !topLevel; i++) {
-                if (candidates.indexOf(this._focusOrder[i]) !== -1) {
-                    topLevel = this._focusOrder[i];
-                }
-            }
-            if (!topLevel) {
-                topLevel = candidates[candidates.length - 1];
-            }
+            topLevel = this._focusCache.mostRecentlyTouched(candidates) || candidates[candidates.length - 1];
         }
 
         if (this._currentTopLevel !== topLevel) {
@@ -395,7 +416,7 @@ class LightDismissService {
             }
         }
         if (i !== -1) {
-            moveToFront(this._focusOrder, this._clients[i]);
+            this._focusCache.touch(this._clients[i]);
             this._clients[i].receivedFocus(target);
         }
 
