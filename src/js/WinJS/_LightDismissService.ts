@@ -80,17 +80,36 @@ export interface ILightDismissInfo {
 
 // Keep in sync with ILightDismissableElementArgs.
 export interface ILightDismissable {
+    // This dismissable should be rendered at a z-index of *zIndex*.
     setZIndex(zIndex: string): void;
+    // Does the dismissable contain *element*?
     containsElement(element: HTMLElement): boolean;
+    // Does this dismissable require a click eater to be placed behind it? The click eater is placed
+    // immediately behind the dismissable with the lowest zIndex which requires it. If no dismissable
+    // requires the click eater, then it won't be placed into the DOM.
     requiresClickEater(): boolean;
     
     // Hooks
+    
+    // The service now considers this dismissable to be the top level/active dismissable and so it should
+    // take focus if focus isn't already inside of it.
     becameTopLevel(): void;
+    // Focus has moved into or within this dismissable (similar to a focusin handler except
+    // you don't have to explicitly register for it).
     receivedFocus(element: HTMLElement): void;
+    // This dismissable is now hidden (i.e. has been removed from the light dismiss service).
     hidden(): void;
     
     // Dismissal
+    
+    // A light dismiss was triggered. Return whether or not this dismissable should be dismissed. Built-in
+    // implementations of this method are specified in LightDismissalPolicies.
     shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
+    // Should implement what it means for this dismissable to be dismissed (e.g. call control.hide()). Just because
+    // this method is called doesn't mean that the service thinks this dismissable has been dismissed. Consequently,
+    // you can decide to do nothing in this method if you want the dismissable to remain shown. However, this decision
+    // should generally be made in shouldReceiveLightDismiss if possible. The dismissable is responsible for calling
+    // _LightDismissService.hidden at some point.
     lightDismiss(info: ILightDismissInfo): void;
 }
 
@@ -115,10 +134,11 @@ export interface ILightDismissableElementArgs {
 export class LightDismissableElement implements ILightDismissable {
     element: HTMLElement;
     
-    private _winCurrentFocus: HTMLElement;
+    // lde prefix stands for LightDismissableElement
+    private _ldeCurrentFocus: HTMLElement;
     
-    private _winReceivedFocus: (element: HTMLElement) => void;
-    private _winHidden: () => void;
+    private _customReceivedFocus: (element: HTMLElement) => void;
+    private _customHidden: () => void;
     
     constructor(args: ILightDismissableElementArgs) {
         this.element = args.element;
@@ -129,8 +149,8 @@ export class LightDismissableElement implements ILightDismissable {
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
         if (args.becameTopLevel) { this.becameTopLevel = args.becameTopLevel; }
-        this._winReceivedFocus = args.receivedFocus;
-        this._winHidden = args.hidden;
+        this._customReceivedFocus = args.receivedFocus;
+        this._customHidden = args.hidden;
         if (args.shouldReceiveLightDismiss) { this.shouldReceiveLightDismiss = args.shouldReceiveLightDismiss; }
     }
     
@@ -146,24 +166,24 @@ export class LightDismissableElement implements ILightDismissable {
     becameTopLevel(): void {
         var activeElement = <HTMLElement>_Global.document.activeElement;
         if (activeElement && this.containsElement(activeElement)) {
-            this._winCurrentFocus = activeElement;
+            this._ldeCurrentFocus = activeElement;
         } else {
             // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
             // Otherwise, use setActive() so no focus visual is drawn.
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
             
-            (this._winCurrentFocus && this.containsElement(this._winCurrentFocus) && _ElementUtilities._tryFocus(this._winCurrentFocus, useSetActive)) ||
+            (this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocus(this._ldeCurrentFocus, useSetActive)) ||
                 _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
                 _ElementUtilities._tryFocus(this.element, useSetActive);
         }
     }
     receivedFocus(element: HTMLElement): void {
-        this._winCurrentFocus = element;
-        this._winReceivedFocus && this._winReceivedFocus(element);
+        this._ldeCurrentFocus = element;
+        this._customReceivedFocus && this._customReceivedFocus(element);
     }
     hidden(): void {
-        this._winCurrentFocus = null;
-        this._winHidden && this._winHidden();
+        this._ldeCurrentFocus = null;
+        this._customHidden && this._customHidden();
     }
     shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
         return LightDismissalPolicies.light(info);
@@ -215,8 +235,10 @@ class OrderedCache<T> {
     }
     
     touch(item: T) {
-        this.remove(item);
-        this._orderedCache.unshift(item);
+        if (this._orderedCache[0] !== item) {
+            this.remove(item);
+            this._orderedCache.unshift(item);
+        }
     }
     
     remove(item: T) {
@@ -279,6 +301,9 @@ class LightDismissService {
         this.shown(this._bodyClient);
     }
     
+    // Dismissables should call this as soon as they are ready to be shown. More specifically, they should call this:
+    //   - After they are in the DOM and ready to receive focus (e.g. style.display cannot = "none")
+    //   - Before their entrance animation is played
     shown(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index === -1) {
@@ -287,6 +312,7 @@ class LightDismissService {
         }
     }
     
+    // Dismissables should call this when they are done being dismissed (i.e. after their exit animation has finished)
     hidden(client: ILightDismissable) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
@@ -370,11 +396,15 @@ class LightDismissService {
     private _dispatchLightDismiss(reason: string, clients?: ILightDismissable[]) {
         if (this._notifying) {
             _Log.log && _Log.log('_LightDismissService ignored dismiss trigger to avoid re-entrancy: "' + reason + '"', "winjs _LightDismissService", "warning");
-             return;
-         }
+            return;
+        }
+        
+        clients = clients || this._clients.slice(0);
+        if (clients.length === 0) {
+            return;
+        }
         
         this._notifying = true;
-        clients = clients || this._clients.slice(0);
         var lightDismissInfo = {
             reason: reason,
             topLevel: true,
@@ -431,7 +461,7 @@ class LightDismissService {
         }
     }
     
-    private _onBackClick(eventObject: any) {
+    private _onBackClick(eventObject: any): boolean {
         var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
         return !doDefault; // Returns whether or not the event was handled.
     }
@@ -471,8 +501,8 @@ class LightDismissService {
     // Here's an overview of the scenarios:
     //   - UIA invoke (e.g. Narrator): UIA invoke only fires a click event. It doesn't fire any pointer
     //     events so it is up to the click handler to handle this case.
-    //   - Chrome: In Chrome, we only receive pointer events (no click event) because we call preventDefault
-    //     on the pointer events. Consequently, it is up to the PointerUp handler to handle this case.
+    //   - Chrome: In Chrome, we only receive synthetic WinJS pointer events (no click event) because we call
+    //     preventDefault on the pointer events. Consequently, it is up to the PointerUp handler to handle this case.
     //   - IE: In IE, we receive both a PointerUp event and a click event. Consequently, these two event
     //     handlers have to communicate so that they don't trigger a double dismiss. In this case,
     //     PointerUp runs first so it triggers the dismiss and the click handler does nothing (due to the
