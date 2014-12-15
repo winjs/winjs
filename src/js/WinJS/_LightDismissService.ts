@@ -38,11 +38,11 @@ var LightDismissalReasons = {
     edgy: "edgy"
 };
 export var LightDismissalPolicies = {
-    light: function LightDismissalPolicies_light_shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+    light: function LightDismissalPolicies_light_onBeforeLightDismiss(info: ILightDismissInfo): boolean {
         switch (info.reason) {
             case LightDismissalReasons.tap:
             case LightDismissalReasons.escape:
-                if (info.topLevel) {
+                if (info.active) {
                     return true;
                 } else {
                     info.stopPropagation();
@@ -50,7 +50,7 @@ export var LightDismissalPolicies = {
                 }
                 break;
             case LightDismissalReasons.hardwareBackButton:
-                if (info.topLevel) {
+                if (info.active) {
                     info.preventDefault(); // prevent backwards navigation in the app
                     return true;
                 } else {
@@ -65,7 +65,7 @@ export var LightDismissalPolicies = {
                 return true;
         }
     },
-    sticky: function LightDismissalPolicies_sticky_shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+    sticky: function LightDismissalPolicies_sticky_onBeforeLightDismiss(info: ILightDismissInfo): boolean {
         info.stopPropagation();
         return false;
     }  
@@ -73,7 +73,7 @@ export var LightDismissalPolicies = {
 
 export interface ILightDismissInfo {
     reason: string;
-    topLevel: boolean;
+    active: boolean;
     stopPropagation(): void;
     preventDefault(): void;
 }
@@ -91,26 +91,26 @@ export interface ILightDismissable {
     
     // Hooks
     
-    // The service now considers this dismissable to be the top level/active dismissable and so it should
+    // The service now considers this dismissable to be the active dismissable and so it should
     // take focus if focus isn't already inside of it.
-    becameTopLevel(): void;
+    onActivate(): void;
     // Focus has moved into or within this dismissable (similar to a focusin handler except
     // you don't have to explicitly register for it).
-    receivedFocus(element: HTMLElement): void;
+    onFocus(element: HTMLElement): void;
     // This dismissable is now hidden (i.e. has been removed from the light dismiss service).
-    hidden(): void;
+    onHide(): void;
     
     // Dismissal
     
     // A light dismiss was triggered. Return whether or not this dismissable should be dismissed. Built-in
     // implementations of this method are specified in LightDismissalPolicies.
-    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean;
+    onBeforeLightDismiss(info: ILightDismissInfo): boolean;
     // Should implement what it means for this dismissable to be dismissed (e.g. call control.hide()). Just because
     // this method is called doesn't mean that the service thinks this dismissable has been dismissed. Consequently,
     // you can decide to do nothing in this method if you want the dismissable to remain shown. However, this decision
-    // should generally be made in shouldReceiveLightDismiss if possible. The dismissable is responsible for calling
+    // should generally be made in onBeforeLightDismiss if possible. The dismissable is responsible for calling
     // _LightDismissService.hidden at some point.
-    lightDismiss(info: ILightDismissInfo): void;
+    onLightDismiss(info: ILightDismissInfo): void;
 }
 
 //
@@ -120,15 +120,15 @@ export interface ILightDismissable {
 // Keep in sync with ILightDismissable and the LightDismissableElement constructor.
 export interface ILightDismissableElementArgs {
     element: HTMLElement;
-    lightDismiss(info: ILightDismissInfo): void;
+    onLightDismiss(info: ILightDismissInfo): void;
     
     setZIndex?(zIndex: string): void;
     containsElement?(element: HTMLElement): boolean;
     requiresClickEater?(): boolean;
-    becameTopLevel?(): void;
-    receivedFocus?(element: HTMLElement): void;
-    hidden?(): void;
-    shouldReceiveLightDismiss?(info: ILightDismissInfo): boolean;
+    onActivate?(): void;
+    onFocus?(element: HTMLElement): void;
+    onHide?(): void;
+    onBeforeLightDismiss?(info: ILightDismissInfo): boolean;
 }
 
 export class LightDismissableElement implements ILightDismissable {
@@ -137,21 +137,21 @@ export class LightDismissableElement implements ILightDismissable {
     // lde prefix stands for LightDismissableElement
     private _ldeCurrentFocus: HTMLElement;
     
-    private _customReceivedFocus: (element: HTMLElement) => void;
-    private _customHidden: () => void;
+    private _customOnFocus: (element: HTMLElement) => void;
+    private _customOnHide: () => void;
     
     constructor(args: ILightDismissableElementArgs) {
         this.element = args.element;
-        this.lightDismiss = args.lightDismiss;
+        this.onLightDismiss = args.onLightDismiss;
         
         // Allow the caller to override the default implementations of our ILightDismissable methods.
         if (args.setZIndex) { this.setZIndex = args.setZIndex; }
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
-        if (args.becameTopLevel) { this.becameTopLevel = args.becameTopLevel; }
-        this._customReceivedFocus = args.receivedFocus;
-        this._customHidden = args.hidden;
-        if (args.shouldReceiveLightDismiss) { this.shouldReceiveLightDismiss = args.shouldReceiveLightDismiss; }
+        if (args.onActivate) { this.onActivate = args.onActivate; }
+        this._customOnFocus = args.onFocus;
+        this._customOnHide = args.onHide;
+        if (args.onBeforeLightDismiss) { this.onBeforeLightDismiss = args.onBeforeLightDismiss; }
     }
     
     setZIndex(zIndex: string) {
@@ -163,7 +163,7 @@ export class LightDismissableElement implements ILightDismissable {
     requiresClickEater(): boolean {
         return true;
     }
-    becameTopLevel(): void {
+    onActivate(): void {
         var activeElement = <HTMLElement>_Global.document.activeElement;
         if (activeElement && this.containsElement(activeElement)) {
             this._ldeCurrentFocus = activeElement;
@@ -177,18 +177,18 @@ export class LightDismissableElement implements ILightDismissable {
                 _ElementUtilities._tryFocus(this.element, useSetActive);
         }
     }
-    receivedFocus(element: HTMLElement): void {
+    onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
-        this._customReceivedFocus && this._customReceivedFocus(element);
+        this._customOnFocus && this._customOnFocus(element);
     }
-    hidden(): void {
+    onHide(): void {
         this._ldeCurrentFocus = null;
-        this._customHidden && this._customHidden();
+        this._customOnHide && this._customOnHide();
     }
-    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+    onBeforeLightDismiss(info: ILightDismissInfo): boolean {
         return LightDismissalPolicies.light(info);
     }
-    lightDismiss(info: ILightDismissInfo): void { }
+    onLightDismiss(info: ILightDismissInfo): void { }
 }
 
 class LightDismissableBody implements ILightDismissable {    
@@ -201,7 +201,7 @@ class LightDismissableBody implements ILightDismissable {
     requiresClickEater(): boolean {
         return false;
     }
-    becameTopLevel(): void {
+    onActivate(): void {
         // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
         // Otherwise, use setActive() so no focus visual is drawn.
         var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
@@ -210,16 +210,16 @@ class LightDismissableBody implements ILightDismissable {
             _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
             _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
     }
-    receivedFocus(element: HTMLElement): void {
+    onFocus(element: HTMLElement): void {
         this.currentFocus = element;
     }
-    hidden(): void {
+    onHide(): void {
         this.currentFocus = null;
     }
-    shouldReceiveLightDismiss(info: ILightDismissInfo): boolean {
+    onBeforeLightDismiss(info: ILightDismissInfo): boolean {
         return false;
     }
-    lightDismiss(info: ILightDismissInfo): void { }
+    onLightDismiss(info: ILightDismissInfo): void { }
 }
 
 //
@@ -262,7 +262,7 @@ class OrderedCache<T> {
 class LightDismissService {
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[];
-    private _currentTopLevel: ILightDismissable;
+    private _activeDismissable: ILightDismissable;
     private _focusCache: OrderedCache<ILightDismissable>;
     private _notifying: boolean;
     private _bodyClient: LightDismissableBody;
@@ -276,7 +276,7 @@ class LightDismissService {
     constructor() {
         this._clickEaterEl = this._createClickEater();
         this._clients = [];
-        this._currentTopLevel = null;
+        this._activeDismissable = null;
         this._focusCache = new OrderedCache<ILightDismissable>();
         this._rendered = {
             clickEaterInDom: false,
@@ -319,7 +319,7 @@ class LightDismissService {
             this._clients.splice(index, 1);
             this._focusCache.remove(client);
             client.setZIndex("");
-            client.hidden();
+            client.onHide();
             this._updateDom();
         }
     }
@@ -380,16 +380,16 @@ class LightDismissService {
         //     Flyout dismisses.
         //   - If a Flyout is launched by clicking a button in the AppBar, then the AppBar should receive focus when the
         //     Flyout dismisses.
-        var topLevel: ILightDismissable = null;
+        var activeDismissable: ILightDismissable = null;
         if (this._clients.length > 0) {
             var startIndex = clickEaterIndex === -1 ? 0 : clickEaterIndex;
             var candidates = this._clients.slice(startIndex);
-            topLevel = this._focusCache.mostRecentlyTouched(candidates) || candidates[candidates.length - 1];
+            activeDismissable = this._focusCache.mostRecentlyTouched(candidates) || candidates[candidates.length - 1];
         }
 
-        if (this._currentTopLevel !== topLevel) {
-            this._currentTopLevel = topLevel;
-            this._currentTopLevel && this._currentTopLevel.becameTopLevel();
+        if (this._activeDismissable !== activeDismissable) {
+            this._activeDismissable = activeDismissable;
+            this._activeDismissable && this._activeDismissable.onActivate();
         }
     }
     
@@ -406,8 +406,10 @@ class LightDismissService {
         
         this._notifying = true;
         var lightDismissInfo = {
+            // Which of the LightDismissalReasons caused this event to fire?
             reason: reason,
-            topLevel: true,
+            // Is this dismissable currently the active dismissable?
+            active: false,
             _stop: false,
             stopPropagation: function () {
                 this._stop = true;
@@ -418,10 +420,10 @@ class LightDismissService {
             }
         };
         for (var i = clients.length - 1; i >= 0 && !lightDismissInfo._stop; i--) {
-            if (clients[i].shouldReceiveLightDismiss(lightDismissInfo)) {
-                clients[i].lightDismiss(lightDismissInfo);
+            lightDismissInfo.active = this._activeDismissable === clients[i];
+            if (clients[i].onBeforeLightDismiss(lightDismissInfo)) {
+                clients[i].onLightDismiss(lightDismissInfo);
             }
-            lightDismissInfo.topLevel = false;
         }
         
         this._notifying = false;
@@ -447,7 +449,7 @@ class LightDismissService {
         }
         if (i !== -1) {
             this._focusCache.touch(this._clients[i]);
-            this._clients[i].receivedFocus(target);
+            this._clients[i].onFocus(target);
         }
 
         this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
