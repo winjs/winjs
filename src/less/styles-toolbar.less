@@ -38,6 +38,10 @@
             overflow-y: auto;
             padding: 0;
 
+            &.win-menu {
+                max-width: inherit; /* Turn off max-width styles from .win-menu */
+            }
+
             button.win-command {
                 #flex > .flex(@grow: 0; @shrink: 0);
                 border: 1px dotted transparent;
