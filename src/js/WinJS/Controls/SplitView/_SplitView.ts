@@ -49,6 +49,7 @@ var ClassNames = {
 
     _panePlaceholder: "win-splitview-paneplaceholder",
     _paneWrapper: "win-splitview-panewrapper",
+    _contentWrapper: "win-splitview-contentwrapper",
     // placement
     _placementLeft: "win-splitview-placementleft",
     _placementRight: "win-splitview-placementright",
@@ -514,6 +515,7 @@ export class SplitView {
         paneWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
         panePlaceholder: HTMLElement; // Shouldn't have any margin, padding, or border.
         content: HTMLElement;
+        contentWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
     };
     _dismissable: _LightDismissService.ILightDismissable;
     _isShownMode: boolean; // Is ClassNames.paneShown present on the SplitView?
@@ -685,6 +687,16 @@ export class SplitView {
 
         var panePlaceholderEl = _Global.document.createElement("div");
         panePlaceholderEl.className = ClassNames._panePlaceholder;
+        
+        // contentWrapper is an extra element we need to allow heights to be specified as percentages (e.g. height: 100%)
+        // for elements within the content area. It works around this Chrome bug:
+        //   Issue 428049: 100% height doesn't work on child of a definite-flex-basis flex item (in vertical flex container)
+        //   https://code.google.com/p/chromium/issues/detail?id=428049
+        // The workaround is that putting a position: absolute element (_dom.content) within the flex item (_dom.contentWrapper)
+        // allows percentage heights to work within the absolutely positioned element (_dom.content). 
+        var contentWrapperEl = _Global.document.createElement("div");
+        contentWrapperEl.className = ClassNames._contentWrapper;
+        contentWrapperEl.appendChild(contentEl);
 
         root["winControl"] = this;
         _ElementUtilities.addClass(root, ClassNames.splitView);
@@ -695,7 +707,8 @@ export class SplitView {
             pane: paneEl,
             paneWrapper: paneWrapperEl,
             panePlaceholder: panePlaceholderEl,
-            content: contentEl
+            content: contentEl,
+            contentWrapper: contentWrapperEl
         };
     }
 
@@ -715,11 +728,11 @@ export class SplitView {
     }
 
     private _setContentRect(contentRect: IRect) {
-        var contentStyle = this._dom.content.style;
-        contentStyle.left = contentRect.left + "px";
-        contentStyle.top = contentRect.top + "px";
-        contentStyle.height = contentRect.contentHeight + "px";
-        contentStyle.width = contentRect.contentWidth + "px";
+        var contentWrapperStyle = this._dom.contentWrapper.style;
+        contentWrapperStyle.left = contentRect.left + "px";
+        contentWrapperStyle.top = contentRect.top + "px";
+        contentWrapperStyle.height = contentRect.contentHeight + "px";
+        contentWrapperStyle.width = contentRect.contentWidth + "px";
     }
 
     // Overridden by tests.
@@ -731,8 +744,8 @@ export class SplitView {
         paneWrapperStyle.height = paneRect.totalHeight + "px";
         paneWrapperStyle.width = paneRect.totalWidth + "px";
 
-        var contentStyle = this._dom.content.style;
-        contentStyle.position = "absolute";
+        var contentWrapperStyle = this._dom.contentWrapper.style;
+        contentWrapperStyle.position = "absolute";
         this._setContentRect(contentRect);
     }
 
@@ -746,13 +759,13 @@ export class SplitView {
         paneWrapperStyle.width = "";
         paneWrapperStyle[transformNames.scriptName] = "";
 
-        var contentStyle = this._dom.content.style;
-        contentStyle.position = "";
-        contentStyle.left = "";
-        contentStyle.top = "";
-        contentStyle.height = "";
-        contentStyle.width = "";
-        contentStyle[transformNames.scriptName] = "";
+        var contentWrapperStyle = this._dom.contentWrapper.style;
+        contentWrapperStyle.position = "";
+        contentWrapperStyle.left = "";
+        contentWrapperStyle.top = "";
+        contentWrapperStyle.height = "";
+        contentWrapperStyle.width = "";
+        contentWrapperStyle[transformNames.scriptName] = "";
 
         var paneStyle = this._dom.pane.style;
         paneStyle.height = "";
@@ -904,7 +917,7 @@ export class SplitView {
 
                 var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
                     this._setContentRect(shownContentRect);
-                    return fadeIn(this._dom.content);
+                    return fadeIn(this._dom.contentWrapper);
                 });
 
                 return Promise.join([contentAnimation, playPaneAnimation()]);
@@ -950,7 +963,7 @@ export class SplitView {
 
                 var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
                     this._setContentRect(hiddenContentRect);
-                    return fadeIn(this._dom.content);
+                    return fadeIn(this._dom.contentWrapper);
                 });
 
                 return Promise.join([contentAnimation, playPaneAnimation()]);
@@ -987,9 +1000,9 @@ export class SplitView {
             if (paneShouldBeFirst) {
                 this._dom.root.appendChild(this._dom.panePlaceholder);
                 this._dom.root.appendChild(this._dom.paneWrapper);
-                this._dom.root.appendChild(this._dom.content);
+                this._dom.root.appendChild(this._dom.contentWrapper);
             } else {
-                this._dom.root.appendChild(this._dom.content);
+                this._dom.root.appendChild(this._dom.contentWrapper);
                 this._dom.root.appendChild(this._dom.paneWrapper);
                 this._dom.root.appendChild(this._dom.panePlaceholder);
             }

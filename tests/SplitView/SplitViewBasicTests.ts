@@ -191,8 +191,18 @@ module SplitViewTests {
         assertAreRectsEqual(expectedPaneRect(config), paneRect, "Pane rect");
         assertContentLayoutCorrect(splitView, config);
     }
-
-    function testLayout(args: { rootHeight: number; rootWidth: number; hiddenPaneWidth: number; hiddenPaneHeight: number; shownPaneWidth: number; shownPaneHeight: number }, splitViewOptions?: any) {
+    
+    interface ITestLayoutArgs {
+         rootHeight: number;
+         rootWidth: number;
+         hiddenPaneWidth: number;
+         hiddenPaneHeight: number;
+         shownPaneWidth: number;
+         shownPaneHeight: number;
+         verify?: (splitView: WinJS.UI.PrivateSplitView, config: ILayoutConfig) => void;
+    }
+    function testLayout(args: ITestLayoutArgs, splitViewOptions?: any) {
+        args.verify = args.verify || assertLayoutCorrect;
         testRoot.style.height = args.rootHeight + "px";
         testRoot.style.width = args.rootWidth + "px";
 
@@ -226,12 +236,15 @@ module SplitViewTests {
                                 shownPaneHeight: args.shownPaneHeight,
                                 rtl: rtl
                             };
-    
-                            assertLayoutCorrect(splitView, config);
+                            
+                            args.verify(splitView, config);
                         });
                     });
                 });
             });
+            
+            Helper.removeElement(splitView.element);
+            splitView.dispose();
         });
     }
 
@@ -390,7 +403,7 @@ module SplitViewTests {
                 hiddenPaneHeight: defaultHiddenPaneHeight,
                 shownPaneWidth: defaultShownPaneWidth,
                 shownPaneHeight: defaultShownPaneHeight
-            })
+            });
         }
 
         // Make sure SplitView lays out correctly if the developer uses custom pane dimensions
@@ -404,7 +417,7 @@ module SplitViewTests {
                 hiddenPaneHeight: 123,
                 shownPaneWidth: 409,
                 shownPaneHeight: 242
-            })
+            });
         }
 
         // Make sure SplitView lays out correctly if the developer configures the pane to size to its content
@@ -420,7 +433,30 @@ module SplitViewTests {
                 shownPaneHeight: 444
             }, {
                 paneHTML: '<div class="pane-sizer"></div>'
-            })
+            });
+        }
+        
+        // Verifies that a percentage sized element (e.g. width/height: 100%) is given the appropriate
+        // size when placed within the SplitView's content element.
+        // https://github.com/winjs/winjs/issues/801
+        testPercentageSizingInContentArea() {
+            testLayout({
+                rootHeight: 500,
+                rootWidth: 1000,
+                hiddenPaneWidth: defaultHiddenPaneWidth,
+                hiddenPaneHeight: defaultHiddenPaneHeight,
+                shownPaneWidth: defaultShownPaneWidth,
+                shownPaneHeight: defaultShownPaneHeight,
+                verify: function (splitView, config) {
+                    var percentageSizedEl = <HTMLElement>splitView.contentElement.querySelector(".percentage-sized");
+                    var percentageSizedRect = measureMarginBox(percentageSizedEl, splitView.element);
+                    var contentRect = measureMarginBox(splitView.contentElement, splitView.element);
+                    assertAreRectsEqual(contentRect, percentageSizedRect,
+                        "Element with width:100% and height:100% should be the same size as the SplitView's content element");
+                }
+            }, {
+                contentHTML: '<div class="percentage-sized" style="width:100%; height:100%; background-color:orange; opacity:0.5;"></div>'
+            });
         }
 
         // Verify that if we don't pass an element to the SplitView's constructor, it creates
