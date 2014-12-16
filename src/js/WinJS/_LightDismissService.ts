@@ -207,8 +207,8 @@ class LightDismissableBody implements ILightDismissable {
         var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
         
         (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus, useSetActive)) ||
-            _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
-            _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
+            _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
+            _Global.document.body && _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this.currentFocus = element;
