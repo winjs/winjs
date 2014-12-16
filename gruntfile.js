@@ -63,7 +63,7 @@
         grunt.registerTask("_copyToTsBuild", ["copy:srcjs"])
 
         // Other tasks
-        grunt.registerTask("modules", ["clean:modules", "requirejs:publicModules", "replace:base"]);
+        grunt.registerTask("modules", ["clean:modules", "build-modules", "replace:base"]);
         grunt.registerTask("lint", ["jshint", "jscs"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };

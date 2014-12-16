@@ -41,6 +41,30 @@
                 src: ["**/*.js", "**/*.resjson"],
                 dest: config.compiledTsOutput
             }]
+        },
+
+        modules: {
+            files: [{
+                expand: true,
+                cwd: config.compiledTsOutput,
+                src: ["**/*.js", "**/*.resjson"],
+                dest: config.modulesOutput
+            }, {
+                expand: true,
+                cwd: "src/fonts",
+                src: ["**.ttf"],
+                dest: config.modulesOutput + "fonts/"
+            }, {
+                expand: true,
+                cwd: "src/less",
+                src: ["**.less"],
+                dest: config.modulesOutput + "less/"
+            }, {
+                expand: true,
+                cwd: "tasks/utilities",
+                src: ["require-*.js", "build-winjs.js"],
+                dest: config.modulesOutput
+            }]
         }
     };
 })();

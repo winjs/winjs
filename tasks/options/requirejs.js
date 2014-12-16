@@ -3,128 +3,8 @@
     "use strict";
 
     var path = require('path');
-    var madge = require('madge');
     var config = require("../../config.js");
     var grunt = config.grunt;
-
-    var bundles = {};
-
-    function generatePublicModules() {
-        var moduleConfig = [];
-        var dependencies = madge(config.compiledTsOutput, { format: 'amd' }).tree;
-
-        Object.keys(dependencies).forEach(function (module) {
-            // filter for only public modules
-            if (startsWith(module, "WinJS/") && module.indexOf('_') === -1) {
-
-                var privateModules = [];
-                var processed = dependencies[module].slice(0);
-
-                if (module === 'WinJS/Core') {
-                    privateModules.push('require-json!en-US/ui.resjson');
-                }
-
-                var excludes = dependencies[module].slice(0).filter(function (dep) {
-                    if (startsWith(dep, module)) {
-                        privateModules.push(dep);
-                        return false;
-                    }
-                    return true;
-                });
-
-                var processQueue = processed.slice(0);
-
-                while (processQueue.length) {
-                    var next = processQueue.pop();
-                    dependencies[next].forEach(function (dep) {
-                        if (processed.indexOf(dep) === -1) {
-                            processQueue.push(dep);
-                        }
-                        if (startsWith(dep, module)) {
-                            if (privateModules.indexOf(dep) === -1) {
-                                privateModules.push(dep);
-                            }
-                        } else if (excludes.indexOf(dep) === -1) {
-                            excludes.push(dep);
-                        }
-                    });
-                }
-
-                if (privateModules.length) {
-                    bundles[module] = privateModules;
-                }
-
-                var remove = ['require-style', 'require-json'];
-
-                if (module !== 'WinJS/Core') {
-                    remove.push('require-json!en-US/ui.resjson');
-                }
-
-                moduleConfig.push({
-                    name: module,
-                    exclude: remove,
-                    excludeShallow: excludes,
-                    include: []
-                });
-
-            }
-        });
-
-        return moduleConfig;
-    }
-
-    function moduleDone(done, output) {
-        var fs = require("fs-extra");
-
-        // require-style seems to build in WinJS rather than in the root
-        fs.copySync(path.join(config.modulesOutput, "WinJS/css"), path.join(config.modulesOutput, "css"));
-        // rename the main file
-        fs.copySync(path.join(config.modulesOutput, "WinJS.js"), path.join(config.modulesOutput, "WinJS-custom.js"));
-        // replace require-style and require-json with a stub
-        fs.writeFileSync(path.join(config.modulesOutput, "require-style.js"), config.copyright + "define({ load: function (name, req, onload, config) { onload(); }});");
-        fs.writeFileSync(path.join(config.modulesOutput, "require-json.js"), config.copyright + "define({ load: function (name, req, onload, config) { onload(); }});");
-
-        // require.js copies some undesirable source files over
-        var toRemove = [
-            "en-US",
-            "less",
-            "WinJS.js",
-            "WinJS/css",
-            "WinJS/Core",
-            "WinJS/Controls/AppBar",
-            "WinJS/Utilities/_TelemetryImpl.js"
-        ];
-        toRemove.forEach(function (item) {
-            fs.removeSync(path.join(config.modulesOutput, item));
-        });
-
-
-        var pkgRoot = "node_modules/winjs-modules/";
-        var requireConfig = {
-            baseUrl: ".",
-            name: "WinJS-custom",
-            deps: ["amd"],
-            optimize: "none",
-            useStrict: true,
-            out: "bin/WinJS.js",
-            wrap: {
-                start: header("WinJS-custom", []),
-                end: footer("WinJS-custom"),
-            },
-            paths: {
-                "amd": pkgRoot + "amd",
-                "require-style": pkgRoot + "require-style",
-                "require-json": pkgRoot + "require-json",
-                "WinJS": pkgRoot + "WinJS"
-            },
-            bundles: bundles,
-            findNestedDependencies: true
-        };
-        var output = "(" + JSON.stringify(requireConfig, null, 4) + ")";
-        fs.writeFileSync(path.join(config.modulesOutput, "example.build.js"), output);
-
-        done();
-    }
 
     var rootPath = path.resolve();
     var realFileNames = [];
@@ -143,10 +23,6 @@
                 realFileNames.push(path.join(rootPath, abspath));
             });
         }
-    }
-
-    function startsWith(str, target) {
-        return str.indexOf(target) === 0;
     }
 
     // ensure that the files discovered by requireJS have appropriate
@@ -218,27 +94,6 @@
 "\n";
     }
 
-    module.exports = {
-
-        //
-        // Configs which are themselves a independent file can use default options and the
-        //  onefile grunt task and thus are not listed here
-        //
-
-        // Modules built for people who want to use custom builds
-        publicModules: {
-            options: {
-                skipDirOptimize: true,
-                removeCombined: true,
-                fileExclusionRegExp: /^(library|\w+\.(md|htm|txt))$/i,
-                dir: config.modulesOutput,
-                modules: publicModules,
-                done: moduleDone
-            }
-        }
-
-    };
-
     function defaults(key, buildConfig) {
         buildConfig = buildConfig || {};
         var options = buildConfig.options = buildConfig.options || {};
@@ -282,24 +137,9 @@
         return buildConfig;
     }
 
-    // Shared options
-    Object.keys(module.exports).forEach(function (key) {
-        var buildConfig = module.exports[key];
-        defaults(key, buildConfig);
-    });
-
-    module.exports.defaults = defaults;
-
-    var publicModules = null;
-
-    Object.defineProperty(module.exports.publicModules.options, "modules", {
-        get: function () {
-            if (!publicModules) {
-                publicModules = generatePublicModules();
-            }
-            return publicModules;
-        },
-        enumerable: true,
-        configurable: true
-    });
+    module.exports = {
+        defaults: defaults,
+        header: header,
+        footer: footer
+    };
 })();

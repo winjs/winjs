@@ -42,7 +42,6 @@
     "http-post": "~0.1.1",
     "less": "^1.7.4",
     "load-grunt-tasks": "^0.6.0",
-    "madge": "^0.3.1",
     "minimist": "0.2.0",
     "qunitjs": "~1.14.0",
     "text-table": "~0.2.0",
