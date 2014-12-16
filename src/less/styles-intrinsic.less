@@ -22,7 +22,12 @@ html, body {
 html {
     overflow: hidden;
     direction: ltr;
-    .RTL({direction: rtl;});
+
+    .RTL( {
+        direction: rtl;
+    }
+
+    );
 }
 
 body {
@@ -51,7 +56,9 @@ textarea,
 button,
 select,
 option {
-    font-family: "Segoe UI", "Segoe WP", "sans-serif", "Segoe UI Symbol", "Symbols";
+    /* Do NOT use sans-serif with quotation marks.
+       Put sans-serif at the end of declaration instead. */
+    font-family: "Segoe UI", "Segoe WP", "Segoe UI Symbol", "Symbols",sans-serif;
 }
 
 //
@@ -59,8 +66,8 @@ option {
 //
 button::-moz-focus-inner,
 input::-moz-focus-inner {
-  padding: 0;
-  border: 0;
+    padding: 0;
+    border: 0;
 }
 
 //
@@ -102,11 +109,14 @@ input[type=radio], input[type=checkbox] {
     margin-top: 12px;
     margin-bottom: 12px;
 
-    .RTL({
+    .RTL( {
         margin-left: 8px;
         margin-right: 0px;
-    });
+    }
+
+    );
 }
+
 input::-ms-check {
     border-style: solid;
     display: inline-block;
@@ -137,14 +147,17 @@ input::-ms-clear, input::-ms-reveal {
     margin-bottom: -8px;
     height: 32px;
 }
+
 input {
-    .RTL({
+    .RTL( {
         &::-ms-clear,
         &::-ms-reveal {
             margin-left: -8px;
             margin-right: 2px;
         }
-    });
+    }
+
+    );
 }
 
 //
@@ -170,12 +183,14 @@ input[type=file] {
         .win-type-body();
     }
 
-    .RTL({
+    .RTL( {
         &::-ms-value {
             border-left-style: none;
             border-right-style: solid;
         }
-    });
+    }
+
+    );
 
     &::-ms-browse {
         margin: 0;
@@ -213,7 +228,6 @@ select {
         margin-bottom: -2px; // 5px total with padding
         font-size: 20px;
     }
-
 }
 
 select[multiple] {
@@ -282,17 +296,37 @@ progress {
 }
 
 @-webkit-keyframes win-progress-indeterminate {
-    0% {left: 0; width: 25%;}
-    50% {left: calc(75%); width: 25%;}
-    75% {left: calc(100%); width: 0%;}
-    75.1% {left: 0; width: 0%;}
-    100% {left: 0; width: 25%;}
+    0% {
+        left: 0;
+        width: 25%;
+    }
+
+    50% {
+        left: calc(75%);
+        width: 25%;
+    }
+
+    75% {
+        left: calc(100%);
+        width: 0%;
+    }
+
+    75.1% {
+        left: 0;
+        width: 0%;
+    }
+
+    100% {
+        left: 0;
+        width: 25%;
+    }
 }
 
 @keyframes win-progress-fade-out {
     from {
         opacity: 1.0;
     }
+
     to {
         opacity: 0.5;
     }
@@ -303,10 +337,8 @@ progress {
 //
 input[type=range] {
     -webkit-appearance: none;
-
     width: 280px;
     height: 22px; // Leave enough room for tick marks
-
     .track() {
         height: 2px;
         border-style: none;
@@ -319,16 +351,31 @@ input[type=range] {
         border-style: none;
     }
 
-    &::-ms-track {.track();}
-    &::-webkit-slider-runnable-track {.track();}
-    &::-moz-range-track {.track();}
-    &::-ms-thumb {.thumb();}
+    &::-ms-track {
+        .track();
+    }
+
+    &::-webkit-slider-runnable-track {
+        .track();
+    }
+
+    &::-moz-range-track {
+        .track();
+    }
+
+    &::-ms-thumb {
+        .thumb();
+    }
+
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         margin-top: -4px;
         .thumb();
     }
-    &::-moz-range-thumb {.thumb();}
+
+    &::-moz-range-thumb {
+        .thumb();
+    }
 }
 
 //
@@ -336,7 +383,6 @@ input[type=range] {
 //
 input[type=range].win-vertical {
     writing-mode: bt-lr;
-
     width: 22px; // Leave enough room for tick marks
     height: 280px;
 
@@ -344,14 +390,17 @@ input[type=range].win-vertical {
         width: 2px;
         height: auto;
     }
+
     &::-ms-thumb {
         width: 8px;
         height: 24px;
     }
 
-    .RTL({
+    .RTL( {
         writing-mode: bt-rl;
-    });
+    }
+
+    );
 }
 
 //
@@ -429,12 +478,15 @@ dt, th {
     font-weight: 700;
     line-height: 1.3636;
 }
+
 abbr, acronym, address, blockquote, cite, dl, dd, li, ol, p, q, td, tr {
     font-weight: 300;
 }
+
 b, strong {
     font-weight: 700;
 }
+
 em {
     font-style: italic;
 }
@@ -453,21 +505,27 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
 h1 {
     .win-type-header();
 }
+
 h2 {
     .win-type-subheader();
 }
+
 h3 {
     .win-type-title();
 }
+
 h4 {
     .win-type-subtitle();
 }
+
 h5 {
     .win-type-base();
 }
+
 h6 {
     .win-type-body();
 }
