@@ -241,15 +241,20 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     border-bottom-width: 3px;
     border-style: solid;
     z-index: 3;
+    display: none;
 }
 .win-listview.win-rtl .win-selectioncheckmarkbackground,
 .win-itemcontainer.win-rtl .win-selectioncheckmarkbackground {
     left: 2px;
     right: auto;
 }
-.win-listview.win-selectionstylefilled .win-surface .win-selectioncheckmarkbackground,
-.win-listview.win-selectionstylefilled .win-surface .win-selectioncheckmark {
-    display: none;
+.win-selectionmode.win-itemcontainer .win-selectioncheckmarkbackground,
+.win-selectionmode.win-itemcontainer.win-selectionmode .win-selectioncheckmark,
+.win-selectionmode .win-itemcontainer .win-selectioncheckmarkbackground,
+.win-selectionmode .win-itemcontainer.win-selectionmode .win-selectioncheckmark,
+.win-listview .win-selectionmode .win-selectioncheckmarkbackground,
+.win-listview .win-selectionmode .win-selectioncheckmark {
+    display: block;
 }
 .win-selectioncheckmark {
     position: absolute;
@@ -260,6 +265,7 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     font-family: "Segoe UI Symbol", "Symbols";
     font-size: 14px;
     z-index: 4;
+    display: none;
 }
 .win-rtl .win-selectioncheckmark {
     right: auto;
@@ -349,7 +355,7 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
 .win-selectionmode .win-itemcontainer.win-selectionstylefilled.win-container .win-itembox.win-selected::after,
 .win-itemcontainer.win-selectionmode.win-selectionstylefilled.win-container .win-itembox.win-selected::after,
 .win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox.win-nonselectable::after,
-.win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox.win-selected::after {
+.win-listview .win-surface.win-selectionmode .win-itembox.win-selected::after {
     display: none;
 }
 .win-listview .win-progress {
