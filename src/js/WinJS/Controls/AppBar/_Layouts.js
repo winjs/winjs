@@ -661,7 +661,9 @@ define([
                 },
 
                 _animationComplete: function _AppBarMenuLayout_animationComplete() {
-                    this._animating = false;
+                    if (!this._disposed) {
+                        this._animating = false;
+                    }
                 },
 
                 _createToolBar: function _AppBarMenuLayout_createToolBar(commands) {
@@ -676,7 +678,7 @@ define([
 
                     this._toolbar = new ToolBar.ToolBar(this._toolbarEl, {
                         data: new BindingList.List(this._originalCommands),
-                        inlineMenu: true
+                        shownDisplayMode: 'full',
                     });
 
                     var that = this;
@@ -696,21 +698,23 @@ define([
                 },
 
                 _positionToolBar: function _AppBarMenuLayout_positionToolBar() {
-                    this._writeProfilerMark("_positionToolBar,info");
+                    if (!this._disposed) {
+                        this._writeProfilerMark("_positionToolBar,info");
 
-                    var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
-                    var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
+                        var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
+                        var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
 
-                    // Ensure that initial position is correct
-                    this._toolbarContainer.style[this._tranformNames.scriptName] = "";
-                    this._menu.style[this._tranformNames.scriptName] = "";
-                    this._toolbarEl.style[this._tranformNames.scriptName] = "";
+                        // Ensure that initial position is correct
+                        this._toolbarContainer.style[this._tranformNames.scriptName] = "";
+                        this._menu.style[this._tranformNames.scriptName] = "";
+                        this._toolbarEl.style[this._tranformNames.scriptName] = "";
 
-                    this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
-                    this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
-                    this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
+                        this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
+                        this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
+                        this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
 
-                    this._initialized = true;
+                        this._initialized = true;
+                    }
                 },
 
                 _animateToolBarEntrance: function _AppBarMenuLayout_animateToolBarEntrance() {

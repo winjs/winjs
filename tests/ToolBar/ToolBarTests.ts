@@ -11,6 +11,11 @@ module CorsicaTests {
     var ToolBar = <typeof WinJS.UI.PrivateToolBar> WinJS.UI.ToolBar;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
     var Util = WinJS.Utilities;
+    var _Constants;
+
+    WinJS.Utilities._require(["WinJS/Controls/ToolBar/_Constants"], function (constants) {
+        _Constants = constants;
+    })
 
     export class ToolBarTests {
         "use strict";
@@ -70,24 +75,24 @@ module CorsicaTests {
             LiveUnit.Assert.isNotNull(toolbar.element, "An element should be created when one is not passed to the constructor");
         }
 
-        testInlineMenuProperty() {
-            // default (inlineMenu:false)
+        testShownDisplayModeProperty() {
+            // default (shownDisplayMode: 'reduced')
             var toolbar = new ToolBar();
-            LiveUnit.Assert.areEqual(false, toolbar.inlineMenu, "The default value for inlineMenu should be false");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.flyoutMenuCssClass), "ToolBar with inlineMenu:false is missing flyout menu css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.inlineMenuCssClass), "ToolBar with inlineMenu:false should not have inline menu css class");
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.reduced, toolbar.shownDisplayMode, "The default value for shownDisplayMode should be 'reduced'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'reduced' is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'reduced' should not have showndisplayfull css class");
 
-            // switch to inlineMenu.
-            toolbar.inlineMenu = true;
-            LiveUnit.Assert.areEqual(true, toolbar.inlineMenu, "InlineMenu property should be true");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.inlineMenuCssClass), "ToolBar with inlineMenu:true is missing inline menu css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.flyoutMenuCssClass), "ToolBar with inlineMenu:true should not have flyout menu css class");
+            // switch to 'full'.
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.full;
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.full, toolbar.shownDisplayMode, "shownDisplayMode property should be 'full'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'full' is missing showndisplayfull css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'full' should not have flyout menu css class");
 
-            // switch back to inlineMenu:false.
-            toolbar.inlineMenu = false;
-            LiveUnit.Assert.areEqual(false, toolbar.inlineMenu, "InlineMenu property should be false");
-            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.flyoutMenuCssClass), "ToolBar with inlineMenu:false is missing flyout menu css class");
-            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.inlineMenuCssClass), "ToolBar with inlineMenu:false should not have inline menu css class");
+            // switch back to shownDisplayMode:'reduced'.
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.reduced;
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.reduced, toolbar.shownDisplayMode, "shownDisplayMode property should be 'reduced'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'reduced' is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'reduced' should not have showndisplayfull class");
         }
 
         testDataProperty() {
@@ -190,7 +195,7 @@ module CorsicaTests {
 
         testOverflowAreaVisibility() {
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true
+                shownDisplayMode: _Constants.shownDisplayModes.full
             });
 
             var overflowArea: HTMLElement;
@@ -203,11 +208,11 @@ module CorsicaTests {
                 }
             }
 
-            LiveUnit.Assert.isNotNull(overflowArea, "Unabled to find overflow area element when inlineMenu:true");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(overflowArea).display, "Overflow area should not be hidden when inlineMenu:true");
+            LiveUnit.Assert.isNotNull(overflowArea, "Unabled to find overflow area element when shownDisplayMode:'full'");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(overflowArea).display, "Overflow area should not be hidden when shownDisplayMode:'full'");
 
-            toolbar.inlineMenu = false;
-            LiveUnit.Assert.areEqual("none", getComputedStyle(overflowArea).display, "Overflow area (inline) should be hidden in inlineMenu:false");
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.reduced;
+            LiveUnit.Assert.areEqual("none", getComputedStyle(overflowArea).display, "Overflow area (inline) should be hidden in shownDisplayMode:'reduced'");
         }
 
         testflyoutMenuOverflowButtonHidden() {
@@ -746,38 +751,38 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.controlWithFlyoutMenuMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when inlineMenu:false");
+            LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.controlWithFlyoutMenuMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when shownDisplayMode:'reduced'");
         }
 
-        testInlineMenuMinWidth() {
+        testShownDisplayModeFull_MinWidth() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "2", section: Helper.ToolBar.Constants.secondaryCommandSection }),
             ]);
             this._element.style.width = "10px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(320, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when inlineMenu:true");
+            LiveUnit.Assert.areEqual(320, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when shownDisplayMode:'full'");
         }
 
-        testInlineMenuOverflowAreaContainerHeightWhenThereIsNoOverflow() {
+        testShownDisplayModeFull_OverflowAreaContainerHeightWhenThereIsNoOverflow() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "2" }),
             ]);
 
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
             LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container when there are no commands that overflow");
         }
 
-        testInlineMenuOverflowAreaContainerSize() {
+        testShownDisplayModeFull_OverflowAreaContainerSize() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2" }),
@@ -790,7 +795,7 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
@@ -800,13 +805,13 @@ module CorsicaTests {
             toolbar.forceLayout();
 
             LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should only be 2 commands in the overflow area");
-            LiveUnit.Assert.areEqual(2 * Helper.ToolBar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(2 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
             LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._inlineOverflowArea), "Invalid width for the overflow area container");
             LiveUnit.Assert.areEqual(toolbar.element, toolbar._inlineOverflowArea.parentNode, "Invalid parent for the overflow area container");
             LiveUnit.Assert.areEqual(toolbar.element, toolbar._mainActionArea.parentNode, "Invalid parent for the main action area container");
         }
 
-        testInlineMenuOverflowMaxHeightForOnlySecondaryCommands() {
+        testShownDisplayModeFull_OverflowMaxHeightForOnlySecondaryCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", section: Helper.ToolBar.Constants.secondaryCommandSection }),
@@ -820,15 +825,15 @@ module CorsicaTests {
             ]);
             this._element.style.width = "1000px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
             LiveUnit.Assert.areEqual(9, Helper.ToolBar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should be 9 commands in the overflow area");
         }
 
-        testInlineMenuOverflowMaxHeightForMixedCommands() {
+        testShownDisplayModeFull_OverflowMaxHeightForMixedCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2" }),
@@ -848,28 +853,28 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowInlineMenuCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
         }
 
-        testInlineMenuOverflowButtonVisiblity() {
+        testShownDisplayModeFull_OverflowButtonVisiblity() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "s1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
             ]);
             this._element.style.width = "320px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
-            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when inlineMenu:true");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when inlineMenu:true");
+            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when shownDisplayMode:'full'");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when shownDisplayMode:'full'");
             LiveUnit.Assert.areEqual(24, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
         }
 
-        testKeyboardingInlineMenuMode(complete) {
+        testShownDisplayModeFull_Keyboarding(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -884,7 +889,7 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new ToolBar(this._element, {
-                inlineMenu: true,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
@@ -1105,7 +1110,7 @@ module CorsicaTests {
             this._element.style.width = "10px";
             var toolbar = new ToolBar(this._element, {
                 data: data,
-                inlineMenu: true
+                shownDisplayMode: _Constants.shownDisplayModes.full,
             });
 
             this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";

@@ -675,7 +675,7 @@ declare module WinJS {
         
         class ToolBar {
             public element: HTMLElement;
-            public inlineMenu: boolean;
+            public shownDisplayMode: string;
             public data: WinJS.Binding.List<ICommand>;
             public extraClass: string;
             constructor(element?: HTMLElement, options?: any);

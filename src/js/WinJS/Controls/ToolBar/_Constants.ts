@@ -7,14 +7,20 @@ export var overflowButtonCssClass = "win-toolbar-overflowbutton";
 export var ellipsisCssClass = "win-toolbar-ellipsis";
 export var overflowAreaCssClass = "win-toolbar-overflowarea";
 export var overflowContentFlyoutCssClass = "win-toolbar-contentflyout";
-export var flyoutMenuCssClass = "win-toolbar-flyoutmenu";
-export var inlineMenuCssClass = "win-toolbar-inlinemenu";
+export var shownDisplayReducedCssClass = "win-toolbar-showndisplayreduced";
+export var shownDisplayFullCssClass = "win-toolbar-showndisplayfull";
 export var emptyToolBarCssClass = "win-toolbar-empty";
 export var menuCssClass = "win-menu";
 export var menuContainsToggleCommandClass = "win-menu-containstogglecommand";
 export var menuContainsFlyoutCommandClass = "win-menu-containsflyoutcommand";
 
 export var contentMenuCommandDefaultLabel = "Custom content";
+
+// Constants for shownDisplayModes
+export var shownDisplayModes = {
+    full: "full",
+    reduced: "reduced",
+}
 
 // Constants for commands
 export var typeSeparator = "separator";

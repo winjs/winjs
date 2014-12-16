@@ -4,7 +4,7 @@
 
 module Helper.ToolBar {
     "use strict";
-    
+
     export var Constants = {
         typeSeparator: "separator",
         typeContent: "content",
@@ -14,15 +14,19 @@ module Helper.ToolBar {
         controlCssClass: "win-toolbar",
         disposableCssClass: "win-disposable",
         overflowAreaCssClass: "win-toolbar-overflowarea",
-        flyoutMenuCssClass: "win-toolbar-flyoutmenu",
-        inlineMenuCssClass: "win-toolbar-inlinemenu",
+        shownDisplayReducedCssClass: "win-toolbar-showndisplayreduced",
+        shownDisplayFullCssClass: "win-toolbar-showndisplayfull",
         emptyToolBarCssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
-        overflowInlineMenuCommandHeight: 44,
-        overflowInlineMenuSeparatorHeight: 12,
-        controlWithFlyoutMenuMinWidth: 68
+        inlineOverflowCommandHeight: 44,
+        inlineOverflowSeparatorHeight: 12,
+        controlWithFlyoutMenuMinWidth: 68,
+        shownDisplayModes: {
+            full: "full",
+            reduced: "reduced",
+        }
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
@@ -58,7 +62,7 @@ module Helper.ToolBar {
 
     export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.ToolBar, labels: string[]) {
         var control = <WinJS.UI.PrivateToolBar>toolbar.element.winControl;
-        var commands = getVisibleCommandsInElement(control.inlineMenu ? control._inlineOverflowArea : control._menu.element);
+        var commands = getVisibleCommandsInElement(control.shownDisplayMode === Constants.shownDisplayModes.full ? control._inlineOverflowArea : control._menu.element);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);

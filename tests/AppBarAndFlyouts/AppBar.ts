@@ -1956,7 +1956,7 @@ module CorsicaTests {
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-toolbarcontainer"));
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar-menu"));
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement.parentElement, "win-appbar"));
-                LiveUnit.Assert.areEqual(true, toolbar.inlineMenu, "Invalid inlineMenu toolbar configuration in the appbar");
+                LiveUnit.Assert.areEqual(_ToolBarConstants.shownDisplayModes.full, toolbar.shownDisplayMode, "Invalid toolbar.shownDisplayMode configuration in the appbar");
 
                 Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
                 Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
