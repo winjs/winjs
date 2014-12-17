@@ -164,7 +164,7 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         _lastTarget = null;
         _cachedLastTargetRect = null;
     } else if (_lastTarget && _cachedLastTargetRect) {
-        var lastTargetRect = _lastTarget.getBoundingClientRect();
+        var lastTargetRect = _toIRect(_lastTarget.getBoundingClientRect());
         if (lastTargetRect.left !== _cachedLastTargetRect.left || lastTargetRect.top !== _cachedLastTargetRect.top) {
             _historyRect = null;
             _lastTarget = null;

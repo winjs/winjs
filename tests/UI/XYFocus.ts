@@ -219,15 +219,50 @@ module WinJSTests {
             // Move focus left from 3
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
-            WinJS.UI.XYFocus.moveFocus("left");
+            WinJS.UI.XYFocus._xyFocus("left");
             LiveUnit.Assert.areEqual(layout[2], document.activeElement);
 
             // Move focus right from 1, then left and we should end up at 1 again
-            layout[1].focus();
+            WinJS.UI.XYFocus._xyFocus("up");
+            LiveUnit.Assert.areEqual(layout[1], document.activeElement);
             WinJS.UI.XYFocus._xyFocus("right");
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
             WinJS.UI.XYFocus._xyFocus("left");
             LiveUnit.Assert.areEqual(layout[1], document.activeElement);
+        }
+
+        testXYFocusHistoryWithFractionalPixels() {
+            /**
+             *  ??????????????????????????????
+             *  ?             ??             ?
+             *  ?             ??      2      ?
+             *  ?             ??             ?
+             *  ?      1      ????????????????
+             *  ?             ??             ?
+             *  ?             ??      3      ?
+             *  ?             ??             ?
+             *  ??????????????????????????????
+             *
+             * Normally, if focus was on 3, left would resolve to 2 since 2 occupies a bigger portion of 3's shadow.
+             * However, if focus initially was on 1, then was moved right to 3, then a following left should resolve to 1.
+            **/
+
+            var layout = [
+                this.rootContainer,
+                createAndAppendFocusableElement(50, 50.25, this.rootContainer, "1", "button", 428, 212),
+                createAndAppendFocusableElement(480, 50.25, this.rootContainer, "2", "button", 104, 104),
+                createAndAppendFocusableElement(480, 158.25, this.rootContainer, "3", "button", 104, 104)
+            ];
+
+            // Move focus left from 3 to 1
+            layout[3].focus();
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
+            WinJS.UI.XYFocus._xyFocus("left");
+            LiveUnit.Assert.areEqual(layout[1], document.activeElement);
+
+            // Move focus right from 1 should land us on 3 again
+            WinJS.UI.XYFocus._xyFocus("right");
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
 
         testPreventXYFocus() {
