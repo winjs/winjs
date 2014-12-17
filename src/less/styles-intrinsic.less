@@ -230,8 +230,11 @@ option {
 progress {
     width: 180px;
     height: 4px;
-    border-style: none;
     -webkit-appearance: none;
+
+    &:not(:indeterminate) {
+        border-style: none;
+    }
 
     &::-ms-fill {
         border-style: none;

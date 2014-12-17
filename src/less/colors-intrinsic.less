@@ -138,12 +138,18 @@
     progress {
       // Main colors
       color: @accentColor;
-      background-color: @baseLow;
+
+      // Only style background color in determinate mode to leave
+      // indeterminate background transparent and preserve firefox's
+      // default animation
+      &:not(:indeterminate) {
+        background-color: @baseLow;
+      }
 
       &::-webkit-progress-value {
         background-color: @accentColor;
       }
-      &::-moz-progress-bar {
+      &:not(:indeterminate)::-moz-progress-bar {
         background-color: @accentColor;
       }
 
