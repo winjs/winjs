@@ -3,8 +3,6 @@
 @import "base.less";
 @import "mixins.less";
 
-@hubSectionPadding: 12px;
-
 .win-hub {
     height: 100%;
     width: 100%;
@@ -33,19 +31,20 @@
 }
 .win-hub-surface {
     display: inline-block;
-    padding-top: 52px;
 }
 .win-hub-vertical .win-hub-surface {
     width: 100%;
+    padding: 15px 0;
 }
 .win-hub-horizontal .win-hub-surface {
     height: 100%;
+    padding: 0 80px;
 }
 
 
 .win-hub-section {
     display: inline-block;
-    padding: 16px @hubSectionPadding 0 @hubSectionPadding;
+    padding: 0 40px;
     vertical-align: top;
     white-space: normal;
 }
@@ -53,15 +52,24 @@
     .win-hub-section {
         height: 100%;
     }
+
+    .win-hub-section-header {
+        margin-top: 129px;
+    }
 }
 .win-hub-vertical {
     .win-hub-section {
-        width: ~"calc(100% - (@hubSectionPadding * 2))";
+        width: ~"calc(100% - 80px)";
+        padding: 14px 40px;
+    }
+
+    .win-hub-section-header {
+        margin-top: 1px;
     }
 }
 .win-hub-section-header {
-    .win-type-subtitle();
-    margin-bottom: 7px;
+    margin: 4px 0;
+    font-size: 20pt;
     text-align: left;
     height: 51px;
 
