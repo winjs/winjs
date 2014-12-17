@@ -37,7 +37,8 @@ var LightDismissalReasons = {
     windowBlur: "windowBlur",
     edgy: "edgy"
 };
-export var LightDismissalPolicies = {
+// Built-in implementations of ILightDismissable's onBeforeLightDismiss.
+export var DismissalPolicies = {
     light: function LightDismissalPolicies_light_onBeforeLightDismiss(info: ILightDismissInfo): boolean {
         switch (info.reason) {
             case LightDismissalReasons.tap:
@@ -91,8 +92,12 @@ export interface ILightDismissable {
     
     // Hooks
     
-    // The service now considers this dismissable to be the active dismissable and so it should
-    // take focus if focus isn't already inside of it.
+    // The dismissable should take focus if focus isn't already inside of it.
+    // This fires when the dismissable becomes the focused/active dismissable. Note that the active
+    // dismissable isn't necessarily the topmost dismissable. They can be different when there are
+    // multiple dismissables above the click eater. For example, if the light dismiss stack
+    // consists of the body dismissable and a sticky AppBar then when the body has focus, it is the
+    // active dismissable but it isn't the topmost one.
     onActivate(): void;
     // Focus has moved into or within this dismissable (similar to a focusin handler except
     // you don't have to explicitly register for it).
@@ -186,11 +191,14 @@ export class LightDismissableElement implements ILightDismissable {
         this._customOnHide && this._customOnHide();
     }
     onBeforeLightDismiss(info: ILightDismissInfo): boolean {
-        return LightDismissalPolicies.light(info);
+        return DismissalPolicies.light(info);
     }
     onLightDismiss(info: ILightDismissInfo): void { }
 }
 
+// An implementation of ILightDismissable that represents the HTML body element. It can never be dismissed.
+// The service should instantiate one of these to act as the bottommost light dismissable (it isn't expected
+// for anybody else to instantiate one). It takes care of restoring focus when the last dismissable is dismissed.
 class LightDismissableBody implements ILightDismissable {    
     currentFocus: HTMLElement;
     
@@ -228,13 +236,10 @@ class LightDismissableBody implements ILightDismissable {
 
 class OrderedCache<T> {
     // The item that was most recently touched appears at index 0.
-    private _orderedCache: T[];
-    
-    constructor() {
-        this._orderedCache = [];
-    }
+    private _orderedCache: T[] = [];
     
     touch(item: T) {
+        // Optimization: if *item* is already at index 0, then no work is necessary.
         if (this._orderedCache[0] !== item) {
             this.remove(item);
             this._orderedCache.unshift(item);
@@ -261,11 +266,16 @@ class OrderedCache<T> {
 
 class LightDismissService {
     private _clickEaterEl: HTMLElement;
-    private _clients: ILightDismissable[];
+    private _clients: ILightDismissable[] = [];
+    // The *_activeDismissable* is essentially the dismissable that currently has focus. Note that the
+    // active dismissable isn't necessarily the topmost dismissable. They can be different when
+    // there are multiple dismissables above the click eater. For example, if the light dismiss stack
+    // consists of the body dismissable and a sticky AppBar then when the body has focus, it is the
+    // active dismissable but it isn't the topmost one.
     private _activeDismissable: ILightDismissable;
-    private _focusCache: OrderedCache<ILightDismissable>;
-    private _notifying: boolean;
-    private _bodyClient: LightDismissableBody;
+    private _focusCache = new OrderedCache<ILightDismissable>();
+    private _notifying = false;
+    private _bodyClient = new LightDismissableBody();
     
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
@@ -275,15 +285,6 @@ class LightDismissService {
     
     constructor() {
         this._clickEaterEl = this._createClickEater();
-        this._clients = [];
-        this._activeDismissable = null;
-        this._focusCache = new OrderedCache<ILightDismissable>();
-        this._rendered = {
-            clickEaterInDom: false,
-            serviceActive: false
-        };
-        this._notifying = false;
-        this._bodyClient = new LightDismissableBody();
         
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
@@ -324,17 +325,20 @@ class LightDismissService {
         }
     }
     
-    private _rendered: {
-        clickEaterInDom: boolean;
-        serviceActive: boolean;
-    }
+    // State private to _updateDom. No other method should make use of it.
+    private _updateDom_rendered = {
+        clickEaterInDom: false,
+        serviceActive: false
+    };
     private _updateDom() {
+        var rendered = this._updateDom_rendered;
+        
         if (this._notifying) {
             return;
         }
         
         var serviceActive = this._clients.length > 1;
-        if (serviceActive !== this._rendered.serviceActive) {
+        if (serviceActive !== rendered.serviceActive) {
             // Unregister/register for events that occur frequently.
             if (serviceActive) {
                 _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
@@ -346,7 +350,7 @@ class LightDismissService {
                 _Global.document.documentElement.removeEventListener("keydown", this._onKeyDownBound);
                 _Global.window.removeEventListener("resize", this._onWindowResizeBound);
             }
-            this._rendered.serviceActive = serviceActive;
+            rendered.serviceActive = serviceActive;
         }
          
         var clickEaterIndex = -1;
@@ -361,14 +365,14 @@ class LightDismissService {
         }
         
         var clickEaterInDom = clickEaterIndex !== -1;
-        if (clickEaterInDom !== this._rendered.clickEaterInDom) {
+        if (clickEaterInDom !== rendered.clickEaterInDom) {
             if (clickEaterInDom) {
                 _Global.document.body.appendChild(this._clickEaterEl);
             } else {
                 var parent = this._clickEaterEl.parentNode;
                 parent && parent.removeChild(this._clickEaterEl);
             }
-            this._rendered.clickEaterInDom = clickEaterInDom;
+            rendered.clickEaterInDom = clickEaterInDom;
         }
         
         // Which dismissable should receive focus? In the easy case, there is only one dismissable above the click eater
@@ -380,7 +384,7 @@ class LightDismissService {
         //     Flyout dismisses.
         //   - If a Flyout is launched by clicking a button in the AppBar, then the AppBar should receive focus when the
         //     Flyout dismisses.
-        var activeDismissable: ILightDismissable = null;
+        var activeDismissable: ILightDismissable;
         if (this._clients.length > 0) {
             var startIndex = clickEaterIndex === -1 ? 0 : clickEaterIndex;
             var candidates = this._clients.slice(startIndex);
@@ -564,7 +568,7 @@ class LightDismissService {
         }
     }
     
-    private _onClickEaterClick(eventObject: PointerEvent) {
+    private _onClickEaterClick(eventObject: MouseEvent) {
         eventObject.stopPropagation();
         eventObject.preventDefault();
         
@@ -600,7 +604,7 @@ _Base.Namespace.define("WinJS.UI._LightDismissService", {
     shown: shown,
     hidden: hidden,
     LightDismissableElement: LightDismissableElement,
-    LightDismissalPolicies: LightDismissalPolicies,
+    DismissalPolicies: DismissalPolicies,
     
     _service: service
 });

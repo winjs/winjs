@@ -697,19 +697,6 @@ export class SplitView {
             panePlaceholder: panePlaceholderEl,
             content: contentEl
         };
-        // Nothing has been rendered yet so these are all undefined. Because
-        // they are undefined, the first time _updateDomImpl is called, they
-        // will all be rendered.
-        this._rendered = {
-            paneIsFirst: undefined,
-            isShownMode: undefined,
-            hiddenDisplayMode: undefined,
-            shownDisplayMode: undefined,
-            panePlacement: undefined,
-            panePlaceholderWidth: undefined,
-            panePlaceholderHeight: undefined,
-            isOverlayShown: undefined
-        };
     }
 
     private _measureElement(element: HTMLElement): IRect {
@@ -975,20 +962,27 @@ export class SplitView {
             this._clearAnimation();
         });
     }
-
-    private _rendered: {
-        paneIsFirst: boolean;
-        isShownMode: boolean;
-        hiddenDisplayMode: string;
-        shownDisplayMode: string;
-        panePlacement: string;
-        panePlaceholderWidth: string;
-        panePlaceholderHeight: string;
-        isOverlayShown: boolean;
-    }
+    
+    // State private to _updateDomImpl. No other method should make use of it.
+    //
+    // Nothing has been rendered yet so these are all initialized to undefined. Because
+    // they are undefined, the first time _updateDomImpl is called, they will all be
+    // rendered.
+    private _updateDomImpl_rendered = {
+        paneIsFirst: <boolean>undefined,
+        isShownMode: <boolean>undefined,
+        hiddenDisplayMode: <string>undefined,
+        shownDisplayMode: <string>undefined,
+        panePlacement: <string>undefined,
+        panePlaceholderWidth: <string>undefined,
+        panePlaceholderHeight: <string>undefined,
+        isOverlayShown: <boolean>undefined
+    };
     _updateDomImpl(): void {
+        var rendered = this._updateDomImpl_rendered;
+        
         var paneShouldBeFirst = this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.top;
-        if (paneShouldBeFirst !== this._rendered.paneIsFirst) {
+        if (paneShouldBeFirst !== rendered.paneIsFirst) {
             // TODO: restore focus
             if (paneShouldBeFirst) {
                 this._dom.root.appendChild(this._dom.panePlaceholder);
@@ -1000,9 +994,9 @@ export class SplitView {
                 this._dom.root.appendChild(this._dom.panePlaceholder);
             }
         }
-        this._rendered.paneIsFirst = paneShouldBeFirst;
+        rendered.paneIsFirst = paneShouldBeFirst;
 
-        if (this._rendered.isShownMode !== this._isShownMode) {
+        if (rendered.isShownMode !== this._isShownMode) {
             if (this._isShownMode) {
                 _ElementUtilities.removeClass(this._dom.root, ClassNames.paneHidden);
                 _ElementUtilities.addClass(this._dom.root, ClassNames.paneShown);
@@ -1011,24 +1005,24 @@ export class SplitView {
                 _ElementUtilities.addClass(this._dom.root, ClassNames.paneHidden);
             }
         }
-        this._rendered.isShownMode = this._isShownMode;
+        rendered.isShownMode = this._isShownMode;
 
-        if (this._rendered.panePlacement !== this.panePlacement) {
-            removeClass(this._dom.root, panePlacementClassMap[this._rendered.panePlacement]);
+        if (rendered.panePlacement !== this.panePlacement) {
+            removeClass(this._dom.root, panePlacementClassMap[rendered.panePlacement]);
             addClass(this._dom.root, panePlacementClassMap[this.panePlacement]);
-            this._rendered.panePlacement = this.panePlacement;
+            rendered.panePlacement = this.panePlacement;
         }
         
-        if (this._rendered.hiddenDisplayMode !== this.hiddenDisplayMode) {
-            removeClass(this._dom.root, hiddenDisplayModeClassMap[this._rendered.hiddenDisplayMode]);
+        if (rendered.hiddenDisplayMode !== this.hiddenDisplayMode) {
+            removeClass(this._dom.root, hiddenDisplayModeClassMap[rendered.hiddenDisplayMode]);
             addClass(this._dom.root, hiddenDisplayModeClassMap[this.hiddenDisplayMode]);
-            this._rendered.hiddenDisplayMode = this.hiddenDisplayMode;
+            rendered.hiddenDisplayMode = this.hiddenDisplayMode;
         }
 
-        if (this._rendered.shownDisplayMode !== this.shownDisplayMode) {
-            removeClass(this._dom.root, shownDisplayModeClassMap[this._rendered.shownDisplayMode]);
+        if (rendered.shownDisplayMode !== this.shownDisplayMode) {
+            removeClass(this._dom.root, shownDisplayModeClassMap[rendered.shownDisplayMode]);
             addClass(this._dom.root, shownDisplayModeClassMap[this.shownDisplayMode]);
-            this._rendered.shownDisplayMode = this.shownDisplayMode;
+            rendered.shownDisplayMode = this.shownDisplayMode;
         }
         
         var isOverlayShown = this._isShownMode && this.shownDisplayMode === ShownDisplayMode.overlay;
@@ -1050,21 +1044,21 @@ export class SplitView {
             width = "";
             height = "";
         }
-        if (this._rendered.panePlaceholderWidth !== width || this._rendered.panePlaceholderHeight !== height) {
+        if (rendered.panePlaceholderWidth !== width || rendered.panePlaceholderHeight !== height) {
             var style = this._dom.panePlaceholder.style;
             style.width = width;
             style.height = height;
-            this._rendered.panePlaceholderWidth = width;
-            this._rendered.panePlaceholderHeight = height;
+            rendered.panePlaceholderWidth = width;
+            rendered.panePlaceholderHeight = height;
         }
         
-        if (this._rendered.isOverlayShown !== isOverlayShown) {
+        if (rendered.isOverlayShown !== isOverlayShown) {
             if (isOverlayShown) {
                 _LightDismissService.shown(this._dismissable);
             } else {
                 _LightDismissService.hidden(this._dismissable);
             }
-            this._rendered.isOverlayShown = isOverlayShown;
+            rendered.isOverlayShown = isOverlayShown;
         }
     }
 }
