@@ -59,7 +59,7 @@
         grunt.registerTask("minify", ["uglify", "add-bom"]);
 
         // Private tasks (not designed to be used from the command line)
-        grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts"]);
+        grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts", "copy:intellisense"]);
         grunt.registerTask("_copyToTsBuild", ["copy:srcjs"])
 
         // Other tasks

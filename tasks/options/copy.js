@@ -34,6 +34,15 @@
             }]
         },
 
+        intellisense: {
+            files: [{
+                expand: true,
+                cwd: "src/js/",
+                src: ["WinJS.intellisense*.js"],
+                dest: config.desktopOutput + "js/"
+            }]
+        },
+
         srcjs: {
             files: [{
                 expand: true,
