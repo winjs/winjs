@@ -113,6 +113,20 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(layout[5], target);
         }
 
+        testFindNextFocusElementWithUnfocusableReferenceElementAndInitialFocus() {
+            var layout = [
+                this.rootContainer,
+                createAndAppendFocusableElement(50, 50, this.rootContainer, "1", "div", 150, 150),
+                createAndAppendFocusableElement(200, 50, this.rootContainer, "2", "button", 150, 150),
+            ];
+
+            layout[1].setAttribute("tabIndex", "");
+            layout[2].focus();
+
+            var target = WinJS.UI.XYFocus.findNextFocusElement("right", { referenceElement: layout[1] });
+            LiveUnit.Assert.areEqual(layout[2], target);
+        }
+
         testFindNextFocusElementWithReferenceElement() {
             var layout = createCrossLayout(this.rootContainer);
 

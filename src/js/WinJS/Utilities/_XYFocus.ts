@@ -460,7 +460,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
         var refElement: HTMLElement;
         var refRect: IRect;
 
-        if ((!referenceElement && !referenceRect) || (referenceElement && referenceElement.tabIndex === -1) || (referenceElement && !referenceElement.parentNode)) {
+        if ((!referenceElement && !referenceRect) || (referenceElement && !referenceElement.parentNode)) {
             // Note: We need to check to make sure 'parentNode' is not null otherwise there is a case  
             // where _lastTarget is defined, but calling getBoundingClientRect will throw a native exception.  
             // This case happens if the innerHTML of the parent of the _lastTarget is set to "".  
