@@ -272,16 +272,19 @@ define([
 
                         // Toggle checked on spacebar
                         if (e.keyCode === _ElementUtilities.Key.space) {
+                            e.preventDefault();
                             this.checked = !this.checked;
                         }
 
                         // Arrow keys set value
                         if (e.keyCode === _ElementUtilities.Key.rightArrow ||
                             e.keyCode === _ElementUtilities.Key.upArrow) {
+                            e.preventDefault();
                             this.checked = true;
                         }
                         if (e.keyCode === _ElementUtilities.Key.leftArrow ||
                             e.keyCode === _ElementUtilities.Key.downArrow) {
+                            e.preventDefault();
                             this.checked = false;
                         }
 
