@@ -37,9 +37,9 @@ var LightDismissalReasons = {
     windowBlur: "windowBlur",
     edgy: "edgy"
 };
-// Built-in implementations of ILightDismissable's onBeforeLightDismiss.
+// Built-in implementations of ILightDismissable's onShouldLightDismiss.
 export var DismissalPolicies = {
-    light: function LightDismissalPolicies_light_onBeforeLightDismiss(info: ILightDismissInfo): boolean {
+    light: function LightDismissalPolicies_light_onShouldLightDismiss(info: ILightDismissInfo): boolean {
         switch (info.reason) {
             case LightDismissalReasons.tap:
             case LightDismissalReasons.escape:
@@ -66,7 +66,7 @@ export var DismissalPolicies = {
                 return true;
         }
     },
-    sticky: function LightDismissalPolicies_sticky_onBeforeLightDismiss(info: ILightDismissInfo): boolean {
+    sticky: function LightDismissalPolicies_sticky_onShouldLightDismiss(info: ILightDismissInfo): boolean {
         info.stopPropagation();
         return false;
     }  
@@ -109,11 +109,11 @@ export interface ILightDismissable {
     
     // A light dismiss was triggered. Return whether or not this dismissable should be dismissed. Built-in
     // implementations of this method are specified in LightDismissalPolicies.
-    onBeforeLightDismiss(info: ILightDismissInfo): boolean;
+    onShouldLightDismiss(info: ILightDismissInfo): boolean;
     // Should implement what it means for this dismissable to be dismissed (e.g. call control.hide()). Just because
     // this method is called doesn't mean that the service thinks this dismissable has been dismissed. Consequently,
     // you can decide to do nothing in this method if you want the dismissable to remain shown. However, this decision
-    // should generally be made in onBeforeLightDismiss if possible. The dismissable is responsible for calling
+    // should generally be made in onShouldLightDismiss if possible. The dismissable is responsible for calling
     // _LightDismissService.hidden at some point.
     onLightDismiss(info: ILightDismissInfo): void;
 }
@@ -133,7 +133,7 @@ export interface ILightDismissableElementArgs {
     onActivate?(): void;
     onFocus?(element: HTMLElement): void;
     onHide?(): void;
-    onBeforeLightDismiss?(info: ILightDismissInfo): boolean;
+    onShouldLightDismiss?(info: ILightDismissInfo): boolean;
 }
 
 export class LightDismissableElement implements ILightDismissable {
@@ -156,7 +156,7 @@ export class LightDismissableElement implements ILightDismissable {
         if (args.onActivate) { this.onActivate = args.onActivate; }
         this._customOnFocus = args.onFocus;
         this._customOnHide = args.onHide;
-        if (args.onBeforeLightDismiss) { this.onBeforeLightDismiss = args.onBeforeLightDismiss; }
+        if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
     }
     
     setZIndex(zIndex: string) {
@@ -190,14 +190,14 @@ export class LightDismissableElement implements ILightDismissable {
         this._ldeCurrentFocus = null;
         this._customOnHide && this._customOnHide();
     }
-    onBeforeLightDismiss(info: ILightDismissInfo): boolean {
+    onShouldLightDismiss(info: ILightDismissInfo): boolean {
         return DismissalPolicies.light(info);
     }
     onLightDismiss(info: ILightDismissInfo): void { }
 }
 
-// An implementation of ILightDismissable that represents the HTML body element. It can never be dismissed.
-// The service should instantiate one of these to act as the bottommost light dismissable (it isn't expected
+// An implementation of ILightDismissable that represents the HTML body element. It can never be dismissed. The
+// service should instantiate one of these to act as the bottommost light dismissable at all times (it isn't expected
 // for anybody else to instantiate one). It takes care of restoring focus when the last dismissable is dismissed.
 class LightDismissableBody implements ILightDismissable {    
     currentFocus: HTMLElement;
@@ -224,7 +224,7 @@ class LightDismissableBody implements ILightDismissable {
     onHide(): void {
         this.currentFocus = null;
     }
-    onBeforeLightDismiss(info: ILightDismissInfo): boolean {
+    onShouldLightDismiss(info: ILightDismissInfo): boolean {
         return false;
     }
     onLightDismiss(info: ILightDismissInfo): void { }
@@ -239,7 +239,7 @@ class OrderedCache<T> {
     private _orderedCache: T[] = [];
     
     touch(item: T) {
-        // Optimization: if *item* is already at index 0, then no work is necessary.
+        // Optimization: if *item* is already at index 0, then there's no need to move it to the front of the list.
         if (this._orderedCache[0] !== item) {
             this.remove(item);
             this._orderedCache.unshift(item);
@@ -425,7 +425,7 @@ class LightDismissService {
         };
         for (var i = clients.length - 1; i >= 0 && !lightDismissInfo._stop; i--) {
             lightDismissInfo.active = this._activeDismissable === clients[i];
-            if (clients[i].onBeforeLightDismiss(lightDismissInfo)) {
+            if (clients[i].onShouldLightDismiss(lightDismissInfo)) {
                 clients[i].onLightDismiss(lightDismissInfo);
             }
         }
