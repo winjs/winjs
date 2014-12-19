@@ -100,29 +100,46 @@ export interface IRect {
     width: number;
 }
 
+/**
+ * Gets the mapping object that maps keycodes to XYFocus actions.
+**/ 
 export var keyCodeMap: { [key: string]: number[] } = {
     left: [_ElementUtilities.Key.leftArrow],
     right: [_ElementUtilities.Key.rightArrow],
     up: [_ElementUtilities.Key.upArrow],
     down: [_ElementUtilities.Key.downArrow]
 };
+
+/**
+ * Gets or sets the focus root when invoking XYFocus APIs.
+**/
 export var focusRoot: HTMLElement;
 
+/**
+ * Returns the next focusable element from the current active element (or reference, if supplied) towards the specified direction.
+ * @param direction The direction to search.
+ * @param options An options object configuring the search.
+**/
+export function findNextFocusElement(direction: string, options?: XYFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: "left", options?: XYFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: "right", options?: XYFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: "up", options?: XYFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: "down", options?: XYFocusOptions): HTMLElement;
-export function findNextFocusElement(direction: string, options?: XYFocusOptions): HTMLElement;
 export function findNextFocusElement(direction: string, options?: XYFocusOptions): HTMLElement {
     var result = _findNextFocusElementInternal(direction, options);
     return result ? result.target : null;
 }
 
+/**
+ * Moves focus to the next focusable element from the current active element (or reference, if supplied) towards the specific direction.
+ * @param direction The direction to move.
+ * @param options An options object configuring the focus move.
+**/
+export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElement;
 export function moveFocus(direction: "left", options?: XYFocusOptions): HTMLElement;
 export function moveFocus(direction: "right", options?: XYFocusOptions): HTMLElement;
 export function moveFocus(direction: "up", options?: XYFocusOptions): HTMLElement;
 export function moveFocus(direction: "down", options?: XYFocusOptions): HTMLElement;
-export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElement;
 export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElement {
     var result = findNextFocusElement(direction, options);
     if (result) {
