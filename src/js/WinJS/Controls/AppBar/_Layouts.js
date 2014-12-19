@@ -177,6 +177,159 @@ define([
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._commandLayoutsInit(appBarEl);
             }, {
+                commandsInOrder: {
+                    get: function () {
+                        return this._commandsInOriginalOrder.filter(function (command) {
+                            // Make sure the element is still in the AppBar.
+                            return this.appBarEl.contains(command);
+                        }, this);
+                    }
+                },
+                layout: function _AppBarCommandsLayout_layout(commands) {
+                    // Insert commands and other layout specific DOM into the AppBar element.
+
+                    // Empty our tree.
+                    _ElementUtilities.empty(this._primaryCommands);
+                    _ElementUtilities.empty(this._secondaryCommands);
+
+                    // Keep track of the order we receive the commands in.
+                    this._commandsInOriginalOrder = [];
+
+                    // Layout commands
+                    for (var i = 0, len = commands.length; i < len; i++) {
+                        var command = this.sanitizeCommand(commands[i]);
+
+                        this._commandsInOriginalOrder.push(command.element);
+
+                        if ("primary" === command.section || "global" === command.section) {
+                            this._primaryCommands.appendChild(command._element);
+                        } else {
+                            this._secondaryCommands.appendChild(command._element);
+                        }
+                    }
+
+                    // Append layout containers to AppBar element.
+                    // Secondary Commands should come first in Tab Order.
+                    this.appBarEl.appendChild(this._secondaryCommands);
+                    this.appBarEl.appendChild(this._primaryCommands);
+
+
+                    // Need to measure all content commands after they have been added to the AppBar to make sure we allow
+                    // user defined CSS rules based on the ancestor of the content command to take affect.
+                    this._needToMeasureNewCommands = true;
+
+                    // In case this is called from the constructor before the AppBar element has been appended to the DOM,
+                    // we schedule the initial scaling of commands, with the expectation that the element will be added
+                    // synchronously, in the same block of code that called the constructor.
+                    Scheduler.schedule(function () {
+                        if (this._needToMeasureNewCommands && !this._disposed) {
+                            this.scale();
+                        }
+                    }.bind(this), Scheduler.Priority.idle, this, "WinJS._commandLayoutsMixin._scaleNewCommands");
+
+                },
+                disposeChildren: function _AppBarCommandsLayout_disposeChildren() {
+                    _Dispose.disposeSubTree(this._primaryCommands);
+                    _Dispose.disposeSubTree(this._secondaryCommands);
+                },
+                handleKeyDown: function _AppBarCommandsLayout_handleKeyDown(event) {
+                    var Key = _ElementUtilities.Key;
+
+                    if (_ElementUtilities._matchesSelector(event.target, ".win-interactive, .win-interactive *")) {
+                        return; // Ignore left, right, home & end keys if focused element has win-interactive class.
+                    }
+                    var rtl = _Global.getComputedStyle(this.appBarEl).direction === "rtl";
+                    var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
+                    var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
+
+                    if (event.keyCode === leftKey || event.keyCode === rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
+
+                        var globalCommandHasFocus = this._primaryCommands.contains(_Global.document.activeElement);
+                        var focusableCommands = this._getFocusableCommandsInLogicalOrder(globalCommandHasFocus);
+                        var targetCommand;
+
+                        if (focusableCommands.length) {
+                            switch (event.keyCode) {
+                                case leftKey:
+                                    // Arrowing past the last command wraps back around to the first command.
+                                    var index = Math.max(-1, focusableCommands.focusedIndex - 1) + focusableCommands.length;
+                                    targetCommand = focusableCommands[index % focusableCommands.length].winControl.lastElementFocus;
+                                    break;
+
+                                case rightKey:
+                                    // Arrowing previous to the first command wraps back around to the last command.
+                                    var index = focusableCommands.focusedIndex + 1 + focusableCommands.length;
+                                    targetCommand = focusableCommands[index % focusableCommands.length].winControl.firstElementFocus;
+                                    break;
+
+                                case Key.home:
+                                    var index = 0;
+                                    targetCommand = focusableCommands[index].winControl.firstElementFocus;
+                                    break;
+
+                                case Key.end:
+                                    var index = focusableCommands.length - 1;
+                                    targetCommand = focusableCommands[index].winControl.lastElementFocus;
+                                    break;
+                            }
+                        }
+
+                        if (targetCommand && targetCommand !== _Global.document.activeElement) {
+                            targetCommand.focus();
+                            // Prevent default so that the browser doesn't also evaluate the keydown event on the newly focused element.
+                            event.preventDefault();
+                        }
+                    }
+                },
+                commandsUpdated: function _AppBarCommandsLayout_commandsUpdated(newSetOfVisibleCommands) {
+                    // Whenever new commands are set or existing commands are hiding/showing in the AppBar, this
+                    // function is called to update the cached width measurement of all visible AppBarCommands.
+
+                    var visibleCommands = (newSetOfVisibleCommands) ? newSetOfVisibleCommands : this.commandsInOrder.filter(function (command) {
+                        return !command.winControl.hidden;
+                    });
+                    this._fullSizeWidthOfLastKnownVisibleCommands = this._getWidthOfFullSizeCommands(visibleCommands);
+                },
+                beginAnimateCommands: function _AppBarCommandsLayout_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
+                    // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
+                    // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
+                    // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
+                    // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
+
+                    this._scaleAfterAnimations = false;
+
+                    // Determine if the overall width of visible commands in the primary row will be increasing OR decreasing.
+                    var changeInWidth = this._getWidthOfFullSizeCommands(showCommands) - this._getWidthOfFullSizeCommands(hideCommands);
+                    if (changeInWidth > 0) {
+                        // Width of contents is going to increase, update our command counts now, to what they will be after we complete the animations.
+                        var visibleCommandsAfterAnimations = otherVisibleCommands.concat(showCommands);
+                        this.commandsUpdated(visibleCommandsAfterAnimations);
+                        // Make sure we will have enough room to fit everything on a single row.
+                        this.scale();
+                    } else if (changeInWidth < 0) {
+                        // Width of contents is going to decrease. Once animations are complete, check if
+                        // there is enough available space to make the remaining commands full size.
+                        this._scaleAfterAnimations = true;
+                    }
+                },
+                endAnimateCommands: function _AppBarCommandsLayout_endAnimateCommands() {
+                    if (this._scaleAfterAnimations) {
+                        this.commandsUpdated();
+                        this.scale();
+                    }
+                },
+                resize: function _AppBarCommandsLayout_resize() {
+                    if (!this._disposed) {
+                        // Check for horizontal window resizes.
+                        this._appBarTotalKnownWidth = null;
+                        if (!this.appBarEl.winControl.hidden) {
+                            this.scale();
+                        }
+                    }
+                },
+                disconnect: function _AppBarCommandsLayout_disconnect() {
+                    exports._AppBarBaseLayout.prototype.disconnect.call(this);
+                },
                 _getWidthOfFullSizeCommands: function _AppBarCommandsLayout_getWidthOfFullSizeCommands(commands) {
                     // Commands layout puts primary commands and secondary commands into the primary row.
                     // Return the total width of all visible primary and secondary commands as if they were full-size.
@@ -245,226 +398,65 @@ define([
                     focusableCommands.focusedIndex = focusedIndex;
                     return focusableCommands;
                 },
-            });
+                _commandLayoutsInit: function _AppBarCommandsLayout_commandLayoutsInit() {
+                    // Create layout infrastructure
+                    this._primaryCommands = _Global.document.createElement("DIV");
+                    this._secondaryCommands = _Global.document.createElement("DIV");
+                    _ElementUtilities.addClass(this._primaryCommands, _Constants.primaryCommandsClass);
+                    _ElementUtilities.addClass(this._secondaryCommands, _Constants.secondaryCommandsClass);
+                },
+                _scaleHelper: function _AppBarCommandsLayout_scaleHelper() {
+                    // This exists as a single line function so that unit tests can
+                    // overwrite it since they can't resize the WWA window.
 
-            // Override some our base implementations and expand our API surface with the commandLayoutsMixin object.
-            _Base.Class.mix(_AppBarCommandsLayout, _commandLayoutsMixin);
+                    // It is expected that AppBar is an immediate child of the <body> and will have 100% width.
+                    // We measure the clientWidth of the documentElement so that we can scale the AppBar lazily
+                    // even while its element is display: 'none'
+                    var extraPadding = this.appBarEl.winControl.closedDisplayMode === "minimal" ? _Constants.appBarInvokeButtonWidth : 0;
+                    return _Global.document.documentElement.clientWidth - extraPadding;
+                },
+                _measureContentCommands: function _AppBarCommandsLayout_measureContentCommands() {
+                    // AppBar measures the width of content commands when they are first added
+                    // and then caches that value to avoid additional layouts in the future.
+
+                    // Can't measure unless We're in the document body
+                    if (_Global.document.body.contains(this.appBarEl)) {
+                        this._needToMeasureNewCommands = false;
+
+                        var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
+                        _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+
+                        // Make sure AppBar and children have width dimensions.
+                        var prevAppBarDisplay = this.appBarEl.style.display;
+                        this.appBarEl.style.display = "";
+                        var prevCommandDisplay;
+
+                        var contentElements = this.appBarEl.querySelectorAll("div." + _Constants.appBarCommandClass);
+                        var element;
+                        for (var i = 0, len = contentElements.length; i < len; i++) {
+                            element = contentElements[i];
+                            if (element.winControl && element.winControl._type === _Constants.typeContent) {
+                                // Make sure command has width dimensions before we measure.
+                                prevCommandDisplay = element.style.display;
+                                element.style.display = "";
+                                element.winControl._fullSizeWidth = _ElementUtilities.getTotalWidth(element) || 0;
+                                element.style.display = prevCommandDisplay;
+                            }
+                        }
+
+                        // Restore state to AppBar.
+                        this.appBarEl.style.display = prevAppBarDisplay;
+                        if (hadHiddenClass) {
+                            _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                        }
+
+                        this.commandsUpdated();
+                    }
+                },
+            });
             return _AppBarCommandsLayout;
         }),
     });
-
-    // These are functions and properties that any new command layout would want to share with our existing "commands" layout.
-    var _commandLayoutsMixin = {
-        layout: function _commandLayoutsMixin_layout(commands) {
-            // Insert commands and other layout specific DOM into the AppBar element.
-
-            // Empty our tree.
-            _ElementUtilities.empty(this._primaryCommands);
-            _ElementUtilities.empty(this._secondaryCommands);
-
-            // Keep track of the order we receive the commands in.
-            this._commandsInOriginalOrder = [];
-
-            // Layout commands
-            for (var i = 0, len = commands.length; i < len; i++) {
-                var command = this.sanitizeCommand(commands[i]);
-
-                this._commandsInOriginalOrder.push(command.element);
-
-                if ("primary" === command.section || "global" === command.section) {
-                    this._primaryCommands.appendChild(command._element);
-                } else {
-                    this._secondaryCommands.appendChild(command._element);
-                }
-            }
-
-            // Append layout containers to AppBar element.
-            // Secondary Commands should come first in Tab Order.
-            this.appBarEl.appendChild(this._secondaryCommands);
-            this.appBarEl.appendChild(this._primaryCommands);
-
-
-            // Need to measure all content commands after they have been added to the AppBar to make sure we allow
-            // user defined CSS rules based on the ancestor of the content command to take affect.
-            this._needToMeasureNewCommands = true;
-
-            // In case this is called from the constructor before the AppBar element has been appended to the DOM,
-            // we schedule the initial scaling of commands, with the expectation that the element will be added
-            // synchronously, in the same block of code that called the constructor.
-            Scheduler.schedule(function () {
-                if (this._needToMeasureNewCommands && !this._disposed) {
-                    this.scale();
-                }
-            }.bind(this), Scheduler.Priority.idle, this, "WinJS._commandLayoutsMixin._scaleNewCommands");
-
-        },
-        commandsInOrder: {
-            get: function () {
-                return this._commandsInOriginalOrder.filter(function (command) {
-                    // Make sure the element is still in the AppBar.
-                    return this.appBarEl.contains(command);
-                }, this);
-            }
-        },
-        disposeChildren: function _commandLayoutsMixin_disposeChildren() {
-            _Dispose.disposeSubTree(this._primaryCommands);
-            _Dispose.disposeSubTree(this._secondaryCommands);
-        },
-        handleKeyDown: function _commandLayoutsMixin_handleKeyDown(event) {
-            var Key = _ElementUtilities.Key;
-
-            if (_ElementUtilities._matchesSelector(event.target, ".win-interactive, .win-interactive *")) {
-                return; // Ignore left, right, home & end keys if focused element has win-interactive class.
-            }
-            var rtl = _Global.getComputedStyle(this.appBarEl).direction === "rtl";
-            var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
-            var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
-
-            if (event.keyCode === leftKey || event.keyCode === rightKey || event.keyCode === Key.home || event.keyCode === Key.end) {
-
-                var globalCommandHasFocus = this._primaryCommands.contains(_Global.document.activeElement);
-                var focusableCommands = this._getFocusableCommandsInLogicalOrder(globalCommandHasFocus);
-                var targetCommand;
-
-                if (focusableCommands.length) {
-                    switch (event.keyCode) {
-                        case leftKey:
-                            // Arrowing past the last command wraps back around to the first command.
-                            var index = Math.max(-1, focusableCommands.focusedIndex - 1) + focusableCommands.length;
-                            targetCommand = focusableCommands[index % focusableCommands.length].winControl.lastElementFocus;
-                            break;
-
-                        case rightKey:
-                            // Arrowing previous to the first command wraps back around to the last command.
-                            var index = focusableCommands.focusedIndex + 1 + focusableCommands.length;
-                            targetCommand = focusableCommands[index % focusableCommands.length].winControl.firstElementFocus;
-                            break;
-
-                        case Key.home:
-                            var index = 0;
-                            targetCommand = focusableCommands[index].winControl.firstElementFocus;
-                            break;
-
-                        case Key.end:
-                            var index = focusableCommands.length - 1;
-                            targetCommand = focusableCommands[index].winControl.lastElementFocus;
-                            break;
-                    }
-                }
-
-                if (targetCommand && targetCommand !== _Global.document.activeElement) {
-                    targetCommand.focus();
-                    // Prevent default so that the browser doesn't also evaluate the keydown event on the newly focused element.
-                    event.preventDefault();
-                }
-            }
-        },
-        commandsUpdated: function _commandLayoutsMixin_commandsUpdated(newSetOfVisibleCommands) {
-            // Whenever new commands are set or existing commands are hiding/showing in the AppBar, this
-            // function is called to update the cached width measurement of all visible AppBarCommands.
-
-            var visibleCommands = (newSetOfVisibleCommands) ? newSetOfVisibleCommands : this.commandsInOrder.filter(function (command) {
-                return !command.winControl.hidden;
-            });
-            this._fullSizeWidthOfLastKnownVisibleCommands = this._getWidthOfFullSizeCommands(visibleCommands);
-        },
-        beginAnimateCommands: function _commandLayoutsMixin_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
-            // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
-            // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
-            // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
-            // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
-
-            this._scaleAfterAnimations = false;
-
-            // Determine if the overall width of visible commands in the primary row will be increasing OR decreasing.
-            var changeInWidth = this._getWidthOfFullSizeCommands(showCommands) - this._getWidthOfFullSizeCommands(hideCommands);
-            if (changeInWidth > 0) {
-                // Width of contents is going to increase, update our command counts now, to what they will be after we complete the animations.
-                var visibleCommandsAfterAnimations = otherVisibleCommands.concat(showCommands);
-                this.commandsUpdated(visibleCommandsAfterAnimations);
-                // Make sure we will have enough room to fit everything on a single row.
-                this.scale();
-            } else if (changeInWidth < 0) {
-                // Width of contents is going to decrease. Once animations are complete, check if
-                // there is enough available space to make the remaining commands full size.
-                this._scaleAfterAnimations = true;
-            }
-        },
-        endAnimateCommands: function _commandLayoutsMixin_endAnimateCommands() {
-            if (this._scaleAfterAnimations) {
-                this.commandsUpdated();
-                this.scale();
-            }
-        },
-
-        resize: function _commandLayoutsMixin_resize() {
-            if (!this._disposed) {
-                // Check for horizontal window resizes.
-                this._appBarTotalKnownWidth = null;
-                if (!this.appBarEl.winControl.hidden) {
-                    this.scale();
-                }
-            }
-        },
-        disconnect: function _commandLayoutsMixin_disconnect() {
-            exports._AppBarBaseLayout.prototype.disconnect.call(this);
-        },
-        _commandLayoutsInit: function _commandLayoutsMixin_commandLayoutsInit() {
-            // Create layout infrastructure
-            this._primaryCommands = _Global.document.createElement("DIV");
-            this._secondaryCommands = _Global.document.createElement("DIV");
-            _ElementUtilities.addClass(this._primaryCommands, _Constants.primaryCommandsClass);
-            _ElementUtilities.addClass(this._secondaryCommands, _Constants.secondaryCommandsClass);
-        },
-        _scaleHelper: function _commandLayoutsMixin_scaleHelper() {
-            // This exists as a single line function so that unit tests can
-            // overwrite it since they can't resize the WWA window.
-
-            // It is expected that AppBar is an immediate child of the <body> and will have 100% width.
-            // We measure the clientWidth of the documentElement so that we can scale the AppBar lazily
-            // even while its element is display: 'none'
-            var extraPadding = this.appBarEl.winControl.closedDisplayMode === "minimal" ? _Constants.appBarInvokeButtonWidth : 0;
-            return _Global.document.documentElement.clientWidth - extraPadding;
-        },
-        _measureContentCommands: function _commandLayoutsMixin_measureContentCommands() {
-            // AppBar measures the width of content commands when they are first added
-            // and then caches that value to avoid additional layouts in the future.
-
-            // Can't measure unless We're in the document body
-            if (_Global.document.body.contains(this.appBarEl)) {
-                this._needToMeasureNewCommands = false;
-
-                var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
-                _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
-
-                // Make sure AppBar and children have width dimensions.
-                var prevAppBarDisplay = this.appBarEl.style.display;
-                this.appBarEl.style.display = "";
-                var prevCommandDisplay;
-
-                var contentElements = this.appBarEl.querySelectorAll("div." + _Constants.appBarCommandClass);
-                var element;
-                for (var i = 0, len = contentElements.length; i < len; i++) {
-                    element = contentElements[i];
-                    if (element.winControl && element.winControl._type === _Constants.typeContent) {
-                        // Make sure command has width dimensions before we measure.
-                        prevCommandDisplay = element.style.display;
-                        element.style.display = "";
-                        element.winControl._fullSizeWidth = _ElementUtilities.getTotalWidth(element) || 0;
-                        element.style.display = prevCommandDisplay;
-                    }
-                }
-
-                // Restore state to AppBar.
-                this.appBarEl.style.display = prevAppBarDisplay;
-                if (hadHiddenClass) {
-                    _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
-                }
-
-                this.commandsUpdated();
-            }
-        },
-    };
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _AppBarMenuLayout: _Base.Namespace._lazy(function () {
@@ -479,13 +471,13 @@ define([
             }, {
                 layout: function _AppBarMenuLayout_layout(commands) {
                     this._writeProfilerMark("layout,info");
-                    
+
                     commands = commands || [];
                     this._originalCommands = [];
 
                     var that = this;
                     commands.forEach(function (command) {
-                         that._originalCommands.push(that.sanitizeCommand(command));
+                        that._originalCommands.push(that.sanitizeCommand(command));
                     });
                     this._displayedCommands = this._originalCommands.slice(0);
 
@@ -590,7 +582,7 @@ define([
                     this._originalCommands = [];
                     this._displayedCommands = [];
                 },
-                
+
                 setFocusOnShow: function _AppBarMenuLayout_setFocusOnShow() {
                     // Make sure the toolbarContainer (used for clipping during the resize animation)
                     // doesn't scroll when we give focus to the AppBar.
