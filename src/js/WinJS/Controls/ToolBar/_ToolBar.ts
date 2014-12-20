@@ -76,6 +76,7 @@ export class ToolBar {
     private _id: string;
     private _disposed: boolean;
     private _overflowButton: HTMLButtonElement;
+    private _spacer: HTMLDivElement;
     private _separatorWidth: number;
     private _standardCommandWidth: number;
     private _overflowButtonWidth: number;
@@ -330,6 +331,10 @@ export class ToolBar {
         _ElementUtilities._reparentChildren(this.element, this._mainActionArea);
         this.element.appendChild(this._mainActionArea);
 
+        this._spacer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(this._spacer, _Constants.spacerCssClass);
+        this._mainActionArea.appendChild(this._spacer);
+
         this._overflowButton = _Global.document.createElement("button");
         this._overflowButton.tabIndex = 0;
         this._overflowButton.innerHTML = "<span class='" + _Constants.ellipsisCssClass + "'></span>";
@@ -434,7 +439,7 @@ export class ToolBar {
             child = <HTMLElement> this._mainActionArea.children[i];
             if (child.style.display !== "none" || (child["winControl"] && child["winControl"].section === "secondary")) {
                 currentElements.push(child);
-                if (dataElements.indexOf(child) === -1 && child !== this._overflowButton) {
+                if (dataElements.indexOf(child) === -1 && child !== this._overflowButton && child !== this._spacer) {
                     deletedElements.push(child);
                 }
             }

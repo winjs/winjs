@@ -871,7 +871,7 @@ module CorsicaTests {
             });
             LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when shownDisplayMode:'full'");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when shownDisplayMode:'full'");
-            LiveUnit.Assert.areEqual(24, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
+            LiveUnit.Assert.areEqual(48, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
         }
 
         testShownDisplayModeFull_Keyboarding(complete) {
@@ -1123,7 +1123,7 @@ module CorsicaTests {
             toolbar.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(1, toolbar._mainActionArea.children.length, "Only the overflow button should be a child");
+                LiveUnit.Assert.areEqual(2, toolbar._mainActionArea.children.length, "Only the overflow button and spacer elements should children.");
                 LiveUnit.Assert.areEqual(0, toolbar._inlineOverflowArea.children.length);
                 complete();
             }, WinJS.Utilities.Scheduler.Priority.high);

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 .win-toolbar {
-    width:100%;
+    width: 100%;
     outline: none;
 
     .win-toolbar-actionarea {
@@ -11,23 +11,35 @@
         #flex > .display-inline-flex();
         #flex > .justify-content(flex-end;);
         #flex > .align-items(flex-start);
+
+        .win-toolbar-spacer {
+            visibility: hidden;
+            height: 48px; /* height of a primary command with no label */
+            width: 0px;
+        }
     }
 
     .win-toolbar-actionarea .win-command,
     .win-toolbar-actionarea .win-toolbar-overflowbutton {
-      #flex > .flex(@grow: 0; @shrink: 0);
+        #flex > .flex(@grow: 0; @shrink: 0);
     }
 
     &.win-toolbar-showndisplayreduced {
         min-width: 68px; /* enough for one primary command */
-
         > .win-toolbar-overflowarea {
-            display:none;
+            display: none;
         }
     }
 
     &.win-toolbar-showndisplayfull {
         min-width: 320px;
+
+        .win-toolbar-actionarea {
+
+            .win-toolbar-overflowbutton {
+                visibility: hidden;
+            }
+        }
 
         .win-toolbar-overflowarea {
             #flex > .display-flex();
@@ -49,7 +61,7 @@
                 .win-type-body();
                 white-space: nowrap;
                 overflow: hidden;
-                width:auto;
+                width: auto;
             }
 
             hr.win-command {
@@ -58,36 +70,30 @@
                 margin: 6px 12px 4px 12px;
             }
         }
-
-        .win-toolbar-overflowbutton {
-            min-height: 24px;
-            visibility: hidden;
-        }
     }
 
     &.win-toolbar-empty {
         .win-toolbar-overflowbutton {
-            display:none;
+            display: none;
         }
     }
 
     .win-toolbar-overflowbutton {
         width: 32px; /* 30px + 2px border */
-        min-height: 48px; /* height of a command without labels */
         margin: 0px;
         padding: 0px;
         border: 1px dotted;
         min-width: 0px;
         position: relative;
-        outline:none;
+        outline: none;
         #flex > .align-self(stretch);
         box-sizing: border-box;
-        background-clip:border-box;
+        background-clip: border-box;
 
         .win-toolbar-ellipsis {
             width: 32px;
             right: 0px;
-            top:12px;
+            top: 12px;
             line-height: 24px;
             position: absolute;
             display: inline-block;
