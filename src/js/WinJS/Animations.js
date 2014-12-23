@@ -685,56 +685,30 @@ define([
         });
     }
     // See _resizeTransition's comment for documentation on *args*.
-    function growTransition(elementClipper, element, args) {
-        var diff = args.anchorTrailingEdge ? args.to.total - args.from.total : args.from.total - args.to.total;
+    function resizeTransition(elementClipper, element, args) {
+        var start = args.actualSize - args.from;
+        var end = args.actualSize - args.to;
+        if (!args.anchorTrailingEdge) {
+            start = -start;
+            end = -end;
+        } 
         var translate = args.dimension === "width" ? "translateX" : "translateY";
-        var size = args.dimension;
-        var duration = args.duration || 367;
-        var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
+        var transition = {
+            duration: args.duration,
+            timing: args.timing 
+        };
     
         // Set up
-        elementClipper.style[size] = args.to.total + "px";
-        elementClipper.style[transformNames.scriptName] = translate + "(" + diff + "px)";
-        element.style[size] = args.to.content + "px";
-        element.style[transformNames.scriptName] = translate + "(" + -diff + "px)";
+        elementClipper.style[transformNames.scriptName] = translate + "(" + start + "px)";
+        element.style[transformNames.scriptName] = translate + "(" + -start + "px)";
     
         // Resolve styles
         _Global.getComputedStyle(elementClipper).opacity;
         _Global.getComputedStyle(element).opacity;
         
         // Animate
-        var transition = {
-            duration: duration,
-            timing: timing,
-            to: ""
-        };
-        return Promise.join([
-            transformWithTransition(elementClipper,  transition),
-            transformWithTransition(element, transition)
-        ]);
-    }
-    // See _resizeTransition's comment for documentation on *args*.
-    function shrinkTransition(elementClipper, element, args) {
-        var diff = args.anchorTrailingEdge ? args.from.total - args.to.total : args.to.total - args.from.total;
-        var translate = args.dimension === "width" ? "translateX" : "translateY";
-        var duration = args.duration || 367;
-        var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
-    
-        // Set up
-        elementClipper.style[transformNames.scriptName] = "";
-        element.style[transformNames.scriptName] = "";
-    
-        // Resolve styles
-        _Global.getComputedStyle(elementClipper).opacity;
-        _Global.getComputedStyle(element).opacity;
-        
-        // Animate
-        var transition = {
-            duration: duration,
-            timing: timing
-        };
-        var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + diff + "px)" });
-        var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -diff + "px)" });
+        var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + end + "px)" });
+        var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -end + "px)" });
         return Promise.join([
             transformWithTransition(elementClipper, clipperTransition),
             transformWithTransition(element, elementTransition)
@@ -2525,25 +2499,36 @@ define([
         //   size should match element's size. Its purpose is to clip *element* during the animation to give
         //   it the illusion that it is resizing.
         // - element: The element that should look like it's resizing.
-        // - args: An object with the following required properties: 
-        //   - from: An object representing the old width/height of the element.
-        //   - to: An object representing the new width/height of the element.
-        //     from/to are objects of the form { content: number; total: number; }. "content" is the
-        //     width/height of *element*'s content box (e.g. getContentWidth). "total" is the width/height
-        //     of *element*'s margin box (e.g. getTotalWidth).
-        //   - duration: The CSS transition duration property.
-        //   - timing: The CSS transition timing property.
+        // - args: An object with the following properties (each is required unless noted otherwise): 
+        //   - from: A number representing the old total width/height of the element.
+        //   - to: A number representing the new total width/height of the element.
+        //   - actualSize: A number representing the actual total width/height of the element (should be at least
+        //     as big as from and to). The element should be at *actualSize* when this function is called.
+        //     from/to/actualSize represent the width/height of *element*'s margin box (e.g. getTotalWidth).
         //   - dimension: The dimension on which *element* is resizing. Either "width" or "height".
-        //   - anchorTrailingEdge: During the resize animation, one edge will move and the other edge will
-        //     remain where it is. This flag specifies which edge is anchored (i.e. won't move).
+        //   - anchorTrailingEdge (optional): During the resize animation, one edge will move and the other
+        //     edge will remain where it is. This flag specifies which edge is anchored (i.e. won't move).
+        //   - duration (optional): Number representing the duration of the animation in milliseconds.
+        //   - timing (optional): String representing the CSS timing function that controls the progress of the animation.
         //
         _resizeTransition: function Utilities_resizeTransition(elementClipper, element, args) {
-            if (args.to.total > args.from.total) {
-                return growTransition(elementClipper, element, args);
-            } else if (args.to.total < args.from.total) {
-                return shrinkTransition(elementClipper, element, args);
-            } else {
+            if (args.to === args.from) {
                 return Promise.as();
+            } else {
+                var growTransition = {
+                    duration: 350,
+                    timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
+                };
+                var shrinkTransition = {
+                    duration: 120,
+                    timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
+                };
+                var defaultTransition = args.to > args.from ? growTransition : shrinkTransition;
+                
+                return resizeTransition(elementClipper, element, _BaseUtils._merge(args, {
+                    duration: args.duration === undefined ? defaultTransition.duration : args.duration,
+                    timing: args.timing === undefined ? defaultTransition.timing : args.timing
+                }));
             }
         }
     });
