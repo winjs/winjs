@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
-    '../../Animations',
     '../../Animations/_TransitionAnimation',
     '../../BindingList',
     '../../Core/_BaseUtils',
@@ -19,7 +18,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, Animations, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -30,7 +29,7 @@ define([
             var strings = {
                 get nullCommand() { return "Invalid argument: command must not be null"; }
             };
-
+            
             var _AppBarBaseLayout = _Base.Class.define(function _AppBarBaseLayout_ctor(appBarEl, options) {
                 this._disposed = false;
 
@@ -463,7 +462,135 @@ define([
         _AppBarMenuLayout: _Base.Namespace._lazy(function () {
             var layoutClassName = _Constants.menuLayoutClass;
             var layoutType = _Constants.appBarLayoutMenu;
-
+            
+            //
+            // Resize animation
+            //  The resize animation requires 2 animations to run simultaneously in sync with each other. It's implemented
+            //  without PVL because PVL doesn't provide a way to guarantee that 2 animations will start at the same time.
+            //
+            var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
+            function transformWithTransition(element, transition) {
+                // transition's properties:
+                // - duration: Number representing the duration of the animation in milliseconds.
+                // - timing: String representing the CSS timing function that controls the progress of the animation.
+                // - to: The value of *element*'s transform property after the animation.
+                var duration = transition.duration * _TransitionAnimation._animationFactor;
+                var transitionProperty = _BaseUtils._browserStyleEquivalents["transition"].scriptName;
+                element.style[transitionProperty] = duration + "ms " + transformNames.cssName + " " + transition.timing;
+                element.style[transformNames.scriptName] = transition.to;
+            
+                var finish;
+                return new Promise(function (c) {
+                    var onTransitionEnd = function (eventObject) {
+                        if (eventObject.target === element && eventObject.propertyName === transformNames.cssName) {
+                            finish();
+                        }
+                    };
+                    
+                    var didFinish = false;
+                    finish = function () {
+                        if (!didFinish) {
+                            _Global.clearTimeout(timeoutId);
+                            element.removeEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd);
+                            element.style[transitionProperty] = "";
+                            didFinish = true;
+                        }
+                        c();
+                    };
+            
+                    // Watch dog timeout
+                    var timeoutId = _Global.setTimeout(function () {
+                        timeoutId = _Global.setTimeout(finish, duration);
+                    }, 50);
+            
+                    element.addEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd);
+                }, function () {
+                    finish(); // On cancelation, complete the promise successfully to match PVL
+                });
+            }
+            // See resizeTransition's comment for documentation on *args*.
+            function growTransition(elementClipper, element, args) {
+                var diff = args.anchorTrailingEdge ? args.to.total - args.from.total : args.from.total - args.to.total;
+                var translate = args.dimension === "width" ? "translateX" : "translateY";
+                var size = args.dimension;
+                var duration = args.duration || 367;
+                var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
+            
+                // Set up
+                elementClipper.style[size] = args.to.total + "px";
+                elementClipper.style[transformNames.scriptName] = translate + "(" + diff + "px)";
+                element.style[size] = args.to.content + "px";
+                element.style[transformNames.scriptName] = translate + "(" + -diff + "px)";
+            
+                // Resolve styles
+                _Global.getComputedStyle(elementClipper).opacity;
+                _Global.getComputedStyle(element).opacity;
+                
+                // Animate
+                var transition = {
+                    duration: duration,
+                    timing: timing,
+                    to: ""
+                };
+                return Promise.join([
+                    transformWithTransition(elementClipper,  transition),
+                    transformWithTransition(element, transition)
+                ]);
+            }
+            // See resizeTransition's comment for documentation on *args*.
+            function shrinkTransition(elementClipper, element, args) {
+                var diff = args.anchorTrailingEdge ? args.from.total - args.to.total : args.to.total - args.from.total;
+                var translate = args.dimension === "width" ? "translateX" : "translateY";
+                var duration = args.duration || 367;
+                var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
+            
+                // Set up
+                elementClipper.style[transformNames.scriptName] = "";
+                element.style[transformNames.scriptName] = "";
+            
+                // Resolve styles
+                _Global.getComputedStyle(elementClipper).opacity;
+                _Global.getComputedStyle(element).opacity;
+            
+                // Animate
+                var transition = {
+                    duration: duration,
+                    timing: timing
+                };
+                var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + diff + "px)" });
+                var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -diff + "px)" });
+                return Promise.join([
+                    transformWithTransition(elementClipper, clipperTransition),
+                    transformWithTransition(element, elementTransition)
+                ]);
+            }
+            // Plays an animation which makes an element look like it is resizing in 1 dimension. Arguments:
+            // - elementClipper: The parent of *element*. It shouldn't have any margin, border, or padding and its
+            //   size should match element's size. Its purpose is to clip *element* during the animation to give
+            //   it the illusion that it is resizing.
+            // - element: The element that should look like it's resizing.
+            // - args: An object with the following required properties: 
+            //   - from: An object representing the old width/height of the element.
+            //   - to: An object representing the new width/height of the element.
+            //     from/to are objects of the form { content: number; total: number; }. "content" is the
+            //     width/height of *element*'s content box (e.g. getContentWidth). "total" is the width/height
+            //     of *element*'s margin box (e.g. getTotalWidth).
+            //   - duration: The CSS transition duration property.
+            //   - timing: The CSS transition timing property.
+            //   - dimension: The dimension on which *element* is resizing. Either "width" or "height".
+            //   - anchorTrailingEdge: During the resize animation, one edge will move and the other edge will
+            //     remain where it is. This flag specifies which edge is anchored (i.e. won't move).
+            //
+            function resizeTransition(elementClipper, element, args) {
+                if (args.to.total > args.from.total) {
+                    return growTransition(elementClipper, element, args);
+                } else if (args.to.total < args.from.total) {
+                    return shrinkTransition(elementClipper, element, args);
+                } else {
+                    return Promise.as();
+                }
+            }
+            
             var _AppBarMenuLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarMenuLayout_ctor(appBarEl) {
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -713,7 +840,7 @@ define([
                         return this._executeTranslate(this._menu, "translateY(" + -offsetTop + "px)");
                     } else {
                         // Top AppBar Animation
-                        return Animations._resizeTransition(this._menu, this._toolbarEl, {
+                        return resizeTransition(this._menu, this._toolbarEl, {
                             from: { content: heightVisible, total: heightVisible },
                             to: { content: this._menu.offsetHeight, total: this._menu.offsetHeight },
                             dimension: "height",
@@ -731,7 +858,7 @@ define([
                         return this._executeTranslate(this._menu, "none");
                     } else {
                         // Top AppBar Animation
-                        return Animations._resizeTransition(this._menu, this._toolbarEl, {
+                        return resizeTransition(this._menu, this._toolbarEl, {
                             from: { content: this._menu.offsetHeight, total: this._menu.offsetHeight },
                             to: { content: heightVisible, total: heightVisible },
                             dimension: "height",

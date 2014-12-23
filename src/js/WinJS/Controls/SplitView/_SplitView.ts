@@ -151,19 +151,7 @@ function cancelablePromise(animationPromise: Promise<any>) {
     });
 }
 
-function showEdgeUI(elements: any, offsets: any): Promise<any> {
-    return cancelablePromise(Animations.showEdgeUI(elements, offsets, { mechanism: "transition" }));
-}
-
-function hideEdgeUI(elements: any, offsets: any): Promise<any> {
-    return cancelablePromise(Animations.hideEdgeUI(elements, offsets, { mechanism: "transition" }));
-}
-
-function fadeIn(elements: any): Promise<any> {
-    return cancelablePromise(Animations.fadeIn(elements));
-}
-
-function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: { from: IThickness; to: IThickness; dimension: string; anchorTrailingEdge: boolean; }): Promise<any> {
+function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: Animations.IResizeTransitionOptions): Promise<any> {
     return cancelablePromise(Animations._resizeTransition(elementClipper, element, options));
 }
 
@@ -802,25 +790,6 @@ export class SplitView {
         }
     }
 
-    private _getAnimationOffsets(shownPaneRect: IRect): { top: string; left: string; } {
-        var placementLeft = this._rtl ? PanePlacement.right : PanePlacement.left;
-        return this._horizontal ? {
-            left: (this.panePlacement === placementLeft ? -1 : 1) * shownPaneRect.totalWidth + "px",
-            top: "0px"
-        } : {
-            left: "0px",
-            top: (this.panePlacement === PanePlacement.top ? -1 : 1) * shownPaneRect.totalHeight + "px"
-        };
-    }
-
-    private _paneSlideIn(shownPaneRect: IRect): Promise<any> {
-        return showEdgeUI(this._dom.paneWrapper, this._getAnimationOffsets(shownPaneRect));
-    }
-
-    private _paneSlideOut(shownPaneRect: IRect): Promise<any> {
-        return hideEdgeUI(this._dom.paneWrapper, this._getAnimationOffsets(shownPaneRect));
-    }
-
     //
     // Methods called by states
     //
@@ -895,34 +864,26 @@ export class SplitView {
         this._prepareAnimation(shownPaneRect, hiddenContentRect);
 
         var playPaneAnimation = (): Promise<any> => {
-            var peek = hiddenPaneThickness.total > 0;
-
-            if (peek) {
-                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
-                return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
-                    from: hiddenPaneThickness,
-                    to: shownPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
-                });
-            } else {
-                return this._paneSlideIn(shownPaneRect);
-            }
+            var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
+            // What percentage of the size change should be skipped? (e.g. let's do the first
+            // 30% of the size change instantly and then animate the other 70%)
+            var animationOffsetFactor = 0.3;
+            var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+            
+            return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
+                from: from,
+                to: shownPaneThickness.total,
+                actualSize: shownPaneThickness.total,
+                dimension: dim,
+                anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
+            });
         };
 
         var playShowAnimation = (): Promise<any> => {
-            if (this.shownDisplayMode === ShownDisplayMode.overlay) {
-                return playPaneAnimation();
-            } else {
-                var fadeInDelay = 350 * _TransitionAnimation._animationFactor;
-
-                var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(shownContentRect);
-                    return fadeIn(this._dom.contentWrapper);
-                });
-
-                return Promise.join([contentAnimation, playPaneAnimation()]);
+            if (this.shownDisplayMode === ShownDisplayMode.inline) {
+                this._setContentRect(shownContentRect);
             }
+            return playPaneAnimation();
         };
 
         return playShowAnimation().then(() => {
@@ -941,34 +902,26 @@ export class SplitView {
         this._prepareAnimation(shownPaneRect, shownContentRect);
 
         var playPaneAnimation = (): Promise<any> => {
-            var peek = hiddenPaneThickness.total > 0;
-
-            if (peek) {
-                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
-                return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
-                    from: shownPaneThickness,
-                    to: hiddenPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
-                });
-            } else {
-                return this._paneSlideOut(shownPaneRect);
-            }
+            var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
+            // What percentage of the size change should be skipped? (e.g. let's do the first
+            // 30% of the size change instantly and then animate the other 70%)
+            var animationOffsetFactor = 0.3;
+            var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+            
+            return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
+                from: from,
+                to: hiddenPaneThickness.total,
+                actualSize: shownPaneThickness.total,
+                dimension: dim,
+                anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
+            });
         };
 
         var playHideAnimation = (): Promise<any> => {
-            if (this.shownDisplayMode === ShownDisplayMode.overlay) {
-                return playPaneAnimation();
-            } else {
-                var fadeInDelay = 267 * _TransitionAnimation._animationFactor;
-
-                var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(hiddenContentRect);
-                    return fadeIn(this._dom.contentWrapper);
-                });
-
-                return Promise.join([contentAnimation, playPaneAnimation()]);
+            if (this.shownDisplayMode === ShownDisplayMode.inline) {
+                this._setContentRect(hiddenContentRect);
             }
+            return playPaneAnimation();
         };
 
 

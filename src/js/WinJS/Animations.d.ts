@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-import Promise = require("Promise");
+import Promise = require("./Promise");
 
 /**
  * Provides access to the Windows animations. These functions provide developers with the ability to use animations in their custom controls that are consistent with animations used by Windows controls.
@@ -386,8 +386,14 @@ export interface IAnimationMethodResponse {
 
 //#endregion Interfaces
 
-export interface IThickness {
-    content: number;
-    total: number;
+export interface IResizeTransitionOptions {
+    from: number;
+    to: number;
+    actualSize: number;
+    dimension: string;
+    
+    anchorTrailingEdge?: boolean;
+    duration?: number;
+    timing?: string;
 }
-export declare function _resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: { from: IThickness; to: IThickness; dimension: string; anchorTrailingEdge: boolean; }): Promise<any>
+export declare function _resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: IResizeTransitionOptions): Promise<any>;
