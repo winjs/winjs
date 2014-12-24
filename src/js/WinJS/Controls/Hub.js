@@ -1142,7 +1142,7 @@ define([
                     }
                 },
                 _keyDownHandler: function hub_keyDownHandler(ev) {
-                    if (this._isInteractive(ev.target)) {
+                    if (this._isInteractive(ev.target) || _ElementUtilities._hasCursorKeysBehaviors(ev.target)) {
                         return;
                     }
 

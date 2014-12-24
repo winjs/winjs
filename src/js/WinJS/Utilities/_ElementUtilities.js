@@ -2267,6 +2267,31 @@ define([
             return highestTabIndex;
         },
 
+        _hasCursorKeysBehaviors: function Utilities_hasCursorKeysBehaviors(element) {
+            if (element.tagName === "SELECT" ||
+                element.tagName === "TEXTAREA") {
+                return true;
+            }
+            if (element.tagName === "INPUT") {
+                return element.type === "" ||
+                    element.type === "date" ||
+                    element.type === "datetime" ||
+                    element.type === "datetime-local" ||
+                    element.type === "email" ||
+                    element.type === "month" ||
+                    element.type === "number" ||
+                    element.type === "password" ||
+                    element.type === "range" ||
+                    element.type === "search" ||
+                    element.type === "tel" ||
+                    element.type === "text" ||
+                    element.type === "time" ||
+                    element.type === "url" ||
+                    element.type === "week";
+            }
+            return false;
+        },
+
         _reparentChildren: function (originalParent, destinationParent) {
             var child = originalParent.firstChild;
             while (child) {
