@@ -673,7 +673,8 @@ define([
                 // prevent multiple events from firing when nesting observers
                 evt.stopPropagation();
 
-                if (this._attributeFilter.length && this._attributeFilter.indexOf(evt.attrName) === -1) {
+                var attrName = evt.attrName;
+                if (this._attributeFilter.length && this._attributeFilter.indexOf(attrName) === -1) {
                     return;
                 }
 
@@ -682,7 +683,7 @@ define([
                     return;
                 }
 
-                var attrName = evt.attrName;
+                var isAriaMutation = attrName.indexOf("aria") >= 0;
 
                 // DOM mutation events use different naming for this attribute
                 if (attrName === 'tabindex') {
@@ -695,7 +696,7 @@ define([
                     attributeName: attrName
                 });
 
-                if (this._observerCount === 1) {
+                if (this._observerCount === 1 && !isAriaMutation) {
                     this._dispatchEvent();
                 } else if (this._scheduled === false) {
                     this._scheduled = true;
