@@ -518,7 +518,7 @@ define([
                     }
                 },
 
-                /// <field type="String" oamOptionsDatatype="_UI.TapBehavior" locid="WinJS.UI.ListView.tapBehavior" helpKeyword="WinJS.UI.ListView.tapBehavior">
+                /// <field type="String" oamOptionsDatatype="WinJS.UI.TapBehavior" locid="WinJS.UI.ListView.tapBehavior" helpKeyword="WinJS.UI.ListView.tapBehavior">
                 /// Gets or sets how the ListView reacts when the user taps or clicks an item.
                 /// The tap or click can invoke the item, select it and invoke it, or have no
                 /// effect.

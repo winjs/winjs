@@ -228,7 +228,7 @@ define([
                 };
             }
 
-            // Signal ListView's own measurement operation. 
+            // Signal ListView's own measurement operation.
             // ListView always needs an opportunity to measure, even if layout cannot.
             site.readyToMeasure();
 
@@ -241,14 +241,14 @@ define([
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         Layout: _Base.Class.define(function Layout_ctor() {
-            /// <signature helpKeyword="exports.Layout.Layout">
-            /// <summary locid="exports.Layout.constructor">
+            /// <signature helpKeyword="WinJS.UI.Layout">
+            /// <summary locid="WinJS.UI.Layout.constructor">
             /// Creates a new Layout object.
             /// </summary>
-            /// <param name="options" type="Object" locid="exports.Layout.constructor_p:options">
+            /// <param name="options" type="Object" locid="WinJS.UI.Layout.constructor_p:options">
             /// The set of options to be applied initially to the new Layout object.
             /// </param>
-            /// <returns type="exports.Layout" locid="exports.Layout.constructor_returnValue">
+            /// <returns type="WinJS.UI.Layout" locid="WinJS.UI.Layout.constructor_returnValue">
             /// The new Layout object.
             /// </returns>
             /// </signature>
@@ -737,7 +737,7 @@ define([
                         } else if (adjustedKey === Key.rightArrow) {
                             var desiredIndex = currentItem.index + 1;
                             desiredIndex = (that._site.header ? desiredIndex : Math.min(that._groups.length - 1, currentItem.index + 1));
-                            return { 
+                            return {
                                 type: (desiredIndex >= that._groups.length ? _UI.ObjectType.header : _UI.ObjectType.groupHeader),
                                 index: (desiredIndex >= that._groups.length ? 0 : desiredIndex)
                             };
