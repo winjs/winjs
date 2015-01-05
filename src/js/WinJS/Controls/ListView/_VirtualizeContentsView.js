@@ -1253,7 +1253,7 @@ define([
                 // Update the ARIA attributes on item that are needed so that Narrator can announce it.
                 // item must be in the items container.
                 updateAriaForAnnouncement: function VirtualizeContentsView_updateAriaForAnnouncement(item, count) {
-                    if (item === this._listView.listHeader || item === this._listView.listFooter) {
+                    if (item === this._listView.header || item === this._listView.footer) {
                         return;
                     }
 
@@ -1877,7 +1877,7 @@ define([
 
                 waitForEntityPosition: function VirtualizeContentsView_waitForEntityPosition(entity) {
                     var that = this;
-                    if (entity.type === _UI.ObjectType.listHeader || entity.type === _UI.ObjectType.listFooter) {
+                    if (entity.type === _UI.ObjectType.header || entity.type === _UI.ObjectType.footer) {
                         // Headers and footers are always laid out by the ListView as soon as it gets them, so there's nothing to wait on
                         return Promise.wrap();
                     }

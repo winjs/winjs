@@ -247,17 +247,17 @@ define([
                     this._keyboardNavigationHandlers[Key.pageUp] = createArrowHandler(Key.pageUp, true);
                     this._keyboardNavigationHandlers[Key.pageDown] = createArrowHandler(Key.pageDown, true);
                     this._keyboardNavigationHandlers[Key.home] = function (oldFocus) {
-                        if (that.site._listHeader && (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.listFooter)) {
-                            return Promise.wrap({ type: _UI.ObjectType.listHeader, index: 0 });
+                        if (that.site._header && (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.footer)) {
+                            return Promise.wrap({ type: _UI.ObjectType.header, index: 0 });
                         }
 
 
-                        return Promise.wrap({ type: (oldFocus.type !== _UI.ObjectType.listFooter ? oldFocus.type : _UI.ObjectType.groupHeader), index: 0 });
+                        return Promise.wrap({ type: (oldFocus.type !== _UI.ObjectType.footer ? oldFocus.type : _UI.ObjectType.groupHeader), index: 0 });
                     };
                     this._keyboardNavigationHandlers[Key.end] = function (oldFocus) {
-                        if (that.site._listFooter && (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.listHeader)) {
-                            return Promise.wrap({ type: _UI.ObjectType.listFooter, index: 0 });
-                        } else if (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.listHeader) {
+                        if (that.site._footer && (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.header)) {
+                            return Promise.wrap({ type: _UI.ObjectType.footer, index: 0 });
+                        } else if (oldFocus.type === _UI.ObjectType.groupHeader || oldFocus.type === _UI.ObjectType.header) {
                             return Promise.wrap({ type: _UI.ObjectType.groupHeader, index: site._groups.length() - 1 });
                         } else {
                             // Get the index of the last container
@@ -1291,7 +1291,7 @@ define([
                 },
 
                 onTabEntered: function (eventObject) {
-                    if (this.site._groups.length() === 0 && !this.site._hasListHeaderOrFooter) {
+                    if (this.site._groups.length() === 0 && !this.site._hasHeaderOrFooter) {
                         return;
                     }
 
@@ -1311,7 +1311,7 @@ define([
 
                         // We tabbed into the ListView
                         focused.index = (focused.index === _Constants._INVALID_INDEX ? 0 : focused.index);
-                        if (forward || !(this.site._supportsGroupHeaderKeyboarding || this.site._hasListHeaderOrFooter)) {
+                        if (forward || !(this.site._supportsGroupHeaderKeyboarding || this.site._hasHeaderOrFooter)) {
                             // We tabbed into the ListView from before the ListView, so focus should go to items
                             var entity = { type: _UI.ObjectType.item };
                             if (focused.type === _UI.ObjectType.groupHeader) {
@@ -1329,7 +1329,7 @@ define([
                         } else {
                             // We tabbed into the ListView from after the ListView, focus should go to headers
                             var entity = { type: _UI.ObjectType.groupHeader };
-                            if (this.site._hasListHeaderOrFooter) {
+                            if (this.site._hasHeaderOrFooter) {
                                 if (this.site._lastFocusedElementInGroupTrack.type === _UI.ObjectType.groupHeader && this.site._supportsGroupHeaderKeyboarding) {
                                     entity.index = site._groups.groupFromItem(focused.index);
                                     if (dispatchKeyboardNavigating(site._element, focused, entity)) {
@@ -1359,7 +1359,7 @@ define([
                 },
 
                 onTabExiting: function (eventObject) {
-                    if (!this.site._hasListHeaderOrFooter && (!this.site._supportsGroupHeaderKeyboarding || this.site._groups.length() === 0)) {
+                    if (!this.site._hasHeaderOrFooter && (!this.site._supportsGroupHeaderKeyboarding || this.site._groups.length() === 0)) {
                         return;
                     }
 
@@ -1373,8 +1373,8 @@ define([
                             // Tabbing and we were focusing an item, go to headers.
                             // If we last saw focus in the header track on the layout header/footer, we'll move focus back to there first. Otherwise, we'll let the group header take it.
                             var lastType = this.site._lastFocusedElementInGroupTrack.type;
-                            if (lastType === _UI.ObjectType.listHeader || lastType === _UI.ObjectType.listFooter || !this.site._supportsGroupHeaderKeyboarding) {
-                                var entity = { type: (lastType === _UI.ObjectType.item ? _UI.ObjectType.listHeader : lastType), index: 0 };
+                            if (lastType === _UI.ObjectType.header || lastType === _UI.ObjectType.footer || !this.site._supportsGroupHeaderKeyboarding) {
+                                var entity = { type: (lastType === _UI.ObjectType.item ? _UI.ObjectType.header : lastType), index: 0 };
                             } else {
                                 var entity = { type: _UI.ObjectType.groupHeader, index: site._groups.groupFromItem(focused.index) };
                             }
@@ -1391,7 +1391,7 @@ define([
                         if (focused.type === _UI.ObjectType.groupHeader) {
                             targetIndex = site._groupFocusCache.getIndexForGroup(focused.index);
                         } else {
-                            targetIndex = (focused.type === _UI.ObjectType.listHeader ? 0 : site._view.lastItemIndex());
+                            targetIndex = (focused.type === _UI.ObjectType.header ? 0 : site._view.lastItemIndex());
                         }
                         var entity = { type: _UI.ObjectType.item, index: targetIndex };
                         if (dispatchKeyboardNavigating(site._element, focused, entity)) {

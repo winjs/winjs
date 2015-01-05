@@ -221,8 +221,63 @@ module WinJSTests {
             }
         });
     };
-
     generate('loadingstatechanged_NumItemsLoadedEventProperty', "GridLayout", loadingstatechanged_NumItemsLoadedEventProperty, { skipInitEvents: true });
+
+
+    var headerfooterevents = function (listView, complete) {
+        var lastHeaderEvent = null,
+            lastFooterEvent = null;
+        listView.addEventListener("headervisibilitychanged", function (e) {
+            lastHeaderEvent = e;
+        });
+        listView.addEventListener("footervisibilitychanged", function (e) {
+            lastFooterEvent = e;
+        });
+
+        function createSimpleElement() {
+            var element = document.createElement("div");
+            element.style.width = "100px";
+            element.style.height = "100px";
+            return element;
+        }
+
+        var header = createSimpleElement(),
+            footer = createSimpleElement();
+
+        var tests = [
+            function () {
+                listView.header = header;
+                listView.footer = footer;
+                return true;
+            },
+            function () {
+                LiveUnit.Assert.isTrue(!!lastHeaderEvent);
+                LiveUnit.Assert.isTrue(lastHeaderEvent.detail.visible);
+                LiveUnit.Assert.isTrue(!lastFooterEvent);
+
+                listView.scrollPosition = footer[(listView._horizontal() ? "offsetLeft" : "offsetTop")] + 100;
+                return true;
+            },
+
+            function () {
+                LiveUnit.Assert.isFalse(lastHeaderEvent.detail.visible);
+                LiveUnit.Assert.isTrue(!!lastFooterEvent);
+                LiveUnit.Assert.isTrue(lastFooterEvent.detail.visible);
+
+                listView.scrollPosition = 0;
+                return true;
+            },
+
+            function () {
+                LiveUnit.Assert.isTrue(lastHeaderEvent.detail.visible);
+                LiveUnit.Assert.isFalse(lastFooterEvent.detail.visible);
+                complete();
+            }
+        ];
+
+        Helper.ListView.runTests(listView, tests);
+    };
+    generate('headerfooterevents', "GridLayout", headerfooterevents, { skipInitEvents: true });
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.ListViewEventsTest");

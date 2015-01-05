@@ -2392,11 +2392,11 @@ declare module WinJS.UI {
         /**
          * The object is the header for the list.
         **/
-        listHeader,
+        header,
         /**
          * The object is the footer for the list.
         **/
-        listFooter
+        footer
     }
 
     /**
@@ -5839,12 +5839,12 @@ declare module WinJS.UI {
         /**
          * Gets or sets the footer of the ListView.
         **/
-        listFooter: HTMLDivElement;
+        footer: HTMLDivElement;
 
         /**
          * Gets or sets the header of the ListView.
         **/
-        listHeader: HTMLDivElement;
+        header: HTMLDivElement;
 
         /**
          * Gets or sets a value that specifies how the ListView fetches items and adds and removes them to the DOM. Don't change the value of this property after the ListView has begun loading data.
