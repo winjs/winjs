@@ -714,21 +714,17 @@ define([
                     /// The command found, an array of commands if more than one have the same ID, or null if no command is found.
                     /// </returns>
                     /// </signature>
-                    var commands = this.element.querySelectorAll("#" + id);
-                    var newCommands = [];
-                    for (var count = 0, len = commands.length; count < len; count++) {
-                        if (commands[count].winControl) {
-                            newCommands.push(commands[count].winControl);
-                        }
-                    }
-
-                    if (newCommands.length === 1) {
-                        return newCommands[0];
-                    } else if (newCommands.length === 0) {
+                    var commands = this._layout.commandsInOrder.filter(function (command) {
+                        return command.id === id || command.element.id === id;
+                    });
+                    
+                    if (commands.length === 1) {
+                        return commands[0];
+                    } else if (commands.length === 0) {
                         return null;
                     }
 
-                    return newCommands;
+                    return commands;
                 },
 
                 showCommands: function (commands) {

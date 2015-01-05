@@ -124,7 +124,7 @@ module CorsicaTests {
             OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
             WinJS.UI._Overlay._clickEatingAppBarDiv = false;
             WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
-    }
+        }
 
         // Test AppBar Instantiation
         testAppBarInstantiation = function () {
@@ -735,8 +735,6 @@ module CorsicaTests {
             }).then(complete);
         };
 
-
-
         testMoveFocusFromMenuToAppBar = function (complete) {
             createMenuInAppBar().then(function () {
                 var root = document.querySelector("#appBarDiv");
@@ -1138,49 +1136,49 @@ module CorsicaTests {
             }
 
         var verifyAppBarClosedCompact = function (appBar) {
-            appBar = appBar.element || appBar;
-            LiveUnit.Assert.isNotNull(appBar.id, "Test Bug!! This test requires the AppBar element have an id.");
+                appBar = appBar.element || appBar;
+                LiveUnit.Assert.isNotNull(appBar.id, "Test Bug!! This test requires the AppBar element have an id.");
 
-            var msg,
-                failures;
+                var msg,
+                    failures;
 
-            // verify is closed
-            msg = "Closed Compact AppBar should be closed";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.isTrue(appBar.winControl.hidden, msg);
+                // verify is closed
+                msg = "Closed Compact AppBar should be closed";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.isTrue(appBar.winControl.hidden, msg);
 
-            msg = "Closed Compact AppBar should not be a tab stop";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            failures = checkShouldBeTabStop(appBar, false);
-            LiveUnit.Assert.isFalse(failures.length, msg);
+                msg = "Closed Compact AppBar should not be a tab stop";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                failures = checkShouldBeTabStop(appBar, false);
+                LiveUnit.Assert.isFalse(failures.length, msg);
 
-            msg = "Closed Compact AppBar should be visible and take up space some space.";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            failures = checkShouldBeDisplayNone(appBar, false);
-            LiveUnit.Assert.isFalse(failures.length, msg);
+                msg = "Closed Compact AppBar should be visible and take up space some space.";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                failures = checkShouldBeDisplayNone(appBar, false);
+                LiveUnit.Assert.isFalse(failures.length, msg);
 
-            // Closed Compact AppBar should have InvokeButton.
-            verifyHasInvokeButton(appBar);
+                // Closed Compact AppBar should have InvokeButton.
+                verifyHasInvokeButton(appBar);
 
-            // Now that we have verified the invoke button, ensure that all other immediate children are not displayed or tabbable.
-            var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-appbar-invokebutton)");
-            msg = "Children of Closed Compact AppBar should be visible or have dimensions.";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            failures = checkShouldBeDisplayNone(childrenMinusInvokeButton, false);
-            LiveUnit.Assert.isFalse(failures.length, msg);
+                // Now that we have verified the invoke button, ensure that all other immediate children are not displayed or tabbable.
+                var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-appbar-invokebutton)");
+                msg = "Children of Closed Compact AppBar should be visible or have dimensions.";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                failures = checkShouldBeDisplayNone(childrenMinusInvokeButton, false);
+                LiveUnit.Assert.isFalse(failures.length, msg);
 
-            verifyHidden(appBar);
+                verifyHidden(appBar);
 
-            var commands: any = appBar.querySelectorAll(".win-command");
-            for (var i = 0, len = commands.length; i < len; i++) {
-                var labelEl = commands[i].querySelector(".win-label");
-                if (labelEl) {
-                    LiveUnit.Assert.areEqual("none", getComputedStyle(labelEl).display, "Label should not be visible in closed compact mode");
+                var commands: any = appBar.querySelectorAll(".win-command");
+                for (var i = 0, len = commands.length; i < len; i++) {
+                    var labelEl = commands[i].querySelector(".win-label");
+                    if (labelEl) {
+                        LiveUnit.Assert.areEqual("none", getComputedStyle(labelEl).display, "Label should not be visible in closed compact mode");
+                    }
                 }
-            }
-        };
+            };
 
-        var verifyAppBarCompletelyHidden = function (appBar) {
+            var verifyAppBarCompletelyHidden = function (appBar) {
                 appBar = appBar.element || appBar;
                 LiveUnit.Assert.isNotNull(appBar.id, "Test Bug!! This test requires the AppBar have a unique id.");
 
@@ -1596,7 +1594,7 @@ module CorsicaTests {
 
             // Simulate click on invoke button.
             var click = function (appBar) {
-                var trigger:any = function () {
+                var trigger: any = function () {
                     Helper.click(appBar._invokeButton);
                 };
                 trigger.sourceAppBar = appBar;
@@ -1610,7 +1608,7 @@ module CorsicaTests {
 
         testSingleAppBarLightDismissFocusWrapping = function (complete) {
             var root = document.getElementById("appBarDiv");
-            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none', layout:'commands' });
+            var topBar = new WinJS.UI.AppBar(null, { placement: 'top', commands: [{ id: 'top1', icon: 'add' }, { id: 'top2', icon: 'edit' }, { id: 'top3', icon: 'camera' }], closedDisplayMode: 'none', layout: 'commands' });
             var bottomBar = new WinJS.UI.AppBar(null, { placement: 'bottom', commands: [{ id: 'bot1', icon: 'add' }, { id: 'bot2', icon: 'edit' }, { id: 'bot3', icon: 'camera' }], closedDisplayMode: 'none', layout: 'custom' });
             root.appendChild(topBar.element);
             root.appendChild(bottomBar.element);
@@ -1993,16 +1991,16 @@ module CorsicaTests {
         testMenuLayoutShowHideCommands = function (complete) {
             var root = document.getElementById("appBarDiv");
             root.innerHTML =
-                "<div id='appBar'>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\"}'></button>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\"}'></button>" +
-                "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\"}' />" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\"}'></button>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"button\"}'></button>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton1\", label:\"Secondary Button 1\", type:\"button\", section:\"secondary\"}'></button>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton2\", label:\"Secondary Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
-                "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton3\", label:\"Secondary Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
-                "</div>";
+            "<div id='appBar'>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\"}'></button>" +
+            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\"}' />" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"button\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton1\", label:\"Secondary Button 1\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton2\", label:\"Secondary Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"SecButton3\", label:\"Secondary Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
+            "</div>";
             var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
                 layout: "menu"
             });
@@ -2072,7 +2070,7 @@ module CorsicaTests {
             // Verifies that the background color of the entire AppBar changes when styling the appbar element.
 
             var root = document.getElementById("appBarDiv");
-            var appBar = new WinJS.UI.AppBar(null, {layout: "menu"});
+            var appBar = new WinJS.UI.AppBar(null, { layout: "menu" });
             root.appendChild(appBar.element);
 
             appBar.element.style.backgroundColor = "rgb(255, 100, 05)";
@@ -2082,6 +2080,30 @@ module CorsicaTests {
             var msg = "AppBar menu layout's ToolBar element should match the color of the AppBar element";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, toolBarStyle.backgroundColor, msg);
+        }
+
+        testGetCommandById() {
+            var pairWiseOptions = {
+                    type: ['button', 'separator', 'toggle', 'flyout', 'content'],
+                    hidden: [true, false],
+                    section: ['primary', 'secondary', 'global', 'selection'],
+                },
+                commands = Helper.pairwise(pairWiseOptions).map(function (option, index) {
+                    return new AppBarCommand(null, { id: "cmd" + index, type: option.type, hidden: option.hidden, section: option.section });
+                }),
+                root = document.getElementById("appBarDiv");
+
+            ["custom", "commands", "menu"].forEach(function (layout) {
+                var appBar = new WinJS.UI.AppBar(null, { layout: layout, commands: commands });
+                root.appendChild(appBar.element);
+
+                commands.forEach(function (command, index) {
+                    var retrievedCommand = appBar.getCommandById(command.id);
+                    LiveUnit.Assert.isTrue(command === retrievedCommand, "AppBar with '" + layout + "' layout using 'getCommandById' failed to retrieve " +
+                        "AppBarCommmand: { id: " + command.id + ", type: " + command.type + ", hidden: " + command.hidden + ", section: " + command.section + "}");
+                });
+
+            });
         }
     };
 }
