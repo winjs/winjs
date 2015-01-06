@@ -286,7 +286,7 @@ define([
                     // function is called to update the cached width measurement of all visible AppBarCommands.
 
                     var visibleCommands = (newSetOfVisibleCommands) ? newSetOfVisibleCommands : this.commandsInOrder.filter(function (command) {
-                        return !command.winControl.hidden;
+                        return !command.hidden;
                     });
                     this._fullSizeWidthOfLastKnownVisibleCommands = this._getWidthOfFullSizeCommands(visibleCommands);
                 },
