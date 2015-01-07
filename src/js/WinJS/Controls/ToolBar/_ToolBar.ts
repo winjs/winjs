@@ -98,7 +98,7 @@ export class ToolBar {
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
     private _refreshPending: boolean;
     private _refreshBound: Function;
-    private _resizeHandlerBound: (ev:any) => any;
+    private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
     private _extraClass: string;
 
@@ -708,7 +708,7 @@ export class ToolBar {
             var originalDisplayStyle = command.element.style.display;
             command.element.style.display = "";
 
-            if (command.type === _Constants.typeContent && !this._customContentCommandsWidth[this._commandUniqueId(command)] ) {
+            if (command.type === _Constants.typeContent && !this._customContentCommandsWidth[this._commandUniqueId(command)]) {
                 this._customContentCommandsWidth[this._commandUniqueId(command)] = _ElementUtilities.getTotalWidth(command.element);
             } else if (command.type === _Constants.typeSeparator) {
                 if (!this._separatorWidth) {
@@ -778,7 +778,7 @@ export class ToolBar {
             type: (command.type === _Constants.typeContent ? _Constants.typeFlyout : command.type) || _Constants.typeButton,
             disabled: command.disabled,
             flyout: command.flyout,
-            beforeOnClick: () => {
+            beforeInvoke: () => {
                 // Save the command that was selected
                 this._chosenCommand = <_Command.ICommand>(menuCommand["_originalToolBarCommand"]);
 
@@ -810,6 +810,30 @@ export class ToolBar {
     }
 
     private _setupOverflowArea(additionalCommands: any[]) {
+
+        // Set up special flyout for "content" typed commands in the overflow area.
+        var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
+        var customContent = additionalCommands.filter(isCustomContent);
+        if (customContent.length === 0) {
+            customContent = this._secondaryCommands.filter(isCustomContent);
+        }
+
+        if (customContent.length > 0 && !this._customContentFlyout) {
+            var mainFlyout = _Global.document.createElement("div");
+            this._customContentContainer = _Global.document.createElement("div");
+            _ElementUtilities.addClass(this._customContentContainer, _Constants.overflowContentFlyoutCssClass);
+            mainFlyout.appendChild(this._customContentContainer);
+            this._customContentFlyout = new _Flyout.Flyout(mainFlyout);
+            _Global.document.body.appendChild(this._customContentFlyout.element);
+            this._customContentFlyout.onbeforeshow = () => {
+                _ElementUtilities.empty(this._customContentContainer);
+                _ElementUtilities._reparentChildren(this._chosenCommand.element, this._customContentContainer);
+            };
+            this._customContentFlyout.onafterhide = () => {
+                _ElementUtilities._reparentChildren(this._customContentContainer, this._chosenCommand.element);
+            };
+        }
+
         if (this.shownDisplayMode === _Constants.shownDisplayModes.full) {
             // Inline menu mode always has the overflow button hidden
             this._overflowButton.style.display = "";
@@ -875,28 +899,6 @@ export class ToolBar {
 
     private _setupOverflowAreaDetached(additionalCommands: any[]) {
         this._writeProfilerMark("_setupOverflowAreaDetached,info");
-
-        var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
-        var customContent = additionalCommands.filter(isCustomContent);
-        if (customContent.length === 0) {
-            customContent = this._secondaryCommands.filter(isCustomContent);
-        }
-
-        if (customContent.length > 0 && !this._customContentFlyout) {
-            var mainFlyout = _Global.document.createElement("div");
-            this._customContentContainer = _Global.document.createElement("div");
-            _ElementUtilities.addClass(this._customContentContainer, _Constants.overflowContentFlyoutCssClass);
-            mainFlyout.appendChild(this._customContentContainer);
-            this._customContentFlyout = new _Flyout.Flyout(mainFlyout);
-            _Global.document.body.appendChild(this._customContentFlyout.element);
-            this._customContentFlyout.onbeforeshow = () => {
-                _ElementUtilities.empty(this._customContentContainer);
-                _ElementUtilities._reparentChildren(this._chosenCommand.element, this._customContentContainer);
-            };
-            this._customContentFlyout.onafterhide = () => {
-                _ElementUtilities._reparentChildren(this._customContentContainer, this._chosenCommand.element);
-            };
-        }
 
         if (!this._menu) {
             this._menu = new Menu.Menu();

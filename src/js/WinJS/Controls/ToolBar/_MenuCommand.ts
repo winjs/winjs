@@ -5,19 +5,19 @@ import _Constants = require("../ToolBar/_Constants");
 import _MenuCommandBase = require("../Menu/_Command");
 
 export class _MenuCommand extends _MenuCommandBase.MenuCommand {
-    private _beforeOnClick: Function;
+    private _beforeInvoke: Function;
     private _isAttachedMode: boolean;
 
     constructor(isAttachedMode: boolean, element?: HTMLElement, options?: any) {
-        if (options && options.beforeOnClick) {
-            this._beforeOnClick = options.beforeOnClick;
+        if (options && options.beforeInvoke) {
+            this._beforeInvoke = options.beforeInvoke;
         }
         this._isAttachedMode = isAttachedMode;
         super(element, options);
     }
 
-    _handleClick(event: any) {
-        this._beforeOnClick && this._beforeOnClick(event);
-        super._handleClick(event);
+    _invoke(event: any) {
+        this._beforeInvoke && this._beforeInvoke(event);
+        super._invoke(event);
     }
 }

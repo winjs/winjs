@@ -42,9 +42,9 @@ export declare class MenuCommand {
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
     /**
-     * Handles the menu click event
+     * MenuCommand invoke behavior
     **/
-    _handleClick(event: any): void;
+    _invoke(event: any): void;
 
 
     /**

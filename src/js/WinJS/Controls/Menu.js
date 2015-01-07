@@ -368,6 +368,11 @@ define([
                 },
 
                 _handleCommandInvoked: function Menu_handleCommandInvoked(event) {
+                    if (this._hoverPromise) {
+                        // Prevent pending duplicate invoke triggered via hover.
+                        this._hoverPromise.cancel();
+                    }
+
                     // Menu hides when invoking a command commits an action, not when a subFlyout is invoked.
                     var command = event.detail.command;
                     if (command._type !== _Constants.typeFlyout) {
