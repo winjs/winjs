@@ -1951,9 +1951,8 @@ module CorsicaTests {
                 var toolbar = toolbarEl.winControl;
 
                 LiveUnit.Assert.isNotNull(toolbarEl, "ToolBar element not found");
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-toolbarcontainer"));
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar-menu"));
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement.parentElement, "win-appbar"));
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-menu"));
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar"));
                 LiveUnit.Assert.areEqual(_ToolBarConstants.shownDisplayModes.full, toolbar.shownDisplayMode, "Invalid toolbar.shownDisplayMode configuration in the appbar");
 
                 Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);

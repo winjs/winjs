@@ -1190,7 +1190,8 @@ define([
                 _animatePositionChange: function AppBar_animatePositionChange(fromPosition, toPosition) {
                     // Determines and executes the proper transition between visible positions
 
-                    this._layout.positionChanging(fromPosition, toPosition);
+                    var layoutElementsAnimationPromise = this._layout.positionChanging(fromPosition, toPosition),
+                        appBarElementAnimationPromise;
 
                     // Get values in terms of pixels to perform animation.
                     var beginningVisiblePixelHeight = this._visiblePixels[fromPosition],
@@ -1211,11 +1212,13 @@ define([
                     // Animate
                     if (endingVisiblePixelHeight > beginningVisiblePixelHeight) {
                         var fromOffset = { top: offsetTop + "px", left: "0px" };
-                        return Animations.showEdgeUI(this._element, fromOffset, { mechanism: "transition" });
+                        appBarElementAnimationPromise = Animations.showEdgeUI(this._element, fromOffset, { mechanism: "transition" });
                     } else {
                         var toOffset = { top: offsetTop + "px", left: "0px" };
-                        return Animations.hideEdgeUI(this._element, toOffset, { mechanism: "transition" });
+                        appBarElementAnimationPromise = Animations.hideEdgeUI(this._element, toOffset, { mechanism: "transition" });
                     }
+
+                    return Promise.join([layoutElementsAnimationPromise, appBarElementAnimationPromise]);
                 },
 
                 _checkDoNext: function AppBar_checkDoNext() {

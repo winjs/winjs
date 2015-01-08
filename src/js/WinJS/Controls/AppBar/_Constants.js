@@ -25,7 +25,6 @@ define([
         hiddenClass: "win-appbar-hidden",
         minimalClass: "win-appbar-minimal",
         menuContainerClass: "win-appbar-menu",
-        toolbarContainerClass: "win-appbar-toolbarcontainer",
 
         // Constants for AppBar placement
         appBarPlacementTop: "top",

@@ -689,6 +689,8 @@ define([
         var diff = args.anchorTrailingEdge ? args.to.total - args.from.total : args.from.total - args.to.total;
         var translate = args.dimension === "width" ? "translateX" : "translateY";
         var size = args.dimension;
+        var duration = args.duration || 367;
+        var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
     
         // Set up
         elementClipper.style[size] = args.to.total + "px";
@@ -702,8 +704,8 @@ define([
         
         // Animate
         var transition = {
-            duration: 367,
-            timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
+            duration: duration,
+            timing: timing,
             to: ""
         };
         return Promise.join([
@@ -715,6 +717,8 @@ define([
     function shrinkTransition(elementClipper, element, args) {
         var diff = args.anchorTrailingEdge ? args.from.total - args.to.total : args.to.total - args.from.total;
         var translate = args.dimension === "width" ? "translateX" : "translateY";
+        var duration = args.duration || 367;
+        var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
     
         // Set up
         elementClipper.style[transformNames.scriptName] = "";
@@ -726,8 +730,8 @@ define([
     
         // Animate
         var transition = {
-            duration: 367,
-            timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
+            duration: duration,
+            timing: timing
         };
         var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + diff + "px)" });
         var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -diff + "px)" });
@@ -2527,6 +2531,8 @@ define([
         //     from/to are objects of the form { content: number; total: number; }. "content" is the
         //     width/height of *element*'s content box (e.g. getContentWidth). "total" is the width/height
         //     of *element*'s margin box (e.g. getTotalWidth).
+        //   - duration: The CSS transition duration property.
+        //   - timing: The CSS transition timing property.
         //   - dimension: The dimension on which *element* is resizing. Either "width" or "height".
         //   - anchorTrailingEdge: During the resize animation, one edge will move and the other edge will
         //     remain where it is. This flag specifies which edge is anchored (i.e. won't move).

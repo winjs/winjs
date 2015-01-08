@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 define([
     'exports',
+    '../../Animations',
     '../../Animations/_TransitionAnimation',
     '../../BindingList',
     '../../Core/_BaseUtils',
@@ -18,7 +19,7 @@ define([
     '../../Utilities/_ElementUtilities',
     './_Command',
     './_Constants'
-], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
+], function appBarLayoutsInit(exports, Animations, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
 
     // AppBar will use this when AppBar.layout property is set to "custom"
@@ -494,12 +495,8 @@ define([
                     }
                     this.appBarEl.appendChild(this._menu);
 
-                    this._toolbarContainer = _Global.document.createElement("div");
-                    _ElementUtilities.addClass(this._toolbarContainer, _Constants.toolbarContainerClass);
-                    this._menu.appendChild(this._toolbarContainer);
-
                     this._toolbarEl = _Global.document.createElement("div");
-                    this._toolbarContainer.appendChild(this._toolbarEl);
+                    this._menu.appendChild(this._toolbarEl);
 
                     this._createToolBar(commands);
                 },
@@ -589,9 +586,9 @@ define([
                 },
 
                 setFocusOnShow: function _AppBarMenuLayout_setFocusOnShow() {
-                    // Make sure the toolbarContainer (used for clipping during the resize animation)
+                    // Make sure the menu (used for clipping during the resize animation)
                     // doesn't scroll when we give focus to the AppBar.
-                    this.appBarEl.winControl._setFocusToAppBar(true, this._toolbarContainer);
+                    this.appBarEl.winControl._setFocusToAppBar(true, this._menu);
                 },
 
                 _updateData: function _AppBarMenuLayout_updateData(data) {
@@ -697,19 +694,6 @@ define([
                 _positionToolBar: function _AppBarMenuLayout_positionToolBar() {
                     if (!this._disposed) {
                         this._writeProfilerMark("_positionToolBar,info");
-
-                        var menuOffset = this._toolbarEl.offsetHeight - ((this._isMinimal() && !this._isBottom()) ? 0 : this.appBarEl.offsetHeight);
-                        var toolbarOffset = this._toolbarEl.offsetHeight - (this._isMinimal() ? 0 : this.appBarEl.offsetHeight);
-
-                        // Ensure that initial position is correct
-                        this._toolbarContainer.style[this._tranformNames.scriptName] = "";
-                        this._menu.style[this._tranformNames.scriptName] = "";
-                        this._toolbarEl.style[this._tranformNames.scriptName] = "";
-
-                        this._toolbarContainer.style[this._tranformNames.scriptName] = "translateY(0px)";
-                        this._menu.style[this._tranformNames.scriptName] = "translateY(-" + menuOffset + 'px)';
-                        this._toolbarEl.style[this._tranformNames.scriptName] = "translateY(" + toolbarOffset + 'px)';
-
                         this._initialized = true;
                     }
                 },
@@ -722,28 +706,39 @@ define([
                         this._toolbar.forceLayout();
                         this._positionToolBar();
                     }
-
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
-                    var animation1, animation2;
                     if (this._isBottom()) {
-                        animation1 = this._executeTranslate(this._toolbarContainer, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
-                        animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + -(this._toolbarContainer.offsetHeight - heightVisible) + "px)");
+                        // Bottom AppBar Animation
+                        var offsetTop = this._menu.offsetHeight - heightVisible;
+                        return this._executeTranslate(this._menu, "translateY(" + -offsetTop + "px)");
                     } else {
-                        animation1 = this._executeTranslate(this._toolbarContainer, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
-                        animation2 = this._executeTranslate(this._toolbarEl, "translateY(0px)");
+                        // Top AppBar Animation
+                        return Animations._resizeTransition(this._menu, this._toolbarEl, {
+                            from: { content: heightVisible, total: heightVisible },
+                            to: { content: this._menu.offsetHeight, total: this._menu.offsetHeight },
+                            dimension: "height",
+                            duration: 400,
+                            timing: "ease-in",
+                        });
                     }
-                    return Promise.join([animation1, animation2]);
                 },
 
                 _animateToolBarExit: function _AppBarMenuLayout_animateToolBarExit() {
                     this._writeProfilerMark("_animateToolBarExit,info");
 
                     var heightVisible = this._isMinimal() ? 0 : this.appBarEl.offsetHeight;
-                    var animation1 = this._executeTranslate(this._toolbarContainer, "translateY(0px)");
-                    var animation2 = this._executeTranslate(this._toolbarEl, "translateY(" + (this._toolbarContainer.offsetHeight - heightVisible) + "px)");
-                    var animation = Promise.join([animation1, animation2]);
-                    animation.then(this._positionToolBarBound, this._positionToolBarBound);
-                    return animation;
+                    if (this._isBottom()) {
+                        return this._executeTranslate(this._menu, "none");
+                    } else {
+                        // Top AppBar Animation
+                        return Animations._resizeTransition(this._menu, this._toolbarEl, {
+                            from: { content: this._menu.offsetHeight, total: this._menu.offsetHeight },
+                            to: { content: heightVisible, total: heightVisible },
+                            dimension: "height",
+                            duration: 400,
+                            timing: "ease-in",
+                        });
+                    }
                 },
 
                 _executeTranslate: function _AppBarMenuLayout_executeTranslate(element, value) {
