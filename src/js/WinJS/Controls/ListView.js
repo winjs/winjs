@@ -1194,20 +1194,11 @@ define([
                     } else {
                         if (_ElementUtilities.hasClass(this._canvas, selectionModeClass)) {
                             var that = this;
-                            var animationCompleteHandler = function (e) {
-                                var isAnimationCompleteEvent = (e && e.animationName && e.animationName.indexOf(_Constants._hidingSelectionModeAnimationName) !== -1);
-                                if (isAnimationCompleteEvent || !e) {
-                                    _ElementUtilities._removeEventListener(that._canvas, "animationEnd", animationCompleteHandler, false);
-                                    _ElementUtilities.removeClass(that._canvas, hidingSelectionModeClass);
-                                }
-                            };
-
                             _Global.setTimeout(function () {
                                 _Global.setTimeout(function () {
-                                    animationCompleteHandler();
+                                    _ElementUtilities.removeClass(that._canvas, hidingSelectionModeClass);
                                 }, _Constants._hidingSelectionModeAnimationTimeout);
                             }, 50);
-                            _ElementUtilities._addEventListener(this._canvas, "animationEnd", animationCompleteHandler, false);
                             _ElementUtilities.addClass(this._canvas, hidingSelectionModeClass);
                         }
                         _ElementUtilities.removeClass(this._canvas, selectionModeClass);

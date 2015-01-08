@@ -59,7 +59,6 @@ define([
     members._selectionModeClass = "win-selectionmode";
     members._noCSSGrid = "win-nocssgrid";
     members._hidingSelectionMode = "win-hidingselectionmode";
-    members._hidingSelectionModeAnimationName = "WinJS-selectionMode-shiftLeft";
     members._hidingSelectionModeAnimationTimeout = 250;
 
     members._INVALID_INDEX = -1;

@@ -294,24 +294,28 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
     left: 2px;
 }
 .win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-item {
-    animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
-    -webkit-animation: WinJS-selectionMode-shiftRight 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transition: transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-transition: -webkit-transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: translate(40px, 0px);
+    -webkit-transform: translate(40px, 0px);
 }
 .win-listview.win-rtl.win-selectionstylefilled .win-surface.win-selectionmode .win-item {
-    animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
-    -webkit-animation: WinJS-selectionMode-shiftRight-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transition: transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-transition: -webkit-transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: translate(-40px, 0px);
+    -webkit-transform: translate(-40px, 0px);
 }
 .win-listview.win-selectionstylefilled .win-surface.win-hidingselectionmode .win-item {
-    animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
-    -webkit-animation: WinJS-selectionMode-shiftLeft 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transition: transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-transition: -webkit-transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: none;
+    -webkit-transform: none;
 }
 .win-listview.win-rtl.win-selectionstylefilled .win-surface.win-hideselectionmode .win-item {
-    animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
-    -webkit-animation: WinJS-selectionMode-shiftLeft-rtl 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    transition: transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
+    -webkit-transition: -webkit-transform 250ms cubic-bezier(0.17, 0.79, 0.215, 1.0025);
     transform: none;
+    -webkit-transform: none;
 }
 .win-listview.win-selectionstylefilled .win-surface.win-selectionmode .win-itembox::after {
     left: 12px;
