@@ -125,6 +125,17 @@ export interface ILightDismissable {
 // Keep in sync with ILightDismissable and the LightDismissableElement constructor.
 export interface ILightDismissableElementArgs {
     element: HTMLElement;
+    // This will be set as the tabIndex of the element. All light dismissable elements
+    // need to have a tabIndex otherwise they will lose focus when a user taps on a
+    // non-focusable descendant. If you are unsure of the appropriate tabIndex, use -1: it
+    // will allow the element to be focusable but users will not be able to reach it with
+    // the tab key.
+    // Style outline to none if you don't want a focus visual on your root element.
+    // Including this in ILightDismissableElementArgs has 2 benefits:
+    //   - It ensures all light dismissable elements have a tabIndex.
+    //   - It makes it clear to the control author that a tabIndex is being set on their
+    //     element.
+    tabIndex: number;
     onLightDismiss(info: ILightDismissInfo): void;
     
     setZIndex?(zIndex: string): void;
@@ -147,6 +158,7 @@ export class LightDismissableElement implements ILightDismissable {
     
     constructor(args: ILightDismissableElementArgs) {
         this.element = args.element;
+        this.element.tabIndex = args.tabIndex;
         this.onLightDismiss = args.onLightDismiss;
         
         // Allow the caller to override the default implementations of our ILightDismissable methods.

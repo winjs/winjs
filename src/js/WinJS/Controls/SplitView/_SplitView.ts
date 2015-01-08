@@ -264,6 +264,7 @@ module States {
                     
                     this.splitView._dismissable = new _LightDismissService.LightDismissableElement({
                         element: this.splitView._dom.paneWrapper,
+                        tabIndex: -1,
                         onLightDismiss: () => {
                             this.splitView.hidePane();
                         }
