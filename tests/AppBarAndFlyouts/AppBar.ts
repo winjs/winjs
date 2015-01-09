@@ -895,7 +895,7 @@ module CorsicaTests {
             var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), { layout: 'menu' });
 
             // Make sure we start from a sane place and verify initial menu layout HTML.
-            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(appBar.element, _Constants.menuLayoutClass), "Commands Layout AppBar should have the win-menulayout CSS class");
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(appBar.element, _Constants.menuLayoutClass), "menu layout AppBar should have the win-menulayout CSS class");
             var layoutHTML = appBar.element.querySelectorAll(".win-appbar-menu");
             LiveUnit.Assert.isTrue(layoutHTML.length === 1, "menu layout appbar should have its own HTML inside of the AppBar element.");
 
