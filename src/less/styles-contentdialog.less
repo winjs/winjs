@@ -45,7 +45,6 @@
     }
     
     .win-contentdialog-backgroundoverlay {
-        z-index: -1; /* Put backgroundoverlay behind the dialog's body */
         position: absolute;
         top: 0;
         left: 0;
@@ -58,6 +57,7 @@
         #flex > .flex-direction(column);
         
         #flex > .flex(@grow: 1; @shrink: 1);
+        z-index: 1; /* Put the dialog's body above the backgroundoverlay */
         
         outline-style: solid;
         outline-width: 1px;

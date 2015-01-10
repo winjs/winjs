@@ -110,13 +110,12 @@
             color: @textColorSelected;
         }
 
-        button[aria-checked=true].win-command:after {
+        button[aria-checked=true].win-command:before {
             position: absolute;
             height: 100%;
             width: 100%;
             background-color: @accentColor;
             opacity:@accentColorDefaultOpacity;
-            z-index: -1;
             box-sizing: content-box;
             content: "";
             /* We want this pseudo element to cover the border of its parent. */
@@ -225,15 +224,14 @@
             color:@textColorActive;
         }
 
-        &.win-menu button.win-command-flyout-activated:after,
-        .win-menu button.win-command-flyout-activated:after {
+        &.win-menu button.win-command-flyout-activated:before,
+        .win-menu button.win-command-flyout-activated:before {
             position: absolute;
             height: 100%;
             width: 100%;
             background-color: @accentColor;
             opacity: @listSelectRestOpacity;
             content: "";
-            z-index: -1;
             box-sizing: content-box;
             /* We want this pseudo element to cover the border of its parent. */
             /* Put a 1px border on this element to make it larger and then set its top/left to -1px.*/
@@ -242,8 +240,8 @@
             left: -1px;
         }
 
-        &.win-menu button[aria-checked=true].win-command:after,
-        .win-menu button[aria-checked=true].win-command:after {
+        &.win-menu button[aria-checked=true].win-command:before,
+        .win-menu button[aria-checked=true].win-command:before {
             background-color: transparent;
             border-color: transparent;
         }
@@ -307,11 +305,11 @@
             background-color: transparent;
         }
 
-        button:enabled[aria-checked=true].win-command:hover:after {
+        button:enabled[aria-checked=true].win-command:hover:before {
             opacity:@accentColorHoverOpacity;
         }
 
-        button:enabled[aria-checked=true].win-command:hover:active:after {
+        button:enabled[aria-checked=true].win-command:hover:active:before {
             opacity:@accentColorActiveOpacity;
         }
     }
