@@ -340,11 +340,11 @@ module CorsicaTests {
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(menu);
             }).then(() => {
-                LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
+                    LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
 
-                OverlayHelpers.disposeAndRemove(menuElement);
-                complete();
-            });
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    complete();
+                });
         }
 
         testMenuLaysoutCommandsCorrectly = function (complete) {
@@ -485,32 +485,32 @@ module CorsicaTests {
 
                 return MenuCommand._activateFlyoutCommand(f1);
             }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f1, "TEST ERROR: command needs to be activated before continuing");
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f1, "TEST ERROR: command needs to be activated before continuing");
 
-                msg = "Focusing an activated 'flyout' typed command in a menu should leave it activated";
-                LiveUnit.LoggingCore.logComment("Test: " + msg);
-                f1.element.focus();
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f1, msg);
+                    msg = "Focusing an activated 'flyout' typed command in a menu should leave it activated";
+                    LiveUnit.LoggingCore.logComment("Test: " + msg);
+                    f1.element.focus();
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f1, msg);
 
-                msg = "Changing focus from an activated 'flyout' typed command in a Menu, to any other command in that Menu, should deactivate all commands.";
-                LiveUnit.LoggingCore.logComment("Test : " + msg);
-                f2.element.focus();
-                verifyAllCommandsDeactivated(commands, msg);
+                    msg = "Changing focus from an activated 'flyout' typed command in a Menu, to any other command in that Menu, should deactivate all commands.";
+                    LiveUnit.LoggingCore.logComment("Test : " + msg);
+                    f2.element.focus();
+                    verifyAllCommandsDeactivated(commands, msg);
 
-                return MenuCommand._activateFlyoutCommand(f2);
-            }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f2, "TEST ERROR: command needs to be activated before continuing");
+                    return MenuCommand._activateFlyoutCommand(f2);
+                }).then(() => {
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(f2, "TEST ERROR: command needs to be activated before continuing");
 
-                msg = "Changing focus from an activated 'flyout' typed command in a Menu, to any other command in that Menu, should deactivate all commands.";
-                LiveUnit.LoggingCore.logComment("Test: " + msg);
-                b1.element.focus();
-                verifyAllCommandsDeactivated(commands, msg);
+                    msg = "Changing focus from an activated 'flyout' typed command in a Menu, to any other command in that Menu, should deactivate all commands.";
+                    LiveUnit.LoggingCore.logComment("Test: " + msg);
+                    b1.element.focus();
+                    verifyAllCommandsDeactivated(commands, msg);
 
-                OverlayHelpers.disposeAndRemove(menuElement);
-                OverlayHelpers.disposeAndRemove(subMenuElement);
-                OverlayHelpers.disposeAndRemove(subFlyoutElement);
-                complete();
-            });
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    OverlayHelpers.disposeAndRemove(subMenuElement);
+                    OverlayHelpers.disposeAndRemove(subFlyoutElement);
+                    complete();
+                });
         };
 
         testCommandsDeactivateWhenContainingMenuHides = function (complete) {
@@ -543,25 +543,25 @@ module CorsicaTests {
             OverlayHelpers.show(menu1).then(() => {
                 return MenuCommand._activateFlyoutCommand(c1);
             }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c1, "TEST ERROR: command needs to be activated before continuing");
-                return MenuCommand._activateFlyoutCommand(c2);
-            }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c2, "TEST ERROR: command needs to be activated before continuing");
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c1, "TEST ERROR: command needs to be activated before continuing");
+                    return MenuCommand._activateFlyoutCommand(c2);
+                }).then(() => {
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c2, "TEST ERROR: command needs to be activated before continuing");
 
-                msg = "When a Menu is hidden, all of its 'flyout' typed MenuCommands should be deactivated";
-                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                    msg = "When a Menu is hidden, all of its 'flyout' typed MenuCommands should be deactivated";
+                    LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(menu2)
             }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandDeactivated(c2);
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandDeactivated(c2);
 
-                OverlayHelpers.disposeAndRemove(menu1Element);
-                OverlayHelpers.disposeAndRemove(menu2Element);
-                OverlayHelpers.disposeAndRemove(menu3Element);
-                complete();
-            });
+                    OverlayHelpers.disposeAndRemove(menu1Element);
+                    OverlayHelpers.disposeAndRemove(menu2Element);
+                    OverlayHelpers.disposeAndRemove(menu3Element);
+                    complete();
+                });
         };
 
-        testParentMenuMovesFocusToSubMenuWhenActivatedMenuCommandIsFocused = function(complete) {
+        testParentMenuMovesFocusToSubMenuWhenActivatedMenuCommandIsFocused = function (complete) {
             // Verifies that when a Menu contains a 'flyout' typed MenuCommand that is already activated, and that MenuCommand recieves focus,
             // then the Menu should move focus onto the element of the MenuCommand's subMenu and all of the subMenu's 'flyout' typed commands
             // should be deactivated.
@@ -611,15 +611,15 @@ module CorsicaTests {
             OverlayHelpers.show(parentMenu).then(() => {
                 return MenuCommand._activateFlyoutCommand(c1);
             }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c1, "TEST ERROR: command needs to be activated before continuing");
-                return MenuCommand._activateFlyoutCommand(c2);
-            }).then(() => {
-                OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c2, "TEST ERROR: command needs to be activated before continuing");
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c1, "TEST ERROR: command needs to be activated before continuing");
+                    return MenuCommand._activateFlyoutCommand(c2);
+                }).then(() => {
+                    OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(c2, "TEST ERROR: command needs to be activated before continuing");
 
-                msg = "Focusing an activated command in the Parent Menu should move focus to that commands subMenu and deactivate all 'flyout' commands in the subMenu";
-                LiveUnit.LoggingCore.logComment("Test: " + msg);
-                c1.element.focus();
-            });
+                    msg = "Focusing an activated command in the Parent Menu should move focus to that commands subMenu and deactivate all 'flyout' commands in the subMenu";
+                    LiveUnit.LoggingCore.logComment("Test: " + msg);
+                    c1.element.focus();
+                });
         };
 
     }

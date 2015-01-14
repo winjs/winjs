@@ -10,12 +10,13 @@ define([
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
+    '../_Signal',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     './AppBar/_Constants',
     './Flyout/_Overlay'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -85,6 +86,8 @@ define([
                     // Removes flyout param and its subflyout descendants from the _cascadingStack.
                     if (!this.reentrancyLock && flyout && this.indexOf(flyout) >= 0) {
                         this.reentrancyLock = true;
+                        var signal = new _Signal();
+                        this.unlocked = signal.promise;
 
                         var subFlyout;
                         while (this.length && flyout !== subFlyout) {
@@ -94,6 +97,8 @@ define([
                         }
 
                         this.reentrancyLock = false;
+                        this.unlocked = null;
+                        signal.complete();
                     }
                 },
                 collapseAll: function _CascadeManager_collapseAll(keyboardInvoked) {
@@ -425,11 +430,11 @@ define([
                     // We expect an anchor
                     if (!anchor) {
                         // If we have _nextLeft, etc., then we were continuing an old animation, so that's OK
-                        if (!this._retryLast) {
+                        if (!this._reuseCurrent) {
                             throw new _ErrorFromName("WinJS.UI.Flyout.NoAnchor", strings.noAnchor);
                         }
-                        // Last call was incomplete, so use the previous _current values.
-                        this._retryLast = null;
+                        // Last call was incomplete, so reuse the previous _current values.
+                        this._reuseCurrent = null;
                     } else {
                         // Remember the anchor so that if we lose focus we can go back
                         this._currentAnchor = anchor;
@@ -444,57 +449,65 @@ define([
                     }
 
                     // If we're animating (eg baseShow is going to fail), or the cascadeManager is in the middle of a updating the cascade,
-                    // then don't mess up our current state. Queue us up to wait for current operation to finish first.
-                    if (this._element.winAnimating || Flyout._cascadeManager.reentrancyLock) {
+                    // then don't mess up our current state.
+                    if (this._element.winAnimating) {
+                        this._reuseCurrent = true;
+                        // Queue us up to wait for the current animation to finish. 
+                        // _checkDoNext() is always scheduled after the current animation completes.
                         this._doNext = "show";
-                        this._retryLast = true;
-                        return;
-                    }
+                    } else if (Flyout._cascadeManager.reentrancyLock) {
+                        this._reuseCurrent = true;
+                        // Queue us up to wait for the current animation to finish. 
+                        // Schedule a call to _checkDoNext() for when the cascadeManager unlocks.
+                        this._doNext = "show";
+                        var that = this;
+                        Flyout._cascadeManager.unlocked.then(function () { that._checkDoNext(); });
+                    } else {
+                        // We call our base _baseShow to handle the actual animation
+                        if (this._baseShow()) {
+                            // (_baseShow shouldn't ever fail because we tested winAnimating above).
+                            if (!_ElementUtilities.hasClass(this.element, "win-menu")) {
+                                // Verify that the firstDiv is in the correct location.
+                                // Move it to the correct location or add it if not.
+                                var _elms = this._element.getElementsByTagName("*");
+                                var firstDiv = this.element.querySelectorAll(".win-first");
+                                if (this.element.children.length && !_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
+                                    if (firstDiv && firstDiv.length > 0) {
+                                        firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
+                                    }
 
-                    // We call our base _baseShow to handle the actual animation
-                    if (this._baseShow()) {
-                        // (_baseShow shouldn't ever fail because we tested winAnimating above).
-                        if (!_ElementUtilities.hasClass(this.element, "win-menu")) {
-                            // Verify that the firstDiv is in the correct location.
-                            // Move it to the correct location or add it if not.
-                            var _elms = this._element.getElementsByTagName("*");
-                            var firstDiv = this.element.querySelectorAll(".win-first");
-                            if (this.element.children.length && !_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
-                                if (firstDiv && firstDiv.length > 0) {
-                                    firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
+                                    firstDiv = this._addFirstDiv();
                                 }
+                                firstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(_elms);
 
-                                firstDiv = this._addFirstDiv();
-                            }
-                            firstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(_elms);
+                                // Verify that the finalDiv is in the correct location.
+                                // Move it to the correct location or add it if not.
+                                var finalDiv = this.element.querySelectorAll(".win-final");
+                                if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
+                                    if (finalDiv && finalDiv.length > 0) {
+                                        finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
+                                    }
 
-                            // Verify that the finalDiv is in the correct location.
-                            // Move it to the correct location or add it if not.
-                            var finalDiv = this.element.querySelectorAll(".win-final");
-                            if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
-                                if (finalDiv && finalDiv.length > 0) {
-                                    finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
+                                    finalDiv = this._addFinalDiv();
                                 }
-
-                                finalDiv = this._addFinalDiv();
+                                finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                             }
-                            finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
-                        }
 
-                        Flyout._cascadeManager.appendFlyout(this);
+                            Flyout._cascadeManager.appendFlyout(this);
 
-                        // Store what had focus before showing the Flyout. This must happen after we've appended this
-                        // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
-                        // collapse. Ensures that focus has already been restored to the correct element by the 
-                        // previous branch before we try to record it here.
-                        this._previousFocus = _Global.document.activeElement;
+                            // Store what had focus before showing the Flyout. This must happen after we've appended this
+                            // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
+                            // collapse. Ensures that focus has already been restored to the correct element by the 
+                            // previous branch before we try to record it here.
+                            this._previousFocus = _Global.document.activeElement;
 
-                        if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
-                            // Put focus on the first child in the Flyout
-                            this._focusOnFirstFocusableElementOrThis();
-                        } else {
-                            // Make sure the menu has focus, but don't show a focus rect
-                            _Overlay._Overlay._trySetActive(this._element);
+                            if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
+                                // Put focus on the first child in the Flyout
+                                this._focusOnFirstFocusableElementOrThis();
+                            } else {
+                                // Make sure the menu has focus, but don't show a focus rect
+                                _Overlay._Overlay._trySetActive(this._element);
+                            }
                         }
                     }
                 },
