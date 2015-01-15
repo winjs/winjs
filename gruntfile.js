@@ -50,17 +50,18 @@
             config.isStorePackage = true;
         });
 
-        // Tasks that drop things in bin/ (should have "add-bom" as the last task)
+        // Tasks that drop things in bin/ (should have "_postProcess" as the last task)
         grunt.registerTask("storePackage", ["configureStore", "default"]);
-        grunt.registerTask("default", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat", "onefile:WinJS", "_copyFinal", "replace", "add-bom"]);
-        grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:WinJS", "add-bom"]);
+        grunt.registerTask("default", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat", "onefile:WinJS", "_copyFinal", "replace", "_postProcess"]);
+        grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:WinJS", "_postProcess"]);
 
-        grunt.registerTask("release", ["lint", "default", "uglify", "cssmin", "add-bom"]);
-        grunt.registerTask("minify", ["uglify", "add-bom"]);
+        grunt.registerTask("release", ["lint", "default", "uglify", "cssmin", "_postProcess"]);
+        grunt.registerTask("minify", ["uglify", "_postProcess"]);
 
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts", "copy:intellisense"]);
-        grunt.registerTask("_copyToTsBuild", ["copy:srcjs"])
+        grunt.registerTask("_copyToTsBuild", ["copy:srcjs"]);
+        grunt.registerTask("_postProcess", ["add-bom", "line-endings"]);
 
         // Other tasks
         grunt.registerTask("modules", ["clean:modules", "build-modules", "replace:base"]);
