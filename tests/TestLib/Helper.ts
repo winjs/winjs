@@ -1053,8 +1053,8 @@ module Helper {
     // Best used through Helper.translateCSSProperty and Helper.translateCSSValue
     // Please add to this list as neccessary and use it where possible in test code
     export var cssTranslations = {
-        "touch-action": function() {
-            var obj = {property: {}, value: {}};
+        "touch-action": function () {
+            var obj = { property: {}, value: {} };
             if ("touchAction" in document.documentElement.style) {
                 obj = null;
             } else if ("msTouchAction" in document.documentElement.style) {
@@ -1062,8 +1062,8 @@ module Helper {
             }
             return obj;
         },
-        "display": function() {
-            var obj = {property: {}, value: {}};
+        "display": function () {
+            var obj = { property: {}, value: {} };
             if ("flex" in document.documentElement.style) {
                 obj = null;
             } else if ("msFlex" in document.documentElement.style) {
@@ -1075,8 +1075,8 @@ module Helper {
             }
             return obj;
         },
-        "flex": function() {
-            var obj = {property: {}, value: {}};
+        "flex": function () {
+            var obj = { property: {}, value: {} };
             if ("flex" in document.documentElement.style) {
                 obj = null;
             } else if ("msFlex" in document.documentElement.style) {
@@ -1086,8 +1086,8 @@ module Helper {
             }
             return obj;
         },
-        "flex-grow": function() {
-            var obj = {property: {}, value: {}};
+        "flex-grow": function () {
+            var obj = { property: {}, value: {} };
             if ("flexGrow" in document.documentElement.style) {
                 obj = null;
             } else if ("msFlexGrow" in document.documentElement.style) {
@@ -1099,8 +1099,8 @@ module Helper {
             }
             return obj;
         },
-        "flex-shrink": function() {
-            var obj = {property: {}, value: {}};
+        "flex-shrink": function () {
+            var obj = { property: {}, value: {} };
             if ("flexShrink" in document.documentElement.style) {
                 obj = null;
             } else if ("msFlexShrink" in document.documentElement.style) {
@@ -1112,8 +1112,8 @@ module Helper {
             }
             return obj;
         },
-        "flex-basis": function() {
-            var obj = {property: {}, value: {}};
+        "flex-basis": function () {
+            var obj = { property: {}, value: {} };
             if ("flexBasis" in document.documentElement.style) {
                 obj = null;
             } else if ("msFlexBasis" in document.documentElement.style) {
@@ -1260,13 +1260,13 @@ module Helper {
                 normalizedCssValue(attributeName, expected),
                 normalizedCssValue(attributeName, actual),
                 message
-            );
+                );
         };
     }
 
     export module Assert {
         export function areArraysEqual(expectedArray, actualArray, message) {
-            if (!Array.isArray(expectedArray)|| !(Array.isArray(actualArray))) {
+            if (!Array.isArray(expectedArray) || !(Array.isArray(actualArray))) {
                 LiveUnit.Assert.fail(message);
             }
 
@@ -1312,7 +1312,7 @@ module Helper {
             LiveUnit.Assert.isTrue(diff <= tolerance, message + " (expected = " + expectedValue +
                 ", actual = " + actualValue + ", tolerance = " + tolerance + ")");
         }
-        
+
         // Asserts that each key of *object* is a member of *validKeys*.
         export function areKeysValid(object, validKeys) {
             Object.keys(object).forEach(function (key) {
@@ -1703,10 +1703,29 @@ module Helper {
         }
         return str;
     }
-    
+
     // Removes the element if it has a parent
     export function removeElement(element: HTMLElement): void {
         var parent = element.parentNode;
         parent && parent.removeChild(element);
+    }
+}
+
+module Helper {
+    export module Promise {
+        export function forEach(array: Array<any>, asyncCallbackFn: (value?, index?, array?) => any): WinJS.Promise<any> {
+            // Execute an asynchronous forEach loop over an array. The asynchronous forEach loop only applies asyncCallbackFn to each subsequent value in the array,
+            // after the Promise returned by applying asyncCallbackFn to the previous array value completes.
+            // 
+            // Returns a Promise that completes when all promises that were returned by applying asyncCallbackFn to every value in the array have been completed.
+            var p = WinJS.Promise.as();
+            array.forEach((value, index, array) => {
+                p = p.then(() => {
+                    return asyncCallbackFn(value, index, array);
+                });
+
+            });
+            return p;
+        }
     }
 }
