@@ -2214,7 +2214,7 @@ define([
                         var previousModifiedElementsHash = {};
                         this._modifiedElements = [];
                         this._countDifference += updater.countDifference;
-
+                        
                         for (i = 0; i < previousModifiedElements.length; i++) {
                             var modifiedElement = previousModifiedElements[i];
                             if (modifiedElement.newIndex === -1) {
@@ -2223,7 +2223,7 @@ define([
                                 previousModifiedElementsHash[modifiedElement.newIndex] = modifiedElement;
                             }
                         }
-
+                        
                         for (i = 0; i < updater.removed.length; i++) {
                             var removed = updater.removed[i];
                             var modifiedElement = previousModifiedElementsHash[removed.index];
@@ -2241,7 +2241,7 @@ define([
                             }
                             this._modifiedElements.push(modifiedElement);
                         }
-
+                        
                         var insertedKeys = Object.keys(this._insertedItems);
                         for (i = 0; i < insertedKeys.length; i++) {
                             this._modifiedElements.push({
@@ -2278,7 +2278,7 @@ define([
                             }
                         }
                         this._writeProfilerMark("_synchronize:update_modifiedElements,StopTM");
-
+                        
                         var previousIndices = Object.keys(previousModifiedElementsHash);
                         for (i = 0; i < previousIndices.length; i++) {
                             var key = previousIndices[i];
@@ -4162,8 +4162,28 @@ define([
 
                 _updateContainers: function ListView_updateContainers(groups, count, containersDelta, modifiedElements) {
                     var that = this;
-
-                    var maxContainers = this._view.containers.length + (containersDelta > 0 ? containersDelta : 0);
+                    
+                    // If the ListView is still in the middle of asynchronously creating containers (i.e. createContainersWorker isn't done),
+                    // then we need to cap the number of containers we create here. Without the cap, we'll synchronously finish creating all
+                    // of the containers nullifying the responsiveness benefits of the asynchronous create containers worker. However, if
+                    // the worker has already finished, there's no need for the cap.
+                    var containerCountAfterEdits = this._view.containers.length + containersDelta;
+                    var asyncContainerCreationInProgress = containerCountAfterEdits < count;
+                    var maxContainers;
+                    if (asyncContainerCreationInProgress) {
+                        // Just create enough containers to handle the edits in the realized range. We need to create at least
+                        // this many containers so that we can play the edit animations.
+                        var countInsertedInRealizedRange = 0;
+                        for (var i = 0; i < modifiedElements.length; i++) {
+                            if (modifiedElements[i].oldIndex === -1) {
+                                countInsertedInRealizedRange++;
+                            }
+                        }
+                        maxContainers = this._view.containers.length + countInsertedInRealizedRange;
+                    } else {
+                        // Create enough containers for every item in the data source.
+                        maxContainers = count;
+                    }
 
                     var newTree = [];
                     var newKeyToGroupIndex = {};
