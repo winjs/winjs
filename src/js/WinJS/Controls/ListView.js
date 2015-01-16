@@ -3737,22 +3737,18 @@ define([
                             }
                             var eventDetails = that._fireAnimationEvent(ListViewAnimationType.contentTransition);
                             that._firedAnimationEvent = true;
-                            var overflowStyle = _BaseUtils._browserStyleEquivalents["overflow-style"];
-                            var animatedElement = overflowStyle ? that._viewport : that._canvas;
                             if (!eventDetails.prevented) {
                                 that._fadingViewportOut = true;
-                                if (overflowStyle) {
-                                    animatedElement.style[overflowStyle.scriptName] = "none";
-                                }
-                                AnimationHelper.fadeOutElement(animatedElement).then(function () {
+                                that._viewport.style.overflow = "hidden";
+                                AnimationHelper.fadeOutElement(that._viewport).then(function () {
                                     if (that._isZombie()) { return; }
                                     that._fadingViewportOut = false;
-                                    animatedElement.style.opacity = 1.0;
+                                    that._viewport.style.opacity = 1.0;
                                     complete();
                                 });
                             } else {
                                 that._disableEntranceAnimation = true;
-                                animatedElement.style.opacity = 1.0;
+                                that._viewport.style.opacity = 1.0;
                                 complete();
                             }
                         }
@@ -3765,16 +3761,12 @@ define([
                         animationPromise: Promise.wrap()
                     };
                     var that = this;
-                    var overflowStyle = _BaseUtils._browserStyleEquivalents["overflow-style"];
-                    var animatedElement = overflowStyle ? this._viewport : this._canvas;
                     this._raiseHeaderFooterVisibilityEvent();
                     function resetViewOpacity() {
                         that._canvas.style.opacity = 1;
                         that._headerContainer.style.opacity = 1;
                         that._footerContainer.style.opacity = 1;
-                        if (overflowStyle) {
-                            animatedElement.style[overflowStyle.scriptName] = "";
-                        }
+                        that._viewport.style.overflow = "";
                         that._raiseHeaderFooterVisibilityEvent();
                     }
 
@@ -3802,30 +3794,17 @@ define([
                             this._waitingEntranceAnimationPromise.cancel();
                         }
                         this._canvas.style.opacity = 0;
-                        if (overflowStyle) {
-                            animatedElement.style[overflowStyle.scriptName] = "none";
-                        }
+                        this._viewport.style.overflow = "hidden";
                         this._headerContainer.style.opacity = 1;
                         this._footerContainer.style.opacity = 1;
                         this._waitingEntranceAnimationPromise = eventDetails.animationPromise.then(function () {
                             if (!that._isZombie()) {
                                 that._canvas.style.opacity = 1;
-                                var animatedElements = [animatedElement];
-                                if (animatedElement !== that._viewport) {
-                                    if (that._header) {
-                                        animatedElements.push(that._headerContainer);
-                                    }
-                                    if (that._footer) {
-                                        animatedElements.push(that._footerContainer);
-                                    }
-                                }
 
-                                return AnimationHelper.animateEntrance(animatedElements, firstTime).then(function () {
+                                return AnimationHelper.animateEntrance(that._viewport, firstTime).then(function () {
                                     if (!that._isZombie()) {
                                         that._waitingEntranceAnimationPromise = null;
-                                        if (overflowStyle) {
-                                            animatedElement.style[overflowStyle.scriptName] = "";
-                                        }
+                                        that._viewport.style.overflow = "";
                                     }
                                 });
                             }
