@@ -22,7 +22,7 @@ module.exports = {
             hostname: 'localhost'
         }
     },
-    saucelabs: {
+    browserstack: {
         options: {
             base: "",
             port: 9999,

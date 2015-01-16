@@ -47,7 +47,9 @@
     "text-table": "~0.2.0",
     "typescript": "1.0.1",
     "websocket": "^1.0.8",
-    "seed-random": "^2.2.0"
+	"seed-random": "^2.2.0",
+	"browserstack-webdriver": "^2.41.1",
+	"browserstacktunnel-wrapper": "1.3.1"
   },
   "browserify": {
     "transform": "deamdify"
