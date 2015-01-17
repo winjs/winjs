@@ -19,7 +19,9 @@
                 }]
             });
 
-            tunnel.start(function (error) {
+            tunnel.start(runTests);
+            //runTests();
+            function runTests(error) {
                 if (error) {
                     console.log(error);
                     complete();
@@ -45,37 +47,74 @@
 
                     activeRuns++;
                     var test = tests[curTest++];
+                    var testName = getTestNameFromUrl(test.url) + " on " + test.cap.os + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version;
                     console.log();
-                    console.log("Starting test: " + getTestNameFromUrl(test.url));
-                    console.log(" on " + test.cap.os + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version);
+                    console.log("Starting test: " + testName);
 
-                    var wd = require("browserstack-webdriver");
-                    var driver = new wd.Builder().usingServer('http://hub.browserstack.com/wd/hub').withCapabilities(test.cap).build();
-                    driver.manage().timeouts().setScriptTimeout(30 * 60 * 1000);
-                    driver.get(test.url);
-                    driver.executeAsyncScript(function () {
-                        var callback = arguments[arguments.length - 1];
-                        QUnit.done(function () {
-                            callback(window.global_test_results);
-                        });
-                    }).then(function (results) {
-                        console.log();
-                        console.log("----------------");
-                        console.log("Test Report");
-                        console.log(" Config: " + test.cap.os + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version);
-                        if (results) {
-                            console.log(" Results - " + getTestNameFromUrl(test.url) + ": " + results.passed + "/" + results.total + " (" + results.runtime + "ms)");
-                        } else {
-                            console.log(" No results returned from test run.");
-                        }
-                        console.log("----------------");
-
-                        driver.quit();
+                    try {
+                        var wd = require("browserstack-webdriver");
+                        var builder = new wd.Builder();
+                        var driver = builder.usingServer('http://hub.browserstack.com/wd/hub').withCapabilities(test.cap).build();
+                        //driver.manage().timeouts().setScriptTimeout(30 * 60 * 1000);
+                        driver.get(test.url).then(runTestScript);
+                    } catch (e) {
+                        console.log("Remote error for " + testName);
+                        console.log(e);
                         activeRuns--;
-                        nextTest();
-                    });
+                        setTimeout(nextTest, 1000);
+                    }
+
+                    function runTestScript() {
+                        function checkStatus() {
+                            try {
+                                driver.executeScript("return window.global_test_results;").then(function (results) {
+                                    if (results) {
+                                        console.log();
+                                        console.log("----------------");
+                                        console.log("Test Report");
+                                        console.log(" Config: " + test.cap.os + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version);
+                                        console.log(" Results - " + getTestNameFromUrl(test.url) + ": " + results.passed + "/" + results.total + " (" + results.runtime + "ms)");
+                                        console.log("----------------");
+
+                                        driver.quit();
+                                        activeRuns--;
+                                        setTimeout(nextTest, 1000);
+                                    } else {
+                                        setTimeout(checkStatus, 5000);
+                                    }
+                                });
+                            } catch (e) {
+                                console.log("Remote error for " + testName);
+                                console.log(e);
+                                activeRuns--;
+                                setTimeout(nextTest, 1000);
+                            }
+                        }
+                        setTimeout(checkStatus, 5000);
+                        //driver.executeAsyncScript(function () {
+                        //    var callback = arguments[arguments.length - 1];
+                        //    QUnit.done(function () {
+                        //        callback(window.global_test_results);
+                        //    });
+                        //}).then(function (results) {
+                        //    console.log();
+                        //    console.log("----------------");
+                        //    console.log("Test Report");
+                        //    console.log(" Config: " + test.cap.os + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version);
+                        //    if (results) {
+                        //        console.log(" Results - " + getTestNameFromUrl(test.url) + ": " + results.passed + "/" + results.total + " (" + results.runtime + "ms)");
+                        //    } else {
+                        //        console.log(" No results returned from test run.");
+                        //    }
+                        //    console.log("----------------");
+
+                        //    //driver.quit();
+                        //    //activeRuns--;
+                        //    //nextTest();
+                        //});
+                    }
                 }
-            });
+            };
         });
     };
 
@@ -85,16 +124,51 @@
 
     function generateTestSetups() {
         var capList = [{
-            'browser': 'IE',
-            'browser_version': '11.0',
-            'os': 'Windows',
-            'os_version': '8.1',
+            'browser': 'Safari',
+            'browser_version': '7.0',
+            'os': 'OS X',
+            'os_version': 'Mavericks',
         }, {
-            'browser': 'IE',
-            'browser_version': '10.0',
-            'os': 'Windows',
-            'os_version': '8',
+            'browserName': 'android',
+            'platform': 'ANDROID',
+            'device': 'Samsung Galaxy S5',
         }];
+
+        //var capList = [{
+        //    'browser': 'IE',
+        //    'browser_version': '11.0',
+        //    'os': 'Windows',
+        //    'os_version': '8.1',
+        //}, {
+        //    'browser': 'IE',
+        //    'browser_version': '10.0',
+        //    'os': 'Windows',
+        //    'os_version': '8',
+        //}, {
+        //    'browser': 'Safari',
+        //    'browser_version': '7.0',
+        //    'os': 'OS X',
+        //    'os_version': 'Mavericks',
+        //}, {
+        //    'browser': 'Firefox',
+        //    'browser_version': '33.0',
+        //    'os': 'Windows',
+        //    'os_version': '8.1',
+        //}, {
+        //    'browser': 'Chrome',
+        //    'browser_version': '38.0',
+        //    'os': 'Windows',
+        //    'os_version': '8.1',
+        //}, {
+        //    'browserName': 'iPhone',
+        //    'platform': 'MAC',
+        //    'device': 'iPhone 5S',
+        //}, {
+        //    'browserName': 'android',
+        //    'platform': 'ANDROID',
+        //    'device': 'Samsung Galaxy S5',
+        //}];
+
         capList.forEach(function (cap) {
             cap["browserstack.user"] = "winjsproject";
             cap["browserstack.key"] = "scb8Tm2t5saetT1KzPBd";
@@ -105,8 +179,8 @@
             "http://127.0.0.1:9999/bin/tests/Animations/test.html?fastanimations=false&autostart=true",
             "http://127.0.0.1:9999/bin/tests/Base/test.html?fastanimations=true&autostart=true",
             "http://127.0.0.1:9999/bin/tests/AppBarAndFlyouts/test.html?fastanimations=true&autostart=true",
-            "http://127.0.0.1:9999/bin/tests/Binding/test.html?fastanimations=true&autostart=true",
-            "http://127.0.0.1:9999/bin/tests/BindingList/test.html?fastanimations=true&autostart=true",
+            //"http://127.0.0.1:9999/bin/tests/Binding/test.html?fastanimations=true&autostart=true",
+            //"http://127.0.0.1:9999/bin/tests/BindingList/test.html?fastanimations=true&autostart=true",
             //"http://127.0.0.1:9999/bin/tests/BindingTemplate/test.html?fastanimations=true&autostart=true",
             //"http://127.0.0.1:9999/bin/tests/ContentDialog/test.html?fastanimations=true&autostart=true",
             //"http://127.0.0.1:9999/bin/tests/DateTime/test.html?fastanimations=true&autostart=true",
