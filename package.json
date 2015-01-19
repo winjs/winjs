@@ -36,7 +36,7 @@
     "grunt-contrib-uglify": "^0.5.1",
     "grunt-jscs": "^0.6.2",
     "grunt-replace": "~0.7.8",
-    "grunt-saucelabs": "git+https://github.com/xirzec/grunt-saucelabs.git#debug2",
+    "grunt-saucelabs": "git+https://github.com/xirzec/grunt-saucelabs.git#debug",
     "grunt-shell": "~0.7.0",
     "grunt-ts": "^1.11.6",
     "http-post": "~0.1.1",
