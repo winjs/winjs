@@ -209,12 +209,13 @@
         border-color: @baseMediumMid;
 
         &::-ms-expand {
-            color: @baseHigh;
+            color: @baseMediumHigh;
             background-color: transparent;
         }
 
         &:hover {
-            background-color: @baseMediumMid;
+            background-color: @chromeMediumMid;
+            border-color: @baseMid;
         }
 
         &:disabled {
@@ -223,11 +224,13 @@
         }
         &:disabled::-ms-expand {
             color: @baseLow;
+            border-color: @baseLow;
         }
     }
 
     option {
-        color: @baseBlack;
+        color: @baseHigh;
+        background-color: @chromeMediumMid;
 
         &:checked {
             color: @baseWhite;
@@ -235,7 +238,7 @@
         }
         &:hover, &:active {
             background-color: fade(@baseBlack, 20%);
-            color: @baseBlack;
+            color: @baseHigh;
         }
     }
 
