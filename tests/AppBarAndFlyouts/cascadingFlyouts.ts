@@ -25,11 +25,15 @@ module CorsicaTests {
         }, false);
     }
 
-    // Helpers and tests that every implementing class should have.
+    // Private test class provides Helpers and tests that every implementing test class will need.
     export class _BaseCascadingTests {
         private abstractMethodFail() {
             LiveUnit.Assert.fail("Test Error: This method is abstract. Descendant classes need to provide implementation.");
         }
+
+        //
+        // Abstract Helper methods that need to be implemented by each derivative class.
+        //
 
         showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
             this.abstractMethodFail();
@@ -44,6 +48,10 @@ module CorsicaTests {
         chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
             this.abstractMethodFail();
         }
+
+        //
+        // Concrete Helper methods
+        //
 
         hideFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
             // Hides the specified flyout and returns a promise that completes when
@@ -87,16 +95,11 @@ module CorsicaTests {
             var index = flyoutChain.indexOf(sentinelFlyout);
             flyoutChain = (index < 0) ? flyoutChain : flyoutChain.slice(0, index + 1);
 
-            var p = WinJS.Promise.wrap();
-            flyoutChain.forEach((flyout) => {
-                p = p.then((): WinJS.Promise<any> => {
-                    return this.showFlyout(flyout).then(() => {
-                        verifyFlyoutContainsFocusAfterShowing(flyout);
-                    });
+            return Helper.Promise.forEach(flyoutChain, (flyout) => {
+                return this.showFlyout(flyout).then(() => {
+                    verifyFlyoutContainsFocusAfterShowing(flyout);
                 });
             });
-
-            return p;
         }
 
         verifyCascade(expectedCascade: Array<WinJS.UI.PrivateFlyout>): void {
@@ -148,6 +151,10 @@ module CorsicaTests {
             WinJS.UI._Overlay._clickEatingAppBarDiv = false;
             WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
+
+        //
+        // Unit Tests 
+        //
 
         testSingleFlyoutInTheCascade = function (complete) {
             // Verifies that showing and hiding a flyout will always add and remove it from the cascade.
@@ -425,8 +432,7 @@ module CorsicaTests {
             // Regression test: https://github.com/winjs/winjs/issues/882
             // Verifies that showing a 2nd Flyout chain at the beginning of hiding the 1st Flyout chain, 
             // will cause the 2nd Flyout chain to show once the 1st cascade is finished collapsing.
-            var msg = "",
-                chain1 = this.generateFlyoutChain(),
+            var chain1 = this.generateFlyoutChain(),
                 chain2 = this.generateFlyoutChain();
 
             this.showFlyoutChain(chain1).then(() => {
@@ -445,11 +451,15 @@ module CorsicaTests {
         }
     }
 
+    // Test Class for Cascading Flyout unit tests.
     export class CascadingFlyoutTests extends _BaseCascadingTests {
+        
+        // Implementation of Abstract showFlyout Method.
         showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
             return OverlayHelpers.show(flyout);
         }
 
+        // Implementation of Abstract generateFlyoutChain Method.
         generateFlyoutChain(numFlyouts?: number): Array<WinJS.UI.PrivateFlyout> {
             // Creates and returns an Array of Flyouts. Each Flyout in the chain has its anchor property set to the HTMLElement of the previous flyout.
             var flyoutChain = [],
@@ -474,16 +484,19 @@ module CorsicaTests {
             return flyoutChain;
         }
 
+        // Implementation of Abstract chainFlyouts Method.
         chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
             // Chain the tail Flyout to the head Flyout.
             tail.anchor = head.element;
         }
     }
 
+    // Test Class for Cascading Menu unit tests.
     export class CascadingMenuTests extends _BaseCascadingTests {
         private firstCommandId = "flyoutCmd1";
         private secondCommandId = "flyoutCmd2";
 
+        // Implementation of Abstract showFlyout Method.
         showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
             // If my anchor isn't in the cascade, just call overlayhelpers.show
             // else call menucommand._activateFlyoutCommand(flyout)
@@ -517,6 +530,7 @@ module CorsicaTests {
             return result;
         }
 
+        // Implementation of Abstract generateFlyoutChain Method.
         generateFlyoutChain(numMenus?: number): Array<WinJS.UI.PrivateFlyout> {
             // Creates and returns an Array of Menu Flyouts. Each Menu in the chain has its anchor property set to the HTMLElement of parent Menu's flyout MenuCommand
             var flyoutChain = [],
@@ -554,11 +568,43 @@ module CorsicaTests {
             return flyoutChain;
         }
 
+        // Implementation of Abstract chainFlyouts Method.
         chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
             // Chain the tail Menu to the head Menu.
             var menuCommand = head.element.querySelector("#" + this.secondCommandId).winControl;
             menuCommand.flyout = tail;
         }
+
+        //
+        // Unit Tests
+        //
+
+        testMenuCommandActionCommittedCollapsesEntireCascade = function (complete) {
+            var flyoutChain = this.generateFlyoutChain();
+
+            var buttonCmd = new MenuCommand(null, { type: 'button' });
+            flyoutChain[flyoutChain.length - 1].commands = [buttonCmd];
+
+            this.showFlyoutChain(flyoutChain).then(() => {
+
+                var pArr = [];
+
+                flyoutChain.forEach((flyout) => {
+                    pArr.push(new WinJS.Promise((c) => {
+                        listenOnce(flyout, "afterhide", c);
+                    }));
+
+                })
+
+                WinJS.Promise.join(pArr).then(() => {
+                    this.verifyCascade([]);
+                    complete();
+                });
+
+                buttonCmd._invoke(); // Trigger collapse of entire cascade.
+            });
+        }
+
     }
 }
 
