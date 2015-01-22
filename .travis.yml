@@ -5,10 +5,9 @@ before_script:
 - npm install -g grunt-cli
 - git submodule update --init --recursive
 script:
-- grunt release
+- grunt browserstack
 after_success:
 - grunt update-winjs-controls
-- grunt saucelabs --force
 env:
   global:
   - SAUCE_USERNAME=winjs
