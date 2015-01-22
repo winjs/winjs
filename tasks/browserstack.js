@@ -1,11 +1,13 @@
 (function () {
+    "use strict";
+
     var numParallel = 2;
     var numRetries = 2;
 
     module.exports = function (grunt) {
 
         grunt.registerTask("browserstack", function () {
-            grunt.task.run(["connect:browserstack", "_browserstack", "post-tests-results"]);
+            grunt.task.run(["release", "connect:browserstack", "_browserstack", "post-tests-results"]);
         });
 
         grunt.registerTask("_browserstack", function () {
@@ -34,11 +36,7 @@
 
                 config.tests_results = { results: [], environment: [], date: new Date() };
                 var tests = generateTestSetups();
-                config.tests_results.environment = tests.map(function (test, i) {
-                    var info = {};
-                    info["e" + (i + 1)] = test.cap.os + " " + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version;
-                    return info;
-                });
+
                 var curTest = 0;
                 var activeRuns = 0;
 
@@ -61,13 +59,15 @@
                     var runComplete = false;
                     var retriesLeft = numRetries;
 
-                    createChildAndRunTest()
+                    createChildAndRunTest();
 
                     function createChildAndRunTest() {
                         console.log("Starting test: " + moduleName + " on " + platform);
 
-                        var child = cp.fork("tasks/browserstackChild.js", [], { silent: false });
+                        var child = cp.fork("tasks/browserstackChild.js", [], { silent: true });
+                        var sessionId = "";
                         child.on("message", function (msg) {
+                            sessionId = msg.sessionId || "";
                             var type = msg.type;
                             switch (type) {
                                 case "results":
@@ -84,15 +84,12 @@
                                     console.log("----------------");
                                     runComplete = true;
 
-                                    var log = {};
-                                    log.name = moduleName;
-                                    log["e1"] = {
+                                    recordTestResult(test, {
                                         passed: results.passed,
                                         total: results.total,
                                         time: results.runtime / 1000 | 0,
-                                        url: test.url
-                                    };
-                                    config.tests_results.results.push(log);
+                                        url: createSessionUrl(sessionId)
+                                    });
                                     break;
 
                                 case "quit":
@@ -103,17 +100,17 @@
                         child.on("exit", function () {
                             if (!runComplete) {
                                 console.log();
-                                console.log("Child process for " + moduleName + "on" + platform + " terminated abnormally.");
+                                console.log("Child process for " + moduleName + " on " + platform + " terminated abnormally.");
                                 if (retriesLeft <= 0) {
-                                    var log = {};
-                                    log.name = moduleName;
-                                    log[platform] = { url: test.url, result: "Error" };
+                                    recordTestResult(test, {
+                                        url: createSessionUrl(sessionId),
+                                        result: "Error"
+                                    });
                                     console.log("Giving up, waiting 100s for session to time out...");
                                     setTimeout(function () {
                                         activeRuns--;
                                         nextTest();
                                     }, 100 * 1000);
-                                    config.tests_results.results.push(log);
                                 } else {
                                     console.log("Retrying after 100s...");
                                     setTimeout(function () {
@@ -129,50 +126,82 @@
                         child.send(test);
                     }
                 }
+
+                function recordTestResult(test, results) {
+                    var environment = config.tests_results.environment.filter(function (x) {
+                        return !!x[test.platformId];
+                    })[0];
+                    if (!environment) {
+                        var e = {};
+                        e[test.platformId] = test.cap.os + " " + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version;
+                        config.tests_results.environment.push(e);
+                    }
+
+                    var moduleName = getTestNameFromUrl(test.url);
+                    var log = config.tests_results.results.filter(function (x) {
+                        return x && x.name === moduleName;
+                    })[0];
+                    if (!log) {
+                        log = { name: moduleName };
+                        config.tests_results.results.push(log);
+                    }
+                    log[test.platformId] = results;
+                }
             });
         });
     };
+
+    function createSessionUrl(sessionId) {
+        return sessionId ? ("https://www.browserstack.com/automate/builds/206308468b900496399cb8134c346ff07c4c8f7c/sessions/" + sessionId) : "";
+    }
 
     function getTestNameFromUrl(url) {
         return url.substring(url.indexOf("/bin/tests") + 11, url.lastIndexOf("/"));
     }
 
     function generateTestSetups() {
-        var capList = [{
-            'browser': 'IE',
-            'browser_version': '11.0',
-            'os': 'Windows',
-            'os_version': '8.1',
-        }, {
+        var capList = [
+            {
+                'browser': 'IE',
+                'browser_version': '11.0',
+                'os': 'Windows',
+                'os_version': '8.1',
+            },
+        {
             'browser': 'IE',
             'browser_version': '10.0',
             'os': 'Windows',
             'os_version': '8',
-        }, {
+        },
+        {
             'browser': 'Safari',
             'browser_version': '8.0',
             'os': 'OS X',
             'os_version': 'Yosemite',
-        }, {
+        },
+        {
             'browser': 'Firefox',
             'browser_version': '33.0',
             'os': 'Windows',
             'os_version': '8.1',
-        }, {
+        },
+        {
             'browser': 'Chrome',
             'browser_version': '38.0',
             'os': 'Windows',
             'os_version': '8.1',
-        }, {
+        },
+        {
             'browserName': 'android',
             'platform': 'ANDROID',
             'device': 'Samsung Galaxy S5'
-        }, {
+        },
+        {
             'browserName': 'iPhone',
             'platform': 'MAC',
             'device': 'iPhone 5S',
-
-        }];
+        }
+        ];
 
         capList.forEach(function (cap) {
             cap["browserstack.user"] = "winjsproject";
@@ -181,15 +210,48 @@
         });
 
         var uris = [
-                     "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
-         "http://127.0.0.1:9999/bin/tests/ListViewComponents/test.html?fastanimations=true&autostart=true&testtimeout=10000",
-         "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000"
+            "http://127.0.0.1:9999/bin/tests/Animations/test.html?fastanimations=false&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/AppBarAndFlyouts/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Base/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Binding/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/BindingList/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/BindingTemplate/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/ContentDialog/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/DateTime/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/FlipView/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Hub/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/ItemContainer/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Itemsmanager/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Less/test.html?autostart=true",
+            "http://127.0.0.1:9999/bin/tests/NavBar/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Navigation/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/PageControl/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Promise/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Repeater/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Scheduler/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/AutoSuggestBox/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/SearchBox/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/SemanticZoom/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+            "http://127.0.0.1:9999/bin/tests/SplitView/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Toggle/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/ToolBar/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Tooltip/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+            "http://127.0.0.1:9999/bin/tests/UI/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/ViewBox/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true",
+            "http://127.0.0.1:9999/bin/tests/Pivot/test.html?fastanimations=false&autostart=true&testtimeout=10000",
+            "http://127.0.0.1:9999/bin/tests/Rating/test.html?fastanimations=true&autostart=true&testtimeout=3000",
+            "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+            "http://127.0.0.1:9999/bin/tests/ListViewComponents/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+            "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000"
         ];
 
         var tests = [];
-        capList.forEach(function (cap) {
+        capList.forEach(function (cap, i) {
+            var platformId = "e" + (i + 1);
             uris.forEach(function (url) {
-                tests.push({ cap: cap, url: url });
+                tests.push({ cap: cap, url: url, platformId: platformId });
             });
         });
         return tests;

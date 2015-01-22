@@ -1,4 +1,6 @@
 process.on("message", function (test) {
+    "use strict";
+
     var testTimeout = 5 * 60 * 1000;
 
     var wd = require("browserstack-webdriver");
@@ -8,24 +10,17 @@ process.on("message", function (test) {
         if (!test.cap.device) {
             driver.manage().timeouts().setScriptTimeout(testTimeout).then(function () {
                 // Execute result fetch script
-                driver.executeAsyncScript(function () {
-                    var callback = arguments[arguments.length - 1];
-                    if (window.global_test_results) {
-                        // All tests finished before we could hook up event, post results back
-                        callback(window.global_test_results);
-                    } else {
-                        // Tests are running, hook listener up to QUnit.done
-                        QUnit.done(function () {
-                            callback(window.global_test_results);
-                        });
-                    }
-                }).then(function (results) {
+                driver.executeAsyncScript(
+"var c = arguments[arguments.length - 1]; if (window.global_test_results) { c(window.global_test_results); } else { QUnit.done(function () { c(window.global_test_results); }) }"
+                ).then(function (results) {
                     // Tests finished or timed out, post results if tests finished
-                    if (results) {
-                        process.send({ type: "results", results: results });
-                    }
-                    driver.quit().then(function () {
-                        process.send({ type: "quit" });
+                    driver.getSession().then(function (session) {
+                        if (results) {
+                            process.send({ type: "results", results: results, sessionId: session.id_ });
+                        }
+                        driver.quit().then(function () {
+                            process.send({ type: "quit", sessionId: session.id_ });
+                        });
                     });
                 });
             });
@@ -47,18 +42,20 @@ process.on("message", function (test) {
                 // Execute polling script
                 driver.executeScript("return !window.QUnit || window.global_test_results;").then(function (results) {
                     if (results) {
-                        if (results === true) {
-                            // window.QUnit doesn't exist, quit
-                            driver.quit().then(function () {
-                                process.send({ type: "quit" });
-                            });
-                        } else {
-                            // Got results, post it and quit
-                            process.send({ type: "results", results: results });
-                            driver.quit().then(function () {
-                                process.send({ type: "quit" });
-                            });
-                        }
+                        driver.getSession().then(function (session) {
+                            if (results === true) {
+                                // window.QUnit doesn't exist, quit
+                                driver.quit().then(function () {
+                                    process.send({ type: "quit", sessionId: session.id_ });
+                                });
+                            } else {
+                                // Got results, post it and quit
+                                process.send({ type: "results", results: results, sessionId: session.id_ });
+                                driver.quit().then(function () {
+                                    process.send({ type: "quit" });
+                                });
+                            }
+                        });
                     } else {
                         // Test still running, keep polling
                         setTimeout(pollingFunc, pollingInterval);
