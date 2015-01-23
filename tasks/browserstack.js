@@ -133,7 +133,7 @@
                     })[0];
                     if (!environment) {
                         var e = {};
-                        e[test.platformId] = test.cap.os + " " + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version;
+                        e[test.platformId] = test.cap.device || (test.cap.os + " " + test.cap.os_version + " / " + test.cap.browser + test.cap.browser_version);
                         config.tests_results.environment.push(e);
                     }
 
