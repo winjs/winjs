@@ -2083,10 +2083,10 @@ module CorsicaTests {
 
         testGetCommandById() {
             var pairWiseOptions = {
-                    type: ['button', 'separator', 'toggle', 'flyout', 'content'],
-                    hidden: [true, false],
-                    section: ['primary', 'secondary', 'global', 'selection'],
-                },
+                type: ['button', 'separator', 'toggle', 'flyout', 'content'],
+                hidden: [true, false],
+                section: ['primary', 'secondary', 'global', 'selection'],
+            },
                 commands = Helper.pairwise(pairWiseOptions).map(function (option, index) {
                     return new AppBarCommand(null, { id: "cmd" + index, type: option.type, hidden: option.hidden, section: option.section });
                 }),
@@ -2104,6 +2104,46 @@ module CorsicaTests {
 
             });
         }
+
+        testregresstionTest(complete) {
+            var primaryCommands = [
+                new AppBarCommand(null, { label: "pCmd", section: "primary" })
+            ];
+
+            var secondaryCommands = [];
+            for (var i = 0; i < 10; - i++) { // Create enough secondary commands to force a scroll bar in the AppBar's overflow menu
+                secondaryCommands.push(new AppBarCommand(null, { label: "sCmd", section: "secondary" }));
+            }
+
+            var commands = primaryCommands.concat(secondaryCommands),
+                root = document.getElementById("appBarDiv"),
+                appBar = new WinJS.UI.AppBar(null, { layout: 'menu', commands: commands }),
+                appBarMenuElement = appBar.element.querySelector(".win-appbar-menu"),
+                toolBarElement = appBarMenuElement.querySelector(".win-toolbar");
+
+            LiveUnit.Assert.isNotNull(appBarMenuElement, "TEST ERROR: Test requires appBarMenuElement");
+            LiveUnit.Assert.isNotNull(toolBarElement, "TEST ERROR: Test requires toolBarElement");
+
+            root.appendChild(appBar.element);
+            OverlayHelpers.show(appBar).then(() => {
+
+                var before = {
+                    menuWidth: getComputedStyle(toolBarElement).width,
+                    toolBarWidth: getComputedStyle(toolBarElement).width,
+                };
+
+                secondaryCommands[0].element.focus();
+
+                var after = {
+                    menuWidth: getComputedStyle(toolBarElement).width,
+                    toolBarWidth: getComputedStyle(toolBarElement).width,
+                };
+
+                LiveUnit.Assert.areEqual(before.menuWidth, after.menuWidth);
+                LiveUnit.Assert.areEqual(before.toolBarWidth, after.toolBarWidth);
+
+            });
+        } s
     };
 }
 // register the object as a test class by passing in the name
