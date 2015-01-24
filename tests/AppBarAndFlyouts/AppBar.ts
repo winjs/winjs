@@ -2106,44 +2106,54 @@ module CorsicaTests {
         }
 
         testregresstionTest(complete) {
-            var primaryCommands = [
-                new AppBarCommand(null, { label: "pCmd", section: "primary" })
-            ];
+            var name = "pCmd1",
+                commands = [
+                    new AppBarCommand(null, { id: name, label: name, section: "primary" })
+                ];
 
-            var secondaryCommands = [];
             for (var i = 0; i < 10; - i++) { // Create enough secondary commands to force a scroll bar in the AppBar's overflow menu
-                secondaryCommands.push(new AppBarCommand(null, { label: "sCmd", section: "secondary" }));
+                name = "sCmd" + i;
+                commands.push(new AppBarCommand(null, { id: name, label: name, section: "secondary" }));
             }
 
-            var commands = primaryCommands.concat(secondaryCommands),
-                root = document.getElementById("appBarDiv"),
-                appBar = new WinJS.UI.AppBar(null, { layout: 'menu', commands: commands }),
+            var root = document.getElementById("appBarDiv"),
+                appBarEl = document.createElement("DIV");
+            root.appendChild(appBarEl);
+
+            var appBar = new WinJS.UI.AppBar(appBarEl, { layout: 'menu', commands: commands }),
                 appBarMenuElement = appBar.element.querySelector(".win-appbar-menu"),
-                toolBarElement = appBarMenuElement.querySelector(".win-toolbar");
+                toolBarElement = appBarMenuElement.querySelector(".win-toolbar"),
+                overFlowElement = toolBarElement.querySelector(".win-toolbar-overflowarea");
 
             LiveUnit.Assert.isNotNull(appBarMenuElement, "TEST ERROR: Test requires appBarMenuElement");
             LiveUnit.Assert.isNotNull(toolBarElement, "TEST ERROR: Test requires toolBarElement");
+            LiveUnit.Assert.isNotNull(overFlowElement, "TEST ERROR: Test requires overFlowElement");
 
-            root.appendChild(appBar.element);
             OverlayHelpers.show(appBar).then(() => {
 
                 var before = {
-                    menuWidth: getComputedStyle(toolBarElement).width,
+                    menuWidth: getComputedStyle(appBarMenuElement).width,
                     toolBarWidth: getComputedStyle(toolBarElement).width,
                 };
 
-                secondaryCommands[0].element.focus();
+                //WinJS.Promise.timeout(0).then(() => {
+                var secondaryCommand = <HTMLElement>overFlowElement.querySelector("#sCmd0");
+                secondaryCommand.focus();
 
                 var after = {
-                    menuWidth: getComputedStyle(toolBarElement).width,
+                    menuWidth: getComputedStyle(appBarMenuElement).width,
                     toolBarWidth: getComputedStyle(toolBarElement).width,
                 };
 
                 LiveUnit.Assert.areEqual(before.menuWidth, after.menuWidth);
                 LiveUnit.Assert.areEqual(before.toolBarWidth, after.toolBarWidth);
 
+                //complete();
+
+                // });
+
             });
-        } s
+        }
     };
 }
 // register the object as a test class by passing in the name
