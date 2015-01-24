@@ -2105,7 +2105,9 @@ module CorsicaTests {
             });
         }
 
-        testregresstionTest(complete) {
+        testAppBarMenuDoesNotResizeWhenCommandsAreFocused(complete) {
+            // Regression test: https://github.com/winjs/winjs/issues/859
+            // Verifies that focusing a command in the AppBar overflow menu will not cause the overflow menu to change width.
             var name = "pCmd1",
                 commands = [
                     new AppBarCommand(null, { id: name, label: name, section: "primary" })
@@ -2131,27 +2133,25 @@ module CorsicaTests {
 
             OverlayHelpers.show(appBar).then(() => {
 
-                var before = {
+                var beforeFocus = {
                     menuWidth: getComputedStyle(appBarMenuElement).width,
                     toolBarWidth: getComputedStyle(toolBarElement).width,
+                    overFlowWidth: getComputedStyle(overFlowElement).width
                 };
 
-                //WinJS.Promise.timeout(0).then(() => {
-                var secondaryCommand = <HTMLElement>overFlowElement.querySelector("#sCmd0");
-                secondaryCommand.focus();
+                var secondaryElement = <HTMLElement>overFlowElement.querySelector("button.win-command");
+                secondaryElement.focus();
 
-                var after = {
+                var afterFocus = {
                     menuWidth: getComputedStyle(appBarMenuElement).width,
                     toolBarWidth: getComputedStyle(toolBarElement).width,
+                    overFlowWidth: getComputedStyle(overFlowElement).width
                 };
 
-                LiveUnit.Assert.areEqual(before.menuWidth, after.menuWidth);
-                LiveUnit.Assert.areEqual(before.toolBarWidth, after.toolBarWidth);
-
-                //complete();
-
-                // });
-
+                LiveUnit.Assert.areEqual(beforeFocus.menuWidth, afterFocus.menuWidth, "Focusing a secondary command element should not resize the AppBarMenu.");
+                LiveUnit.Assert.areEqual(beforeFocus.toolBarWidth, afterFocus.toolBarWidth, "Focusing a secondary command element should not resize the ToolBar.");
+                LiveUnit.Assert.areEqual(beforeFocus.overFlowWidth, afterFocus.overFlowWidth, "Focusing a secondary command element should not resize the OverFlowArea.");
+                complete();
             });
         }
     };
