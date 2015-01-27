@@ -21,6 +21,23 @@ define([
 ], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
 
+    var ClassNames = {
+        asb: "win-autosuggestbox",
+        asbDisabled: "win-autosuggestbox-disabled",
+        asbFlyout: "win-autosuggestbox-flyout",
+        asbFlyoutAbove: "win-autosuggestbox-flyout-above",
+        asbBoxFlyoutHighlightText: "win-autosuggestbox-flyout-highlighttext",
+        asbHitHighlightSpan: "win-autosuggestbox-hithighlight-span",
+        asbInput: "win-autosuggestbox-input",
+        asbInputFocus: "win-autosuggestbox-input-focus",
+        asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
+        asbSuggestionResult: "win-autosuggestbox-suggestion-result",
+        asbSuggestionResultText: "win-autosuggestbox-suggestion-result-text",
+        asbSuggestionResultDetailedText: "win-autosuggestbox-suggestion-result-detailed-text",
+        asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
+        asbSuggestionSeparator: "win-autosuggestbox-suggestion-separator",
+    };
+
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.AutoSuggestBox">
@@ -46,23 +63,6 @@ define([
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AutoSuggestBox: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
-
-            var ClassNames = {
-                asb: "win-autosuggestbox",
-                asbDisabled: "win-autosuggestbox-disabled",
-                asbFlyout: "win-autosuggestbox-flyout",
-                asbFlyoutAbove: "win-autosuggestbox-flyout-above",
-                asbBoxFlyoutHighlightText: "win-autosuggestbox-flyout-highlighttext",
-                asbHitHighlightSpan: "win-autosuggestbox-hithighlight-span",
-                asbInput: "win-autosuggestbox-input",
-                asbInputFocus: "win-autosuggestbox-input-focus",
-                asbSuggestionQuery: "win-autosuggestbox-suggestion-query",
-                asbSuggestionResult: "win-autosuggestbox-suggestion-result",
-                asbSuggestionResultText: "win-autosuggestbox-suggestion-result-text",
-                asbSuggestionResultDetailedText: "win-autosuggestbox-suggestion-result-detailed-text",
-                asbSuggestionSelected: "win-autosuggestbox-suggestion-selected",
-                asbSuggestionSeparator: "win-autosuggestbox-suggestion-separator",
-            };
 
             var EventNames = {
                 querychanged: "querychanged",
@@ -1311,4 +1311,5 @@ define([
             return AutoSuggestBox;
         })
     });
+    exports.ClassNames = ClassNames;
 });
