@@ -102,7 +102,7 @@ export interface IRect {
 
 /**
  * Gets the mapping object that maps keycodes to XYFocus actions.
-**/ 
+**/
 export var keyCodeMap: { [key: string]: number[] } = {
     left: [_ElementUtilities.Key.leftArrow],
     right: [_ElementUtilities.Key.rightArrow],
@@ -201,12 +201,7 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
 
     if (result && _trySetFocus(result.target, keyCode)) {
         // A focus target was found
-        if (result.usedOverride) {
-            // Reset history since the override target could be anywhere
-            _historyRect = null;
-        } else {
-            updateHistoryRect(direction, result);
-        }
+        updateHistoryRect(direction, result);
         _lastTarget = result.target;
         _cachedLastTargetRect = result.targetRect;
 
@@ -327,7 +322,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
                     if (target === _Global.document.activeElement) {
                         return null;
                     }
-                    return { target: target, targetRect: _toIRect(target.getBoundingClientRect()), referenceRect: null, usedOverride: true };
+                    return { target: target, targetRect: _toIRect(target.getBoundingClientRect()), referenceRect: refObj.rect, usedOverride: true };
                 }
             }
         }
@@ -566,7 +561,7 @@ function _trySetFocus(element: HTMLElement, keyCode: number) {
 
 function _getIFrameFromWindow(win: Window) {
     var iframes = _Global.document.querySelectorAll("IFRAME");
-    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
+    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes,(x: HTMLIFrameElement) => x.contentWindow === win);
     return found.length ? found[0] : null;
 }
 
@@ -589,7 +584,7 @@ function _handleKeyEvent(e: KeyboardEvent): void {
     }
 }
 
-_Global.addEventListener("message", (e: MessageEvent): void => {
+_Global.addEventListener("message",(e: MessageEvent): void => {
     if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
         return;
     }
@@ -633,7 +628,7 @@ _Global.addEventListener("message", (e: MessageEvent): void => {
     }
 });
 
-_Global.document.addEventListener("DOMContentLoaded", () => {
+_Global.document.addEventListener("DOMContentLoaded",() => {
     if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
         enableXYFocus();
     }
