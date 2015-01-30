@@ -43,8 +43,8 @@ var ClassNames = {
     pane: "win-pane",
     
     // hidden/shown
-    hidden: "win-pane-pane-hidden",
-    shown: "win-pane-pane-shown",
+    hidden: "win-pane-hidden",
+    shown: "win-pane-shown",
 
     _content: "win-pane-content",
     // placement
@@ -114,19 +114,17 @@ function cancelablePromise(animationPromise: Promise<any>) {
     });
 }
 
-function showEdgeUI(elements: any, offsets: any): Promise<any> {
-    return cancelablePromise(Animations.showEdgeUI(elements, offsets, { mechanism: "transition" }));
+interface IResizeTransitionOptions {
+    from: number;
+    to: number;
+    actualSize: number;
+    dimension: string;
+    
+    anchorTrailingEdge?: boolean;
+    duration?: number;
+    timing?: string;
 }
-
-function hideEdgeUI(elements: any, offsets: any): Promise<any> {
-    return cancelablePromise(Animations.hideEdgeUI(elements, offsets, { mechanism: "transition" }));
-}
-
-function fadeIn(elements: any): Promise<any> {
-    return cancelablePromise(Animations.fadeIn(elements));
-}
-
-function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: { from: IThickness; to: IThickness; dimension: string; anchorTrailingEdge: boolean; }): Promise<any> {
+function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: IResizeTransitionOptions): Promise<any> {
     return cancelablePromise(Animations._resizeTransition(elementClipper, element, options));
 }
 
@@ -236,7 +234,7 @@ module States {
 
                     this.pane.hidden = true;
                     this.pane.hiddenDisplayMode = HiddenDisplayMode.overlay;
-                    this.pane.panePlacement = Placement.left;
+                    this.pane.placement = Placement.left;
                     _Control.setOptions(this.pane, options);
 
                     return _ElementUtilities._inDom(this.pane._dom.root).then(() => {
@@ -528,16 +526,16 @@ export class Pane {
         }
     }
 
-    private _panePlacement: string;
+    private _placement: string;
     /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.PanePlacement" locid="WinJS.UI.SplitView.panePlacement" helpKeyword="WinJS.UI.SplitView.panePlacement">
     /// Gets or sets the placement of the SplitView's pane.
     /// </field>
-    get panePlacement(): string {
-        return this._panePlacement;
+    get placement(): string {
+        return this._placement;
     }
-    set panePlacement(value: string) {
-        if (Placement[value] && this._panePlacement !== value) {
-            this._panePlacement = value;
+    set placement(value: string) {
+        if (Placement[value] && this._placement !== value) {
+            this._placement = value;
             this._cachedHiddenPaneThickness = null;
             this._state.updateDom();
         }
@@ -633,31 +631,12 @@ export class Pane {
         contentStyle[transformNames.scriptName] = "";
     }
 
-    private _getAnimationOffsets(shownPaneRect: IRect): { top: string; left: string; } {
-        var placementLeft = this._rtl ? Placement.right : Placement.left;
-        return this._horizontal ? {
-            left: (this.panePlacement === placementLeft ? -1 : 1) * shownPaneRect.totalWidth + "px",
-            top: "0px"
-        } : {
-            left: "0px",
-            top: (this.panePlacement === Placement.top ? -1 : 1) * shownPaneRect.totalHeight + "px"
-        };
-    }
-
-    private _paneSlideIn(shownPaneRect: IRect): Promise<any> {
-        return showEdgeUI(this._dom.root, this._getAnimationOffsets(shownPaneRect));
-    }
-
-    private _paneSlideOut(shownPaneRect: IRect): Promise<any> {
-        return hideEdgeUI(this._dom.root, this._getAnimationOffsets(shownPaneRect));
-    }
-
     //
     // Methods called by states
     //
 
     get _horizontal(): boolean {
-        return this.panePlacement === Placement.left || this.panePlacement === Placement.right;
+        return this.placement === Placement.left || this.placement === Placement.right;
     }
 
     _setState(NewState: any, arg0?: any) {
@@ -724,37 +703,22 @@ export class Pane {
         this._prepareAnimation(shownPaneRect);
 
         var playPaneAnimation = (): Promise<any> => {
-            var peek = hiddenPaneThickness.total > 0;
-
-            if (peek) {
-                var placementRight = this._rtl ? Placement.left : Placement.right;
-                return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
-                    from: hiddenPaneThickness,
-                    to: shownPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === Placement.bottom
-                });
-            } else {
-                return this._paneSlideIn(shownPaneRect);
-            }
+            var placementRight = this._rtl ? Placement.left : Placement.right;
+            // What percentage of the size change should be skipped? (e.g. let's do the first
+            // 30% of the size change instantly and then animate the other 70%)
+            var animationOffsetFactor = 0.3;
+            var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+            
+            return resizeTransition(this._dom.root, this._dom.content, {
+                from: from,
+                to: shownPaneThickness.total,
+                actualSize: shownPaneThickness.total,
+                dimension: dim,
+                anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+            });
         };
 
-        var playShowAnimation = (): Promise<any> => {
-            if (this.shownDisplayMode === ShownDisplayMode.overlay) {
-                return playPaneAnimation();
-            } else {
-                var fadeInDelay = 350 * _TransitionAnimation._animationFactor;
-
-                var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(shownContentRect);
-                    return fadeIn(this._dom.contentWrapper);
-                });
-
-                return Promise.join([contentAnimation, playPaneAnimation()]);
-            }
-        };
-
-        return playShowAnimation().then(() => {
+        return playPaneAnimation().then(() => {
             this._clearAnimation();
         });
     }
@@ -763,45 +727,27 @@ export class Pane {
     // Overridden by tests.
     _playHideAnimation(hiddenPaneThickness: IThickness): Promise<any> {
         var dim = this._horizontal ? Dimension.width : Dimension.height;
-        var shownPaneRect = this._measureElement(this._dom.pane);
-        var shownContentRect = this._measureElement(this._dom.content);
+        var shownPaneRect = this._measureElement(this._dom.root);
         var shownPaneThickness = rectToThickness(shownPaneRect, dim);
-        var hiddenContentRect = this._getHiddenContentRect(shownContentRect, hiddenPaneThickness, shownPaneThickness);
-        this._prepareAnimation(shownPaneRect, shownContentRect);
+        this._prepareAnimation(shownPaneRect);
 
         var playPaneAnimation = (): Promise<any> => {
-            var peek = hiddenPaneThickness.total > 0;
-
-            if (peek) {
-                var placementRight = this._rtl ? Placement.left : Placement.right;
-                return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
-                    from: shownPaneThickness,
-                    to: hiddenPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === Placement.bottom
-                });
-            } else {
-                return this._paneSlideOut(shownPaneRect);
-            }
+            var placementRight = this._rtl ? Placement.left : Placement.right;
+            // What percentage of the size change should be skipped? (e.g. let's do the first
+            // 30% of the size change instantly and then animate the other 70%)
+            var animationOffsetFactor = 0.3;
+            var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+            
+            return resizeTransition(this._dom.root, this._dom.content, {
+                from: from,
+                to: hiddenPaneThickness.total,
+                actualSize: shownPaneThickness.total,
+                dimension: dim,
+                anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+            });
         };
-
-        var playHideAnimation = (): Promise<any> => {
-            if (this.shownDisplayMode === ShownDisplayMode.overlay) {
-                return playPaneAnimation();
-            } else {
-                var fadeInDelay = 267 * _TransitionAnimation._animationFactor;
-
-                var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(hiddenContentRect);
-                    return fadeIn(this._dom.contentWrapper);
-                });
-
-                return Promise.join([contentAnimation, playPaneAnimation()]);
-            }
-        };
-
-
-        return playHideAnimation().then(() => {
+        
+        return playPaneAnimation().then(() => {
             this._clearAnimation();
         });
     }
@@ -812,32 +758,13 @@ export class Pane {
     // they are undefined, the first time _updateDomImpl is called, they will all be
     // rendered.
     private _updateDomImpl_rendered = {
-        paneIsFirst: <boolean>undefined,
         isShownMode: <boolean>undefined,
         hiddenDisplayMode: <string>undefined,
-        shownDisplayMode: <string>undefined,
-        panePlacement: <string>undefined,
-        panePlaceholderWidth: <string>undefined,
-        panePlaceholderHeight: <string>undefined,
+        placement: <string>undefined,
         isOverlayShown: <boolean>undefined
     };
     _updateDomImpl(): void {
         var rendered = this._updateDomImpl_rendered;
-        
-        var paneShouldBeFirst = this.panePlacement === Placement.left || this.panePlacement === Placement.top;
-        if (paneShouldBeFirst !== rendered.paneIsFirst) {
-            // TODO: restore focus
-            if (paneShouldBeFirst) {
-                this._dom.root.appendChild(this._dom.panePlaceholder);
-                this._dom.root.appendChild(this._dom.paneWrapper);
-                this._dom.root.appendChild(this._dom.contentWrapper);
-            } else {
-                this._dom.root.appendChild(this._dom.contentWrapper);
-                this._dom.root.appendChild(this._dom.paneWrapper);
-                this._dom.root.appendChild(this._dom.panePlaceholder);
-            }
-        }
-        rendered.paneIsFirst = paneShouldBeFirst;
 
         if (rendered.isShownMode !== this._isShownMode) {
             if (this._isShownMode) {
@@ -850,10 +777,10 @@ export class Pane {
         }
         rendered.isShownMode = this._isShownMode;
 
-        if (rendered.panePlacement !== this.panePlacement) {
-            removeClass(this._dom.root, placementClassMap[rendered.panePlacement]);
-            addClass(this._dom.root, placementClassMap[this.panePlacement]);
-            rendered.panePlacement = this.panePlacement;
+        if (rendered.placement !== this.placement) {
+            removeClass(this._dom.root, placementClassMap[rendered.placement]);
+            addClass(this._dom.root, placementClassMap[this.placement]);
+            rendered.placement = this.placement;
         }
         
         if (rendered.hiddenDisplayMode !== this.hiddenDisplayMode) {
@@ -862,33 +789,7 @@ export class Pane {
             rendered.hiddenDisplayMode = this.hiddenDisplayMode;
         }
         
-        var isOverlayShown = this._isShownMode;
-        
-        // panePlaceholder's purpose is to take up the amount of space occupied by the
-        // hidden pane while the pane is shown in overlay mode. Without this, the content
-        // would shift as the pane shows and hides in overlay mode.
-        var width: string, height: string;
-        if (isOverlayShown) {
-            var hiddenPaneThickness = this._getHiddenPaneThickness();
-            if (this._horizontal) {
-                width = hiddenPaneThickness.total + "px";
-                height = "";
-            } else {
-                width = "";
-                height = hiddenPaneThickness.total + "px";
-            }
-        } else {
-            width = "";
-            height = "";
-        }
-        if (rendered.panePlaceholderWidth !== width || rendered.panePlaceholderHeight !== height) {
-            var style = this._dom.panePlaceholder.style;
-            style.width = width;
-            style.height = height;
-            rendered.panePlaceholderWidth = width;
-            rendered.panePlaceholderHeight = height;
-        }
-        
+        var isOverlayShown = this._isShownMode;      
         if (rendered.isOverlayShown !== isOverlayShown) {
             if (isOverlayShown) {
                 _LightDismissService.shown(this._dismissable);
@@ -907,3 +808,4 @@ _Base.Class.mix(Pane, _Events.createEventProperties(
     EventNames.afterHide
 ));
 _Base.Class.mix(Pane, _Control.DOMEventMixin);
+_Base.Namespace.define("WinJS.UI", { Pane: Pane });
