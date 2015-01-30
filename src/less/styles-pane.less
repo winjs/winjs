@@ -1,0 +1,76 @@
+// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+.win-pane {
+	position: absolute;
+    overflow: hidden;
+	
+	&.win-pane-placementtop {
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+	&.win-pane-placementbottom {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+         
+    @pane-left: {
+        .win-pane-panewrapper {
+            top: 0;
+            left: 0;
+            right: auto;
+            height: 100%;
+        }
+    };
+        
+    @pane-right: {
+        .win-pane-panewrapper {
+            top: 0;
+            left: auto;
+            right: 0;
+            height: 100%;
+        }
+    };
+        
+    &.win-pane-placementleft {
+        @pane-left();
+        .RTL(@pane-right);
+    }
+    
+    &.win-pane-placementright {
+        @pane-right();
+        .RTL(@pane-left);
+    }
+	
+	&.win-pane-hidden {
+        &.win-pane-placementtop,
+        &.win-pane-placementbottom {
+            height: 24px;
+        }
+
+        &.win-pane-placementleft,
+        &.win-pane-placementright {
+            width: 48px;
+        }
+        
+        &.win-pane-hiddendisplaynone {
+            display: none;
+        }
+    }
+
+    &.win-pane-shown {
+        &.win-pane-placementleft,
+        &.win-pane-placementright {
+            width: 320px;
+        }
+        
+        &.win-pane-placementtop,
+        &.win-pane-placementbottom {
+            height: 60px;
+        }
+    }
+}
