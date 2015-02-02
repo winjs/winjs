@@ -4,10 +4,19 @@
 @import "mixins.less";
 
 .win-pane {
-	position: absolute;
+	//position: absolute;
     overflow: hidden;
+    
+    .win-pane-contentwrapper,
+    .win-pane-content {
+        overflow: hidden;
+    }
+    
+    .win-pane-placeholder {
+        display: none;
+    }
 	
-	&.win-pane-placementtop {
+	/*&.win-pane-placementtop {
         top: 0;
         left: 0;
         width: 100%;
@@ -40,17 +49,21 @@
     &.win-pane-placementright {
         @pane-right();
         .RTL(@pane-left);
-    }
+    }*/
 	
 	&.win-pane-hidden {
         &.win-pane-placementtop,
         &.win-pane-placementbottom {
-            height: 24px;
+            .win-pane-content {
+                height: 24px;
+            }
         }
 
         &.win-pane-placementleft,
         &.win-pane-placementright {
-            width: 48px;
+            .win-pane-content {
+                width: 48px;
+            }
         }
         
         &.win-pane-hiddendisplaynone {
@@ -61,12 +74,16 @@
     &.win-pane-shown {
         &.win-pane-placementleft,
         &.win-pane-placementright {
-            width: 320px;
+            .win-pane-content {
+                width: 320px;
+            }
         }
         
         &.win-pane-placementtop,
         &.win-pane-placementbottom {
-            height: 60px;
+            .win-pane-content {
+                height: 60px;
+            }
         }
     }
 }

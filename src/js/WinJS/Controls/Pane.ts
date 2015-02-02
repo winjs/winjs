@@ -46,7 +46,9 @@ var ClassNames = {
     hidden: "win-pane-hidden",
     shown: "win-pane-shown",
 
+    _contentWrapper: "win-pane-contentwrapper",
     _content: "win-pane-content",
+    _placeholder: "win-pane-placeholder",
     // placement
     _placementLeft: "win-pane-placementleft",
     _placementRight: "win-pane-placementright",
@@ -467,7 +469,9 @@ export class Pane {
     private _state: IPaneState;
     _dom: {
         root: HTMLElement;
+        contentWrapper: HTMLElement;
         content: HTMLElement;
+        placeholder: HTMLElement;
     };
     _dismissable: _LightDismissService.ILightDismissable;
     _isShownMode: boolean; // Is ClassNames.paneShown present on the SplitView?
@@ -578,15 +582,25 @@ export class Pane {
         var contentEl = _Global.document.createElement("div");
         _ElementUtilities.addClass(contentEl, ClassNames._content);
         _ElementUtilities._reparentChildren(root, contentEl);
-        root.appendChild(contentEl);
+        
+        var contentWrapperEl = _Global.document.createElement("div");
+        _ElementUtilities.addClass(contentWrapperEl, ClassNames._contentWrapper);
+        contentWrapperEl.appendChild(contentEl);
+        
+        var placeholderEl = _Global.document.createElement("div");
+        _ElementUtilities.addClass(placeholderEl, ClassNames._placeholder);
 
         root["winControl"] = this;
         _ElementUtilities.addClass(root, ClassNames.pane);
         _ElementUtilities.addClass(root, "win-disposable");
+        root.appendChild(contentWrapperEl);
+        root.appendChild(placeholderEl);
 
         this._dom = {
             root: root,
-            content: contentEl
+            contentWrapper: contentWrapperEl,
+            content: contentEl,
+            placeholder: placeholderEl
         };
     }
 
@@ -607,28 +621,33 @@ export class Pane {
 
     // Overridden by tests.
     private _prepareAnimation(paneRect: IRect): void {
-        var paneWrapperStyle = this._dom.root.style;
-        paneWrapperStyle.position = "absolute";
-        paneWrapperStyle.left = paneRect.left + "px";
-        paneWrapperStyle.top = paneRect.top + "px";
-        paneWrapperStyle.height = paneRect.totalHeight + "px";
-        paneWrapperStyle.width = paneRect.totalWidth + "px";
+        var contentWrapperStyle = this._dom.contentWrapper.style;
+        contentWrapperStyle.position = "absolute";
+        contentWrapperStyle.left = paneRect.left + "px";
+        contentWrapperStyle.top = paneRect.top + "px";
+        contentWrapperStyle.height = paneRect.totalHeight + "px";
+        contentWrapperStyle.width = paneRect.totalWidth + "px";
     }
 
     // Overridden by tests.
     private _clearAnimation(): void {
-        var paneWrapperStyle = this._dom.root.style;
-        paneWrapperStyle.position = "";
-        paneWrapperStyle.left = "";
-        paneWrapperStyle.top = "";
-        paneWrapperStyle.height = "";
-        paneWrapperStyle.width = "";
-        paneWrapperStyle[transformNames.scriptName] = "";
+        var contentWrapperStyle = this._dom.contentWrapper.style;
+        contentWrapperStyle.position = "";
+        contentWrapperStyle.left = "";
+        contentWrapperStyle.top = "";
+        contentWrapperStyle.height = "";
+        contentWrapperStyle.width = "";
+        contentWrapperStyle[transformNames.scriptName] = "";
 
         var contentStyle = this._dom.content.style;
         contentStyle.height = "";
         contentStyle.width = "";
         contentStyle[transformNames.scriptName] = "";
+        
+        var placeholderStyle = this._dom.placeholder.style;
+        placeholderStyle.display = "";
+        placeholderStyle.width = "";
+        placeholderStyle.height = "";
     }
 
     //
@@ -682,7 +701,7 @@ export class Pane {
                     _ElementUtilities.removeClass(this._dom.root, ClassNames.shown);
                     _ElementUtilities.addClass(this._dom.root, ClassNames.hidden);
                 }
-                var size = this._measureElement(this._dom.root);
+                var size = this._measureElement(this._dom.content);
                 this._cachedHiddenPaneThickness = rectToThickness(size, this._horizontal ? Dimension.width : Dimension.height);
                 if (this._isShownMode) {
                     _ElementUtilities.removeClass(this._dom.root, ClassNames.hidden);
@@ -698,9 +717,13 @@ export class Pane {
     // Overridden by tests.
     _playShowAnimation(hiddenPaneThickness: IThickness): Promise<any> {
         var dim = this._horizontal ? Dimension.width : Dimension.height;
-        var shownPaneRect = this._measureElement(this._dom.root);
+        var shownPaneRect = this._measureElement(this._dom.content);
         var shownPaneThickness = rectToThickness(shownPaneRect, dim);
         this._prepareAnimation(shownPaneRect);
+        var placeholderStyle = this._dom.placeholder.style;
+        placeholderStyle.display = "block";
+        placeholderStyle.width = shownPaneRect.totalWidth + "px";
+        placeholderStyle.height = shownPaneRect.totalHeight + "px";
 
         var playPaneAnimation = (): Promise<any> => {
             var placementRight = this._rtl ? Placement.left : Placement.right;
@@ -709,7 +732,7 @@ export class Pane {
             var animationOffsetFactor = 0.3;
             var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.root, this._dom.content, {
+            return resizeTransition(this._dom.contentWrapper, this._dom.content, {
                 from: from,
                 to: shownPaneThickness.total,
                 actualSize: shownPaneThickness.total,
@@ -727,9 +750,18 @@ export class Pane {
     // Overridden by tests.
     _playHideAnimation(hiddenPaneThickness: IThickness): Promise<any> {
         var dim = this._horizontal ? Dimension.width : Dimension.height;
-        var shownPaneRect = this._measureElement(this._dom.root);
+        var shownPaneRect = this._measureElement(this._dom.content);
         var shownPaneThickness = rectToThickness(shownPaneRect, dim);
         this._prepareAnimation(shownPaneRect);
+        var placeholderStyle = this._dom.placeholder.style;
+        placeholderStyle.display = "block";
+        if (dim === Dimension.height) {
+            placeholderStyle.width = shownPaneRect.totalWidth + "px";
+            placeholderStyle.height = hiddenPaneThickness.total + "px";
+        } else {
+            placeholderStyle.width = hiddenPaneThickness.total + "px";
+            placeholderStyle.height = shownPaneRect.totalHeight + "px";
+        }
 
         var playPaneAnimation = (): Promise<any> => {
             var placementRight = this._rtl ? Placement.left : Placement.right;
@@ -738,7 +770,7 @@ export class Pane {
             var animationOffsetFactor = 0.3;
             var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.root, this._dom.content, {
+            return resizeTransition(this._dom.contentWrapper, this._dom.content, {
                 from: from,
                 to: hiddenPaneThickness.total,
                 actualSize: shownPaneThickness.total,
@@ -792,9 +824,9 @@ export class Pane {
         var isOverlayShown = this._isShownMode;      
         if (rendered.isOverlayShown !== isOverlayShown) {
             if (isOverlayShown) {
-                _LightDismissService.shown(this._dismissable);
+                //_LightDismissService.shown(this._dismissable);
             } else {
-                _LightDismissService.hidden(this._dismissable);
+                //_LightDismissService.hidden(this._dismissable);
             }
             rendered.isOverlayShown = isOverlayShown;
         }
