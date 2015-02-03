@@ -4,21 +4,62 @@
 @import "mixins.less";
 
 .win-toolpane {
-	.win-toolpane-pane {
-		&.win-pane-hidden {
-			.win-pane-content {
-				height: auto;
-			}
-		
-			.win-label {
-	        	display: none;
-	    	}
-		}
-		
-		&.win-pane-shown {
-			.win-pane-content {
-				height: auto;
-			}
-		}
-	}
+    &.win-toolpane-minimum {
+        &.win-toolpane-hiding {
+            .win-toolbar-overflowbutton {
+                min-height: 0;
+            }
+            .win-toolbar-ellipsis {
+                line-height: 0;
+            }
+
+            .win-command {
+                visibility: hidden;
+            }
+        }
+
+        .win-toolpane-pane.win-pane-hidden {
+            .win-toolbar-actionarea {
+                height: 24px;
+            }
+            .win-toolbar-overflowbutton {
+                min-height: 0;
+            }
+            .win-toolbar-ellipsis {
+                line-height: 0;
+            }
+
+            .win-command {
+                display: none;
+            }
+        }
+    }
+
+    &.win-toolpane-compact {
+        &.win-toolpane-hiding {
+            .win-label {
+                visibility: hidden;
+            }
+        }
+
+        .win-toolpane-pane.win-pane-hidden {
+            .win-label {
+                display: none;
+            }
+        }
+    }
+
+    .win-toolpane-pane {
+        &.win-pane-hidden {
+            .win-pane-content {
+                height: auto;
+            }
+        }
+        
+        &.win-pane-shown {
+            .win-pane-content {
+                height: auto;
+            }
+        }
+    }
 }

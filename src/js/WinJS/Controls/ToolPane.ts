@@ -15,14 +15,39 @@ require(["require-style!less/styles-toolpane"]);
 
 "use strict";
 
+var ClosedDisplayModes = {
+    none: "none",
+    minimum: "minimum",
+    compact: "compact",
+    full: "full"
+};
+
 var ClassNames = {
     toolPane: "win-toolpane",
     
     _pane: "win-toolpane-pane",
     _toolBar: "win-toolpane-toolbar",
     _top: "win-toolpane-top",
-    _bottom: "win-toolpane-bottom"
+    _bottom: "win-toolpane-bottom",
+    _none: "win-toolpane-none",
+    _minimum: "win-toolpane-minimum",
+    _compact: "win-toolpane-compact",
+    _full: "win-toolpane-full",
+    _hiding: "win-toolpane-hiding"
 };
+var closedDisplayModeClassMap = {};
+closedDisplayModeClassMap[ClosedDisplayModes.none] = ClassNames._none;
+closedDisplayModeClassMap[ClosedDisplayModes.minimum] = ClassNames._minimum;
+closedDisplayModeClassMap[ClosedDisplayModes.compact] = ClassNames._compact;
+closedDisplayModeClassMap[ClosedDisplayModes.full] = ClassNames._full;
+
+// Versions of add/removeClass that are no ops when called with falsy class names.
+function addClass(element: HTMLElement, className: string): void {
+    className && _ElementUtilities.addClass(element, className);
+}
+function removeClass(element: HTMLElement, className: string): void {
+    className && _ElementUtilities.removeClass(element, className);
+}
 
 export class ToolPane {
     static supportedForProcessing: boolean = true;
@@ -43,6 +68,7 @@ export class ToolPane {
         
         this._initializeDom(element || _Global.document.createElement("div"))
         this.placement = "top";
+        this.closedDisplayMode = ClosedDisplayModes.compact;
         _Control.setOptions(this, options);
     }
 
@@ -69,6 +95,27 @@ export class ToolPane {
             return;
         }
         this._pane.placement = value;
+    }
+
+    private _closedDisplayMode: string;
+    get closedDisplayMode(): string {
+        return this._closedDisplayMode;
+    }
+    set closedDisplayMode(value: string) {
+        // TODO: Shouldn't apply this while panes are animating
+        if (ClosedDisplayModes[value] && this._closedDisplayMode !== value) {
+            this._closedDisplayMode = value;
+            this._updateDom();
+            // TODO: How to signal to pane that it's cachedHiddenPaneThickness may now be invalid?
+        }
+    }
+
+    show(): void {
+        this._pane.show();
+    }
+
+    hide(): void {
+        this._pane.hide();
     }
 
     dispose(): void {
@@ -107,6 +154,13 @@ export class ToolPane {
         };
         
         this._pane = new _Pane.Pane(this._dom.pane);
+        this._pane.element.addEventListener("beforehide", () => {
+            _ElementUtilities.addClass(this._dom.root, ClassNames._hiding);
+        });
+        this._pane.element.addEventListener("afterhide", () => {
+            _ElementUtilities.removeClass(this._dom.root, ClassNames._hiding);
+        });
+
         this._toolBar = new _ToolBar.ToolBar(this._dom.toolBar);
         this._toolBar.element.querySelector(".win-toolbar-overflowbutton").addEventListener("click", () => {
             this._pane.hidden = !this._pane.hidden;
@@ -115,6 +169,19 @@ export class ToolPane {
         _Global.setTimeout(() => {
             this._toolBar.forceLayout();
         }, 0);
+    }
+
+    private _updateDom_rendered = {
+        closedDisplayMode: <string>undefined
+    };
+    private _updateDom(): void {
+        var rendered = this._updateDom_rendered;
+        if (rendered.closedDisplayMode !== this._closedDisplayMode) {
+            removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
+            addClass(this._dom.root, closedDisplayModeClassMap[this._closedDisplayMode]);
+            this._pane.hiddenDisplayMode = this._closedDisplayMode === ClosedDisplayModes.none ? "none" : "overlay";
+            rendered.closedDisplayMode = this._closedDisplayMode;
+        }
     }
 }
 _Base.Namespace.define("WinJS.UI", { ToolPane: ToolPane });

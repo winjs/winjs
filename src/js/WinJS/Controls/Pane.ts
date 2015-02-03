@@ -30,6 +30,11 @@
   - How to compose state machines, DOM updates? For example, parent control shouldn't restyle itself while child control is animating.
 */
 
+/* Bugs
+   - ToolPane
+     - Start with closedDisplayMode: none. show() and ToolBar isn't laid out
+*/
+
 import Animations = require('../Animations');
 import _Base = require('../Core/_Base');
 import _BaseUtils = require('../Core/_BaseUtils');
