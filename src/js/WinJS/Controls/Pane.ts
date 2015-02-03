@@ -28,11 +28,13 @@
     Can we do without the pane or expose it a different way? e.g. expose state machine some how?
     Is there a way to make it easy to plug new animations in?
   - How to compose state machines, DOM updates? For example, parent control shouldn't restyle itself while child control is animating.
+  - What's a nice pattern for consuming one control from another? For example, in initializeDom, should we describe it declaratively and call processAll?
 */
 
 /* Bugs
    - ToolPane
      - Start with closedDisplayMode: none. show() and ToolBar isn't laid out
+   - Doesn't work in Chrome/Safari due to their percentage sizing flexbox bug
 */
 
 import Animations = require('../Animations');
