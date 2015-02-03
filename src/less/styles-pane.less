@@ -5,15 +5,26 @@
 
 .win-pane {
 	//position: absolute;
-    overflow: hidden;
+    // Overflow needs to be visible when resizing from shown to hidden to avoid clipping animation. Why?
+    //   - win-pane-content becomes absolutely positioned so it doesn't take up space
+    //   - win-pane-placeholder is at hidden size so that external content reflows at beginning of animation
+    //   - So win-pane will be hidden size. We need overflow visible so it doesn't clip while animation is larger than hidden size.
     
-    .win-pane-contentwrapper,
-    .win-pane-content {
+    .win-pane-contentwrapper, // clip during resize animation
+    .win-pane-content { // clip users content and prevent margins from callapsing thru win-pane-content
         overflow: hidden;
     }
     
     .win-pane-placeholder {
         display: none;
+    }
+    
+    &.win-pane-placementleft,
+    &.win-pane-placementright {
+        .win-pane-contentwrapper,
+        .win-pane-content {
+            height: 100%;
+        }
     }
 	
 	/*&.win-pane-placementtop {

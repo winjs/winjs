@@ -1,6 +1,35 @@
 // Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 /// <reference path="../../../../typings/require.d.ts" />
 
+/* Notes
+  - Styling is fragile
+    - Recall the problem we have with apps overriding styles (i.e. guidance is to prefix rule with id to guarantee win).
+      A control that utilizes another control via composition has the same exact problem except it can't guarantee a win
+      by using an id in the selector. How can we override in a non-fragile way (i.e. we don't want to start losing if the
+      more primitive control changes and adds an extra class in its selector)
+    - Solutions
+      - Interface via LESS
+      - Can provide a class so that all styles stop working and you take controls of all styling
+  - Pane uses a surprising number of elements. Why? For the resize animation (2) and so that it can continue taking up space
+    during the animation. Can we reduce the number?
+      - root: holds all of the elements
+      - contentWrapper: acts as the clipper during the resize animation
+      - content: public, developer puts his content in here and sizes this element
+      - placeholder: takes up space while the control is animating (does contentWrapper and content really need to be absolute and not take up space during the animation?)
+    All these elements also cause problems with sizing. Generally, you want the pane to size to content in one direction and the parent to decide its size in the other.
+    But how do you make all of these private interior elements take up the same amount of space as their parent? If the root is sized via flexbox, 100% won't work in Chrome...
+  - What about variations in how people want the pane used?
+    - Different animations (Is there a way to make it easy to plug new animations in?)
+    - What if somebody wanted the pane to not cause content to shift until the end of its animation (instead of at the beginning)?
+      What if somebody wanted to animate how the content shifts?
+  - What is the value of the pane?
+    - Resize animation
+    - State machine
+    Can we do without the pane or expose it a different way? e.g. expose state machine some how?
+    Is there a way to make it easy to plug new animations in?
+  - How to compose state machines, DOM updates? For example, parent control shouldn't restyle itself while child control is animating.
+*/
+
 import Animations = require('../Animations');
 import _Base = require('../Core/_Base');
 import _BaseUtils = require('../Core/_BaseUtils');
@@ -114,6 +143,26 @@ function cancelablePromise(animationPromise: Promise<any>) {
     return Promise._cancelBlocker(animationPromise, function () {
         animationPromise.cancel();
     });
+}
+
+function showEdgeUI(element: HTMLElement, offset?: any, options?: any): Promise<any> {
+    return cancelablePromise(Animations.showEdgeUI(element, offset, options));
+}
+
+function hideEdgeUI(element: HTMLElement, offset?: any, options?: any): Promise<any> {
+    return cancelablePromise(Animations.hideEdgeUI(element, offset, options));
+}
+
+function slide(element: HTMLElement, options: { from: number; to: number; dimension: string }) {
+    var translate = options.dimension === Dimension.height ? "translateY" : "translateX";
+    return cancelablePromise(_TransitionAnimation["executeTransition"](element, {
+        property: transformNames.cssName,
+        delay: 0,
+        duration: 367,
+        timing: "cubic-bezier(0.1, 0.9, 0.2, 1)",
+        from: translate + "(" + options.from + "px)",
+        to: translate + "(" + options.to + "px)"
+    }));
 }
 
 interface IResizeTransitionOptions {
@@ -727,18 +776,27 @@ export class Pane {
 
         var playPaneAnimation = (): Promise<any> => {
             var placementRight = this._rtl ? Placement.left : Placement.right;
-            // What percentage of the size change should be skipped? (e.g. let's do the first
-            // 30% of the size change instantly and then animate the other 70%)
-            var animationOffsetFactor = 0.3;
-            var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.contentWrapper, this._dom.content, {
-                from: from,
-                to: shownPaneThickness.total,
-                actualSize: shownPaneThickness.total,
-                dimension: dim,
-                anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
-            });
+            if (this.placement === placementRight || this.placement === Placement.bottom) {
+                var offset = this._horizontal ?
+                    { left: shownPaneThickness.total - hiddenPaneThickness.total + "px", top: "0px" } :
+                    { left: "0px", top: shownPaneThickness.total - hiddenPaneThickness.total + "px" };
+                
+                return showEdgeUI(this._dom.content, offset, { mechanism: "transition" });
+            } else {
+                // What percentage of the size change should be skipped? (e.g. let's do the first
+                // 30% of the size change instantly and then animate the other 70%)
+                var animationOffsetFactor = 0.3;
+                var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+                
+                return resizeTransition(this._dom.contentWrapper, this._dom.content, {
+                    from: from,
+                    to: shownPaneThickness.total,
+                    actualSize: shownPaneThickness.total,
+                    dimension: dim,
+                    anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+                });
+            }
         };
 
         return playPaneAnimation().then(() => {
@@ -754,29 +812,46 @@ export class Pane {
         var shownPaneThickness = rectToThickness(shownPaneRect, dim);
         this._prepareAnimation(shownPaneRect);
         var placeholderStyle = this._dom.placeholder.style;
+        // TODO: During the hide animation, should we take up the amount of space associated with the hidden or shown state?
+        //   - Taking up hidden matches SplitView's speced animation
+        //   - Taking up shown breaks AppBar's animation (when it is absolutely positioned at the bottom)
         placeholderStyle.display = "block";
         if (dim === Dimension.height) {
             placeholderStyle.width = shownPaneRect.totalWidth + "px";
-            placeholderStyle.height = hiddenPaneThickness.total + "px";
+            placeholderStyle.height = shownPaneRect.totalHeight + "px";
         } else {
-            placeholderStyle.width = hiddenPaneThickness.total + "px";
+            placeholderStyle.width = shownPaneRect.totalWidth + "px";
             placeholderStyle.height = shownPaneRect.totalHeight + "px";
         }
 
         var playPaneAnimation = (): Promise<any> => {
             var placementRight = this._rtl ? Placement.left : Placement.right;
-            // What percentage of the size change should be skipped? (e.g. let's do the first
-            // 30% of the size change instantly and then animate the other 70%)
-            var animationOffsetFactor = 0.3;
-            var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.contentWrapper, this._dom.content, {
-                from: from,
-                to: hiddenPaneThickness.total,
-                actualSize: shownPaneThickness.total,
-                dimension: dim,
-                anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
-            });
+            if (this.placement === placementRight || this.placement === Placement.bottom) {
+                var offset = this._horizontal ?
+                    { left: shownPaneThickness.total - hiddenPaneThickness.total + "px", top: "0px" } :
+                    { left: "0px", top: shownPaneThickness.total - hiddenPaneThickness.total + "px" };
+                
+                return hideEdgeUI(this._dom.content, offset, { mechanism: "transition" });
+                return slide(this._dom.content, {
+                    from: -(shownPaneThickness.total - hiddenPaneThickness.total),
+                    to: 0,
+                    dimension: dim
+                });
+            } else {
+                // What percentage of the size change should be skipped? (e.g. let's do the first
+                // 30% of the size change instantly and then animate the other 70%)
+                var animationOffsetFactor = 0.3;
+                var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
+                
+                return resizeTransition(this._dom.contentWrapper, this._dom.content, {
+                    from: from,
+                    to: hiddenPaneThickness.total,
+                    actualSize: shownPaneThickness.total,
+                    dimension: dim,
+                    anchorTrailingEdge: this.placement === placementRight || this.placement === Placement.bottom
+                });
+            }
         };
         
         return playPaneAnimation().then(() => {

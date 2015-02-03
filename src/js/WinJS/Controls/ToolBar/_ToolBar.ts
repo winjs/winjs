@@ -340,12 +340,13 @@ export class ToolBar {
         this._overflowButton.innerHTML = "<span class='" + _Constants.ellipsisCssClass + "'></span>";
         _ElementUtilities.addClass(this._overflowButton, _Constants.overflowButtonCssClass);
         this._mainActionArea.appendChild(this._overflowButton);
-        this._overflowButton.addEventListener("click", () => {
+        // TODO: Find a better way of making this functionality customizable
+        /*this._overflowButton.addEventListener("click", () => {
             if (this._menu) {
                 var isRTL = _Global.getComputedStyle(this._element).direction === 'rtl';
                 this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
             }
-        });
+        });*/
         this._overflowButtonWidth = _ElementUtilities.getTotalWidth(this._overflowButton);
         _ElementUtilities.addClass(this.element, _Constants.shownDisplayReducedCssClass);
     }

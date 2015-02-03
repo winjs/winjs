@@ -44,6 +44,7 @@ define([
     'WinJS/Controls/ToolBar',
     'WinJS/Controls/SplitView',
     'WinJS/Controls/Pane',
+    'WinJS/Controls/ToolPane'
     ], function (_WinJS) {
     "use strict";
 

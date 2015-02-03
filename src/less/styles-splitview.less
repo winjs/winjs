@@ -4,137 +4,25 @@
 @import "mixins.less";
 
 .win-splitview {
-    position: relative;
+    //position: relative;
     width: 100%;
     height: 100%;
     #flex > .display-flex();
     overflow: hidden;
     
-    &.win-splitview-placementtop,
-    &.win-splitview-placementbottom {
+    &.win-splitview-horizontal {
+        #flex > .flex-direction(row);
+    }
+    
+    &.win-splitview-vertical {
         #flex > .flex-direction(column);
-        
-        .win-splitview-panewrapper {
-            #flex > .flex-direction(column);
-        }
     }
     
-    .win-splitview-panewrapper {
-        position: relative; // Enable absolute positioning to work inside of the pane
-        z-index: 1;
-        outline: none; // Don't render a focus visual
-        #flex > .flex(none);
-        overflow: hidden;
-        
-        #flex > .display-flex();
+    > * {
+        #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%); 
     }
     
-    .win-splitview-pane,
-    .win-splitview-paneplaceholder {
-        #flex > .flex(none);
-        overflow: hidden;
-    }
-
-    .win-splitview-contentwrapper {
-        position: relative;
-        z-index: 0;
-        #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
-        overflow: hidden;
-    }
-    
-    .win-splitview-content {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-
-    &.win-splitview-pane-shown {
-        &.win-splitview-placementleft,
-        &.win-splitview-placementright {
-            .win-splitview-pane {
-                width: 320px;
-            }
-        }
-        
-        &.win-splitview-placementtop,
-        &.win-splitview-placementbottom {
-            .win-splitview-pane {
-                height: 60px;
-            }
-        }
-        
-        &.win-splitview-showndisplayoverlay {
-            &.win-splitview-placementtop .win-splitview-panewrapper {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-            }
-    
-            &.win-splitview-placementbottom .win-splitview-panewrapper {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-            }
-        
-            @pane-left: {
-                .win-splitview-panewrapper {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: auto;
-                    height: 100%;
-                }
-            };
-            
-            @pane-right: {
-                .win-splitview-panewrapper {
-                    position: absolute;
-                    top: 0;
-                    left: auto;
-                    right: 0;
-                    height: 100%;
-                }
-            };
-            
-            &.win-splitview-placementleft {
-                @pane-left();
-                .RTL(@pane-right);
-            }
-            
-            &.win-splitview-placementright {
-                @pane-right();
-                .RTL(@pane-left);
-            }
-        }
-    }
-
-    &.win-splitview-pane-hidden {
-        .win-splitview-paneplaceholder {
-            display: none;
-        }
-
-        &.win-splitview-placementtop,
-        &.win-splitview-placementbottom {
-            .win-splitview-pane {
-                height: 24px;
-            }
-        }
-
-        &.win-splitview-placementleft,
-        &.win-splitview-placementright {
-            .win-splitview-pane {
-                width: 48px;
-            }
-        }
-        
-        &.win-splitview-hiddendisplaynone .win-splitview-pane {
-            display: none;
-        }
-    }
-
-    &.win-splitview-showndisplayinline .win-splitview-paneplaceholder {
-        display: none;
+    > .win-pane {
+        #flex > .flex(none); 
     }
 }
