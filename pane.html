@@ -1,0 +1,236 @@
+<!doctype html>
+<html>
+<head>
+    <title>Pane</title>
+    <link rel="stylesheet" href="bin/Microsoft.WinJS.4.0/css/ui-light.css" />
+    <script src="bin/Microsoft.WinJS.4.0/js/WinJS.js"></script>
+    <style>
+        .root {
+            display: flex;
+            flex-direction: column;
+            height: calc(100% - 60px);
+        }
+        .controls {
+            flex: none;
+        }
+        #app .splitView {
+            flex: 1 1 0%;
+        }
+
+        /*#app .win-splitview.win-splitview-horizontal .win-pane-contentwrapper,
+        #app .win-splitview.win-splitview-horizontal .win-pane-content {
+            height: 100%;
+        }*/
+
+        #app .win-splitview.win-splitview-vertical .win-pane-hidden .win-pane-content {
+            height: 60px;
+        }
+        #app .win-splitview.win-splitview-vertical .win-pane-shown .win-pane-content {
+            height: 150px;
+        }
+
+        /* ToolBar */
+        .toolBarPane {
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        #app .win-pane-hidden.toolBarPane .win-pane-content {
+            height: auto;
+        }
+        #app .win-pane-hidden.toolBarPane .win-command {
+            display: none;
+        }
+        #app .toolBarPane.hiding .win-command {
+            visibility: hidden;
+        }
+        /*#app .win-pane-hidden .win-toolbar-actionarea {
+            height: 24px;
+        }
+        #app .hiding .toolBar .win-toolbar-overflowbutton,
+        #app .win-pane-hidden .toolBar .win-toolbar-overflowbutton {
+            min-height: 0;
+        }
+        #app .hiding .toolBar .win-toolbar-ellipsis,
+        #app .win-pane-hidden .toolBar .win-toolbar-ellipsis {
+            line-height: 0;
+        }*/
+
+        .ahc {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 70px;
+            width: 100%;
+            background-color: orange;
+        }
+        #toolBarPaneEl {
+            display: none;
+        }
+    </style>
+    <script>
+        // Monitor focus
+        window.ahc = null;
+        setInterval(function () {
+            if (ahc !== document.activeElement) {
+                ahc = document.activeElement;
+                console.log("focus: " + (ahc ? [ahc.id, ahc.className, ahc.tagName].join(":") : "<null>"));
+            }
+        }, 0);
+
+        var pane;
+        WinJS.Utilities.ready(function () {
+            WinJS.UI.processAll().then(function () {
+                pane = paneEl.winControl;
+
+                if (false) {
+                    var toVertical = {
+                        left: "top",
+                        right: "bottom"
+                    };
+                    [].forEach.call(document.querySelectorAll(".win-pane"), function (e) {
+                        var c = e.winControl;
+                        c.placement = toVertical[c.placement];
+                    });
+                    [].forEach.call(document.querySelectorAll(".win-splitview"), function (e) {
+                        e.winControl.orientation = "vertical";
+                    });
+                }
+
+                document.querySelector(".win-toolbar-overflowbutton").addEventListener("click", function (ev) {
+                    toolBarPaneEl.winControl.hidden = !toolBarPaneEl.winControl.hidden;
+                });
+
+                toolBarPaneEl.winControl.addEventListener("beforehide", function () {
+                    toolBarPaneEl.classList.add("hiding");
+                });
+                toolBarPaneEl.winControl.addEventListener("afterhide", function () {
+                    toolBarPaneEl.classList.remove("hiding");
+                });
+            });
+        });
+
+        function toggleSlowAnimations() {
+            WinJS.Utilities._slowAnimations = slowAnimationsEl.checked;
+        }
+
+        function setPlacement() {
+            pane.placement = placementEl.value;
+        }
+
+        function setHiddenDisplayMode(displayMode) {
+            pane.hiddenDisplayMode = displayMode;
+        }
+
+        function toggle(e) {
+            var pane = e;
+            while (pane && !pane.classList.contains("win-pane")) {
+                pane = pane.parentElement;
+            }
+            if (pane) {
+                pane.winControl.hidden = !pane.winControl.hidden;
+            }
+        }
+    </script>
+</head>
+<body id="app" class="clown">
+    <div class="ahc">
+        Hello
+    </div>
+    <div data-win-control="WinJS.UI.ToolPane">
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdAdd',label:'Add',icon:'add',section:'primary',tooltip:'Add item'}"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdRemove',label:'Remove',icon:'remove',section:'primary',tooltip:'Remove item'}"></button>
+        <hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type:'separator',section:'primary'}" />
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdCamera',label:'Camera',icon:'camera',section:'primary',tooltip:'Camera'}"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdToggle',label:'Toggle',icon:'mappin',section:'primary', type:'toggle', tooltip:'Toggle'}"></button>
+        <hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type:'separator',section:'primary'}" />
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdDelete',label:'Delete',icon:'delete',section:'primary',tooltip:'Delete item'}"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption1',label:'Option 1',section:'secondary', type:'flyout', flyout: select('#menuFlyout')}"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption2',label:'Option 2',section:'secondary', type:'toggle', selected: true }"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption3',label:'Option 3',section:'secondary', type:'button' }"></button>
+        <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption4',label:'Option 4',section:'secondary', type:'button' }"></button>
+    </div>
+
+    <div id="toolBarPaneEl" class="toolBarPane" data-win-control="WinJS.UI.Pane" data-win-options="{ placement: 'bottom' }">
+        <div class="toolBar" data-win-control="WinJS.UI.ToolBar">
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdAdd',label:'Add',icon:'add',section:'primary',tooltip:'Add item'}"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdRemove',label:'Remove',icon:'remove',section:'primary',tooltip:'Remove item'}"></button>
+            <hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type:'separator',section:'primary'}" />
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdCamera',label:'Camera',icon:'camera',section:'primary',tooltip:'Camera'}"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdToggle',label:'Toggle',icon:'mappin',section:'primary', type:'toggle', tooltip:'Toggle'}"></button>
+            <hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type:'separator',section:'primary'}" />
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdDelete',label:'Delete',icon:'delete',section:'primary',tooltip:'Delete item'}"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption1',label:'Option 1',section:'secondary', type:'flyout', flyout: select('#menuFlyout')}"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption2',label:'Option 2',section:'secondary', type:'toggle', selected: true }"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption3',label:'Option 3',section:'secondary', type:'button' }"></button>
+            <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'cmdOption4',label:'Option 4',section:'secondary', type:'button' }"></button>
+        </div>
+    </div>
+    <div class="root">
+        <div class="controls">
+            <input id="slowAnimationsEl" onclick="toggleSlowAnimations();" type="checkbox" />
+            <label for="slowAnimationsEl">Slow Animations</label>
+            <br />
+
+            Hidden Display Mode:
+            <input type="radio" name="hiddenDisplayMode" onclick="setHiddenDisplayMode('none');" />None
+            <input type="radio" name="hiddenDisplayMode" onclick="setHiddenDisplayMode('overlay');" checked="checked" />Inline
+            <br />
+
+            <label for="placmentEl">Placement:</label>
+            <select id="placementEl" onchange="setPlacement();">
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+            </select>
+            <br />
+            <button class="paneButtonToggle" onclick="pane.hidden = !pane.hidden;">Toggle Pane</button>
+        </div>
+
+        <div class="splitView" data-win-control="WinJS.UI.SplitView">
+            <div id="paneEl" data-win-control="WinJS.UI.Pane">
+                <p>Some text</p>
+                <button class="paneButton1">Button 1</button>
+                <button class="paneButton2">Button 2</button>
+                <button class="paneButtonToggle" onclick="toggle(this);">Toggle Pane</button>
+            </div>
+            <div data-win-control="WinJS.UI.Pane">
+                <p>Some text</p>
+                <button class="paneButton1">Button 1</button>
+                <button class="paneButton2">Button 2</button>
+                <button class="paneButtonToggle" onclick="toggle(this);">Toggle Pane</button>
+            </div>
+            <div>
+                Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello
+            </div>
+            <div data-win-control="WinJS.UI.Pane" data-win-options="{ placement: 'right' }">
+                <p>Some text</p>
+                <button class="paneButton1">Button 1</button>
+                <button class="paneButton2">Button 2</button>
+                <button class="paneButtonToggle" onclick="toggle(this);">Toggle Pane</button>
+            </div>
+        </div>
+    </div>
+    <!--<div class="flex">
+        <div id="paneEl" class="pane" data-win-control="WinJS.UI.Pane" data-win-options="{ placement: 'left', hiddenDisplayMode: 'none' }">
+            <p>Some text</p>
+            <button class="paneButton1">Button 1</button>
+            <button class="paneButton2">Button 2</button>
+            <button class="paneButtonToggle" onclick="pane.hidden = !pane.hidden;">Toggle Pane</button>
+        </div>
+        <div class="content">
+            Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello Hello 
+        </div>
+        <div id="pane2El" class="pane" data-win-control="WinJS.UI.Pane" data-win-options="{ placement: 'right' }">
+            <p>Some text</p>
+            <button class="paneButton1">Button 1</button>
+            <button class="paneButton2">Button 2</button>
+            <button class="paneButtonToggle" onclick="pane2El.winControl.hidden = !pane2El.winControl.hidden;">Toggle Pane</button>
+        </div>
+    </div>-->
+</body>
+</html>
+
