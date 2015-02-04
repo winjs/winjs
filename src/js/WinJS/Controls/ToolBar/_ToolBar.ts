@@ -767,6 +767,7 @@ export class ToolBar {
     }
 
     private _setupOverflowArea(additionalCommands: any[]) {
+        this._writeProfilerMark("_setupOverflowArea,info");
 
         // Set up custom flyout for "content" typed commands in the overflow area.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
