@@ -95,7 +95,7 @@ interface IShowHideState {
 
 module States {
     function updateDomImpl(): void {
-        this.machine._control.updateDom();
+        this.machine._control.onUpdateDom();
     }
 
     // Initial state. Initializes state on the SplitView shared by the various states.
@@ -107,8 +107,9 @@ module States {
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    return this.machine._control.initialize(this.machine);
+                    return this.machine._initializedSignal.promise;
                 }).then(() => {
+                    this.machine._control.onUpdateDom();
                     if (this._hidden) {
                         this.machine._control.onHide({ skipAnimation: true });
                         this.machine._setState(Hidden);
@@ -190,7 +191,7 @@ module States {
                 }).then(() => {
                     this.machine._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
                 }).then(() => {
-                    this.machine._control.updateDom();
+                    this.machine._control.onUpdateDom();
                     this.machine._setState(Shown, { hideIsPending: this._hideIsPending });
                 });
             });
@@ -265,7 +266,7 @@ module States {
                 }).then(() => {
                     this.machine._fireEvent(EventNames.afterHide); // Give opportunity for chain to be canceled when calling into app code
                 }).then(() => {
-                    this.machine._control.updateDom();
+                    this.machine._control.onUpdateDom();
                     this.machine._setState(Hidden, { showIsPending: this._showIsPending });
                 });
             });
@@ -295,52 +296,65 @@ module States {
     }
 }
 
-export interface IShowHideMachineOptions {
+export interface IShowHideMachineArgs {
+    // The element on which the events (beforeshow, afterhide, etc.) should be dispatched.
     eventElement: HTMLElement;
-    initialize(machine: ShowHideMachine): void;
+    // Called when the control should render its shown state possibly with an animation.
     onShow(options?: { skipAnimation?: boolean }): Promise<any>;
+    // Called when the control should render its hidden state possibly with an animation.
     onHide(options?: { skipAnimation?: boolean }): Promise<any>;
-    updateDom(): void;
-    
-    dispose(): void; // TODO: needed?
+    // Called when the control should render its current internal state to the DOM.
+    onUpdateDom(): void;
 }
 
 export class ShowHideMachine {
-    _control: IShowHideMachineOptions;
+    _control: IShowHideMachineArgs;
+    _initializedSignal: _Signal<any>;
     
     private _disposed: boolean;
     private _state: IShowHideState;
     
-    constructor(options: IShowHideMachineOptions) {
+    //
+    // Methods called by the control
+    //
+    
+    // When the machine is created, it sits in the Init state. When in the Init state, calls to
+    // updateDom will be postponed until the machine exits the Init state. Consequently, while in
+    // this state, the control can feel free to call updateDom as many times as it wants without
+    // worrying about it being expensive due to updating the DOM many times. The control should call
+    // *initialized* to move the machine out of the Init state. 
+    
+    constructor(args: IShowHideMachineArgs) {
+        this._control = args;
+        this._initializedSignal = new _Signal();
         this._disposed = false;
-        this._control = options;
         this._setState(States.Init);
     }
     
-    show() {
-        this._state.show();
+    // Moves the machine out of the Init state and into the Shown or Hidden state depending on whether
+    // show or hide was called more recently.
+    initialized() {
+        this._initializedSignal.complete();
     }
     
-    hide() {
-        this._state.hide();
+    
+    // These method calls are forwarded to the current state.
+    updateDom() { this._state.updateDom(); }
+    show() { this._state.show(); }
+    hide() { this._state.hide(); }
+    get hidden() { return this._state.hidden; }
+    set hidden(value: boolean) {
+        if (value) {
+            this.hide();
+        } else {
+            this.show();
+        }
     }
     
+    // Puts the machine into the Disposed state.
     dispose() {
         this._setState(States.Disposed);
         this._disposed = true;
-        this._control.dispose();
-    }
-    
-    get hidden() {
-        return this._state.hidden;
-    }
-    
-    set hidden(value: boolean) {
-        this._state.hidden = value;
-    }
-    
-    updateDom() {
-        this._state.updateDom();
     }
     
     //

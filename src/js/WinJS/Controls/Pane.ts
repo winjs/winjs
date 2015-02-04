@@ -254,35 +254,10 @@ export class Pane {
         if (element && element["winControl"]) {
             throw new _ErrorFromName("WinJS.UI.SplitView.DuplicateConstruction", Strings.duplicateConstruction);
         }
-
-        this._disposed = false;
-        this._initializeDom(element || _Global.document.createElement("div"));
         
-        new _Utilities.ShowHideMachine({
+        this._initializeDom(element || _Global.document.createElement("div"));
+        this._machine = new _Utilities.ShowHideMachine({
             eventElement: this._dom.root,
-            initialize: (machine) => {
-                this._machine = machine;
-                this._cachedHiddenPaneThickness = null;
-                this._dismissable = new _LightDismissService.LightDismissableElement({
-                    element: this._dom.root,
-                    tabIndex: -1,
-                    onLightDismiss: () => {
-                        this.hide();
-                    }
-                });
-                
-                this.hidden = true;
-                this.hiddenDisplayMode = HiddenDisplayMode.overlay;
-                this.placement = Placement.left;
-                _Control.setOptions(this, options);
-                
-                return _ElementUtilities._inDom(this._dom.root).then(() => {
-                    this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
-                });
-            },
-            dispose: () => {
-                _LightDismissService.hidden(this._dismissable);
-            },
             onShow: (options?: { skipAnimation?: boolean }) => {
                 options = options || {};
                 this._cachedHiddenPaneThickness = null;
@@ -307,9 +282,32 @@ export class Pane {
                     this._updateDomImpl();
                 });
             },
-            updateDom: () => {
+            onUpdateDom: () => {
                 this._updateDomImpl();
             }
+        });
+        
+        // Initialize private state.
+        this._disposed = false;
+        this._cachedHiddenPaneThickness = null;
+        this._dismissable = new _LightDismissService.LightDismissableElement({
+            element: this._dom.root,
+            tabIndex: -1,
+            onLightDismiss: () => {
+                this.hide();
+            }
+        });
+        
+        // Initialize public properties.
+        this.hidden = true;
+        this.hiddenDisplayMode = HiddenDisplayMode.overlay;
+        this.placement = Placement.left;
+        _Control.setOptions(this, options);
+        
+        // Exit the Init state.
+        _ElementUtilities._inDom(this._dom.root).then(() => {
+            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._machine.initialized();
         });
     }
 
@@ -354,11 +352,7 @@ export class Pane {
         return this._machine.hidden;
     }
     set hidden(value: boolean) {
-        if (value) {
-            this.hide();
-        } else {
-            this.show();
-        }
+        this._machine.hidden = value;
     }
 
     dispose(): void {
@@ -372,6 +366,7 @@ export class Pane {
         }
         this._disposed = true;
         this._machine.dispose();
+        _LightDismissService.hidden(this._dismissable);
         _Dispose._disposeElement(this._dom.content);
     }
 
