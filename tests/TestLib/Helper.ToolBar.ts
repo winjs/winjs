@@ -14,14 +14,11 @@ module Helper.ToolBar {
         controlCssClass: "win-toolbar",
         disposableCssClass: "win-disposable",
         overflowAreaCssClass: "win-toolbar-overflowarea",
-        shownDisplayFullCssClass: "win-toolbar-showndisplayfull",
         emptyToolBarCssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
-        inlineOverflowCommandHeight: 44,
-        inlineOverflowSeparatorHeight: 12,
-        controlWithFlyoutMenuMinWidth: 68,
+        toolBarMinWidth: 68,
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
