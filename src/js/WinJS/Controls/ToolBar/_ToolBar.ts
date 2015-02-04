@@ -730,7 +730,7 @@ export class ToolBar {
     }
 
     private _getMenuCommand(command: _Command.ICommand): _MenuCommand.MenuCommand {
-        var menuCommand = new _ToolBarMenuCommand._MenuCommand(false, null, {
+        var menuCommand = new _ToolBarMenuCommand._MenuCommand(null, {
             label: command.label,
             type: (command.type === _Constants.typeContent ? _Constants.typeFlyout : command.type) || _Constants.typeButton,
             disabled: command.disabled,
@@ -791,12 +791,7 @@ export class ToolBar {
         var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
         this._overflowButton.style.display = showOverflowButton ? "" : "none";
 
-        this._setupOverflowAreaDetached(additionalCommands);
-    }
-
-    private _setupOverflowAreaDetached(additionalCommands: any[]) {
-        this._writeProfilerMark("_setupOverflowAreaDetached,info");
-
+        // Project additional commands into the overflow menu
         if (!this._menu) {
             this._menu = new Menu.Menu();
             _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
