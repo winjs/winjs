@@ -14,7 +14,6 @@ module Helper.ToolBar {
         controlCssClass: "win-toolbar",
         disposableCssClass: "win-disposable",
         overflowAreaCssClass: "win-toolbar-overflowarea",
-        shownDisplayReducedCssClass: "win-toolbar-showndisplayreduced",
         shownDisplayFullCssClass: "win-toolbar-showndisplayfull",
         emptyToolBarCssClass: "win-toolbar-empty",
         commandType: "WinJS.UI.AppBarCommand",
