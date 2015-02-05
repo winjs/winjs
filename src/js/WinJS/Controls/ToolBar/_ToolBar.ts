@@ -44,10 +44,11 @@ interface IFocusableElementsInfo {
 }
 
 interface IDataChangeInfo {
-    currentElements: HTMLElement[];
-    dataElements: HTMLElement[];
-    deletedElements: HTMLElement[];
-    addedElements: HTMLElement[];
+    newCommandElements: HTMLElement[];
+    currentCommandElements: HTMLElement[];
+    addedCommandElements: HTMLElement[];
+    deletedCommandElements: HTMLElement[];
+    affectedCommandElements: HTMLElement[];
 }
 
 var strings = {
@@ -336,17 +337,17 @@ export class ToolBar {
         var changeInfo = this._getDataChangeInfo();
 
         // Take a snapshot of the current state
-        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.addedElements, changeInfo.deletedElements, changeInfo.currentElements);
+        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.addedCommandElements, changeInfo.deletedCommandElements, changeInfo.affectedCommandElements);
 
-        // Remove deleted elements
-        changeInfo.deletedElements.forEach((element) => {
+        // Remove current elements
+        changeInfo.currentCommandElements.forEach((element) => {
             if (element.parentElement) {
                 element.parentElement.removeChild(element);
             }
         });
 
-        // Add elements in the right order
-        changeInfo.dataElements.forEach((element) => {
+        // Add new elements in the right order.
+        changeInfo.newCommandElements.forEach((element) => {
             this._mainActionArea.appendChild(element);
         });
 
@@ -382,39 +383,41 @@ export class ToolBar {
     }
 
     private _getDataChangeInfo(): IDataChangeInfo {
-        var child: HTMLElement;
+        var currentCommandElement: HTMLElement;
         var i = 0, len = 0;
-        var dataElements: HTMLElement[] = [];
-        var deletedElements: HTMLElement[] = [];
-        var addedElements: HTMLElement[] = [];
-        var currentElements: HTMLElement[] = [];
+        var newCommandElements: HTMLElement[] = [];
+        var currentCommandElements = Array.prototype.slice.call(this._mainActionArea.querySelectorAll(".win-command"), 0);
+        var addedCommandElements: HTMLElement[] = [];
+        var deletedCommandElements: HTMLElement[] = [];
+        var affectedCommandElements: HTMLElement[] = [];
 
         for (i = 0, len = this.data.length; i < len; i++) {
-            dataElements.push(this.data.getAt(i).element);
+            newCommandElements.push(this.data.getAt(i).element);
         }
 
-        for (i = 0, len = this._mainActionArea.children.length; i < len; i++) {
-            child = <HTMLElement> this._mainActionArea.children[i];
-            if (child.style.display !== "none" || (child["winControl"] && child["winControl"].section === "secondary")) {
-                currentElements.push(child);
-                if (dataElements.indexOf(child) === -1 && child !== this._overflowButton && child !== this._spacer) {
-                    deletedElements.push(child);
+        for (i = 0, len = currentCommandElements.length; i < len; i++) {
+            currentCommandElement = currentCommandElements[i];
+            if (currentCommandElement.style.display !== "none") {
+                affectedCommandElements.push(currentCommandElement);
+                if (newCommandElements.indexOf(currentCommandElement) === -1) {
+                    deletedCommandElements.push(currentCommandElement);
                 }
             }
         }
 
-        dataElements.forEach((element) => {
-            if (deletedElements.indexOf(element) === -1 &&
-                currentElements.indexOf(element) === -1) {
-                addedElements.push(element);
+        newCommandElements.forEach((element) => {
+            if (deletedCommandElements.indexOf(element) === -1 &&
+                affectedCommandElements.indexOf(element) === -1) {
+                addedCommandElements.push(element);
             }
         });
 
         return {
-            dataElements: dataElements,
-            deletedElements: deletedElements,
-            addedElements: addedElements,
-            currentElements: currentElements
+            newCommandElements: newCommandElements,
+            currentCommandElements: currentCommandElements,
+            addedCommandElements: addedCommandElements,
+            deletedCommandElements: deletedCommandElements,
+            affectedCommandElements: affectedCommandElements,
         }
     }
 

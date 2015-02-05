@@ -898,14 +898,14 @@ module CorsicaTests {
             this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";
             toolbar.forceLayout();
 
-            // The main action area should now show | 1 | 2 | 3  | ... |
-            LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
+            // The main action area should now show | 1 | 2 | 3 | ... |
+            LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
 
             // Delete all items
             toolbar.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(2, toolbar._mainActionArea.children.length, "Only the overflow button and spacer elements should children.");
+                LiveUnit.Assert.areEqual(2, toolbar._mainActionArea.children.length, "Only the overflow button and spacer elements should be children.");
                 LiveUnit.Assert.areEqual(0, toolbar._menu.element.querySelectorAll(".win-command").length);
                 complete();
             }, WinJS.Utilities.Scheduler.Priority.high);
