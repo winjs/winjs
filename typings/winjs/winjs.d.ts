@@ -1690,7 +1690,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that adds an item or items to a list.
      * @param added Element or elements to add to the list.
-     * @param affected Element or elements affected by the added items.
+     * @param affected Element or elements affected by the added items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createAddToListAnimation(added: any, affected: any): IAnimationMethodResponse;
@@ -1698,7 +1698,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that adds an item or items to a list of search results.
      * @param added Element or elements to add to the list.
-     * @param affected Element or elements affected by the added items.
+     * @param affected Element or elements affected by the added items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createAddToSearchListAnimation(added: any, affected: any): IAnimationMethodResponse;
@@ -1706,7 +1706,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that collapses a list.
      * @param hidden Element or elements hidden as a result of the collapse.
-     * @param affected Element or elements affected by the hidden items.
+     * @param affected Element or elements affected by the hidden items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createCollapseAnimation(hidden: any, affected: any): IAnimationMethodResponse;
@@ -1714,7 +1714,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that removes an item or items from a list.
      * @param deleted Element or elements to delete from the list.
-     * @param remaining Element or elements affected by the removal of the deleted items.
+     * @param remaining Element or elements affected by the removal of the deleted items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createDeleteFromListAnimation(deleted: any, remaining: any): IAnimationMethodResponse;
@@ -1722,7 +1722,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that removes an item or items from a list of search results.
      * @param deleted Element or elements to delete from the list.
-     * @param remaining Element or elements affected by the removal of the deleted items.
+     * @param remaining Element or elements affected by the removal of the deleted items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createDeleteFromSearchListAnimation(deleted: any, remaining: any): IAnimationMethodResponse;
@@ -1730,7 +1730,7 @@ declare module WinJS.UI.Animation {
     /**
      * Creates an object that performs an animation that expands a list.
      * @param revealed Element or elements revealed by the expansion.
-     * @param affected Element or elements affected by the newly revealed items.
+     * @param affected Element or elements affected by the newly revealed items. Typically, this is all other items displayed in the list.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
     **/
     function createExpandAnimation(revealed: any, affected: any): IAnimationMethodResponse;

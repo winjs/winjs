@@ -44,11 +44,11 @@ interface IFocusableElementsInfo {
 }
 
 interface IDataChangeInfo {
-    newCommandElements: HTMLElement[];
-    currentCommandElements: HTMLElement[];
-    addedCommandElements: HTMLElement[];
-    deletedCommandElements: HTMLElement[];
-    affectedCommandElements: HTMLElement[];
+    newElements: HTMLElement[];
+    currentElements: HTMLElement[];
+    added: HTMLElement[];
+    deleted: HTMLElement[];
+    affected: HTMLElement[];
 }
 
 var strings = {
@@ -337,17 +337,17 @@ export class ToolBar {
         var changeInfo = this._getDataChangeInfo();
 
         // Take a snapshot of the current state
-        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.addedCommandElements, changeInfo.deletedCommandElements, changeInfo.affectedCommandElements);
+        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.added, changeInfo.deleted, changeInfo.affected);
 
         // Remove current elements
-        changeInfo.currentCommandElements.forEach((element) => {
+        changeInfo.currentElements.forEach((element) => {
             if (element.parentElement) {
                 element.parentElement.removeChild(element);
             }
         });
 
         // Add new elements in the right order.
-        changeInfo.newCommandElements.forEach((element) => {
+        changeInfo.newElements.forEach((element) => {
             this._mainActionArea.appendChild(element);
         });
 
@@ -383,43 +383,49 @@ export class ToolBar {
     }
 
     private _getDataChangeInfo(): IDataChangeInfo {
-        var currentCommandElement: HTMLElement;
         var i = 0, len = 0;
-        var newCommandElements: HTMLElement[] = [];
-        var currentCommandElements = Array.prototype.slice.call(this._mainActionArea.querySelectorAll(".win-command"), 0);
-        var addedCommandElements: HTMLElement[] = [];
-        var deletedCommandElements: HTMLElement[] = [];
-        var affectedCommandElements: HTMLElement[] = [];
+        var added: HTMLElement[] = [];
+        var deleted: HTMLElement[] = [];
+        var affected: HTMLElement[] = [];
 
-        for (i = 0, len = this.data.length; i < len; i++) {
-            newCommandElements.push(this.data.getAt(i).element);
-        }
-
-        for (i = 0, len = currentCommandElements.length; i < len; i++) {
-            currentCommandElement = currentCommandElements[i];
-            if (currentCommandElement.style.display !== "none") {
-                affectedCommandElements.push(currentCommandElement);
-                if (newCommandElements.indexOf(currentCommandElement) === -1) {
-                    deletedCommandElements.push(currentCommandElement);
-                }
+        var currentShown: HTMLElement[] = [];
+        var currentElements = Array.prototype.map.call(this._mainActionArea.querySelectorAll(".win-command"), (commandElement: HTMLElement) => {
+            if (commandElement.style.display !== "none") {
+                currentShown.push(commandElement);
             }
-        }
-
-        newCommandElements.forEach((element) => {
-            if (deletedCommandElements.indexOf(element) === -1 &&
-                affectedCommandElements.indexOf(element) === -1) {
-                addedCommandElements.push(element);
-            }
+            return commandElement;
         });
 
+        var newShown: HTMLElement[] = [];
+        var newHidden: HTMLElement[] = [];
+        var newElements = this.data.map((command) => {
+            if (command.element.style.display !== "none") {
+                newShown.push(command.element);
+            } else {
+                newHidden.push(command.element);
+            }
+            return command.element;
+        });
+        
+        deleted = ToolBar._diffElements(currentShown, newShown);
+        affected = ToolBar._diffElements(currentShown, deleted);
+        // Pad "added" with the elements from newHidden to ensure that we continue to animate
+        // part any commands elements that have underflowed back into the action area as a
+        // of this data change.
+        added = ToolBar._diffElements(newShown, currentShown).concat(newHidden);
+
         return {
-            newCommandElements: newCommandElements,
-            currentCommandElements: currentCommandElements,
-            addedCommandElements: addedCommandElements,
-            deletedCommandElements: deletedCommandElements,
-            affectedCommandElements: affectedCommandElements,
-        }
+            newElements: newElements,
+            currentElements: currentElements,
+            added: added,
+            deleted: deleted,
+            affected: affected,
+        };
     }
+
+    //private _diffElements(LHS: Array<HTMLElement>, RHS: Array<HTMLElement>): Array<HTMLElement> {
+    //    return LHS.filter((commandElement) => { return RHS.indexOf(commandElement) < 0 })
+    //}
 
     private _refresh() {
         if (!this._refreshPending) {
@@ -774,7 +780,7 @@ export class ToolBar {
 
         // Set up custom flyout for "content" typed commands in the overflow area.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
-        var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.filter(isCustomContent);
+        var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
 
         if (hasCustomContent && !this._customContentFlyout) {
             var mainFlyout = _Global.document.createElement("div");
@@ -856,6 +862,10 @@ export class ToolBar {
     }
 
     static supportedForProcessing: boolean = true;
+
+    private static _diffElements(LHS: Array<HTMLElement>, RHS: Array<HTMLElement>): Array<HTMLElement> {
+        return LHS.filter((commandElement) => { return RHS.indexOf(commandElement) < 0 })
+    }
 }
 
 // addEventListener, removeEventListener, dispatchEvent

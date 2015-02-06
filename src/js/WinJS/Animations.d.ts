@@ -11,13 +11,13 @@ import Promise = require("Promise");
 /**
  * Creates an object that performs an animation that adds an item or items to a list.
  * @param added Element or elements to add to the list.
- * @param affected Element or elements affected by the added items.
+ * @param affected Element or elements affected by the added items. Typically, this is all other items displayed in the list.
  * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
 **/
 export declare function createAddToListAnimation(added: any, affected: any): IAnimationMethodResponse;
 
 /**
- * Creates an object that performs an animation that adds an item or items to a list.
+ * Creates an object that performs an animation that adds and removes items to a list.
  * @param added Element or elements to add to the list.
  * @param removed Element or elements to remove from the list.
  * @param affected Element or elements affected by the added items. Typically, this is all other items displayed in the list.
