@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-/// <dictionary>animatable,appbar,appbars,divs,Flyout,Flyouts,iframe,Statics,unfocus,unselectable</dictionary>
+/// <dictionary>animatable,bar,appbars,divs,Flyout,Flyouts,iframe,Statics,unfocus,unselectable</dictionary>
 define([
     'exports',
     '../Core/_Global',
@@ -20,25 +20,39 @@ define([
     'AppBar/_Constants',
     'require-style!less/styles-overlay',
     'require-style!less/colors-overlay'
-], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
+], function barInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
     "use strict";
+
+    var _Constants = {
+        barClass: "win-appbar",
+        ihmClass: "win-overlay",
+        barPlacementTop: "top",
+        barPlacementBottom: "bottom",
+        topClass: "win-top",
+        bottomClass: "win-bottom",
+        _visualViewportClass: "win-visualviewport-space",
+    };
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Bar: _Base.Namespace._lazy(function () {
 
             function _allManipulationChanged(event) {
-                var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
+                var elements = _Global.document.querySelectorAll("." + _Constants.barClass);
                 if (elements) {
                     var len = elements.length;
                     for (var i = 0; i < len; i++) {
                         var element = elements[i];
-                        var appbar = element.winControl;
-                        if (appbar && !element.disabled) {
-                            appbar._manipulationChanged(event);
+                        var bar = element.winControl;
+                        if (bar && !element.disabled) {
+                            bar._manipulationChanged(event);
                         }
                     }
                 }
             }
+
+            var strings = {
+                get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
+            };
 
             var _Bar = _Base.Class.define(function _Bar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI._Bar">
@@ -72,8 +86,8 @@ define([
                     element.winControl = this;
 
                     // Attach our css class.
-                    _ElementUtilities.addClass(this._element, _Constants.appBarClass);
-                    _ElementUtilities.addClass(this._element, _Constants.overlayClass);
+                    _ElementUtilities.addClass(this._element, _Constants.barClass);
+                    _ElementUtilities.addClass(this._element, _Constants.ihmClass);
                     _ElementUtilities.addClass(this._element, "win-disposable");
 
                     // Make sure we have an ARIA role
@@ -95,10 +109,10 @@ define([
                     if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                         // React to Soft Keyboard events
                         var inputPane = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView();
-                        inputPane[listenerOperation]("showing", this._inputPaneShowing, false);
-                        inputPane[listenerOperation]("hiding", this._inputPaneHiding, false);
+                        inputPane.addEventListener("showing", this._inputPaneShowing, false);
+                        inputPane.addEventListener("hiding", this._inputPaneHiding, false);
 
-                        _Global.document[listenerOperation]("scroll", this._documentScroll, false);
+                        _Global.document.addEventListener("scroll", this._documentScroll, false);
                     }
 
                     // Need to know if the IHM is done scrolling
@@ -130,19 +144,19 @@ define([
                     }
                 },
 
-                /// <field type="String" defaultValue="bottom" oamOptionsDatatype="WinJS.UI.AppBar.placement" locid="WinJS.UI.AppBar.placement" helpKeyword="WinJS.UI.AppBar.placement">The placement of the AppBar on the display.  Values are "top" or "bottom".</field>
+                /// <field type="String" defaultValue="bottom" oamOptionsDatatype="WinJS.UI.Bar.placement" locid="WinJS.UI.Bar.placement" helpKeyword="WinJS.UI.Bar.placement">The placement of the Bar on the display.  Values are "top" or "bottom".</field>
                 placement: {
-                    get: function AppBar_get_placement() {
+                    get: function Bar_get_placement() {
                         return this._placement;
                     },
-                    set: function AppBar_set_placement(value) {
-                        this._placement = (value === _Constants.appBarPlacementTop) ? _Constants.appBarPlacementTop : _Constants.appBarPlacementBottom;
+                    set: function Bar_set_placement(value) {
+                        this._placement = (value === _Constants.barPlacementTop) ? _Constants.barPlacementTop : _Constants.barPlacementBottom;
 
                         // Clean up win-top, win-bottom styles
-                        if (this._placement === _Constants.appBarPlacementTop) {
+                        if (this._placement === _Constants.barPlacementTop) {
                             _ElementUtilities.addClass(this._element, _Constants.topClass);
                             _ElementUtilities.removeClass(this._element, _Constants.bottomClass);
-                        } else if (this._placement === _Constants.appBarPlacementBottom) {
+                        } else if (this._placement === _Constants.barPlacementBottom) {
                             _ElementUtilities.removeClass(this._element, _Constants.topClass);
                             _ElementUtilities.addClass(this._element, _Constants.bottomClass);
                         }
@@ -152,27 +166,27 @@ define([
                     }
                 },
 
-                // Get the top offset for top appbars.
-                _getTopOfVisualViewport: function AppBar_getTopOfVisualViewPort() {
-                    return _Overlay._Overlay._keyboardInfo._visibleDocTop;
+                // Get the top offset for top bars.
+                _getTopOfVisualViewport: function Bar_getTopOfVisualViewPort() {
+                    return _Bar._Bar._keyboardInfo._visibleDocTop;
                 },
 
-                // Get the bottom offset for bottom appbars.
-                _getAdjustedBottom: function AppBar_getAdjustedBottom() {
+                // Get the bottom offset for bottom bars.
+                _getAdjustedBottom: function bar_getAdjustedBottom() {
                     // Need the distance the IHM moved as well.
-                    return _Overlay._Overlay._keyboardInfo._visibleDocBottomOffset;
+                    return _Bar._Bar._keyboardInfo._visibleDocBottomOffset;
                 },
 
-                _inputPaneShowing: function AppBar_inputPaneShowing(event) {
-                    this._needtohandleInputPaneHiding = false;
+                _inputPaneShowing: function Bar_inputPaneShowing(event) {
+                    this._needToHandleInputPaneHiding = false;
 
                     // If we're already moved, then ignore the whole thing
-                    if (_Overlay._Overlay._keyboardInfo._visible && this._alreadyInPlace()) {
+                    if (_Bar._Bar._keyboardInfo._visible && this._alreadyInPlace()) {
                         return;
                     }
 
-                    this._needtohandleinputPaneShowing = true;
-                    // If focus is in the appbar, don't cause scrolling.
+                    this._needToHandleInputPaneShowing = true;
+                    // If focus is in the bar, don't cause scrolling.
                     if (!this.hidden && this._element.contains(_Global.document.activeElement)) {
                         event.ensuredFocusedElementInView = true;
                     }
@@ -182,18 +196,18 @@ define([
 
                     // Also set timeout regardless, so we can clean up our _inputPaneShowing flag.
                     var that = this;
-                    _Global.setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Overlay._Overlay._keyboardInfo._animationShowLength + _Overlay._Overlay._scrollTimeout);
+                    _Global.setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Bar._Bar._keyboardInfo._animationShowLength + _Bar._Bar._scrollTimeout);
                 },
 
-                _inputPaneHiding: function AppBar_inputPaneHiding() {
+                _inputPaneHiding: function bar_inputPaneHiding() {
                     // We'll either just reveal the current space under the IHM or restore the window height.
 
                     // We won't be obscured
-                    this._needtohandleinputPaneShowing = false;
-                    this._needtohandleInputPaneHiding = true;
+                    this._needToHandleInputPaneHiding = false;
+                    this._needToHandleInputPaneHiding = true;
 
                     // We'll either just reveal the current space or resize the window
-                    if (!_Overlay._Overlay._keyboardInfo._isResized) {
+                    if (!_Bar._Bar._keyboardInfo._isResized) {
                         // If we're not completely hidden, only fake hiding under keyboard, or already animating,
                         // then snap us to our final position.
                         if (this._visible || this._animating) {
@@ -201,26 +215,26 @@ define([
                             this._checkScrollPosition();
                             this._element.style.display = "";
                         }
-                        this._needtohandleInputPaneHiding = false;
+                        this._needToHandleInputPaneHiding = false;
                     }
                     // Else resize should clear keyboardHiding.
                 },
 
-                _resize: function AppBar_resize(event) {
-                    // If we're hidden by the keyboard, then hide bottom appbar so it doesn't pop up twice when it scrolls
-                    if (this._needtohandleinputPaneShowing) {
+                _resize: function Bar_resize(event) {
+                    // If we're hidden by the keyboard, then hide bottom bar so it doesn't pop up twice when it scrolls
+                    if (this._needToHandleInputPaneHiding) {
                         // Top is allowed to scroll off the top, but we don't want bottom to peek up when
                         // scrolled into view since we'll show it ourselves and don't want a stutter effect.
                         if (this._visible) {
-                            if (this._placement !== _Constants.appBarPlacementTopd) {
+                            if (this._placement !== _Constants.barPlacementTop) {
                                 // If viewport doesn't match window, need to vanish momentarily so it doesn't scroll into view,
                                 // however we don't want to toggle the visibility="hidden" hidden flag.
                                 this._element.style.display = "none";
                             }
                         }
                         // else if we're top we stay, and if there's a flyout, stay obscured by the keyboard.
-                    } else if (this._needtohandleInputPaneHiding) {
-                        this._needtohandleInputPaneHiding = false;
+                    } else if (this._needToHandleInputPaneHiding) {
+                        this._needToHandleInputPaneHiding = false;
                         if (this._visible || this._animating) {
                             // Snap to final position
                             this._checkScrollPosition();
@@ -234,13 +248,13 @@ define([
                     }
                 },
 
-                _checkKeyboardTimer: function AppBar_checkKeyboardTimer() {
+                _checkKeyboardTimer: function Bar_checkKeyboardTimer() {
                     if (!this._scrollHappened) {
                         this._mayEdgeBackIn();
                     }
                 },
 
-                _manipulationChanged: function AppBar_manipulationChanged(event) {
+                _manipulationChanged: function Bar_manipulationChanged(event) {
                     // See if we're at the not manipulating state, and we had a scroll happen,
                     // which is implicitly after the keyboard animated.
                     if (event.currentState === 0 && this._scrollHappened) {
@@ -248,14 +262,14 @@ define([
                     }
                 },
 
-                _mayEdgeBackIn: function AppBar_mayEdgeBackIn() {
+                _mayEdgeBackIn: function Bar_mayEdgeBackIn() {
                     // May need to react to IHM being resized event
-                    if (this._needtohandleinputPaneShowing) {
-                        // If not top appbar or viewport isn't still at top, then need to show again
-                        this._needtohandleinputPaneShowing = false;
+                    if (this._needToHandleInputPaneHiding) {
+                        // If not top bar or viewport isn't still at top, then need to show again
+                        this._needToHandleInputPaneHiding = false;
                         // If obscured (IHM + flyout showing), it's ok to stay obscured.
                         // If bottom we have to move, or if top scrolled off screen.
-                        if ((this._placement !== _Constants.appBarPlacementTop || _Overlay._Overlay._keyboardInfo._visibleDocTop !== 0)) {
+                        if ((this._placement !== _Constants.barPlacementTop || _Bar._Bar._keyboardInfo._visibleDocTop !== 0)) {
                             var toPosition = this._visiblePosition;
                             this._lastPositionVisited = displayModeVisiblePositions.hidden;
                             this._changeVisiblePosition(toPosition, false);
@@ -267,8 +281,8 @@ define([
                     this._scrollHappened = false;
                 },
 
-                _ensurePosition: function AppBar_ensurePosition() {
-                    // Position the AppBar element relative to the top or bottom edge of the visible
+                _ensurePosition: function Bar_ensurePosition() {
+                    // Position the bar element relative to the top or bottom edge of the visible
                     // document, based on the the visible position we think we need to be in.
                     var offSet = this._computePositionOffset();
                     this._element.style.bottom = offSet.bottom;
@@ -276,17 +290,17 @@ define([
 
                 },
 
-                _computePositionOffset: function AppBar_computePositionOffset() {
-                    // Calculates and returns top and bottom offsets for the AppBar element, relative to the top or bottom edge of the visible
+                _computePositionOffset: function Bar_computePositionOffset() {
+                    // Calculates and returns top and bottom offsets for the bar element, relative to the top or bottom edge of the visible
                     // document.
                     var positionOffSet = {};
 
-                    if (this._placement === _Constants.appBarPlacementBottom) {
+                    if (this._placement === _Constants.barPlacementBottom) {
                         // If the IHM is open, the bottom of the visual viewport may or may not be obscured
                         // Use _getAdjustedBottom to account for the IHM if it is covering the bottom edge.
                         positionOffSet.bottom = this._getAdjustedBottom() + "px";
                         positionOffSet.top = "";
-                    } else if (this._placement === _Constants.appBarPlacementTop) {
+                    } else if (this._placement === _Constants.barPlacementTop) {
                         positionOffSet.bottom = "";
                         positionOffSet.top = this._getTopOfVisualViewport() + "px";
                     }
@@ -294,9 +308,9 @@ define([
                     return positionOffSet;
                 },
 
-                _checkScrollPosition: function AppBar_checkScrollPosition() {
+                _checkScrollPosition: function Bar_checkScrollPosition() {
                     // If IHM has appeared, then remember we may come in
-                    if (this._needtohandleinputPaneShowing) {
+                    if (this._needToHandleInputPaneHiding) {
                         // Tag that it's OK to edge back in.
                         this._scrollHappened = true;
                         return;
@@ -310,7 +324,7 @@ define([
                     }
                 },
 
-                _alreadyInPlace: function AppBar_alreadyInPlace() {
+                _alreadyInPlace: function Bar_alreadyInPlace() {
                     // See if we're already where we're supposed to be.
                     var offSet = this._computePositionOffset();
                     return (offSet.top === this._element.style.top && offSet.bottom === this._element.style.bottom);
@@ -421,7 +435,7 @@ define([
                                 // When the IHM appears, the text input that invoked it may be in a position on the page that is occluded by the IHM.
                                 // In that instance, the default browser behavior is to resize the visual viewport and scroll the input back into view.
                                 // However, if the viewport resize is prevented by an IHM event listener, the keyboard will still occlude
-                                // -ms-device-fixed elements, so we adjust the bottom offset of the appbar by the height of the occluded rect of the IHM.
+                                // -ms-device-fixed elements, so we adjust the bottom offset of the bar by the height of the occluded rect of the IHM.
                                 return (_Bar._keyboardInfo._isResized) ? 0 : _Bar._keyboardInfo._extraOccluded;
                             },
 
