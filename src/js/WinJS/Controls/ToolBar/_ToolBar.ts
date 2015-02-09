@@ -81,13 +81,13 @@ export class ToolBar {
     private _separatorWidth: number;
     private _standardCommandWidth: number;
     private _overflowButtonWidth: number;
-    private _menu: Menu.Menu;
     private _element: HTMLElement;
     private _data: BindingList.List<_Command.ICommand>;
     private _primaryCommands: _Command.ICommand[];
     private _secondaryCommands: _Command.ICommand[];
     private _customContentContainer: HTMLElement;
     private _mainActionArea: HTMLElement;
+    private _overflowArea: HTMLElement;
     private _customContentFlyout: _Flyout.Flyout;
     private _chosenCommand: _Command.ICommand;
     private _measured = false;
@@ -99,33 +99,12 @@ export class ToolBar {
     private _refreshBound: Function;
     private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
-    private _extraClass: string;
 
     /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.ToolBar.element" helpKeyword="WinJS.UI.ToolBar.element">
     /// Gets the DOM element that hosts the ToolBar.
     /// </field>
     get element() {
         return this._element;
-    }
-
-    /// <field type="String" locid="WinJS.UI.ToolBar.extraClass" helpKeyword="WinJS.UI.ToolBar.extraClass">
-    /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding
-    /// overflow menu created by the ToolBar.
-    /// </field>
-    get extraClass() {
-        return this._extraClass;
-    }
-    set extraClass(value: string) {
-        this._writeProfilerMark("set_extraClass,info");
-
-        if (this._extraClass) {
-            _ElementUtilities.removeClass(this._element, this._extraClass);
-            this._menu && _ElementUtilities.removeClass(this._menu.element, this._extraClass);
-        }
-
-        this._extraClass = value;
-        _ElementUtilities.addClass(this._element, this._extraClass);
-        this._menu && _ElementUtilities.addClass(this._menu.element, this.extraClass);
     }
 
     /// <field type="WinJS.Binding.List" locid="WinJS.UI.ToolBar.data" helpKeyword="WinJS.UI.ToolBar.data">
@@ -261,11 +240,6 @@ export class ToolBar {
             this._customContentFlyout.element.parentNode.removeChild(this._customContentFlyout.element);
         }
 
-        if (this._menu) {
-            this._menu.dispose();
-            this._menu.element.parentNode.removeChild(this._menu.element);
-        }
-
         _Dispose.disposeSubTree(this.element);
         this._disposed = true;
     }
@@ -305,12 +279,20 @@ export class ToolBar {
         _ElementUtilities.addClass(this._overflowButton, _Constants.overflowButtonCssClass);
         this._mainActionArea.appendChild(this._overflowButton);
         this._overflowButton.addEventListener("click", () => {
-            if (this._menu) {
-                var isRTL = _Global.getComputedStyle(this._element).direction === 'rtl';
-                this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
-            }
+            // TODO: Expand actionArea and ofverflowArea here.
+            this._overflowArea.style.display = (this._overflowArea.style.display === "none") ? "block" : "none";
         });
         this._overflowButtonWidth = _ElementUtilities.getTotalWidth(this._overflowButton);
+
+        if (!this._overflowArea) {
+            this._overflowArea = _Global.document.createElement("div");
+            this._overflowArea.style.display = "none";
+            this._overflowArea.style.backgroundColor = "indigo";
+            _ElementUtilities.addClass(this._overflowArea, _Constants.overflowAreaCssClass);
+            _ElementUtilities.addClass(this._overflowArea, _Constants.menuCssClass);
+            this.element.appendChild(this._overflowArea);
+            
+        }
     }
 
     private _getFocusableElementsInfo(): IFocusableElementsInfo {
@@ -406,7 +388,7 @@ export class ToolBar {
             }
             return command.element;
         });
-        
+
         deleted = ToolBar._diffElements(currentShown, newShown);
         affected = ToolBar._diffElements(currentShown, deleted);
         // Pad "added" with the elements from newHidden to ensure that we continue to animate
@@ -775,10 +757,71 @@ export class ToolBar {
         return menuCommand;
     }
 
+    //private _setupOverflowArea(additionalCommands: any[]) {
+    //    this._writeProfilerMark("_setupOverflowArea,info");
+
+    //    // Set up custom flyout for "content" typed commands in the overflow area.
+    //    var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
+    //    var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
+
+    //    if (hasCustomContent && !this._customContentFlyout) {
+    //        var mainFlyout = _Global.document.createElement("div");
+    //        this._customContentContainer = _Global.document.createElement("div");
+    //        _ElementUtilities.addClass(this._customContentContainer, _Constants.overflowContentFlyoutCssClass);
+    //        mainFlyout.appendChild(this._customContentContainer);
+    //        this._customContentFlyout = new _Flyout.Flyout(mainFlyout);
+    //        _Global.document.body.appendChild(this._customContentFlyout.element);
+    //        this._customContentFlyout.onbeforeshow = () => {
+    //            _ElementUtilities.empty(this._customContentContainer);
+    //            _ElementUtilities._reparentChildren(this._chosenCommand.element, this._customContentContainer);
+    //        };
+    //        this._customContentFlyout.onafterhide = () => {
+    //            _ElementUtilities._reparentChildren(this._customContentContainer, this._chosenCommand.element);
+    //        };
+    //    }
+
+    //    var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
+    //    this._overflowButton.style.display = showOverflowButton ? "" : "none";
+
+    //    // Project additional commands into the overflow menu
+    //    if (!this._menu) {
+    //        this._menu = new Menu.Menu();
+    //        _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
+    //        this.extraClass && _ElementUtilities.addClass(this._menu.element, this.extraClass);
+    //        _Global.document.body.appendChild(this._menu.element);
+    //    }
+
+    //    var menuCommands: _MenuCommand.MenuCommand[] = [];
+
+    //    // Add primary commands that should overflow to the menu commands
+    //    additionalCommands.forEach((command) => {
+    //        menuCommands.push(this._getMenuCommand(command));
+    //    });
+
+    //    // Add separator between primary and secondary command if applicable
+    //    if (additionalCommands.length > 0 && this._secondaryCommands.length > 0) {
+    //        menuCommands.push(new _MenuCommand.MenuCommand(null, {
+    //            type: _Constants.typeSeparator
+    //        }));
+    //    }
+
+    //    // Add secondary commands to the menu commands
+    //    this._secondaryCommands.forEach((command) => {
+    //        if (!command.hidden) {
+    //            menuCommands.push(this._getMenuCommand(command));
+    //        }
+    //    });
+
+    //    this._hideSeparatorsIfNeeded(menuCommands);
+
+    //    // Set the menu commands
+    //    this._menu.commands = menuCommands;
+    //}
+
     private _setupOverflowArea(additionalCommands: any[]) {
         this._writeProfilerMark("_setupOverflowArea,info");
 
-        // Set up custom flyout for "content" typed commands in the overflow area.
+        // Set up custom flyout for "content" typed commands in the overflow area. 
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
         var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
 
@@ -792,6 +835,7 @@ export class ToolBar {
             this._customContentFlyout.onbeforeshow = () => {
                 _ElementUtilities.empty(this._customContentContainer);
                 _ElementUtilities._reparentChildren(this._chosenCommand.element, this._customContentContainer);
+
             };
             this._customContentFlyout.onafterhide = () => {
                 _ElementUtilities._reparentChildren(this._customContentContainer, this._chosenCommand.element);
@@ -801,40 +845,108 @@ export class ToolBar {
         var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
         this._overflowButton.style.display = showOverflowButton ? "" : "none";
 
-        // Project additional commands into the overflow menu
-        if (!this._menu) {
-            this._menu = new Menu.Menu();
-            _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
-            this.extraClass && _ElementUtilities.addClass(this._menu.element, this.extraClass);
-            _Global.document.body.appendChild(this._menu.element);
-        }
+        var hasToggleCommands = false,
+            hasFlyoutCommands = false;
 
-        var menuCommands: _MenuCommand.MenuCommand[] = [];
+        _ElementUtilities.empty(this._overflowArea);
 
-        // Add primary commands that should overflow to the menu commands
+        this._hideSeparatorsIfNeeded(additionalCommands);
+
+        // Add primary commands that should overflow 
         additionalCommands.forEach((command) => {
-            menuCommands.push(this._getMenuCommand(command));
+            if (command.type === _Constants.typeToggle) {
+                hasToggleCommands = true;
+
+            }
+
+            if (command.type === _Constants.typeFlyout) {
+                hasFlyoutCommands = true;
+
+            }
+
+            this._overflowArea.appendChild(this._getMenuCommand(command).element);
+
         });
 
-        // Add separator between primary and secondary command if applicable
-        if (additionalCommands.length > 0 && this._secondaryCommands.length > 0) {
-            menuCommands.push(new _MenuCommand.MenuCommand(null, {
+
+        // Add separator between primary and secondary command if applicable 
+        var secondaryCommandsLength = this._secondaryCommands.length;
+        if (additionalCommands.length > 0 && secondaryCommandsLength > 0) {
+            var separator = new _ToolBarMenuCommand._MenuCommand(null, {
                 type: _Constants.typeSeparator
-            }));
+            });
+            this._overflowArea.appendChild(separator.element);
+
         }
 
-        // Add secondary commands to the menu commands
+        this._hideSeparatorsIfNeeded(this._secondaryCommands);
+
+        // Add secondary commands 
         this._secondaryCommands.forEach((command) => {
             if (!command.hidden) {
-                menuCommands.push(this._getMenuCommand(command));
+                if (command.type === _Constants.typeToggle) {
+                    hasToggleCommands = true;
+
+                }
+                if (command.type === _Constants.typeFlyout) {
+                    hasFlyoutCommands = true;
+
+                }
+                this._overflowArea.appendChild(this._getMenuCommand(command).element);
             }
         });
 
-        this._hideSeparatorsIfNeeded(menuCommands);
 
-        // Set the menu commands
-        this._menu.commands = menuCommands;
+        _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsToggleCommandClass);
+        _ElementUtilities[hasFlyoutCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsFlyoutCommandClass);
+
     }
+
+    //private _setupOverflowAreaDetached(additionalCommands: any[]) {
+    //    this._writeProfilerMark("_setupOverflowAreaDetached,info");
+
+    //    if (!this._menu) {
+    //        this._menu = new Menu.Menu();
+    //        _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
+    //        this.extraClass && _ElementUtilities.addClass(this._menu.element, this.extraClass);
+    //        _Global.document.body.appendChild(this._menu.element);
+
+    //    }
+
+    //    var menuCommands: _MenuCommand.MenuCommand[] = [];
+
+    //    // Add primary commands that should overflow to the menu commands 
+    //    additionalCommands.forEach((command) => {
+    //        menuCommands.push(this._getMenuCommand(command));
+
+    //    });
+
+
+    //    // Add separator between primary and secondary command if applicable 
+    //    if (additionalCommands.length > 0 && this._secondaryCommands.length > 0) {
+    //        menuCommands.push(new _MenuCommand.MenuCommand(null, {
+    //            type: _Constants.typeSeparator
+
+    //        }));
+
+    //    }
+
+
+    //    // Add secondary commands to the menu commands 
+    //    this._secondaryCommands.forEach((command) => {
+    //        if (!command.hidden) {
+    //            menuCommands.push(this._getMenuCommand(command));
+
+    //        }
+
+    //    });
+
+    //    this._hideSeparatorsIfNeeded(menuCommands);
+
+    //    // Set the menu commands 
+    //    this._menu.commands = menuCommands;
+    //}
+
 
     private _hideSeparatorsIfNeeded(commands: ICommandWithType[]): void {
         var prevType = _Constants.typeSeparator;
