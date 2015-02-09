@@ -818,7 +818,7 @@ export class ToolBar {
 
         // Add separator between primary and secondary command if applicable
         if (additionalCommands.length > 0 && this._secondaryCommands.length > 0) {
-            menuCommands.push(new _MenuCommand.MenuCommand(null, {
+            menuCommands.push(new _ToolBarMenuCommand._MenuCommand(null, {
                 type: _Constants.typeSeparator
             }));
         }
