@@ -423,10 +423,6 @@ export class ToolBar {
         };
     }
 
-    //private _diffElements(LHS: Array<HTMLElement>, RHS: Array<HTMLElement>): Array<HTMLElement> {
-    //    return LHS.filter((commandElement) => { return RHS.indexOf(commandElement) < 0 })
-    //}
-
     private _refresh() {
         if (!this._refreshPending) {
             this._refreshPending = true;
