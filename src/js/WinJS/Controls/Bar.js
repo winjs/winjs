@@ -185,7 +185,7 @@ define([
                         return;
                     }
 
-                    this._needToHandleInputPaneShowing = true;
+                    this._needToHandleinputPaneShowing = true;
                     // If focus is in the bar, don't cause scrolling.
                     if (!this.hidden && this._element.contains(_Global.document.activeElement)) {
                         event.ensuredFocusedElementInView = true;
@@ -203,7 +203,7 @@ define([
                     // We'll either just reveal the current space under the IHM or restore the window height.
 
                     // We won't be obscured
-                    this._needToHandleInputPaneHiding = false;
+                    this._needToHandleinputPaneShowing = false;
                     this._needToHandleInputPaneHiding = true;
 
                     // We'll either just reveal the current space or resize the window
@@ -222,7 +222,7 @@ define([
 
                 _resize: function Bar_resize(event) {
                     // If we're hidden by the keyboard, then hide bottom bar so it doesn't pop up twice when it scrolls
-                    if (this._needToHandleInputPaneHiding) {
+                    if (this._needToHandleinputPaneShowing) {
                         // Top is allowed to scroll off the top, but we don't want bottom to peek up when
                         // scrolled into view since we'll show it ourselves and don't want a stutter effect.
                         if (this._visible) {
@@ -264,9 +264,9 @@ define([
 
                 _mayEdgeBackIn: function Bar_mayEdgeBackIn() {
                     // May need to react to IHM being resized event
-                    if (this._needToHandleInputPaneHiding) {
+                    if (this._needToHandleinputPaneShowing) {
                         // If not top bar or viewport isn't still at top, then need to show again
-                        this._needToHandleInputPaneHiding = false;
+                        this._needToHandleinputPaneShowing = false;
                         // If obscured (IHM + flyout showing), it's ok to stay obscured.
                         // If bottom we have to move, or if top scrolled off screen.
                         if ((this._placement !== _Constants.barPlacementTop || _Bar._Bar._keyboardInfo._visibleDocTop !== 0)) {
@@ -310,7 +310,7 @@ define([
 
                 _checkScrollPosition: function Bar_checkScrollPosition() {
                     // If IHM has appeared, then remember we may come in
-                    if (this._needToHandleInputPaneHiding) {
+                    if (this._needToHandleinputPaneShowing) {
                         // Tag that it's OK to edge back in.
                         this._scrollHappened = true;
                         return;
