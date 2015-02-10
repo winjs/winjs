@@ -58,6 +58,12 @@ var strings = {
     get mustContainCommands() { return "The toolbar can only contain WinJS.UI.Command or WinJS.UI.AppBarCommand controls"; }
 };
 
+function diffElements(lhs: Array<HTMLElement>, rhs: Array<HTMLElement>): Array<HTMLElement> {
+    // Subtract array rhs from array lhs.
+    // Returns a new Array containing the subset of elements in lhs that are not also in rhs.
+    return lhs.filter((commandElement) => { return rhs.indexOf(commandElement) < 0 })
+}
+
 /// <field>
 /// <summary locid="WinJS.UI.ToolBar">
 /// Represents a toolbar for displaying commands.
@@ -387,32 +393,34 @@ export class ToolBar {
         var added: HTMLElement[] = [];
         var deleted: HTMLElement[] = [];
         var affected: HTMLElement[] = [];
-
         var currentShown: HTMLElement[] = [];
-        var currentElements = Array.prototype.map.call(this._mainActionArea.querySelectorAll(".win-command"), (commandElement: HTMLElement) => {
+        var currentElements: HTMLElement[] = [];
+        var newShown: HTMLElement[] = [];
+        var newHidden: HTMLElement[] = [];
+        var newElements: HTMLElement[] = [];
+
+        Array.prototype.forEach.call(this._mainActionArea.querySelectorAll(".win-command"), (commandElement: HTMLElement) => {
             if (commandElement.style.display !== "none") {
                 currentShown.push(commandElement);
             }
-            return commandElement;
+            currentElements.push(commandElement);
         });
 
-        var newShown: HTMLElement[] = [];
-        var newHidden: HTMLElement[] = [];
-        var newElements = this.data.map((command) => {
+        this.data.forEach((command) => {
             if (command.element.style.display !== "none") {
                 newShown.push(command.element);
             } else {
                 newHidden.push(command.element);
             }
-            return command.element;
+            newElements.push(command.element);
         });
-        
-        deleted = ToolBar._diffElements(currentShown, newShown);
-        affected = ToolBar._diffElements(currentShown, deleted);
-        // Pad "added" with the elements from newHidden to ensure that we continue to animate
-        // part any commands elements that have underflowed back into the action area as a
-        // of this data change.
-        added = ToolBar._diffElements(newShown, currentShown).concat(newHidden);
+
+        deleted = diffElements(currentShown, newShown);
+        affected = diffElements(currentShown, deleted);
+        // "added" must also include the elements from "newHidden" to ensure that we continue 
+        // to animate any command elements that have underflowed back into the actionarea 
+        // as a part of this data change.
+        added = diffElements(newShown, currentShown).concat(newHidden);
 
         return {
             newElements: newElements,
@@ -858,10 +866,6 @@ export class ToolBar {
     }
 
     static supportedForProcessing: boolean = true;
-
-    private static _diffElements(LHS: Array<HTMLElement>, RHS: Array<HTMLElement>): Array<HTMLElement> {
-        return LHS.filter((commandElement) => { return RHS.indexOf(commandElement) < 0 })
-    }
 }
 
 // addEventListener, removeEventListener, dispatchEvent
