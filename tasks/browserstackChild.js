@@ -44,7 +44,8 @@ process.on("message", function (test) {
                     if (results) {
                         driver.getSession().then(function (session) {
                             if (results === true) {
-                                // window.QUnit doesn't exist, quit
+                                // window.QUnit didn't exist, this happens sometimes on iOS, quit
+                                process.send({ type: "error", sessionId: session.id_ });
                                 driver.quit().then(function () {
                                     process.send({ type: "quit", sessionId: session.id_ });
                                 });

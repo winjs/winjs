@@ -58,6 +58,7 @@
                     var moduleName = getTestNameFromUrl(test.url);
                     var runComplete = false;
                     var retriesLeft = numRetries;
+                    var quickRetry = false;
 
                     createChildAndRunTest();
 
@@ -92,6 +93,10 @@
                                     });
                                     break;
 
+                                case "error":
+                                    quickRetry = true;
+                                    break;
+
                                 case "quit":
                                     child.kill();
                                     break;
@@ -101,23 +106,25 @@
                             if (!runComplete) {
                                 console.log();
                                 console.log("Child process for " + moduleName + " on " + platform + " terminated abnormally.");
+                                var retryDelay = (quickRetry ? 5 : 91);
                                 if (retriesLeft <= 0) {
                                     recordTestResult(test, {
                                         url: createSessionUrl(sessionId),
                                         result: "Error"
                                     });
-                                    console.log("Giving up, waiting 100s for session to time out...");
+                                    console.log("Giving up, waiting " + retryDelay + "s for session to time out...");
                                     setTimeout(function () {
                                         activeRuns--;
                                         nextTest();
-                                    }, 100 * 1000);
+                                    }, retryDelay * 1000);
                                 } else {
-                                    console.log("Retrying after 100s...");
+                                    console.log("Retrying after 90s...");
                                     setTimeout(function () {
                                         retriesLeft--;
                                         createChildAndRunTest();
-                                    }, 100 * 1000);
+                                    }, retryDelay * 1000);
                                 }
+                                quickRetry = false;
                             } else {
                                 activeRuns--;
                                 nextTest();
