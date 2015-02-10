@@ -232,7 +232,6 @@ declare module WinJS {
         var _scrollableClass: string;
         var _containerClass: string;
         var _headerContainerClass: string;
-        var _listViewSupportsCrossSlideClass: string;
 
         module _ListViewAnimationHelper {
             function fadeInElement(element): Promise<any>;

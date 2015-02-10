@@ -407,26 +407,13 @@
     #Animations2TestListView.margins .win-surface.win-listlayout {
         margin-top: 12px;
     }
-
-    // Desired .win-itemscontainer margins are:
-    //   margin: 2px 0 12px 14px;
-    // Need to make some make some adjustments to these numbers to account for:
-    //   - Default padding and margin. Vertical layouts have a default left/right margin of
-    //     -200px while horizontal layouts have a default top/bottom margin of -200px.
-    //   - RTL
-    #Animations2TestListView.margins .win-horizontal .win-gridlayout .win-itemscontainer {
-        margin: -198px 0 -188px 14px;
+    
+    #Animations2TestListView.margins .win-gridlayout .win-itemscontainer {
+        margin: 2px 0 12px 14px;
     }
-    #Animations2TestListView.margins.win-rtl .win-horizontal .win-gridlayout .win-itemscontainer {
+    #Animations2TestListView.margins.win-rtl .win-gridlayout .win-itemscontainer {
         margin-left: 0;
         margin-right: 14px;
-    }
-    #Animations2TestListView.margins .win-vertical .win-gridlayout .win-itemscontainer {
-        margin: 2px -200px 12px -186px;
-    }
-    #Animations2TestListView.margins.win-rtl .win-vertical .win-gridlayout .win-itemscontainer {
-        margin-left: -200px;
-        margin-right: -186px;
     }
 
     #Animations2TestListView.margins .win-gridlayout .win-groupheadercontainer {
@@ -448,8 +435,8 @@
     }
 
     #Animations2TestListView.margins .win-listlayout .win-container {
-        margin-top: 0px;
-        margin-bottom: 20px;
+        margin-top: 20px;
+        margin-bottom: 0;
     }
 
     #Animations2TestListView.margins .win-horizontal .win-listlayout .win-container {

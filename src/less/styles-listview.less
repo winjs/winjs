@@ -411,9 +411,12 @@ html.win-hoverable .win-itemcontainer.win-itembox.win-selected:hover::before
         // Itemsblocks will already be styled as flexboxes elsewhere in the file. 
         // Display the itemscontainer "block" since it will only contain one giant itemsblock.
         display: block;
-
+        
+        // Padder must not be display:none so that it prevents the win-container's top margin from
+        // collapsing thru the win-itemscontainer during animations.
         .win-itemscontainer-padder {
-            display: none;
+            height: 0;
+            width: 0;
         }
     }
 }

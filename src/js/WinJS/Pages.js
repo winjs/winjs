@@ -175,7 +175,8 @@ define([
         define: Pages_define,
         get: get,
         _remove: _remove,
-        render: render
+        render: render,
+        _viewMap: _BasePage.viewMap
     });
 
 });

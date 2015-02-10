@@ -64,19 +64,19 @@ module WinJSTests {
         return "rgb(" + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + "," + Math.floor(Math.random() * 256) + ")";
     }
 
-    function getItem(index = 0) {
+    function getItem(index = 0, itemsPerGroup = 10) {
 
         return {
             title: "Tile" + itemId++,
             color: getRandomColor(),
-            group: "" + Math.floor(index / 10)
+            group: "" + Math.floor(index / itemsPerGroup)
         };
     }
 
-    function getBindingList(count) {
+    function getBindingList(count, itemsPerGroup = 10) {
         var rawData = [];
         for (var i = 0; i < count; i++) {
-            rawData.push(getItem(i));
+            rawData.push(getItem(i, itemsPerGroup));
         }
 
         return new WinJS.Binding.List(rawData);
@@ -126,8 +126,8 @@ module WinJSTests {
     // Verifies that the delete animation starts by setting the deleted item's
     // size and location correctly.
     function verifyDeleteAnimation(listView, bindingList, index) {
-        var rectBeforeDelete;
-        var itemboxToDelete;
+        var rectsBeforeDelete = [];
+        var itemBoxes = [];
         var didVerification = false;
 
         return new WinJS.Promise(function (complete, error) {
@@ -138,22 +138,33 @@ module WinJSTests {
 
             Helper.ListView.waitForReady(listView)().
                 then(function () {
-                    listView.ensureVisible(index);
+                    // Get items on the screen which are both above and below the deleted item.
+                    listView.indexOfFirstVisible = index - 2;
+                    
                     return Helper.ListView.waitForReady(listView)();
                 }).
                 done(function () {
-                    itemboxToDelete = ancestorWithClass(listView.elementFromIndex(index), WinJS.UI._itemBoxClass);
-                    rectBeforeDelete = Helper.ListView.containerFrom(itemboxToDelete).getBoundingClientRect();
+                    var first = listView.indexOfFirstVisible;
+                    var last = listView.indexOfLastVisible;
+                    LiveUnit.Assert.isTrue(index >= first && index <= last,
+                        "Test set up failed: index should be between indexOfFirstVisible and indexOfLastVisible");
+                    for (var i = first; i <= last; i++) {
+                        var itemBox = ancestorWithClass(listView.elementFromIndex(i), WinJS.UI._itemBoxClass);
+                        itemBoxes[i] = itemBox;
+                        rectsBeforeDelete[i] = Helper.ListView.containerFrom(itemBox).getBoundingClientRect();
+                    }
 
                     var realExecuteAnimations = listView.layout.executeAnimations;
                     listView.layout.executeAnimations = function () {
                         try {
                             listView.layout.executeAnimations = realExecuteAnimations;
-                            // getComputedStyle needs to be called to ensure that the item is laid out before we try measuring it.
-                            getComputedStyle(Helper.ListView.containerFrom(itemboxToDelete));
-                            var rectDuringDelete = Helper.ListView.containerFrom(itemboxToDelete).getBoundingClientRect();
-                            assertRectsAreEqual(rectBeforeDelete, rectDuringDelete,
-                                "Animation improperly set initial size/location of deleted item");
+                            Object.keys(itemBoxes).forEach(function (i) {
+                                // getComputedStyle needs to be called to ensure that the item is laid out before we try measuring it.
+                                getComputedStyle(Helper.ListView.containerFrom(itemBoxes[i]));
+                                var rectDuringDelete = Helper.ListView.containerFrom(itemBoxes[i]).getBoundingClientRect();
+                                assertRectsAreEqual(rectsBeforeDelete[i], rectDuringDelete,
+                                    "Animation improperly set initial size/location of item at index " + i);
+                            });
                             didVerification = true;
                         } finally {
                             Helper.ListView.waitForReady(listView)().done(finishVerification);
@@ -316,12 +327,6 @@ module WinJSTests {
         testExpandItemsContainerForReflowNeeded = function (complete) {
             var bindingList = getBindingList(100);
             var listView = new WinJS.UI.ListView(listViewEl);
-
-            if (listView.element.classList.contains(WinJS.UI._listViewSupportsCrossSlideClass)) {
-                LiveUnit.LoggingCore.logComment("Negative margins not supported.");
-                complete();
-                return;
-            }
 
             listView.layout = new WinJS.UI.GridLayout();
             listView.itemTemplate = itemTemplate;
@@ -797,17 +802,22 @@ module WinJSTests {
                 return {
                     title: "Group " + itemData.group
                 };
-            };
+            }
+            function groupSorter(a, b) {
+                return parseInt(a, 10) - parseInt(b, 10);
+            }
 
             if (rtl) {
                 listViewEl.dir = "rtl";
             }
             WinJS.Utilities.addClass(listViewEl, "margins");
+            listViewEl.style.height = "1000px";
+            listViewEl.style.width = "1000px";
             var listView = new WinJS.UI.ListView(listViewEl);
-            var bindingList: any = getBindingList(100);
+            var bindingList: any = getBindingList(100, 4);
 
             if (useGroups) {
-                bindingList = bindingList.createGrouped(groupKey, groupData);
+                bindingList = bindingList.createGrouped(groupKey, groupData, groupSorter);
                 listView.groupHeaderTemplate = groupHeaderTemplate;
                 listView.groupDataSource = bindingList.groups.dataSource;
             }
@@ -849,33 +859,33 @@ module WinJSTests {
 
         [false, true].forEach(function (rtl) {
             ["horizontal", "vertical"].forEach(function (orientation) {
-                generateTestPositioningOfDeletedItem(rtl, [12], false, "ListLayout" + "_" + orientation + "_", new WinJS.UI.ListLayout({ orientation: orientation }));
-                generateTestPositioningOfDeletedItem(rtl, [12], false, "GridLayout" + "_" + orientation + "_", new WinJS.UI.GridLayout({ orientation: orientation }));
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "GridLayout_HeaderPositionTop" + "_" + orientation + "_", new WinJS.UI.GridLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6], false, "ListLayout" + "_" + orientation + "_", new WinJS.UI.ListLayout({ orientation: orientation }));
+                generateTestPositioningOfDeletedItem(rtl, [6], false, "GridLayout" + "_" + orientation + "_", new WinJS.UI.GridLayout({ orientation: orientation }));
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "GridLayout_HeaderPositionTop" + "_" + orientation + "_", new WinJS.UI.GridLayout({
                     orientation: orientation,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.top
                 }));
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "GridLayout_HeaderPositionLeft" + "_" + orientation + "_", new WinJS.UI.GridLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "GridLayout_HeaderPositionLeft" + "_" + orientation + "_", new WinJS.UI.GridLayout({
                     orientation: orientation,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left
                 }));
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "GroupedListLayout_HeaderPositionTop" + "_" + orientation + "_", new WinJS.UI.ListLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "GroupedListLayout_HeaderPositionTop" + "_" + orientation + "_", new WinJS.UI.ListLayout({
                     orientation: orientation,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.top
                 }));
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "GroupedListLayout_HeaderPositionLeft" + "_" + orientation + "_", new WinJS.UI.ListLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "GroupedListLayout_HeaderPositionLeft" + "_" + orientation + "_", new WinJS.UI.ListLayout({
                     orientation: orientation,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left
                 }));
             });
 
             if (Helper.Browser.supportsCSSGrid) {
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
                     groupInfo: groupInfo,
                     itemInfo: itemInfo,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.top
                 }));
-                generateTestPositioningOfDeletedItem(rtl, [12, 25], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
+                generateTestPositioningOfDeletedItem(rtl, [6, 10], true, "CellSpanningLayout_HeaderPositionLeft", new WinJS.UI.CellSpanningLayout({
                     groupInfo: groupInfo,
                     itemInfo: itemInfo,
                     groupHeaderPosition: WinJS.UI.HeaderPosition.left

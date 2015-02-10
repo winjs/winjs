@@ -48,10 +48,17 @@ define([
             // Enums
             var ClassName = {
                 searchBox: "win-searchbox",
+                searchBoxDisabled: "win-searchbox-disabled",
                 searchBoxInput: "win-searchbox-input",
+                searchBoxInputFocus: "win-searchbox-input-focus",
                 searchBoxButton: "win-searchbox-button",
                 searchBoxFlyout: "win-searchbox-flyout",
+                searchBoxFlyoutHighlightText: "win-searchbox-flyout-highlighttext",
+                searchBoxHitHighlightSpan: "win-searchbox-hithighlight-span",
                 searchBoxSuggestionResult: "win-searchbox-suggestion-result",
+                searchBoxSuggestionResultText: "win-searchbox-suggestion-result-text",
+                searchBoxSuggestionResultDetailedText: "win-searchbox-suggestion-result-detailed-text",
+                searchBoxSuggestionSelected: "win-searchbox-suggestion-selected",
                 searchBoxSuggestionQuery: "win-searchbox-suggestion-query",
                 searchBoxSuggestionSeparator: "win-searchbox-suggestion-separator",
                 searchBoxButtonInputFocus: "win-searchbox-button-input-focus",
@@ -163,12 +170,14 @@ define([
                     AutoSuggestBox.AutoSuggestBox.prototype._disableControl.call(this);
                     this._buttonElement.disabled = true;
                     this._buttonElement.classList.add(ClassName.searchBoxButtonDisabled);
+                    this.element.classList.add(ClassName.searchBoxDisabled);
                 },
 
                 _enableControl: function SearchBox_enableControl() {
                     AutoSuggestBox.AutoSuggestBox.prototype._enableControl.call(this);
                     this._buttonElement.disabled = false;
                     this._buttonElement.classList.remove(ClassName.searchBoxButtonDisabled);
+                    this.element.classList.remove(ClassName.searchBoxDisabled);
                 },
 
                 _renderSuggestion: function SearchBox_renderSuggestion(suggestion) {
@@ -180,11 +189,36 @@ define([
                         render.classList.add(ClassName.searchBoxSuggestionSeparator);
                     } else {
                         render.classList.add(ClassName.searchBoxSuggestionResult);
+                        
+                        var resultText = render.querySelector("." + AutoSuggestBox.ClassNames.asbSuggestionResultText);
+                        resultText.classList.add(ClassName.searchBoxSuggestionResultText);
+
+                        var resultDetailText = render.querySelector("." + AutoSuggestBox.ClassNames.asbSuggestionResultDetailedText);
+                        resultDetailText.classList.add(ClassName.searchBoxSuggestionResultDetailedText);
+
+                        var spans = render.querySelectorAll("." + AutoSuggestBox.ClassNames.asbHitHighlightSpan);
+                        for (var i = 0, len = spans.length; i < len; i++) {
+                            spans[i].classList.add(ClassName.searchBoxHitHighlightSpan);
+                        }
+                        var highlightTexts = render.querySelectorAll("." + AutoSuggestBox.ClassNames.asbBoxFlyoutHighlightText);
+                        for (var i = 0, len = highlightTexts.length; i < len; i++) {
+                            highlightTexts[i].classList.add(ClassName.searchBoxFlyoutHighlightText);
+                        }
                     }
                     return render;
                 },
 
-                _shouldIgnoreInput: function asb_shouldIgnoreInput() {
+                _selectSuggestionAtIndex: function SearchBox_selectSuggestionAtIndex(indexToSelect) {
+                    // Overrides base class
+                    AutoSuggestBox.AutoSuggestBox.prototype._selectSuggestionAtIndex.call(this, indexToSelect);
+
+                    var currentSelected = this.element.querySelector("." + ClassName.searchBoxSuggestionSelected);
+                    currentSelected && currentSelected.classList.remove(ClassName.searchBoxSuggestionSelected);
+                    var newSelected = this.element.querySelector("." + AutoSuggestBox.ClassNames.asbSuggestionSelected);
+                    newSelected && newSelected.classList.add(ClassName.searchBoxSuggestionSelected);
+                },
+
+                _shouldIgnoreInput: function SearchBox_shouldIgnoreInput() {
                     // Overrides base class
                     var shouldIgnore = AutoSuggestBox.AutoSuggestBox.prototype._shouldIgnoreInput();
                     var isButtonDown = _ElementUtilities._matchesSelector(this._buttonElement, ":active");
@@ -212,10 +246,12 @@ define([
                 },
 
                 _searchboxInputBlurHandler: function SearchBox_inputBlurHandler() {
+                    _ElementUtilities.removeClass(this.element, ClassName.searchBoxInputFocus);
                     _ElementUtilities.removeClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
                 },
 
                 _searchboxInputFocusHandler: function SearchBox_inputFocusHandler() {
+                    _ElementUtilities.addClass(this.element, ClassName.searchBoxInputFocus);
                     _ElementUtilities.addClass(this._buttonElement, ClassName.searchBoxButtonInputFocus);
                 },
 
