@@ -1,7 +1,7 @@
 (function () {
     "use strict";
 
-    var numParallel = 2;
+    var numParallel = 10;
     var numRetries = 2;
 
     module.exports = function (grunt) {
