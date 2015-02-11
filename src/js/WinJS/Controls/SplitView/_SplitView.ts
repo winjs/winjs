@@ -13,7 +13,7 @@ import _Global = require('../../Core/_Global');
 import _Hoverable = require('../../Utilities/_Hoverable');
 import _LightDismissService = require('../../_LightDismissService');
 import Promise = require('../../Promise');
-import _Signal = require('../../_Signal');
+import _ShowHideMachine = require('../../Utilities/_ShowHideMachine');
 import _TransitionAnimation = require('../../Animations/_TransitionAnimation');
 
 require(["require-style!less/styles-splitview"]);
@@ -141,324 +141,6 @@ function rectToThickness(rect: IRect, dimension: string): IThickness {
     };
 }
 
-// WinJS animation promises always complete successfully. This
-// helper allows an animation promise to complete in the canceled state
-// so that the success handler can be skipped when the animation is
-// interrupted.
-function cancelablePromise(animationPromise: Promise<any>) {
-    return Promise._cancelBlocker(animationPromise, function () {
-        animationPromise.cancel();
-    });
-}
-
-function resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: Animations.IResizeTransitionOptions): Promise<any> {
-    return cancelablePromise(Animations._resizeTransition(elementClipper, element, options));
-}
-
-//
-// State machine
-//
-
-// Noop function, used in the various states to indicate that they don't support a given
-// message. Named with the somewhat cute name '_' because it reads really well in the states.
-function _() { }
-
-// Implementing the control as a state machine helps us correctly handle:
-//   - re-entrancy while firing events
-//   - calls into the control during asynchronous operations (e.g. animations)
-//
-// Many of the states do their "enter" work within a promise chain. The idea is that if
-// the state is interrupted and exits, the rest of its work can be skipped by canceling
-// the promise chain.
-// An interesting detail is that anytime the state may call into app code (e.g. due to
-// firing an event), the current promise must end and a new promise must be chained off of it.
-// This is necessary because the app code may interact with the control and cause it to
-// change states. If we didn't create a new promise, then the very next line of code that runs
-// after calling into app code may not be valid because the state may have exited. Starting a
-// new promise after each call into app code prevents us from having to worry about this
-// problem. In this configuration, when a promise's success handler runs, it guarantees that
-// the state hasn't exited.
-// For similar reasons, each of the promise chains created in "enter" starts off with a _Signal
-// which is completed at the end of the "enter" function (this boilerplate is abstracted away by
-// the "interruptible" function). The reason is that we don't want any of the code in "enter"
-// to run until the promise chain has been stored in a variable. If we didn't do this (e.g. instead,
-// started the promise chain with Promise.wrap()), then the "enter" code could trigger the "exit"
-// function (via app code) before the promise chain had been stored in a variable. Under these
-// circumstances, the promise chain would be uncancelable and so the "enter" work would be
-// unskippable. This wouldn't be good when we needed the state to exit early.
-
-// These two functions manage interruptible work promises (one creates them the other cancels
-// them). They communicate with each other thru the _interruptibleWorkPromises property which
-//  "interruptible" creates on your object.
-
-function interruptible<T>(object: T, workFn: (promise: Promise<any>) => Promise<any>) {
-    object["_interruptibleWorkPromises"] = object["_interruptibleWorkPromises"] || [];
-    var workStoredSignal = new _Signal();
-    object["_interruptibleWorkPromises"].push(workFn(workStoredSignal.promise));
-    workStoredSignal.complete();
-}
-
-function cancelInterruptibles() {
-    (this["_interruptibleWorkPromises"] || []).forEach((workPromise: _Signal<any>) => {
-        workPromise.cancel();
-    });
-}
-
-interface ISplitViewState {
-    // Debugging
-    name: string;
-    // State lifecyle
-    enter(args: any): void;
-    exit(): void;
-    // SplitView's API surface
-    paneHidden: boolean; // readyonly. Writes go thru showPane/hidePane.
-    showPane(): void;
-    hidePane(): void;
-    // Misc
-    updateDom(): void;
-    // Provided by _setState for use within the state
-    splitView: SplitView;
-}
-
-// Transitions:
-//   When created, the control will take one of the following initialization transitions depending on
-//   how the control's APIs have been used by the time it is inserted into the DOM:
-//     Init -> Hidden
-//     Init -> Shown
-//   Following that, the life of the SplitView will be dominated by the following
-//   sequences of transitions. In geneneral, these sequences are uninterruptible.
-//     Hidden -> BeforeShow -> Hidden (when preventDefault is called on beforeshow event)
-//     Hidden -> BeforeShow -> Showing -> Shown
-//     Shown -> BeforeHide -> Shown (when preventDefault is called on beforehide event)
-//     Shown -> BeforeHide -> Hiding -> Hidden
-//   However, any state can be interrupted to go to the Disposed state:
-//     * -> Disposed
-
-module States {
-    function updateDomImpl(): void {
-        this.splitView._updateDomImpl();
-    }
-
-    // Initial state. Initializes state on the SplitView shared by the various states.
-    export class Init implements ISplitViewState {
-        private _paneHidden: boolean;
-
-        splitView: SplitView;
-        name = "Init";
-        enter(options?: any) {
-            interruptible(this, (ready) => {
-                return ready.then(() => {
-                    options = options || {};
-                    
-                    this.splitView._dismissable = new _LightDismissService.LightDismissableElement({
-                        element: this.splitView._dom.paneWrapper,
-                        tabIndex: -1,
-                        onLightDismiss: () => {
-                            this.splitView.hidePane();
-                        }
-                    });
-                    this.splitView._cachedHiddenPaneThickness = null;
-
-                    this.splitView.paneHidden = true;
-                    this.splitView.hiddenDisplayMode = HiddenDisplayMode.inline;
-                    this.splitView.shownDisplayMode = ShownDisplayMode.overlay;
-                    this.splitView.panePlacement = PanePlacement.left;
-                    _Control.setOptions(this.splitView, options);
-
-                    return _ElementUtilities._inDom(this.splitView._dom.root).then(() => {
-                        this.splitView._rtl = _Global.getComputedStyle(this.splitView._dom.root).direction === 'rtl';
-                        this.splitView._isShownMode = !this._paneHidden;
-                        this.splitView._updateDomImpl();
-                        this.splitView._setState(this._paneHidden ? Hidden : Shown);
-                    });
-                });
-            });
-        }
-        exit = cancelInterruptibles;
-        get paneHidden(): boolean {
-            return this._paneHidden;
-        }
-        showPane() {
-            this._paneHidden = false;
-        }
-        hidePane() {
-            this._paneHidden = true;
-        }
-        updateDom = _; // Postponed until immediately before we switch to another state
-    }
-
-    // A rest state. The SplitView pane is hidden and is waiting for the app to call showPane.
-    class Hidden implements ISplitViewState {
-        splitView: SplitView;
-        name = "Hidden";
-        enter(args?: { showIsPending?: boolean; }) {
-            args = args || {};
-            if (args.showIsPending) {
-                this.showPane();
-            }
-        }
-        exit = _;
-        paneHidden = true;
-        showPane() {
-            this.splitView._setState(BeforeShow);
-        }
-        hidePane = _;
-        updateDom = updateDomImpl;
-    }
-
-    // An event state. The SplitView fires the beforeshow event.
-    class BeforeShow implements ISplitViewState {
-        splitView: SplitView;
-        name = "BeforeShow";
-        enter() {
-            interruptible(this, (ready) => {
-                return ready.then(() => {
-                    return this.splitView._fireBeforeShow(); // Give opportunity for chain to be canceled when calling into app code
-                }).then((shouldShow) => {
-                    if (shouldShow) {
-                        this.splitView._setState(Showing);
-                    } else {
-                        this.splitView._setState(Hidden);
-                    }
-                });
-            });
-        }
-        exit = cancelInterruptibles;
-        paneHidden = true;
-        showPane = _;
-        hidePane = _;
-        updateDom = updateDomImpl;
-    }
-
-    // An animation/event state. The SplitView plays its show animation and fires aftershow.
-    class Showing implements ISplitViewState {
-        private _hideIsPending: boolean;
-
-        splitView: SplitView;
-        name = "Showing";
-        enter() {
-            interruptible(this, (ready) => {
-                return ready.then(() => {
-                    this._hideIsPending = false;
-
-                    this.splitView._cachedHiddenPaneThickness = null;
-                    var hiddenPaneThickness = this.splitView._getHiddenPaneThickness();
-
-                    this.splitView._isShownMode = true;
-                    this.splitView._updateDomImpl();
-                    return this.splitView._playShowAnimation(hiddenPaneThickness);
-                }).then(() => {
-                    this.splitView._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when calling into app code
-                }).then(() => {
-                    this.splitView._updateDomImpl();
-                    this.splitView._setState(Shown, { hideIsPending: this._hideIsPending });
-                });
-            });
-        }
-        exit = cancelInterruptibles;
-        get paneHidden() {
-            return this._hideIsPending;
-        }
-        showPane() {
-            this._hideIsPending = false;
-        }
-        hidePane() {
-            this._hideIsPending = true;
-        }
-        updateDom = _; // Postponed until immediately before we switch to another state
-    }
-
-    // A rest state. The SplitView pane is shown and is waiting for the app to trigger hidePane.
-    class Shown implements ISplitViewState {
-        splitView: SplitView;
-        name = "Shown";
-        enter(args?: { hideIsPending?: boolean }) {
-            args = args || {};
-            if (args.hideIsPending) {
-                this.hidePane();
-            }
-        }
-        exit = _;
-        paneHidden = false;
-        showPane = _;
-        hidePane() {
-            this.splitView._setState(BeforeHide);
-        }
-        updateDom = updateDomImpl;
-    }
-
-    // An event state. The SplitView fires the beforehide event.
-    class BeforeHide implements ISplitViewState {
-        splitView: SplitView;
-        name = "BeforeHide";
-        enter() {
-            interruptible(this, (ready) => {
-                return ready.then(() => {
-                    return this.splitView._fireBeforeHide(); // Give opportunity for chain to be canceled when calling into app code
-                }).then((shouldHide) => {
-                    if (shouldHide) {
-                        this.splitView._setState(Hiding);
-                    } else {
-                        this.splitView._setState(Shown);
-                    }
-                });
-            });
-        }
-        exit = cancelInterruptibles;
-        paneHidden = false;
-        showPane = _;
-        hidePane = _;
-        updateDom = updateDomImpl;
-    }
-
-    // An animation/event state. The SpitView plays the hide animation and fires the afterhide event.
-    class Hiding implements ISplitViewState {
-        private _showIsPending: boolean;
-
-        splitView: SplitView;
-        name = "Hiding";
-        enter() {
-            interruptible(this, (ready) => {
-                return ready.then(() => {
-                    this._showIsPending = false;
-                    return this.splitView._playHideAnimation(this.splitView._getHiddenPaneThickness());
-                }).then(() => {
-                    this.splitView._isShownMode = false;
-                    this.splitView._updateDomImpl();
-                    this.splitView._fireEvent(EventNames.afterHide); // Give opportunity for chain to be canceled when calling into app code
-                }).then(() => {
-                    this.splitView._updateDomImpl();
-                    this.splitView._setState(Hidden, { showIsPending: this._showIsPending });
-                });
-            });
-        }
-        exit = cancelInterruptibles;
-        get paneHidden() {
-            return !this._showIsPending;
-        }
-        showPane() {
-            this._showIsPending = true;
-        }
-        hidePane() {
-            this._showIsPending = false;
-        }
-        updateDom = _; // Postponed until immediately before we switch to another state
-    }
-
-    export class Disposed implements ISplitViewState {
-        splitView: SplitView;
-        name = "Disposed";
-        enter() {
-            _LightDismissService.hidden(this.splitView._dismissable);
-        }
-        exit = _;
-        paneHidden = true;
-        showPane = _;
-        hidePane = _;
-        updateDom = _;
-    }
-}
-
 /// <field>
 /// <summary locid="WinJS.UI.SplitView">
 /// Displays a SplitView which renders a collapsable pane next to arbitrary HTML content.
@@ -497,7 +179,7 @@ export class SplitView {
     private static _ClassNames = ClassNames;
 
     private _disposed: boolean;
-    private _state: ISplitViewState;
+    private _machine: _ShowHideMachine.ShowHideMachine;
     _dom: {
         root: HTMLElement;
         pane: HTMLElement;
@@ -534,11 +216,58 @@ export class SplitView {
         if (element && element["winControl"]) {
             throw new _ErrorFromName("WinJS.UI.SplitView.DuplicateConstruction", Strings.duplicateConstruction);
         }
-
-        this._disposed = false;
-
+        
         this._initializeDom(element || _Global.document.createElement("div"));
-        this._setState(States.Init, options);
+        this._machine = new _ShowHideMachine.ShowHideMachine({
+            eventElement: this._dom.root,
+            onShow: () => {
+                this._cachedHiddenPaneThickness = null;
+                var hiddenPaneThickness = this._getHiddenPaneThickness();
+
+                this._isShownMode = true;
+                this._updateDomImpl();
+                
+                return this._playShowAnimation(hiddenPaneThickness);
+            },
+            onHide: () => {
+                return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
+                    this._isShownMode = false;
+                    this._updateDomImpl();
+                });
+            },
+            onUpdateDom: () => {
+                this._updateDomImpl();
+            },
+            onUpdateDomWithIsShown: (isShown: boolean) => {
+                this._isShownMode = isShown;
+                this._updateDomImpl();
+            }
+        });
+        
+        // Initialize private state.
+        this._disposed = false;
+        this._dismissable = new _LightDismissService.LightDismissableElement({
+            element: this._dom.paneWrapper,
+            tabIndex: -1,
+            onLightDismiss: () => {
+                this.hidePane();
+            }
+        });
+        this._cachedHiddenPaneThickness = null;
+        
+        // Initialize public properties.
+        this.paneHidden = true;
+        this.hiddenDisplayMode = HiddenDisplayMode.inline;
+        this.shownDisplayMode = ShownDisplayMode.overlay;
+        this.panePlacement = PanePlacement.left;
+        _Control.setOptions(this, options);
+        
+        // Exit the Init state.
+        _ElementUtilities._inDom(this._dom.root).then(() => {
+            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._machine.initialized();
+        });
+        
     }
 
     /// <field type="HTMLElement" domElement="true" readonly="true" hidden="true" locid="WinJS.UI.SplitView.element" helpKeyword="WinJS.UI.SplitView.element">
@@ -573,7 +302,7 @@ export class SplitView {
         if (HiddenDisplayMode[value] && this._hiddenDisplayMode !== value) {
             this._hiddenDisplayMode = value;
             this._cachedHiddenPaneThickness = null;
-            this._state.updateDom();
+            this._machine.updateDom();
         }
     }
 
@@ -588,7 +317,7 @@ export class SplitView {
         if (ShownDisplayMode[value] && this._shownDisplayMode !== value) {
             this._shownDisplayMode = value;
             this._cachedHiddenPaneThickness = null;
-            this._state.updateDom();
+            this._machine.updateDom();
         }
     }
 
@@ -603,7 +332,7 @@ export class SplitView {
         if (PanePlacement[value] && this._panePlacement !== value) {
             this._panePlacement = value;
             this._cachedHiddenPaneThickness = null;
-            this._state.updateDom();
+            this._machine.updateDom();
         }
     }
 
@@ -611,14 +340,10 @@ export class SplitView {
     /// Gets or sets whether the SpitView's pane is currently collapsed.
     /// </field>
     get paneHidden(): boolean {
-        return this._state.paneHidden;
+        return this._machine.hidden;
     }
     set paneHidden(value: boolean) {
-        if (value) {
-            this.hidePane();
-        } else {
-            this.showPane();
-        }
+        this._machine.hidden = value;
     }
 
     dispose(): void {
@@ -630,8 +355,9 @@ export class SplitView {
         if (this._disposed) {
             return;
         }
-        this._setState(States.Disposed);
         this._disposed = true;
+        this._machine.dispose();
+        _LightDismissService.hidden(this._dismissable);
         _Dispose._disposeElement(this._dom.pane);
         _Dispose._disposeElement(this._dom.content);
     }
@@ -642,7 +368,7 @@ export class SplitView {
         /// Shows the SplitView's pane.
         /// </summary>
         /// </signature>
-        this._state.showPane();
+        this._machine.show();
     }
 
     hidePane(): void {
@@ -651,7 +377,7 @@ export class SplitView {
         /// Hides the SplitView's pane.
         /// </summary>
         /// </signature>
-        this._state.hidePane();
+        this._machine.hide();
     }
 
     private _initializeDom(root: HTMLElement): void {
@@ -790,49 +516,11 @@ export class SplitView {
         }
     }
 
-    //
-    // Methods called by states
-    //
-
-    get _horizontal(): boolean {
+    private get _horizontal(): boolean {
         return this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.right;
     }
 
-    _setState(NewState: any, arg0?: any) {
-        if (!this._disposed) {
-            this._state && this._state.exit();
-            this._state = new NewState();
-            this._state.splitView = this;
-            this._state.enter(arg0);
-        }
-    }
-
-    // Calls into arbitrary app code
-    _fireEvent(eventName: string, options?: { detail?: any; cancelable?: boolean; }): boolean {
-        options = options || {};
-        var detail = options.detail || null;
-        var cancelable = !!options.cancelable;
-
-        var eventObject = <CustomEvent>_Global.document.createEvent("CustomEvent");
-        eventObject.initCustomEvent(eventName, true, cancelable, detail);
-        return this._dom.root.dispatchEvent(eventObject);
-    }
-
-    // Calls into arbitrary app code
-    _fireBeforeShow(): boolean {
-        return this._fireEvent(EventNames.beforeShow, {
-            cancelable: true
-        });
-    }
-
-    // Calls into arbitrary app code
-    _fireBeforeHide(): boolean {
-        return this._fireEvent(EventNames.beforeHide, {
-            cancelable: true
-        });
-    }
-
-    _getHiddenPaneThickness(): IThickness {
+    private _getHiddenPaneThickness(): IThickness {
         if (this._cachedHiddenPaneThickness === null) {
             if (this._hiddenDisplayMode === HiddenDisplayMode.none) {
                 this._cachedHiddenPaneThickness = { content: 0, total: 0 };
@@ -855,7 +543,7 @@ export class SplitView {
 
     // Should be called while SplitView is rendered in its shown mode
     // Overridden by tests.
-    _playShowAnimation(hiddenPaneThickness: IThickness): Promise<any> {
+    private _playShowAnimation(hiddenPaneThickness: IThickness): Promise<any> {
         var dim = this._horizontal ? Dimension.width : Dimension.height;
         var shownPaneRect = this._measureElement(this._dom.pane);
         var shownContentRect = this._measureElement(this._dom.content);
@@ -870,7 +558,7 @@ export class SplitView {
             var animationOffsetFactor = 0.3;
             var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
+            return Animations._resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                 from: from,
                 to: shownPaneThickness.total,
                 actualSize: shownPaneThickness.total,
@@ -893,7 +581,7 @@ export class SplitView {
 
     // Should be called while SplitView is rendered in its shown mode
     // Overridden by tests.
-    _playHideAnimation(hiddenPaneThickness: IThickness): Promise<any> {
+    private _playHideAnimation(hiddenPaneThickness: IThickness): Promise<any> {
         var dim = this._horizontal ? Dimension.width : Dimension.height;
         var shownPaneRect = this._measureElement(this._dom.pane);
         var shownContentRect = this._measureElement(this._dom.content);
@@ -908,7 +596,7 @@ export class SplitView {
             var animationOffsetFactor = 0.3;
             var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
             
-            return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
+            return Animations._resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                 from: from,
                 to: hiddenPaneThickness.total,
                 actualSize: shownPaneThickness.total,
@@ -945,7 +633,7 @@ export class SplitView {
         panePlaceholderHeight: <string>undefined,
         isOverlayShown: <boolean>undefined
     };
-    _updateDomImpl(): void {
+    private _updateDomImpl(): void {
         var rendered = this._updateDomImpl_rendered;
         
         var paneShouldBeFirst = this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.top;

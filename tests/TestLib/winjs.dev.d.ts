@@ -194,7 +194,7 @@ declare module WinJS {
             _prepareAnimation(paneRect: any, contentRect: any): void;
             _clearAnimation(): void;
             _disposed: boolean;
-            _state: any;
+            _machine: { _state: { name: string } };
         }
 
         interface ISelect {

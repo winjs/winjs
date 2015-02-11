@@ -388,7 +388,7 @@ module SplitViewTests {
 
             splitView.dispose();
             LiveUnit.Assert.isTrue(splitView._disposed, "SplitView didn't mark itself as disposed");
-            LiveUnit.Assert.areEqual("Disposed", splitView._state.name, "SplitView didn't move into the disposed state");
+            LiveUnit.Assert.areEqual("Disposed", splitView._machine._state.name, "SplitView didn't move into the disposed state");
 
             splitView.showPane();
             splitView.hidePane();
@@ -498,7 +498,7 @@ module SplitViewTests {
             var rootHeight = 500;
             var rootWidth = 1000;
             var optionsRecords = [
-                null,
+                undefined,
                 { paneHidden: false },
                 { panePlacement: "top" },
                 { hiddenDisplayMode: "none" },
