@@ -3151,7 +3151,7 @@ module CorsicaTests {
 
             // Query the system for Localized "'x' of undefined or null reference"
             var errorText = "'x' of undefined or null reference";
-            try { null.x(); }
+            try { thisVariableNotDefined.x(); }
             catch (e) {
                 errorText = e.message;
             }
@@ -3182,7 +3182,7 @@ module CorsicaTests {
                     })
                     .done(function () {
                         // next line is an intentional reference error
-                        null.x();
+                        thisVariableNotDefined.x();
                     })
 
                 LiveUnit.Assert.areEqual(0, count);
