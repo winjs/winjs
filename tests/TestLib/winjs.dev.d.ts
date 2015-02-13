@@ -389,7 +389,7 @@ declare module WinJS {
             _secondaryCommands: ICommand[];
             _overflowButton: HTMLButtonElement;
             _mainActionArea: HTMLElement;
-            _menu: WinJS.UI.Menu;
+            _overflowArea: HTMLElement;
             _separatorWidth: number;
             _standardCommandWidth: number;
             _overflowButtonWidth: number;
@@ -549,7 +549,6 @@ declare module WinJS {
         class ToolBar {
             public element: HTMLElement;
             public data: WinJS.Binding.List<ICommand>;
-            public extraClass: string;
             constructor(element?: HTMLElement, options?: any);
             public dispose(): void;
             public forceLayout(): void;

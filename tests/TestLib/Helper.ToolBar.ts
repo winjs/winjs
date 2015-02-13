@@ -18,6 +18,8 @@ module Helper.ToolBar {
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
+        overflowCommandHeight: 44,
+        overflowSeparatorHeight: 12,
         toolBarMinWidth: 68,
     }
 
@@ -54,7 +56,7 @@ module Helper.ToolBar {
 
     export function verifyOverflowAreaCommandsLabels(toolbar: WinJS.UI.ToolBar, labels: string[]) {
         var control = <WinJS.UI.PrivateToolBar>toolbar.element.winControl;
-        var commands = getVisibleCommandsInElement(control._menu.element);
+        var commands = getVisibleCommandsInElement(control._overflowArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
