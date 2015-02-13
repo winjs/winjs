@@ -478,6 +478,7 @@ define([
 
                 _createSemanticZoomButton: function () {
                     this._sezoButton = _Global.document.createElement("button");
+                    this._sezoButton.setAttribute("type", "button");
                     this._sezoButton.className = sezoButtonClass + " " + sezoButtonLocationClass;
                     this._sezoButton.tabIndex = -1;
                     this._sezoButton.style.visibility = "hidden";

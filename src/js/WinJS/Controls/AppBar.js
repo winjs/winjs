@@ -377,6 +377,7 @@ define([
                 // Add Invoke button.
                 this._invokeButton = _Global.document.createElement("button");
                 this._invokeButton.tabIndex = 0;
+                this._invokeButton.setAttribute("type", "button");
                 this._invokeButton.innerHTML = "<span class='" + _Constants.ellipsisClass + "'></span>";
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
                 this._element.appendChild(this._invokeButton);
@@ -717,7 +718,7 @@ define([
                     var commands = this._layout.commandsInOrder.filter(function (command) {
                         return command.id === id || command.element.id === id;
                     });
-                    
+
                     if (commands.length === 1) {
                         return commands[0];
                     } else if (commands.length === 0) {
