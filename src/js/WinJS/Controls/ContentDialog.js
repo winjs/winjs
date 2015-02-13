@@ -721,9 +721,9 @@ define([
                             '<div class="' + ClassNames.title + '"></div>' +
                             '<div class="' + ClassNames._scroller + '"></div>' +
                             '<div class="' + ClassNames.commands + '">' +
-                                '<button class="' + ClassNames._commandSpacer + '"></button>' +
-                                '<button class="' + ClassNames.primaryCommand + '"></button>' +
-                                '<button class="' + ClassNames.secondaryCommand + '"></button>' +
+                                '<button type="button" class="' + ClassNames._commandSpacer + '"></button>' +
+                                '<button type="button" class="' + ClassNames.primaryCommand + '"></button>' +
+                                '<button type="button" class="' + ClassNames.secondaryCommand + '"></button>' +
                             '</div>' +
                         '</div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +

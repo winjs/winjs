@@ -393,7 +393,7 @@ module CorsicaTests {
         {
             name: "allSortsOfCommasInArrayExpression",
             input: "[,,1, ,, 2, 3,,]",
-            result: [, , 1, , , 2, 3, , , ] // TS eats the last trailing comma https://github.com/Microsoft/TypeScript/issues/614
+            result: [, , 1, , , 2, 3, ,]
         },
     ];
 

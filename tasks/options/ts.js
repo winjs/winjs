@@ -25,7 +25,8 @@
                 sourceMap: false,
                 noImplicitAny: true,
                 declaration: false,
-                removeComments: false
+                removeComments: false,
+                suppressImplicitAnyIndexErrors: true
             }
         },
     };

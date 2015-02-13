@@ -147,6 +147,7 @@ define([
                         var item = pivot._items.getAt(index);
 
                         var headerContainerEl = _Global.document.createElement("BUTTON");
+                        headerContainerEl.setAttribute("type", "button");
                         headerContainerEl.style.marginLeft = headerContainerEl.style.marginRight = headersStates.common.headerHorizontalMargin + "px";
                         _ElementUtilities.addClass(headerContainerEl, Pivot._ClassName.pivotHeader);
                         headerContainerEl._item = item;
@@ -468,6 +469,7 @@ define([
 
                             // Create header track nav button elements
                             pivot._prevButton = _Global.document.createElement("button");
+                            pivot._prevButton.setAttribute("type", "button");
                             _ElementUtilities.addClass(pivot._prevButton, Pivot._ClassName.pivotNavButton);
                             _ElementUtilities.addClass(pivot._prevButton, Pivot._ClassName.pivotNavButtonPrev);
                             pivot._prevButton.addEventListener("click", function () {
@@ -480,6 +482,7 @@ define([
                             pivot._prevButton.style.left = pivot._rtl ? "0px" : leadingSpace + "px";
 
                             pivot._nextButton = _Global.document.createElement("button");
+                            pivot._nextButton.setAttribute("type", "button");
                             _ElementUtilities.addClass(pivot._nextButton, Pivot._ClassName.pivotNavButton);
                             _ElementUtilities.addClass(pivot._nextButton, Pivot._ClassName.pivotNavButtonNext);
                             pivot._nextButton.addEventListener("click", function () {

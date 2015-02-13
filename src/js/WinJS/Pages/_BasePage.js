@@ -274,7 +274,8 @@ define([
         abs: abs,
         define: Pages_define,
         get: get,
-        remove: remove
+        remove: remove,
+        viewMap: viewMap
     });
 
 });

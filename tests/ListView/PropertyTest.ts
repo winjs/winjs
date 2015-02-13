@@ -151,7 +151,7 @@ module WinJSTests {
                             LiveUnit.Assert.areEqual("0px", getComputedStyle(focusOutlineElement).outlineWidth);
                         } else {
                             LiveUnit.Assert.areNotEqual("transparent", getComputedStyle(focusOutlineElement).outlineColor);
-                            LiveUnit.Assert.areEqual("solid", getComputedStyle(focusOutlineElement).outlineStyle);
+                            LiveUnit.Assert.areEqual("dashed", getComputedStyle(focusOutlineElement).outlineStyle);
                             LiveUnit.Assert.areEqual("2px", getComputedStyle(focusOutlineElement).outlineWidth);
                         }
                     } else {
