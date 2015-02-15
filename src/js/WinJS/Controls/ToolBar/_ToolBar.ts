@@ -296,7 +296,6 @@ export class ToolBar {
             _ElementUtilities.addClass(this._overflowArea, _Constants.overflowAreaCssClass);
             _ElementUtilities.addClass(this._overflowArea, _Constants.menuCssClass);
             this.element.appendChild(this._overflowArea);
-            
         }
     }
 
@@ -306,6 +305,12 @@ export class ToolBar {
             focusedIndex: -1
         };
         var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
+
+        var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
+        if (this._overflowArea.style.display !== "none") {
+            elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._overflowArea.children));
+        }
+
         elementsInReach.forEach((element: HTMLElement) => {
             if (this._isElementFocusable(element)) {
                 focusableCommandsInfo.elements.push(element);
@@ -512,11 +517,6 @@ export class ToolBar {
 
                     case Key.end:
                         var index = focusableElementsInfo.elements.length - 1;
-                        if (this._isElementFocusable(this._overflowButton)) {
-                            // The end key goes to the last command, not the overflow button,
-                            // which is the last element when it is visible.
-                            index = Math.max(0, index - 1);
-                        }
                         targetCommand = this._getLastElementFocus(focusableElementsInfo.elements[index]);
                         break;
                 }

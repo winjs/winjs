@@ -806,7 +806,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
         }
 
-        testKeyboarding(complete) {
+        testKeyboarding_Opened(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -845,6 +845,9 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent, "Down arrow should skip '3' because that command is hidden");
 
                 Helper.keydown(toolbar.element, Key.rightArrow);
+                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement); 
+
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
 
                 Helper.keydown(toolbar.element, Key.downArrow);
@@ -852,6 +855,9 @@ module CorsicaTests {
 
                 Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
+
+                Helper.keydown(toolbar.element, Key.upArrow);
+                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement); 
 
                 Helper.keydown(toolbar.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent);
@@ -862,7 +868,7 @@ module CorsicaTests {
             });
         }
 
-        testKeyboardingClosed(complete) {
+        testKeyboarding_Closed(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -891,9 +897,6 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
                 Helper.keydown(toolbar.element, Key.end);
-                LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
-
-                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
 
                 Helper.keydown(toolbar.element, Key.home);
