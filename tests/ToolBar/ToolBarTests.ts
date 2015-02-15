@@ -597,8 +597,9 @@ module CorsicaTests {
                 data: data
             });
 
+            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
+
             // Click on the first menu item
-            toolbar._overflowButton.click();
             var menuCommand = (<HTMLElement> toolbar._overflowArea.children[0]);
             menuCommand.click();
             LiveUnit.Assert.areEqual("custom 1", toolbar._customContentContainer.textContent, "The custom content flyout has invalid content");
@@ -745,6 +746,8 @@ module CorsicaTests {
             this._element.style.width = width + "px";
             toolbar.forceLayout();
 
+            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
+
             LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "There should only be 2 commands in the overflow area");
             LiveUnit.Assert.areEqual(2 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
             LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._overflowArea), "Invalid width for the overflow area container");
@@ -768,6 +771,8 @@ module CorsicaTests {
             var toolbar = new ToolBar(this._element, {
                 data: data
             });
+
+            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
 
             LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
             LiveUnit.Assert.areEqual(9, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "There should be 9 commands in the overflow area");
@@ -796,20 +801,9 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
-        }
+            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
 
-        testOverflowButtonVisiblity() {
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "s1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
-            ]);
-            this._element.style.width = "320px";
-            var toolbar = new ToolBar(this._element, {
-                data: data
-            });
-            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when shownDisplayMode:'full'");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when shownDisplayMode:'full'");
-            LiveUnit.Assert.areEqual(48, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
+            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
         }
 
         testKeyboarding(complete) {
@@ -829,6 +823,8 @@ module CorsicaTests {
             var toolbar = new ToolBar(this._element, {
                 data: data
             });
+
+            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
 
             toolbar.element.focus();
             setTimeout(function () {
@@ -866,7 +862,7 @@ module CorsicaTests {
             });
         }
 
-        testKeyboardingflyoutMenu(complete) {
+        testKeyboardingClosed(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([

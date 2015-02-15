@@ -760,7 +760,7 @@ export class ToolBar {
         return menuCommand;
     }
 
-    private _setupOverflowArea(additionalCommands: any[]) {
+    private _setupOverflowArea(additionalCommands: _Command.AppBarCommand[]) {
         this._writeProfilerMark("_setupOverflowArea,info");
 
         // Set up custom flyout for "content" typed commands in the overflow area. 
@@ -787,27 +787,24 @@ export class ToolBar {
         var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
         this._overflowButton.style.display = showOverflowButton ? "" : "none";
 
-        var hasToggleCommands = false,
-            hasFlyoutCommands = false;
 
+        // Populate the overflowArea with MenuCommands
         _ElementUtilities.empty(this._overflowArea);
+        var hasToggleCommands = false,
+            hasFlyoutCommands = false,
+            menuCommands: _MenuCommand.MenuCommand[] = [];
 
-        this._hideSeparatorsIfNeeded(additionalCommands);
-
-        // Add primary commands that should overflow 
+        // Add primary commands that have overflowed. 
         additionalCommands.forEach((command) => {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
-
             }
 
             if (command.type === _Constants.typeFlyout) {
                 hasFlyoutCommands = true;
-
             }
 
-            this._overflowArea.appendChild(this._getMenuCommand(command).element);
-
+            menuCommands.push(this._getMenuCommand(command));
         });
 
         // Add separator between primary and secondary command if applicable 
@@ -816,26 +813,29 @@ export class ToolBar {
             var separator = new _ToolBarMenuCommand._MenuCommand(null, {
                 type: _Constants.typeSeparator
             });
-            this._overflowArea.appendChild(separator.element);
 
+            menuCommands.push(separator);
         }
-
-        this._hideSeparatorsIfNeeded(this._secondaryCommands);
 
         // Add secondary commands 
         this._secondaryCommands.forEach((command) => {
             if (!command.hidden) {
                 if (command.type === _Constants.typeToggle) {
                     hasToggleCommands = true;
-
                 }
+
                 if (command.type === _Constants.typeFlyout) {
                     hasFlyoutCommands = true;
-
                 }
-                this._overflowArea.appendChild(this._getMenuCommand(command).element);
+
+                menuCommands.push(this._getMenuCommand(command));
             }
         });
+
+        this._hideSeparatorsIfNeeded(menuCommands);
+        menuCommands.forEach((command) => {
+            this._overflowArea.appendChild(command.element);
+        })
 
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsToggleCommandClass);
         _ElementUtilities[hasFlyoutCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsFlyoutCommandClass);
