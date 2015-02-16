@@ -18,3 +18,5 @@ npm-debug.log
 .baseDir.ts
 .tscache
 *.tmp.txt
+
+.settings/user.json
