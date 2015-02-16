@@ -68,7 +68,11 @@ button {
     });
 }
 
-button.win-command:focus {
+/*
+Always hide the outline, not just when :focus is applied.
+https://github.com/winjs/winjs/issues/859
+*/
+button.win-command {
     outline: none;
 }
 

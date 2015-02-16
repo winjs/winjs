@@ -133,7 +133,7 @@ export class ToolBar {
                 this.element.appendChild(this._inlineOverflowArea);
             }
         } else {
-            // 'reduced' is default 
+            // 'reduced' is default
             this._shownDisplayMode = _Constants.shownDisplayModes.reduced;
             _ElementUtilities.addClass(this.element, _Constants.shownDisplayReducedCssClass);
             _ElementUtilities.removeClass(this.element, _Constants.shownDisplayFullCssClass);
@@ -336,6 +336,7 @@ export class ToolBar {
         this._mainActionArea.appendChild(this._spacer);
 
         this._overflowButton = _Global.document.createElement("button");
+        this._overflowButton.setAttribute("type", "button");
         this._overflowButton.tabIndex = 0;
         this._overflowButton.innerHTML = "<span class='" + _Constants.ellipsisCssClass + "'></span>";
         _ElementUtilities.addClass(this._overflowButton, _Constants.overflowButtonCssClass);

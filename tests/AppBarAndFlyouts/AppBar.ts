@@ -2083,10 +2083,10 @@ module CorsicaTests {
 
         testGetCommandById() {
             var pairWiseOptions = {
-                    type: ['button', 'separator', 'toggle', 'flyout', 'content'],
-                    hidden: [true, false],
-                    section: ['primary', 'secondary', 'global', 'selection'],
-                },
+                type: ['button', 'separator', 'toggle', 'flyout', 'content'],
+                hidden: [true, false],
+                section: ['primary', 'secondary', 'global', 'selection'],
+            },
                 commands = Helper.pairwise(pairWiseOptions).map(function (option, index) {
                     return new AppBarCommand(null, { id: "cmd" + index, type: option.type, hidden: option.hidden, section: option.section });
                 }),
@@ -2102,6 +2102,56 @@ module CorsicaTests {
                         "AppBarCommmand: { id: " + command.id + ", type: " + command.type + ", hidden: " + command.hidden + ", section: " + command.section + "}");
                 });
 
+            });
+        }
+
+        testAppBarMenuDoesNotResizeWhenCommandsAreFocused(complete) {
+            // Regression test: https://github.com/winjs/winjs/issues/859
+            // Verifies that focusing a command in the AppBar overflow menu will not cause the overflow menu to change width.
+            var name = "pCmd1",
+                commands = [
+                    new AppBarCommand(null, { id: name, label: name, section: "primary" })
+                ];
+
+            for (var i = 0; i < 10; - i++) { // Create enough secondary commands to force a scroll bar in the AppBar's overflow menu
+                name = "sCmd" + i;
+                commands.push(new AppBarCommand(null, { id: name, label: name, section: "secondary" }));
+            }
+
+            var root = document.getElementById("appBarDiv"),
+                appBarEl = document.createElement("DIV");
+            root.appendChild(appBarEl);
+
+            var appBar = new WinJS.UI.AppBar(appBarEl, { layout: 'menu', commands: commands }),
+                appBarMenuElement = appBar.element.querySelector(".win-appbar-menu"),
+                toolBarElement = appBarMenuElement.querySelector(".win-toolbar"),
+                overFlowElement = toolBarElement.querySelector(".win-toolbar-overflowarea");
+
+            LiveUnit.Assert.isNotNull(appBarMenuElement, "TEST ERROR: Test requires appBarMenuElement");
+            LiveUnit.Assert.isNotNull(toolBarElement, "TEST ERROR: Test requires toolBarElement");
+            LiveUnit.Assert.isNotNull(overFlowElement, "TEST ERROR: Test requires overFlowElement");
+
+            OverlayHelpers.show(appBar).then(() => {
+
+                var beforeFocus = {
+                    menuWidth: getComputedStyle(appBarMenuElement).width,
+                    toolBarWidth: getComputedStyle(toolBarElement).width,
+                    overFlowWidth: getComputedStyle(overFlowElement).width
+                };
+
+                var secondaryElement = <HTMLElement>overFlowElement.querySelector("button.win-command");
+                secondaryElement.focus();
+
+                var afterFocus = {
+                    menuWidth: getComputedStyle(appBarMenuElement).width,
+                    toolBarWidth: getComputedStyle(toolBarElement).width,
+                    overFlowWidth: getComputedStyle(overFlowElement).width
+                };
+
+                LiveUnit.Assert.areEqual(beforeFocus.menuWidth, afterFocus.menuWidth, "Focusing a secondary command element should not resize the AppBarMenu.");
+                LiveUnit.Assert.areEqual(beforeFocus.toolBarWidth, afterFocus.toolBarWidth, "Focusing a secondary command element should not resize the ToolBar.");
+                LiveUnit.Assert.areEqual(beforeFocus.overFlowWidth, afterFocus.overFlowWidth, "Focusing a secondary command element should not resize the OverFlowArea.");
+                complete();
             });
         }
     };

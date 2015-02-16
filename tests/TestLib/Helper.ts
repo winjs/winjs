@@ -45,19 +45,17 @@ module Helper {
 
     export function createPointerEvent(fallbackType: string) {
         // PointerEvent is already supported, so just use that
+        var e:any;
         if ((<any>window).PointerEvent) {
-            var e = document.createEvent("PointerEvent");
-            return e;
+            return document.createEvent("PointerEvent");
         } else if ((<any>window).MSPointerEvent) {
             // Fallback to the ms prefix version from IE 10
-            var e = document.createEvent("MSPointerEvent");
-            return e;
+            return document.createEvent("MSPointerEvent");
         } else if (fallbackType === "mouse") {
-            var e = document.createEvent("MouseEvent");
-            return e;
+            return document.createEvent("MouseEvent");
         } else if (fallbackType === "touch") {
-            var e = document.createEvent("MouseEvent");
-            (<any>e).isTouch = true;
+            e = document.createEvent("MouseEvent");
+            e.isTouch = true;
             return e;
         }
     }
@@ -1716,7 +1714,7 @@ module Helper {
         export function forEach(array: Array<any>, asyncCallbackFn: (value?, index?, array?) => any): WinJS.Promise<any> {
             // Execute an asynchronous forEach loop over an array. The asynchronous forEach loop only applies asyncCallbackFn to each subsequent value in the array,
             // after the Promise returned by applying asyncCallbackFn to the previous array value completes.
-            // 
+            //
             // Returns a Promise that completes when all promises that were returned by applying asyncCallbackFn to every value in the array have been completed.
             var p = WinJS.Promise.as();
             array.forEach((value, index, array) => {
