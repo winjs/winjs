@@ -2,17 +2,17 @@
 /// <reference path="../../../../typings/require.d.ts" />
 
 import _Base = require('../Core/_Base');
-import _ToolBar = require('./ToolBar/_ToolBar');
+import _CommandingSurface = require('./CommandingSurface/_CommandingSurface');
 
-var module: typeof _ToolBar = null;
+var module: typeof _CommandingSurface = null;
 
 function getModule() {
     if (!module) {
-        require(["./ToolBar/_ToolBar"], (m: typeof _ToolBar) => {
+        require(["./CommandingSurface/_CommandingSurface"], (m: typeof _CommandingSurface) => {
             module = m;
         });
     }
-    return module.ToolBar;
+    return module._CommandingSurface;
 }
 
 _Base.Namespace.define("WinJS.UI", {
