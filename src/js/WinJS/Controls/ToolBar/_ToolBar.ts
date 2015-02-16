@@ -292,7 +292,6 @@ export class ToolBar {
         if (!this._overflowArea) {
             this._overflowArea = _Global.document.createElement("div");
             this._overflowArea.style.display = "none";
-            this._overflowArea.style.backgroundColor = "indigo";
             _ElementUtilities.addClass(this._overflowArea, _Constants.overflowAreaCssClass);
             _ElementUtilities.addClass(this._overflowArea, _Constants.menuCssClass);
             this.element.appendChild(this._overflowArea);
