@@ -1080,4 +1080,4 @@ module CorsicaTests {
         }
     }
 }
-LiveUnit.registerTestClass("CorsicaTests._CommandingSurfaceTests");
+LiveUnit.registerTestClass("CorsicaTests.CommandingSurfaceTests");

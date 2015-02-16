@@ -569,6 +569,14 @@ declare module WinJS {
             public forceLayout(): void;
         }
 
+        class ToolBar {
+            public element: HTMLElement;
+            public data: WinJS.Binding.List<ICommand>;
+            constructor(element?: HTMLElement, options?: any);
+            public dispose(): void;
+            public forceLayout(): void;
+        }
+
         class PrivateItemContainer extends WinJS.UI.ItemContainer {
             _selectionMode: WinJS.UI.SelectionMode;
             _onFocusIn();

@@ -16,13 +16,13 @@ function getModule() {
 }
 
 _Base.Namespace.define("WinJS.UI", {
-    ToolBar: {
+    _CommandingSurface: {
         get: getModule
     }
 });
 
 var publicMembers = Object.create({}, {
-    ToolBar: {
+    _CommandingSurface: {
         get: function () {
             return getModule();
         }
