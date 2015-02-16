@@ -1930,38 +1930,38 @@ module CorsicaTests {
 
         };
 
-        //xtestMenuLayoutConstruction = function (complete) {
-        //    var root = document.getElementById("appBarDiv");
-        //    root.innerHTML =
-        //    "<div id='appBar'>" +
-        //    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\"}'></button>" +
-        //    "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\"}' />" +
-        //    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\"}'></button>" +
-        //    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
-        //    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
-        //    "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"toggle\", section:\"secondary\"}'></button>" +
-        //    "</div>";
-        //    var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
-        //        layout: "menu",
-        //        placement: "top",
-        //    });
+        testMenuLayoutConstruction = function (complete) {
+            var root = document.getElementById("appBarDiv");
+            root.innerHTML =
+            "<div id='appBar'>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\"}'></button>" +
+            "<hr data-win-control='WinJS.UI.AppBarCommand' data-win-options='{type:\"separator\", label:\"Separator\"}' />" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 1\", type:\"button\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button2\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button3\", label:\"Button 3\", type:\"button\", section:\"secondary\"}'></button>" +
+            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button4\", label:\"Button 4\", type:\"toggle\", section:\"secondary\"}'></button>" +
+            "</div>";
+            var appBar = new WinJS.UI.AppBar(<HTMLElement>root.querySelector("#appBar"), {
+                layout: "menu",
+                placement: "top",
+            });
 
-        //    Helper.waitForEvent(appBar, "aftershow").then(function () {
-        //        var toolbarEl = appBar.element.querySelector("." + Helper.ToolBar.Constants.controlCssClass);
-        //        var toolbar = toolbarEl.winControl;
+            Helper.waitForEvent(appBar, "aftershow").then(function () {
+                var toolbarEl = appBar.element.querySelector("." + Helper.ToolBar.Constants.controlCssClass);
+                var toolbar = toolbarEl.winControl;
 
-        //        LiveUnit.Assert.isNotNull(toolbarEl, "ToolBar element not found");
-        //        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-menu"));
-        //        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar"));
-        //        LiveUnit.Assert.areEqual(_ToolBarConstants.shownDisplayModes.full, toolbar.shownDisplayMode, "Invalid toolbar.shownDisplayMode configuration in the appbar");
+                LiveUnit.Assert.isNotNull(toolbarEl, "ToolBar element not found");
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement, "win-appbar-menu"));
+                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass((<HTMLElement>toolbarEl).parentElement.parentElement, "win-appbar"));
+                LiveUnit.Assert.areEqual(_ToolBarConstants.shownDisplayModes.full, toolbar.shownDisplayMode, "Invalid toolbar.shownDisplayMode configuration in the appbar");
 
-        //        Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
-        //        Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
+                Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["Button 0", "Separator", "Button 1"]);
+                Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["Button 2", "Button 3", "Button 4"]);
 
-        //        complete();
-        //    });
-        //    appBar.show();
-        //}
+                complete();
+            });
+            appBar.show();
+        }
 
         testCommandsLayoutUsingDeprecatedSectionsInCommandsLayout = function () {
             var root = document.getElementById("appBarDiv");
