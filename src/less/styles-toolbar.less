@@ -3,7 +3,6 @@
 .win-toolbar {
     width: 100%;
     outline: none;
-    min-width: 68px; /* enough for one primary command */
 
     .win-toolbar-actionarea {
         width: 100%;
@@ -23,6 +22,54 @@
     .win-toolbar-actionarea .win-command,
     .win-toolbar-actionarea .win-toolbar-overflowbutton {
         #flex > .flex(@grow: 0; @shrink: 0);
+    }
+
+    &.win-toolbar-showndisplayreduced {
+        min-width: 68px; /* enough for one primary command */
+        > .win-toolbar-overflowarea {
+            display: none;
+        }
+    }
+
+    &.win-toolbar-showndisplayfull {
+        min-width: 320px;
+
+        .win-toolbar-actionarea {
+
+            .win-toolbar-overflowbutton {
+                visibility: hidden;
+            }
+        }
+
+        .win-toolbar-overflowarea {
+            #flex > .display-flex();
+            #flex > .flex-direction(column);
+            min-width: 320px;
+            min-height: 0;
+            max-height: 198px; /* 4.5 * 44px */
+            overflow-y: auto;
+            padding: 0;
+
+            &.win-menu {
+                max-width: inherit; /* Turn off max-width styles from .win-menu */
+            }
+
+            button.win-command {
+                #flex > .flex(@grow: 0; @shrink: 0);
+                border: 1px dotted transparent;
+                padding: 10px 11px 12px 11px;
+                .win-type-body();
+                white-space: nowrap;
+                overflow: hidden;
+                width: auto;
+            }
+
+            hr.win-command {
+                #flex > .flex(@grow: 0; @shrink: 0);
+                height: 2px;
+                margin: 6px 12px 4px 12px;
+            }
+        }
     }
 
     &.win-toolbar-empty {
@@ -58,37 +105,6 @@
                 content: "\E10C";
                 position: relative;
             }
-        }
-    }
-
-    .win-toolbar-overflowarea {
-        #flex > .display-flex();
-        #flex > .flex-direction(column);
-        min-width: 320px;
-        min-height: 0;
-        max-height: 198px; /* 4.5 * 44px */
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 0;
-
-        &.win-menu {
-            max-width: inherit; /* Turn off max-width styles from .win-menu */
-        }
-
-        button.win-command {
-            #flex > .flex(@grow: 0; @shrink: 0);
-            border: 1px dotted transparent;
-            padding: 10px 11px 12px 11px;
-            .win-type-body();
-            white-space: nowrap;
-            overflow: hidden;
-            width: auto;
-        }
-
-        hr.win-command {
-            #flex > .flex(@grow: 0; @shrink: 0);
-            height: 2px;
-            margin: 6px 12px 4px 12px;
         }
     }
 

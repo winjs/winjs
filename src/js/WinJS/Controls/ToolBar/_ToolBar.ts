@@ -44,11 +44,10 @@ interface IFocusableElementsInfo {
 }
 
 interface IDataChangeInfo {
-    newElements: HTMLElement[];
     currentElements: HTMLElement[];
-    added: HTMLElement[];
-    deleted: HTMLElement[];
-    affected: HTMLElement[];
+    dataElements: HTMLElement[];
+    deletedElements: HTMLElement[];
+    addedElements: HTMLElement[];
 }
 
 var strings = {
@@ -57,12 +56,6 @@ var strings = {
     get badData() { return "Invalid argument: The data property must an instance of a WinJS.Binding.List"; },
     get mustContainCommands() { return "The toolbar can only contain WinJS.UI.Command or WinJS.UI.AppBarCommand controls"; }
 };
-
-function diffElements(lhs: Array<HTMLElement>, rhs: Array<HTMLElement>): Array<HTMLElement> {
-    // Subtract array rhs from array lhs.
-    // Returns a new Array containing the subset of elements in lhs that are not also in rhs.
-    return lhs.filter((commandElement) => { return rhs.indexOf(commandElement) < 0 })
-}
 
 /// <field>
 /// <summary locid="WinJS.UI.ToolBar">
@@ -87,30 +80,87 @@ export class ToolBar {
     private _separatorWidth: number;
     private _standardCommandWidth: number;
     private _overflowButtonWidth: number;
+    private _menu: Menu.Menu;
+    private _shownDisplayMode: string;
     private _element: HTMLElement;
     private _data: BindingList.List<_Command.ICommand>;
     private _primaryCommands: _Command.ICommand[];
     private _secondaryCommands: _Command.ICommand[];
     private _customContentContainer: HTMLElement;
     private _mainActionArea: HTMLElement;
-    private _overflowArea: HTMLElement;
     private _customContentFlyout: _Flyout.Flyout;
     private _chosenCommand: _Command.ICommand;
     private _measured = false;
     private _customContentCommandsWidth: { [uniqueID: string]: number };
     private _initializing = true;
+    private _inlineOverflowArea: HTMLElement;
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
     private _refreshPending: boolean;
     private _refreshBound: Function;
     private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
+    private _extraClass: string;
 
     /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.ToolBar.element" helpKeyword="WinJS.UI.ToolBar.element">
     /// Gets the DOM element that hosts the ToolBar.
     /// </field>
     get element() {
         return this._element;
+    }
+
+    /// <field type="String" defaultValue="reduced" locid="WinJS.UI.ToolBar.shownDisplayMode" helpKeyword="WinJS.UI.ToolBar.shownDisplayMode" isAdvanced="true">
+    /// Gets/Sets how ToolBar will display overflow commands while shown. Values are "reduced" and "full".
+    /// </field>
+    get shownDisplayMode() {
+        return this._shownDisplayMode;
+    }
+    set shownDisplayMode(value: string) {
+        this._writeProfilerMark("set_shownDisplayMode,info");
+
+        if (value === this._shownDisplayMode) {
+            return;
+        }
+
+        if (value === _Constants.shownDisplayModes.full) {
+            this._shownDisplayMode = _Constants.shownDisplayModes.full;
+            _ElementUtilities.addClass(this.element, _Constants.shownDisplayFullCssClass);
+            _ElementUtilities.removeClass(this.element, _Constants.shownDisplayReducedCssClass);
+            if (!this._inlineOverflowArea) {
+                this._inlineOverflowArea = _Global.document.createElement("div");
+                _ElementUtilities.addClass(this._inlineOverflowArea, _Constants.overflowAreaCssClass);
+                _ElementUtilities.addClass(this._inlineOverflowArea, _Constants.menuCssClass);
+                this.element.appendChild(this._inlineOverflowArea);
+            }
+        } else {
+            // 'reduced' is default 
+            this._shownDisplayMode = _Constants.shownDisplayModes.reduced;
+            _ElementUtilities.addClass(this.element, _Constants.shownDisplayReducedCssClass);
+            _ElementUtilities.removeClass(this.element, _Constants.shownDisplayFullCssClass);
+        }
+        if (!this._initializing) {
+            this._positionCommands();
+        }
+    }
+
+    /// <field type="String" locid="WinJS.UI.ToolBar.extraClass" helpKeyword="WinJS.UI.ToolBar.extraClass">
+    /// Gets or sets the extra CSS class that is applied to the host DOM element, and the corresponding
+    /// overflow menu created by the ToolBar when its shownDisplayMode property is 'reduced'.
+    /// </field>
+    get extraClass() {
+        return this._extraClass;
+    }
+    set extraClass(value: string) {
+        this._writeProfilerMark("set_extraClass,info");
+
+        if (this._extraClass) {
+            _ElementUtilities.removeClass(this._element, this._extraClass);
+            this._menu && _ElementUtilities.removeClass(this._menu.element, this._extraClass);
+        }
+
+        this._extraClass = value;
+        _ElementUtilities.addClass(this._element, this._extraClass);
+        this._menu && _ElementUtilities.addClass(this._menu.element, this.extraClass);
     }
 
     /// <field type="WinJS.Binding.List" locid="WinJS.UI.ToolBar.data" helpKeyword="WinJS.UI.ToolBar.data">
@@ -191,12 +241,13 @@ export class ToolBar {
 
         this._setupTree();
 
-        if (!options.data) {
+        if (!options.data || !options.shownDisplayMode) {
             // Shallow copy object so we can modify it.
             options = _BaseUtils._shallowCopy(options);
 
-            // Set default
+            // Set defaults
             options.data = options.data || this._getDataFromDOMElements();
+            options.shownDisplayMode = options.shownDisplayMode || _Constants.shownDisplayModes.reduced;
         }
 
         _Control.setOptions(this, options);
@@ -246,6 +297,11 @@ export class ToolBar {
             this._customContentFlyout.element.parentNode.removeChild(this._customContentFlyout.element);
         }
 
+        if (this._menu) {
+            this._menu.dispose();
+            this._menu.element.parentNode.removeChild(this._menu.element);
+        }
+
         _Dispose.disposeSubTree(this.element);
         this._disposed = true;
     }
@@ -285,17 +341,13 @@ export class ToolBar {
         _ElementUtilities.addClass(this._overflowButton, _Constants.overflowButtonCssClass);
         this._mainActionArea.appendChild(this._overflowButton);
         this._overflowButton.addEventListener("click", () => {
-            this._overflowArea.style.display = (this._overflowArea.style.display === "none") ? "block" : "none";
+            if (this._menu) {
+                var isRTL = _Global.getComputedStyle(this._element).direction === 'rtl';
+                this._menu.show(this._overflowButton, "autovertical", isRTL ? "left" : "right");
+            }
         });
         this._overflowButtonWidth = _ElementUtilities.getTotalWidth(this._overflowButton);
-
-        if (!this._overflowArea) {
-            this._overflowArea = _Global.document.createElement("div");
-            this._overflowArea.style.display = "none";
-            _ElementUtilities.addClass(this._overflowArea, _Constants.overflowAreaCssClass);
-            _ElementUtilities.addClass(this._overflowArea, _Constants.menuCssClass);
-            this.element.appendChild(this._overflowArea);
-        }
+        _ElementUtilities.addClass(this.element, _Constants.shownDisplayReducedCssClass);
     }
 
     private _getFocusableElementsInfo(): IFocusableElementsInfo {
@@ -304,10 +356,8 @@ export class ToolBar {
             focusedIndex: -1
         };
         var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
-
-        var elementsInReach = Array.prototype.slice.call(this._mainActionArea.children);
-        if (this._overflowArea.style.display !== "none") {
-            elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._overflowArea.children));
+        if (this.shownDisplayMode === _Constants.shownDisplayModes.full && _Global.getComputedStyle(this._inlineOverflowArea).visibility !== "hidden") {
+            elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._inlineOverflowArea.children));
         }
 
         elementsInReach.forEach((element: HTMLElement) => {
@@ -328,17 +378,17 @@ export class ToolBar {
         var changeInfo = this._getDataChangeInfo();
 
         // Take a snapshot of the current state
-        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.added, changeInfo.deleted, changeInfo.affected);
+        var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.addedElements, changeInfo.deletedElements, changeInfo.currentElements);
 
-        // Remove current elements
-        changeInfo.currentElements.forEach((element) => {
+        // Remove deleted elements
+        changeInfo.deletedElements.forEach((element) => {
             if (element.parentElement) {
                 element.parentElement.removeChild(element);
             }
         });
 
-        // Add new elements in the right order.
-        changeInfo.newElements.forEach((element) => {
+        // Add elements in the right order
+        changeInfo.dataElements.forEach((element) => {
             this._mainActionArea.appendChild(element);
         });
 
@@ -374,46 +424,40 @@ export class ToolBar {
     }
 
     private _getDataChangeInfo(): IDataChangeInfo {
+        var child: HTMLElement;
         var i = 0, len = 0;
-        var added: HTMLElement[] = [];
-        var deleted: HTMLElement[] = [];
-        var affected: HTMLElement[] = [];
-        var currentShown: HTMLElement[] = [];
+        var dataElements: HTMLElement[] = [];
+        var deletedElements: HTMLElement[] = [];
+        var addedElements: HTMLElement[] = [];
         var currentElements: HTMLElement[] = [];
-        var newShown: HTMLElement[] = [];
-        var newHidden: HTMLElement[] = [];
-        var newElements: HTMLElement[] = [];
 
-        Array.prototype.forEach.call(this._mainActionArea.querySelectorAll(".win-command"), (commandElement: HTMLElement) => {
-            if (commandElement.style.display !== "none") {
-                currentShown.push(commandElement);
+        for (i = 0, len = this.data.length; i < len; i++) {
+            dataElements.push(this.data.getAt(i).element);
+        }
+
+        for (i = 0, len = this._mainActionArea.children.length; i < len; i++) {
+            child = <HTMLElement> this._mainActionArea.children[i];
+            if (child.style.display !== "none" || (child["winControl"] && child["winControl"].section === "secondary")) {
+                currentElements.push(child);
+                if (dataElements.indexOf(child) === -1 && child !== this._overflowButton && child !== this._spacer) {
+                    deletedElements.push(child);
+                }
             }
-            currentElements.push(commandElement);
-        });
+        }
 
-        this.data.forEach((command) => {
-            if (command.element.style.display !== "none") {
-                newShown.push(command.element);
-            } else {
-                newHidden.push(command.element);
+        dataElements.forEach((element) => {
+            if (deletedElements.indexOf(element) === -1 &&
+                currentElements.indexOf(element) === -1) {
+                addedElements.push(element);
             }
-            newElements.push(command.element);
         });
-
-        deleted = diffElements(currentShown, newShown);
-        affected = diffElements(currentShown, deleted);
-        // "added" must also include the elements from "newHidden" to ensure that we continue 
-        // to animate any command elements that have underflowed back into the actionarea 
-        // as a part of this data change.
-        added = diffElements(newShown, currentShown).concat(newHidden);
 
         return {
-            newElements: newElements,
-            currentElements: currentElements,
-            added: added,
-            deleted: deleted,
-            affected: affected,
-        };
+            dataElements: dataElements,
+            deletedElements: deletedElements,
+            addedElements: addedElements,
+            currentElements: currentElements
+        }
     }
 
     private _refresh() {
@@ -516,6 +560,11 @@ export class ToolBar {
 
                     case Key.end:
                         var index = focusableElementsInfo.elements.length - 1;
+                        if (this.shownDisplayMode === _Constants.shownDisplayModes.reduced && this._isElementFocusable(this._overflowButton)) {
+                            // In detached mode, the end key goes to the last command, not the overflow button,
+                            // which is the last element when it is visible.
+                            index = Math.max(0, index - 1);
+                        }
                         targetCommand = this._getLastElementFocus(focusableElementsInfo.elements[index]);
                         break;
                 }
@@ -603,8 +652,9 @@ export class ToolBar {
         for (var i = 0, len = sortedCommandsInfo.length; i < len; i++) {
             availableWidth -= sortedCommandsInfo[i].width;
 
-            // The overflow button needs space if there are secondary commands, or we are not evaluating the last command.
-            overflowButtonSpace = (hasSecondaryCommands || (i < len - 1) ? this._overflowButtonWidth : 0)
+            // The overflow button needs space if there are secondary commands, shownDisplayMode is 'full',
+            // or we are not evaluating the last command.
+            overflowButtonSpace = (this.shownDisplayMode === _Constants.shownDisplayModes.full || hasSecondaryCommands || (i < len - 1) ? this._overflowButtonWidth : 0)
 
             if (availableWidth - overflowButtonSpace < 0) {
                 maxPriority = sortedCommandsInfo[i].priority - 1;
@@ -723,7 +773,7 @@ export class ToolBar {
     }
 
     private _getMenuCommand(command: _Command.ICommand): _MenuCommand.MenuCommand {
-        var menuCommand = new _ToolBarMenuCommand._MenuCommand(null, {
+        var menuCommand = new _ToolBarMenuCommand._MenuCommand(this.shownDisplayMode === _Constants.shownDisplayModes.full, null, {
             label: command.label,
             type: (command.type === _Constants.typeContent ? _Constants.typeFlyout : command.type) || _Constants.typeButton,
             disabled: command.disabled,
@@ -759,12 +809,11 @@ export class ToolBar {
         return menuCommand;
     }
 
-    private _setupOverflowArea(additionalCommands: _Command.AppBarCommand[]) {
-        this._writeProfilerMark("_setupOverflowArea,info");
+    private _setupOverflowArea(additionalCommands: any[]) {
 
-        // Set up custom flyout for "content" typed commands in the overflow area. 
+        // Set up custom flyout for "content" typed commands in the overflow area.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
-        var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
+        var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.filter(isCustomContent);
 
         if (hasCustomContent && !this._customContentFlyout) {
             var mainFlyout = _Global.document.createElement("div");
@@ -776,68 +825,110 @@ export class ToolBar {
             this._customContentFlyout.onbeforeshow = () => {
                 _ElementUtilities.empty(this._customContentContainer);
                 _ElementUtilities._reparentChildren(this._chosenCommand.element, this._customContentContainer);
-
             };
             this._customContentFlyout.onafterhide = () => {
                 _ElementUtilities._reparentChildren(this._customContentContainer, this._chosenCommand.element);
             };
         }
 
-        var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
-        this._overflowButton.style.display = showOverflowButton ? "" : "none";
+        if (this.shownDisplayMode === _Constants.shownDisplayModes.full) {
+            // Inline menu mode always has the overflow button hidden
+            this._overflowButton.style.display = "";
 
+            this._setupOverflowAreaInline(additionalCommands);
+        } else {
+            var showOverflowButton = (additionalCommands.length > 0 || this._secondaryCommands.length > 0);
+            this._overflowButton.style.display = showOverflowButton ? "" : "none"
 
-        // Populate the overflowArea with MenuCommands
-        _ElementUtilities.empty(this._overflowArea);
+            this._setupOverflowAreaDetached(additionalCommands);
+        }
+    }
+
+    private _setupOverflowAreaInline(additionalCommands: any[]) {
+        this._writeProfilerMark("_setupOverflowAreaInline,info");
+
         var hasToggleCommands = false,
-            hasFlyoutCommands = false,
-            menuCommands: _MenuCommand.MenuCommand[] = [];
+            hasFlyoutCommands = false;
 
-        // Add primary commands that have overflowed. 
+        _ElementUtilities.empty(this._inlineOverflowArea);
+
+        this._hideSeparatorsIfNeeded(additionalCommands);
+
+        // Add primary commands that should overflow
         additionalCommands.forEach((command) => {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
             }
-
             if (command.type === _Constants.typeFlyout) {
                 hasFlyoutCommands = true;
             }
 
-            menuCommands.push(this._getMenuCommand(command));
+            this._inlineOverflowArea.appendChild(this._getMenuCommand(command).element);
         });
 
-        // Add separator between primary and secondary command if applicable 
+        // Add separator between primary and secondary command if applicable
         var secondaryCommandsLength = this._secondaryCommands.length;
         if (additionalCommands.length > 0 && secondaryCommandsLength > 0) {
-            var separator = new _ToolBarMenuCommand._MenuCommand(null, {
+            var separator = new _ToolBarMenuCommand._MenuCommand(this.shownDisplayMode === _Constants.shownDisplayModes.full, null, {
                 type: _Constants.typeSeparator
             });
-
-            menuCommands.push(separator);
+            this._inlineOverflowArea.appendChild(separator.element);
         }
 
-        // Add secondary commands 
+        this._hideSeparatorsIfNeeded(this._secondaryCommands);
+
+        // Add secondary commands
         this._secondaryCommands.forEach((command) => {
             if (!command.hidden) {
                 if (command.type === _Constants.typeToggle) {
                     hasToggleCommands = true;
                 }
-
                 if (command.type === _Constants.typeFlyout) {
                     hasFlyoutCommands = true;
                 }
+                this._inlineOverflowArea.appendChild(this._getMenuCommand(command).element);
+            }
+        });
 
+        _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._inlineOverflowArea, _Constants.menuContainsToggleCommandClass);
+        _ElementUtilities[hasFlyoutCommands ? "addClass" : "removeClass"](this._inlineOverflowArea, _Constants.menuContainsFlyoutCommandClass);
+    }
+
+    private _setupOverflowAreaDetached(additionalCommands: any[]) {
+        this._writeProfilerMark("_setupOverflowAreaDetached,info");
+
+        if (!this._menu) {
+            this._menu = new Menu.Menu();
+            _ElementUtilities.addClass(this._menu.element, _Constants.overflowAreaCssClass);
+            this.extraClass && _ElementUtilities.addClass(this._menu.element, this.extraClass);
+            _Global.document.body.appendChild(this._menu.element);
+        }
+
+        var menuCommands: _MenuCommand.MenuCommand[] = [];
+
+        // Add primary commands that should overflow to the menu commands
+        additionalCommands.forEach((command) => {
+            menuCommands.push(this._getMenuCommand(command));
+        });
+
+        // Add separator between primary and secondary command if applicable
+        if (additionalCommands.length > 0 && this._secondaryCommands.length > 0) {
+            menuCommands.push(new _MenuCommand.MenuCommand(null, {
+                type: _Constants.typeSeparator
+            }));
+        }
+
+        // Add secondary commands to the menu commands
+        this._secondaryCommands.forEach((command) => {
+            if (!command.hidden) {
                 menuCommands.push(this._getMenuCommand(command));
             }
         });
 
         this._hideSeparatorsIfNeeded(menuCommands);
-        menuCommands.forEach((command) => {
-            this._overflowArea.appendChild(command.element);
-        })
 
-        _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsToggleCommandClass);
-        _ElementUtilities[hasFlyoutCommands ? "addClass" : "removeClass"](this._overflowArea, _Constants.menuContainsFlyoutCommandClass);
+        // Set the menu commands
+        this._menu.commands = menuCommands;
     }
 
     private _hideSeparatorsIfNeeded(commands: ICommandWithType[]): void {

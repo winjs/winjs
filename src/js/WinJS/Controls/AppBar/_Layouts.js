@@ -672,6 +672,7 @@ define([
 
                     this._toolbar = new ToolBar.ToolBar(this._toolbarEl, {
                         data: new BindingList.List(this._originalCommands),
+                        shownDisplayMode: 'full',
                     });
 
                     var that = this;

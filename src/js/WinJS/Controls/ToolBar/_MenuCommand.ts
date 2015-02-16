@@ -6,11 +6,13 @@ import _MenuCommandBase = require("../Menu/_Command");
 
 export class _MenuCommand extends _MenuCommandBase.MenuCommand {
     private _beforeInvoke: Function;
+    private _isAttachedMode: boolean;
 
-    constructor(element?: HTMLElement, options?: any) {
+    constructor(isAttachedMode: boolean, element?: HTMLElement, options?: any) {
         if (options && options.beforeInvoke) {
             this._beforeInvoke = options.beforeInvoke;
         }
+        this._isAttachedMode = isAttachedMode;
         super(element, options);
     }
 

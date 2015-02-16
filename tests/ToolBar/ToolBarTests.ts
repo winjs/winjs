@@ -58,7 +58,7 @@ module CorsicaTests {
                 toolbar.element.removeEventListener("WinJSNodeInserted", insertedHandler);
                 LiveUnit.Assert.areEqual(data.length, toolbar._primaryCommands.length, "Primary commands array has an invalid length");
                 LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when the primary commands fit");
-                LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+                LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
                 complete();
             }
 
@@ -73,6 +73,26 @@ module CorsicaTests {
 
             toolbar = new ToolBar();
             LiveUnit.Assert.isNotNull(toolbar.element, "An element should be created when one is not passed to the constructor");
+        }
+
+        testShownDisplayModeProperty() {
+            // default (shownDisplayMode: 'reduced')
+            var toolbar = new ToolBar();
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.reduced, toolbar.shownDisplayMode, "The default value for shownDisplayMode should be 'reduced'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'reduced' is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'reduced' should not have showndisplayfull css class");
+
+            // switch to 'full'.
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.full;
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.full, toolbar.shownDisplayMode, "shownDisplayMode property should be 'full'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'full' is missing showndisplayfull css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'full' should not have flyout menu css class");
+
+            // switch back to shownDisplayMode:'reduced'.
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.reduced;
+            LiveUnit.Assert.areEqual(_Constants.shownDisplayModes.reduced, toolbar.shownDisplayMode, "shownDisplayMode property should be 'reduced'");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayReducedCssClass), "ToolBar with shownDisplayMode:'reduced' is missing flyout menu css class");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar.element, Helper.ToolBar.Constants.shownDisplayFullCssClass), "ToolBar with shownDisplayMode:'reduced' should not have showndisplayfull class");
         }
 
         testDataProperty() {
@@ -173,7 +193,29 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("myList", toolbar.element.getAttribute("aria-label"), "ToolBar should have not set a default aria label");
         }
 
-        testOverflowButtonHiddenWithoutSecondaryCommands() {
+        testOverflowAreaVisibility() {
+            var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full
+            });
+
+            var overflowArea: HTMLElement;
+            var child: HTMLElement;
+            for (var i = 0, len = toolbar.element.children.length; i < len; i++) {
+                child = <HTMLElement> toolbar.element.children[i];
+                if (Util.hasClass(child, Helper.ToolBar.Constants.overflowAreaCssClass)) {
+                    overflowArea = child;
+                    break;
+                }
+            }
+
+            LiveUnit.Assert.isNotNull(overflowArea, "Unabled to find overflow area element when shownDisplayMode:'full'");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(overflowArea).display, "Overflow area should not be hidden when shownDisplayMode:'full'");
+
+            toolbar.shownDisplayMode = _Constants.shownDisplayModes.reduced;
+            LiveUnit.Assert.areEqual("none", getComputedStyle(overflowArea).display, "Overflow area (inline) should be hidden in shownDisplayMode:'reduced'");
+        }
+
+        testflyoutMenuOverflowButtonHidden() {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 1" }),
@@ -188,7 +230,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when the primary commands fit");
         }
 
-        testOverflowButtonVisibleForSecondaryCommand() {
+        testflyoutMenuOverflowButtonVisibleForSecondaryCommand() {
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 1" }),
@@ -202,10 +244,10 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(1, toolbar._primaryCommands.length, "Primary commands array has an invalid length");
             LiveUnit.Assert.areEqual(1, toolbar._secondaryCommands.length, "Secondary commands array has an invalid length");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when there are secondary commands");
-            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
-        testOverflowButtonVisibleForPrimaryCommand() {
+        testflyoutMenuOverflowButtonVisibleForPrimaryCommand() {
             this._element.style.width = "10px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 1" }),
@@ -232,14 +274,14 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(data.length, toolbar._primaryCommands.length, "Primary commands array has an invalid length");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when the primary commands overflow");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             this._element.style.width = "1000px";
             toolbar.forceLayout();
 
             LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when the primary commands fit");
             LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Main action area should have 2 commands");
-            LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
         testForceLayoutReMeasures() {
@@ -264,11 +306,11 @@ module CorsicaTests {
 
             // Now that we have changed the parent's size to fit 1 command + the overflow button, let's ensure that one primary command goes to the overflow area
             WinJS.Utilities._resizeNotifier._handleResize();
-            LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
             LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Main action area should have 1 command");
         }
 
-        testSeparatorAddedBetweenPrimaryAndSecondary() {
+        testflyoutMenuSeparatorAddedBetweenPrimaryAndSecondary() {
             this._element.style.width = "10px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "opt 1" }),
@@ -279,14 +321,14 @@ module CorsicaTests {
                 data: data
             });
 
-            var overflowCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var overflowCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(3, overflowCommands.length, "Menu commands list has an invalid length");
             LiveUnit.Assert.areEqual("opt 1", overflowCommands[0].winControl.label);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeSeparator, overflowCommands[1].winControl.type);
             LiveUnit.Assert.areEqual("opt 2", overflowCommands[2].winControl.label);
         }
 
-        testOverflowBehaviorOfCustomContent() {
+        testFlyoutMenuOverflowBehaviorOfCustomContent() {
             var customEl = document.createElement("div");
             customEl.style.width = "2000px";
             customEl.style.height = "50px";
@@ -302,17 +344,17 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when a command overflow");
-            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Custom content should overflow as a flyout menu item
-            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[0]["winControl"]);
+            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeFlyout, menuCommand.type, "Custom content should overflow with type flyout");
             LiveUnit.Assert.areEqual(toolbar._customContentFlyout, menuCommand.flyout, "Invalid flyout target for custom command in the overflow area");
             LiveUnit.Assert.areEqual("1", menuCommand.label, "Invalid label for custom command in the overflow area");
             LiveUnit.Assert.areEqual("c1", menuCommand.extraClass, "Invalid extraClass for custom command in the overflow area");
         }
 
-        testOverflowBehaviorOfButtonCommand(complete) {
+        testFlyoutMenuOverflowBehaviorOfButtonCommand(complete) {
 
             WinJS.Utilities.markSupportedForProcessing(complete);
 
@@ -328,9 +370,9 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when a command overflow");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
-            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[0]["winControl"]);
+            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeButton, menuCommand.type, "Invalid menuCommand type");
             LiveUnit.Assert.isNull(menuCommand.flyout, "Flyout target for button should be null");
             LiveUnit.Assert.areEqual("1", menuCommand.label, "Invalid menuCommand label");
@@ -338,7 +380,7 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(menuCommand.disabled, "Invalid menuCommand disabled property value");
             LiveUnit.Assert.areEqual(Helper.ToolBar.getVisibleCommandsInElement, menuCommand.onclick, "Invalid menuCommand onclick property value");
 
-            menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[1]["winControl"]);
+            menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[1]["winControl"]);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeButton, menuCommand.type, "Invalid menuCommand type");
             LiveUnit.Assert.isNull(menuCommand.flyout, "Flyout target for button should be null");
             LiveUnit.Assert.areEqual("2", menuCommand.label, "Invalid menuCommand label");
@@ -350,7 +392,7 @@ module CorsicaTests {
             menuCommand.element.click();
         }
 
-        testOverflowBehaviorOfToggleCommand() {
+        testFlyoutMenuOverflowBehaviorOfToggleCommand() {
 
             var clickWasHandled = false;
             function test_handleClick(event) {
@@ -372,9 +414,9 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when a command overflow");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
-            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[0]["winControl"]);
+            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeToggle, menuCommand.type, "Invalid menuCommand type");
             LiveUnit.Assert.isNull(menuCommand.flyout, "Flyout target for button should be null");
             LiveUnit.Assert.areEqual("1", menuCommand.label, "Invalid menuCommand label");
@@ -398,11 +440,11 @@ module CorsicaTests {
             var toolbar = new ToolBar(this._element, {
                 data: data
             });
-            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[0]["winControl"]);
+            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
             LiveUnit.Assert.isTrue(menuCommand.selected, "Invalid menuCommand selected property value");
 
             // Deselect the toggle button in the menu
-            var menuCommandEl = (<HTMLElement> toolbar._overflowArea.children[0]);
+            var menuCommandEl = (<HTMLElement> toolbar._menu.element.children[0]);
             menuCommandEl.click();
 
             toolbar.element.style.width = 2 * toolbar._standardCommandWidth + "px";
@@ -413,7 +455,7 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(command.winControl.selected, "Invalid menuCommand selected property value");
         }
 
-        testOverflowBehaviorOfFlyoutCommand(complete) {
+        testFlyoutMenuOverflowBehaviorOfFlyoutCommand(complete) {
             var flyout = new WinJS.UI.Flyout();
             this._element.appendChild(flyout.element);
 
@@ -429,9 +471,9 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when a command overflow");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
-            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea)[0]["winControl"]);
+            var menuCommand = <WinJS.UI.MenuCommand>(Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element)[0]["winControl"]);
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeFlyout, menuCommand.type, "Invalid menuCommand type");
             LiveUnit.Assert.areEqual(flyout, menuCommand.flyout, "Invalid menuCommand flyout property value");
             LiveUnit.Assert.areEqual("1", menuCommand.label, "Invalid menuCommand label");
@@ -446,7 +488,7 @@ module CorsicaTests {
             }, false);
         }
 
-        testOverflowBehaviorOfSeparatorCommand() {
+        testFlyoutMenuOverflowBehaviorOfSeparatorCommand() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", extraClass: "c2", disabled: true }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeSeparator }),
@@ -459,7 +501,7 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visible when a command overflow");
-            var menuCommand = toolbar._overflowArea.querySelectorAll(Helper.ToolBar.Constants.commandSelector)[1]["winControl"];
+            var menuCommand = toolbar._menu.element.querySelectorAll(Helper.ToolBar.Constants.commandSelector)[1]["winControl"];
             LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.typeSeparator, menuCommand.type, "Invalid menuCommand type");
         }
 
@@ -488,49 +530,49 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(5 - 1 /* trailing separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force command back  in the main area
             this._element.style.width = (2 * toolbar._separatorWidth + 4 * toolbar._standardCommandWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(6, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be hidden when there is no overflow");
-            LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 2 commands
             this._element.style.width = (1 * toolbar._separatorWidth + 3 * toolbar._standardCommandWidth + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(2 - 1 /* leading separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2 - 1 /* leading separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 3 commands
             this._element.style.width = (1 * toolbar._separatorWidth + 2 * toolbar._standardCommandWidth + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 4 commands
             this._element.style.width = (1 * toolbar._separatorWidth + 1 * toolbar._standardCommandWidth + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(2 - 1 /* trailing separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 5 commands
             this._element.style.width = (0 * toolbar._separatorWidth + 1 * toolbar._standardCommandWidth + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(5 - 1 /* leading separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(5 - 1 /* leading separator is hidden */, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 6 commands
             this._element.style.width = (0 * toolbar._separatorWidth + 0 * toolbar._standardCommandWidth + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(6, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(6, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
         testOverflowBehaviorDefaultPriorityWithCustomContent() {
@@ -566,14 +608,14 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop 2 commands
             this._element.style.width = (toolbar._standardCommandWidth + (customContent1Width - 1) + toolbar._overflowButtonWidth) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should not be hidden when there is overflow");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
         }
 
         testOverflowBehaviorCustomPriorityContentInFlyout(complete) {
@@ -597,10 +639,9 @@ module CorsicaTests {
                 data: data
             });
 
-            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
-
             // Click on the first menu item
-            var menuCommand = (<HTMLElement> toolbar._overflowArea.children[0]);
+            toolbar._menu.show(toolbar._overflowButton, "autovertical", "right");
+            var menuCommand = (<HTMLElement> toolbar._menu.element.children[0]);
             menuCommand.click();
             LiveUnit.Assert.areEqual("custom 1", toolbar._customContentContainer.textContent, "The custom content flyout has invalid content");
 
@@ -608,7 +649,8 @@ module CorsicaTests {
                 toolbar._customContentFlyout.removeEventListener("afterhide", testSecondCommandClick);
 
                 // Click on the second menu item
-                menuCommand = (<HTMLElement> toolbar._overflowArea.children[1]);
+                toolbar._menu.show(toolbar._overflowButton, "autovertical", "right");
+                menuCommand = (<HTMLElement> toolbar._menu.element.children[1]);
                 menuCommand.click();
                 LiveUnit.Assert.areEqual("custom 2", toolbar._customContentContainer.textContent, "The custom content flyout has invalid content");
 
@@ -652,14 +694,14 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(8, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should be visble because there are secondary commands");
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "Menu commands list has an invalid length");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length, "Menu commands list has an invalid length");
 
             // Force drop priority 5 commands
             this._element.style.width = (2 * toolbar._separatorWidth + 5 * toolbar._standardCommandWidth + customContentWidth + toolbar._overflowButtonWidth - 1) + "px";
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(5, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             var expectedMenuCommands = 6 /* 2 secondary commands + 1 separator + 2 primary commands with 1 separator */;
-            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(expectedMenuCommands, visibleMenuCommands.length, "Menu commands list has an invalid length");
             Helper.ToolBar.verifyOverflowMenuContent(visibleMenuCommands, ["2", Helper.ToolBar.Constants.typeSeparator, "6", Helper.ToolBar.Constants.typeSeparator, "sec 1", "sec 2"]);
 
@@ -668,7 +710,7 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             var expectedMenuCommands = 7 /* 2 secondary commands + 1 separator + 3 primary commands with 1 separator */;
-            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(expectedMenuCommands, visibleMenuCommands.length, "Menu commands list has an invalid length");
             Helper.ToolBar.verifyOverflowMenuContent(visibleMenuCommands, ["2", "5", Helper.ToolBar.Constants.typeSeparator, "6", Helper.ToolBar.Constants.typeSeparator, "sec 1", "sec 2"]);
 
@@ -677,7 +719,7 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             var expectedMenuCommands = 8 /* 2 secondary commands + 1 separator + 4 primary commands with 1 separator */;
-            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(expectedMenuCommands, visibleMenuCommands.length, "Menu commands list has an invalid length");
             Helper.ToolBar.verifyOverflowMenuContent(visibleMenuCommands, ["2", "3", "5", Helper.ToolBar.Constants.typeSeparator, "6", Helper.ToolBar.Constants.typeSeparator, "sec 1", "sec 2"]);
 
@@ -686,7 +728,7 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(1, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             var expectedMenuCommands = 10 /* 2 secondary commands + 1 separator + 5 primary commands with 2 separators */;
-            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(expectedMenuCommands, visibleMenuCommands.length, "Menu commands list has an invalid length");
             Helper.ToolBar.verifyOverflowMenuContent(visibleMenuCommands, ["2", Helper.ToolBar.Constants.typeSeparator, "3", "4", "5", Helper.ToolBar.Constants.typeSeparator, "6", Helper.ToolBar.Constants.typeSeparator, "sec 1", "sec 2"]);
 
@@ -695,12 +737,12 @@ module CorsicaTests {
             toolbar.forceLayout();
             LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length, "Invalid number of commands in the main action area");
             var expectedMenuCommands = 11 /* 2 secondary commands + 1 separator + 6 primary commands with 2 separator */;
-            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea);
+            var visibleMenuCommands = Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element);
             LiveUnit.Assert.areEqual(expectedMenuCommands, visibleMenuCommands.length, "Menu commands list has an invalid length");
             Helper.ToolBar.verifyOverflowMenuContent(visibleMenuCommands, ["1", "2", Helper.ToolBar.Constants.typeSeparator, "3", "4", "5", Helper.ToolBar.Constants.typeSeparator, "6", Helper.ToolBar.Constants.typeSeparator, "sec 1", "sec 2"]);
         }
 
-        testMinWidth() {
+        testflyoutMenuMinWidth() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1" }),
             ]);
@@ -709,23 +751,38 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.toolBarMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar element");
+            LiveUnit.Assert.areEqual(Helper.ToolBar.Constants.controlWithFlyoutMenuMinWidth, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when shownDisplayMode:'reduced'");
         }
 
-        testOverflowAreaContainerHeightWhenThereIsNoOverflow() {
+        testShownDisplayModeFull_MinWidth() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "2", section: Helper.ToolBar.Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
+                data: data
+            });
+
+            LiveUnit.Assert.areEqual(320, parseInt(getComputedStyle(this._element).width, 10), "Invalid min width of toolbar when shownDisplayMode:'full'");
+        }
+
+        testShownDisplayModeFull_OverflowAreaContainerHeightWhenThereIsNoOverflow() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "2" }),
             ]);
 
             var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container when there are no commands that overflow");
+            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container when there are no commands that overflow");
         }
 
-        testOverflowAreaContainerSize() {
+        testShownDisplayModeFull_OverflowAreaContainerSize() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2" }),
@@ -738,6 +795,7 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
@@ -746,16 +804,14 @@ module CorsicaTests {
             this._element.style.width = width + "px";
             toolbar.forceLayout();
 
-            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
-
-            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "There should only be 2 commands in the overflow area");
-            LiveUnit.Assert.areEqual(2 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
-            LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._overflowArea), "Invalid width for the overflow area container");
-            LiveUnit.Assert.areEqual(toolbar.element, toolbar._overflowArea.parentNode, "Invalid parent for the overflow area container");
+            LiveUnit.Assert.areEqual(2, Helper.ToolBar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should only be 2 commands in the overflow area");
+            LiveUnit.Assert.areEqual(2 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(width, WinJS.Utilities.getTotalWidth(toolbar._inlineOverflowArea), "Invalid width for the overflow area container");
+            LiveUnit.Assert.areEqual(toolbar.element, toolbar._inlineOverflowArea.parentNode, "Invalid parent for the overflow area container");
             LiveUnit.Assert.areEqual(toolbar.element, toolbar._mainActionArea.parentNode, "Invalid parent for the main action area container");
         }
 
-        testOverflowMaxHeightForOnlySecondaryCommands() {
+        testShownDisplayModeFull_OverflowMaxHeightForOnlySecondaryCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2", section: Helper.ToolBar.Constants.secondaryCommandSection }),
@@ -769,16 +825,15 @@ module CorsicaTests {
             ]);
             this._element.style.width = "1000px";
             var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
-
-            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
-            LiveUnit.Assert.areEqual(9, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length, "There should be 9 commands in the overflow area");
+            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(9, Helper.ToolBar.getVisibleCommandsInElement(toolbar._inlineOverflowArea).length, "There should be 9 commands in the overflow area");
         }
 
-        testOverflowMaxHeightForMixedCommands() {
+        testShownDisplayModeFull_OverflowMaxHeightForMixedCommands() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "1" }),
                 new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "2" }),
@@ -798,15 +853,28 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
 
-            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
-
-            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._overflowArea), "Invalid height for the overflow area container");
+            LiveUnit.Assert.areEqual(4.5 * Helper.ToolBar.Constants.inlineOverflowCommandHeight, WinJS.Utilities.getTotalHeight(toolbar._inlineOverflowArea), "Invalid height for the overflow area container");
         }
 
-        testKeyboarding_Opened(complete) {
+        testShownDisplayModeFull_OverflowButtonVisiblity() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.ToolBar.Constants.typeButton, label: "s1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "320px";
+            var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
+                data: data
+            });
+            LiveUnit.Assert.areEqual("hidden", getComputedStyle(toolbar._overflowButton).visibility, "Overflow button should not be visible when shownDisplayMode:'full'");
+            LiveUnit.Assert.areNotEqual("none", getComputedStyle(toolbar._overflowButton).display, "Overflow button should still take space when shownDisplayMode:'full'");
+            LiveUnit.Assert.areEqual(48, WinJS.Utilities.getTotalHeight(toolbar._overflowButton), "Overflow button has an invalid height");
+        }
+
+        testShownDisplayModeFull_Keyboarding(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -821,10 +889,9 @@ module CorsicaTests {
             ]);
             this._element.style.width = "320px";
             var toolbar = new ToolBar(this._element, {
+                shownDisplayMode: _Constants.shownDisplayModes.full,
                 data: data
             });
-
-            toolbar._overflowButton.click(); // TODO: replace with show() once API exists
 
             toolbar.element.focus();
             setTimeout(function () {
@@ -845,9 +912,6 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent, "Down arrow should skip '3' because that command is hidden");
 
                 Helper.keydown(toolbar.element, Key.rightArrow);
-                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement); 
-
-                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
 
                 Helper.keydown(toolbar.element, Key.downArrow);
@@ -855,9 +919,6 @@ module CorsicaTests {
 
                 Helper.keydown(toolbar.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
-
-                Helper.keydown(toolbar.element, Key.upArrow);
-                LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement); 
 
                 Helper.keydown(toolbar.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent);
@@ -868,7 +929,7 @@ module CorsicaTests {
             });
         }
 
-        testKeyboarding_Closed(complete) {
+        testKeyboardingflyoutMenu(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -897,6 +958,9 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
 
                 Helper.keydown(toolbar.element, Key.end);
+                LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
+
+                Helper.keydown(toolbar.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(toolbar._overflowButton, document.activeElement);
 
                 Helper.keydown(toolbar.element, Key.home);
@@ -1022,7 +1086,7 @@ module CorsicaTests {
 
                     WinJS.Utilities.Scheduler.schedule(() => {
                         LiveUnit.Assert.areEqual(0, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
-                        LiveUnit.Assert.areEqual(8, Helper.ToolBar.getVisibleCommandsInElement(toolbar._overflowArea).length);
+                        LiveUnit.Assert.areEqual(8, Helper.ToolBar.getVisibleCommandsInElement(toolbar._menu.element).length);
 
                         complete();
                     });
@@ -1046,20 +1110,21 @@ module CorsicaTests {
             this._element.style.width = "10px";
             var toolbar = new ToolBar(this._element, {
                 data: data,
+                shownDisplayMode: _Constants.shownDisplayModes.full,
             });
 
             this._element.style.width = (3 * toolbar._standardCommandWidth) + toolbar._overflowButtonWidth + "px";
             toolbar.forceLayout();
 
-            // The main action area should now show | 1 | 2 | 3 | ... |
-            LiveUnit.Assert.areEqual(3, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
+            // The main action area should now show | 1 | 2 | 3  | ... |
+            LiveUnit.Assert.areEqual(4, Helper.ToolBar.getVisibleCommandsInElement(toolbar._mainActionArea).length);
 
             // Delete all items
             toolbar.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(2, toolbar._mainActionArea.children.length, "Only the overflow button and spacer elements should be children.");
-                LiveUnit.Assert.areEqual(0, toolbar._overflowArea.children.length);
+                LiveUnit.Assert.areEqual(2, toolbar._mainActionArea.children.length, "Only the overflow button and spacer elements should children.");
+                LiveUnit.Assert.areEqual(0, toolbar._inlineOverflowArea.children.length);
                 complete();
             }, WinJS.Utilities.Scheduler.Priority.high);
         }
@@ -1077,6 +1142,29 @@ module CorsicaTests {
             });
             Helper.ToolBar.verifyMainActionVisibleCommandsLabels(toolbar, ["opt 1", "opt 2", "opt 3"]);
             Helper.ToolBar.verifyOverflowAreaCommandsLabels(toolbar, ["opt 4"]);
+        }
+
+        testExtraClassProperty() {
+            var extraCssClass1 = "cool-class1";
+            var extraCssClass2 = "cool-class2";
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "1", section: Helper.ToolBar.Constants.secondaryCommandSection }),
+                new Command(null, { type: Helper.ToolBar.Constants.typeContent, label: "2", section: Helper.ToolBar.Constants.secondaryCommandSection }),
+            ]);
+            this._element.style.width = "10px";
+            var toolbar = new ToolBar(this._element, {
+                data: data,
+                extraClass: extraCssClass1
+            });
+
+            LiveUnit.Assert.isTrue(Util.hasClass(this._element, extraCssClass1), "ExtraClass is missing in toolbar element");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar._menu.element, extraCssClass1), "ExtraClass is missing in toolbar element");
+
+            toolbar.extraClass = extraCssClass2;
+            LiveUnit.Assert.isFalse(Util.hasClass(this._element, extraCssClass1), "ToolBar is not clearing older extraClass when a new value is set");
+            LiveUnit.Assert.isFalse(Util.hasClass(toolbar._menu.element, extraCssClass1), "ToolBar is not clearing older extraClass when a new value is set");
+            LiveUnit.Assert.isTrue(Util.hasClass(this._element, extraCssClass2), "ExtraClass is missing in toolbar element");
+            LiveUnit.Assert.isTrue(Util.hasClass(toolbar._menu.element, extraCssClass2), "ExtraClass is missing in toolbar element");
         }
     }
 }
