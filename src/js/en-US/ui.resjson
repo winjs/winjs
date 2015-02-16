@@ -14,6 +14,8 @@
     "backbuttonarialabel": "Back",
     "clearYourRating" : "Clear your rating",
     "closeOverlay" : "Close",
+	"commandingSurfaceAriaLabel": "CommandingSurface",
+    "commandingSurfaceOverflowButtonAriaLabel": "View more",
     "datePicker": "Date Picker",
     "flipViewPanningContainerAriaLabel": "Scrolling Container",
     "flyoutAriaLabel": "Flyout",

@@ -383,6 +383,21 @@ declare module WinJS {
             _sizes;
         }
 
+        class PrivateCommandingSurface extends WinJS.UI._CommandingSurface {
+            _disposed: boolean;
+            _primaryCommands: ICommand[];
+            _secondaryCommands: ICommand[];
+            _overflowButton: HTMLButtonElement;
+            _mainActionArea: HTMLElement;
+            _overflowArea: HTMLElement;
+            _separatorWidth: number;
+            _standardCommandWidth: number;
+            _overflowButtonWidth: number;
+            _getCommandWidth(command: ICommand): number;
+            _customContentFlyout: WinJS.UI.Flyout;
+            _customContentContainer: HTMLElement;
+        }
+
         class PrivateToolBar extends WinJS.UI.ToolBar {
             _disposed: boolean;
             _primaryCommands: ICommand[];
@@ -407,7 +422,7 @@ declare module WinJS {
             _lastElementFocus;
         }
 
-        // Move to WinJS.d.ts after the ToolBar API review
+        // Move to WinJS.d.ts after the CommandingSurface API review
         export interface ICommand {
             addEventListener(type: string, listener: Function, useCapture?: boolean): void;
             dispose(): void;
@@ -546,7 +561,7 @@ declare module WinJS {
             static _ClassName;
         }
         
-        class ToolBar {
+        class _CommandingSurface {
             public element: HTMLElement;
             public data: WinJS.Binding.List<ICommand>;
             constructor(element?: HTMLElement, options?: any);
