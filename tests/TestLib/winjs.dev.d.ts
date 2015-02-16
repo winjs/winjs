@@ -423,7 +423,7 @@ declare module WinJS {
             _lastElementFocus;
         }
 
-        // Move to WinJS.d.ts after the CommandingSurface API review
+        // Move to WinJS.d.ts after the ToolBar API review
         export interface ICommand {
             addEventListener(type: string, listener: Function, useCapture?: boolean): void;
             dispose(): void;
