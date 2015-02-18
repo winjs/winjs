@@ -90,6 +90,12 @@ var EventNames = {
     afterHide: "afterhide"
 };
 
+var Transitions = {
+    show: "show",
+    hide: "hide",
+    animate: "animate"
+};
+
 //
 // IShowHideControl
 //
@@ -116,11 +122,17 @@ export interface IShowHideControl {
     // Same as onUpdateDom but enables the machine to force the control to update and render
     // its hidden or shown visual as dictated by isShown.
     onUpdateDomWithIsShown(isShown: boolean): void;
+    onAnimateDom(animationName: string): Promise<any>;
 }
 
 //
 // ShowHideMachine
 //
+
+interface ITransition {
+    name: string;
+    args: string;
+}
 
 export class ShowHideMachine {
 	_control: IShowHideControl;
@@ -128,6 +140,7 @@ export class ShowHideMachine {
     
     private _disposed: boolean;
     private _state: IShowHideState;
+    private _transitionQueue: ITransition[];
     
     //
     // Methods called by the control
@@ -141,6 +154,7 @@ export class ShowHideMachine {
     
     constructor(args: IShowHideControl) {
         this._control = args;
+        this._transitionQueue = [];
         this._initializedSignal = new _Signal();
         this._disposed = false;
         this._setState(States.Init);
@@ -157,6 +171,7 @@ export class ShowHideMachine {
     updateDom() { this._state.updateDom(); }
     show() { this._state.show(); }
     hide() { this._state.hide(); }
+    animate(animationName: string) { this._state.animate(animationName); }
     get hidden() { return this._state.hidden; }
     set hidden(value: boolean) {
         if (value) {
@@ -184,6 +199,46 @@ export class ShowHideMachine {
             this._state.machine = this;
             this._state.enter(arg0);
         }
+    }
+
+    _queueTransition(name: string, args?: string) {
+        var newTransition = { name: name, args: args };
+        if (this._transitionQueue.length === 0) {
+            this._transitionQueue.push(newTransition);
+        } else {
+            var lastTransition = this._transitionQueue[this._transitionQueue.length - 1];
+            var same = lastTransition.name === name && lastTransition.args === args;
+            var inverses = lastTransition.name === Transitions.show && name === Transitions.hide ||
+                lastTransition.name === Transitions.hide && name === Transitions.show;
+            if (inverses) {
+                this._transitionQueue.pop();
+                this._transitionQueue.push(newTransition);
+            } else if (!same) {
+                this._transitionQueue.push(newTransition);
+            }
+        }
+    }
+
+    _applyNextTransition() {
+        while (this._transitionQueue.length > 0) {
+            var nextTransition = this._transitionQueue.shift();
+            if (this._state[nextTransition.name] !== _) {
+                this._state[nextTransition.name](nextTransition.args);
+                break;
+            }
+        }
+    }
+
+    _computeHidden(args: { defaultHidden: boolean }) {
+        for (var i = this._transitionQueue.length - 1; i >= 0; i--) {
+            var name = this._transitionQueue[i].name;
+            if (name === Transitions.show) {
+                return false;
+            } else if (name === Transitions.hide) {
+                return true;
+            }
+        }
+        return args.defaultHidden;
     }
     
     // Triggers arbitrary app code
@@ -283,6 +338,7 @@ interface IShowHideState {
     hidden: boolean; // read only. Writes go thru show/hide.
     show(): void;
     hide(): void;
+    animate(animationName: string): void;
     updateDom(): void; // If a state decides to postpone updating the DOM, it should
                        // update the DOM immediately before switching to the next state.
     // Provided by _setState for use within the state
@@ -301,12 +357,26 @@ interface IShowHideState {
 //     Hidden -> BeforeShow -> Showing -> Shown
 //     Shown -> BeforeHide -> Shown (when preventDefault is called on beforehide event)
 //     Shown -> BeforeHide -> Hiding -> Hidden
+//     Hidden -> Animating -> Hidden
+//     Shown -> Animating -> Shown
 //   However, any state can be interrupted to go to the Disposed state:
 //     * -> Disposed
 
 module States {
     function updateDomImpl(): void {
         this.machine._control.onUpdateDom();
+    }
+
+    function queueShow(): void {
+        this.machine._queueTransition(Transitions.show);
+    }
+
+    function queueHide(): void {
+        this.machine._queueTransition(Transitions.hide);
+    }
+
+    function queueAnimation(animationName: string): void {
+        this.machine._queueTransition(Transitions.animate, animationName);
     }
 
     // Initial state. Gives the control the opportunity to initialize itself without
@@ -337,6 +407,7 @@ module States {
         hide() {
             this._hidden = true;
         }
+        animate = queueAnimation;
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
@@ -344,11 +415,8 @@ module States {
     class Hidden implements IShowHideState {
         machine: ShowHideMachine;
         name = "Hidden";
-        enter(args?: { showIsPending?: boolean; }) {
-            args = args || {};
-            if (args.showIsPending) {
-                this.show();
-            }
+        enter() {
+            this.machine._applyNextTransition();
         }
         exit = _;
         hidden = true;
@@ -356,6 +424,12 @@ module States {
             this.machine._setState(BeforeShow);
         }
         hide = _;
+        animate(animationName: string) {
+            this.machine._setState(Animating, {
+                animationName: animationName,
+                nextState: Hidden
+            });
+        }
         updateDom = updateDomImpl;
     }
 
@@ -380,38 +454,33 @@ module States {
         hidden = true;
         show = _;
         hide = _;
+        animate = queueAnimation;
         updateDom = updateDomImpl;
     }
 
     // An animation/event state. The control plays its show animation and fires aftershow.
     class Showing implements IShowHideState {
-        private _hideIsPending: boolean;
-
         machine: ShowHideMachine;
         name = "Showing";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    this._hideIsPending = false;
                     return cancelablePromise(this.machine._control.onShow());
                 }).then(() => {
                     this.machine._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when triggering app code
                 }).then(() => {
                     this.machine._control.onUpdateDom();
-                    this.machine._setState(Shown, { hideIsPending: this._hideIsPending });
+                    this.machine._setState(Shown);
                 });
             });
         }
         exit = cancelInterruptibles;
         get hidden() {
-            return this._hideIsPending;
+            return this.machine._computeHidden({ defaultHidden: false });
         }
-        show() {
-            this._hideIsPending = false;
-        }
-        hide() {
-            this._hideIsPending = true;
-        }
+        show = queueShow;
+        hide = queueHide;
+        animate = queueAnimation;
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
@@ -419,17 +488,20 @@ module States {
     class Shown implements IShowHideState {
         machine: ShowHideMachine;
         name = "Shown";
-        enter(args?: { hideIsPending?: boolean }) {
-            args = args || {};
-            if (args.hideIsPending) {
-                this.hide();
-            }
+        enter() {
+            this.machine._applyNextTransition();
         }
         exit = _;
         hidden = false;
         show = _;
         hide() {
             this.machine._setState(BeforeHide);
+        }
+        animate(animationName: string) {
+            this.machine._setState(Animating, {
+                animationName: animationName,
+                nextState: Shown
+            });
         }
         updateDom = updateDomImpl;
     }
@@ -455,38 +527,59 @@ module States {
         hidden = false;
         show = _;
         hide = _;
+        animate = queueAnimation;
         updateDom = updateDomImpl;
     }
 
     // An animation/event state. The control plays the hide animation and fires the afterhide event.
     class Hiding implements IShowHideState {
-        private _showIsPending: boolean;
-
         machine: ShowHideMachine;
         name = "Hiding";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    this._showIsPending = false;
                     return cancelablePromise(this.machine._control.onHide());
                 }).then(() => {
                     this.machine._fireEvent(EventNames.afterHide); // Give opportunity for chain to be canceled when triggering app code
                 }).then(() => {
                     this.machine._control.onUpdateDom();
-                    this.machine._setState(Hidden, { showIsPending: this._showIsPending });
+                    this.machine._setState(Hidden);
                 });
             });
         }
         exit = cancelInterruptibles;
         get hidden() {
-            return !this._showIsPending;
+            return this.machine._computeHidden({ defaultHidden: true });
         }
-        show() {
-            this._showIsPending = true;
+        show = queueShow;
+        hide = queueHide;
+        animate = queueAnimation;
+        updateDom = _; // Postponed until immediately before we switch to another state
+    }
+
+    class Animating implements IShowHideState {
+        private _nextState: any;
+
+        machine: ShowHideMachine;
+        name = "Animating";
+        enter(args: { animationName: string; nextState: any }) {
+            interruptible(this, (ready) => {
+                return ready.then(() => {
+                    this._nextState = args.nextState;
+                    return cancelablePromise(this.machine._control.onAnimateDom(args.animationName));
+                }).then(() => {
+                    this.machine._control.onUpdateDom();
+                    this.machine._setState(args.nextState);
+                });
+            });
         }
-        hide() {
-            this._showIsPending = false;
+        exit = cancelInterruptibles;
+        get hidden() {
+            return this.machine._computeHidden({ defaultHidden: this._nextState === Hidden });
         }
+        show = queueShow;
+        hide = queueHide;
+        animate = queueAnimation;
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
@@ -498,6 +591,7 @@ module States {
         hidden = true;
         show = _;
         hide = _;
+        animate = _;
         updateDom = _;
     }
 }

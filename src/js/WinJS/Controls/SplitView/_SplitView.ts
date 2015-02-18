@@ -241,6 +241,9 @@ export class SplitView {
             onUpdateDomWithIsShown: (isShown: boolean) => {
                 this._isShownMode = isShown;
                 this._updateDomImpl();
+            },
+            onAnimateDom: (animationName: string) => {
+                return Promise.as();
             }
         });
         
