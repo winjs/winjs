@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /*
 AppBar/Flyout z-index values:
     1000 - AppBar/settings click-eating div
@@ -49,8 +49,8 @@ button.win-command {
     padding: 0;
     margin: 0;
     border: 1px dotted; /* reserve focus rect */
-    min-width: 40px; 
-    min-height: 48px; 
+    min-width: 40px;
+    min-height: 48px;
     text-align: center;
     font-size: 9pt;
     line-height: 16px;
@@ -260,8 +260,8 @@ AppBar
         width: 100%;
     }
 
-    &.win-menulayout.win-appbar-showing, 
-    &.win-menulayout.win-appbar-shown, 
+    &.win-menulayout.win-appbar-showing,
+    &.win-menulayout.win-appbar-shown,
     &.win-menulayout.win-appbar-hiding  {
         .win-appbar-invokebutton {
             visibility: hidden;
@@ -396,7 +396,7 @@ AppBar commands layout
 /* CommandsLayout RTL */
 .win-commandlayout {
     .RTL({
-        &.win-appbar-minimal, 
+        &.win-appbar-minimal,
         &.win-appbar-compact {
             padding-right: 0px;
             padding-left: 32px;
@@ -405,7 +405,7 @@ AppBar commands layout
 }
 
 /*
-AppBar menu layout 
+AppBar menu layout
 */
 .win-menulayout {
     .win-appbar-menu {
@@ -562,7 +562,7 @@ Menu commands.
 */
 .win-menu button.win-command {
     display: block;
-    padding-top: 11px; 
+    padding-top: 11px;
     padding-bottom: 13px;
     min-height: 44px;
     margin-left: 0;
@@ -582,7 +582,7 @@ Menu commands.
         #flex > .align-items(center);
         width:100%;
         position: relative;
-    
+
         .win-toggleicon, .win-flyouticon {
             #flex > .flex(0; 0; auto);
             display: none;
@@ -600,7 +600,7 @@ Menu commands.
             margin-left: 12px;
             margin-right: 16px;
             &::before {
-                content: "\E26B"; 
+                content: "\E26B";
             }
         }
         .win-label {
@@ -626,7 +626,7 @@ Menu commands.
                 margin-left: 16px;
                 margin-right: 12px;
                 &::before {
-                    content: "\E26C"; 
+                    content: "\E26C";
                 }
             }
         });
@@ -746,7 +746,7 @@ Settings Pane
 
         .win-label {
             .win-type-subtitle();
-        }        
+        }
 
         .win-settings-section {
             padding-top: 0;

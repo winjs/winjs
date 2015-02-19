@@ -6,7 +6,7 @@
   "main": "js/WinJS.js",
   "homepage": "http://try.buildwinjs.com/",
   "author": {
-    "name": "Microsoft Open Technologies, Inc. and other contributors",
+    "name": "Microsoft Corporation and other contributors",
     "url": "https://github.com/winjs/winjs/graphs/contributors"
   },
   "repository": {
@@ -15,7 +15,7 @@
   },
   "licenses": [
     {
-      "type": "Apache2",
+      "type": "MIT",
       "url": "https://github.com/winjs/winjs/blob/master/License.txt"
     }
   ],

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 // <reference path="../TestLib/Helper.ts"/>
@@ -153,7 +153,7 @@ module CorsicaTests {
         }
 
         //
-        // Unit Tests 
+        // Unit Tests
         //
 
         testSingleFlyoutInTheCascade = function (complete) {
@@ -430,7 +430,7 @@ module CorsicaTests {
 
         testFlyoutsBlockedFromShowingDuringReEntrancy_WillBeShownAsyncronously = function (complete) {
             // Regression test: https://github.com/winjs/winjs/issues/882
-            // Verifies that showing a 2nd Flyout chain at the beginning of hiding the 1st Flyout chain, 
+            // Verifies that showing a 2nd Flyout chain at the beginning of hiding the 1st Flyout chain,
             // will cause the 2nd Flyout chain to show once the 1st cascade is finished collapsing.
             var chain1 = this.generateFlyoutChain(),
                 chain2 = this.generateFlyoutChain();
@@ -453,7 +453,7 @@ module CorsicaTests {
 
     // Test Class for Cascading Flyout unit tests.
     export class CascadingFlyoutTests extends _BaseCascadingTests {
-        
+
         // Implementation of Abstract showFlyout Method.
         showFlyout(flyout: WinJS.UI.PrivateFlyout): WinJS.Promise<any> {
             return OverlayHelpers.show(flyout);
@@ -551,7 +551,7 @@ module CorsicaTests {
                 if (prevMenu) {
                     // Set commands in the previous Menu in order to chain it to the current Menu, via the MenuCommand 'flyout' property.
                     var prevMenuCommands = [
-                        // First command opens the current Menu. 
+                        // First command opens the current Menu.
                         // Second command can be used by tests for any reason.
                         new MenuCommand(null, { id: this.firstCommandId, label: this.firstCommandId, type: _Constants.typeFlyout, flyout: menu }),
                         new MenuCommand(null, { id: this.secondCommandId, label: this.secondCommandId, type: _Constants.typeFlyout, flyout: null }),

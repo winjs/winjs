@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../../../../typings/require.d.ts" />
 
 import Animations = require('../../Animations');
@@ -546,9 +546,9 @@ export class SplitView {
         if (element && element["winControl"]) {
             throw new _ErrorFromName("WinJS.UI.SplitView.DuplicateConstruction", Strings.duplicateConstruction);
         }
-
+        
         this._disposed = false;
-
+        
         this._initializeDom(element || _Global.document.createElement("div"));
         this._setState(States.Init, options);
     }
@@ -630,7 +630,7 @@ export class SplitView {
             this.hidePane();
         } else {
             this.showPane();
-        }
+    }
     }
 
     dispose(): void {
@@ -815,7 +815,7 @@ export class SplitView {
 
     private _paneSlideIn(shownPaneRect: IRect): Promise<any> {
         return showEdgeUI(this._dom.paneWrapper, this._getAnimationOffsets(shownPaneRect));
-    }
+        }
 
     private _paneSlideOut(shownPaneRect: IRect): Promise<any> {
         return hideEdgeUI(this._dom.paneWrapper, this._getAnimationOffsets(shownPaneRect));
@@ -898,13 +898,13 @@ export class SplitView {
             var peek = hiddenPaneThickness.total > 0;
 
             if (peek) {
-                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
+            var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
                 return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                     from: hiddenPaneThickness,
                     to: shownPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
-                });
+                dimension: dim,
+                anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
+            });
             } else {
                 return this._paneSlideIn(shownPaneRect);
             }
@@ -917,7 +917,7 @@ export class SplitView {
                 var fadeInDelay = 350 * _TransitionAnimation._animationFactor;
 
                 var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(shownContentRect);
+                this._setContentRect(shownContentRect);
                     return fadeIn(this._dom.contentWrapper);
                 });
 
@@ -944,13 +944,13 @@ export class SplitView {
             var peek = hiddenPaneThickness.total > 0;
 
             if (peek) {
-                var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
+            var placementRight = this._rtl ? PanePlacement.left : PanePlacement.right;
                 return resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                     from: shownPaneThickness,
                     to: hiddenPaneThickness,
-                    dimension: dim,
-                    anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
-                });
+                dimension: dim,
+                anchorTrailingEdge: this.panePlacement === placementRight || this.panePlacement === PanePlacement.bottom
+            });
             } else {
                 return this._paneSlideOut(shownPaneRect);
             }
@@ -963,7 +963,7 @@ export class SplitView {
                 var fadeInDelay = 267 * _TransitionAnimation._animationFactor;
 
                 var contentAnimation = Promise.timeout(fadeInDelay).then(() => {
-                    this._setContentRect(hiddenContentRect);
+                this._setContentRect(hiddenContentRect);
                     return fadeIn(this._dom.contentWrapper);
                 });
 

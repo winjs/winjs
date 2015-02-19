@@ -1,9 +1,9 @@
-/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */
+/* Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */
 /* this CSS file intentionally contains syntax errors */
 
 .myClass span {
     /* syntax errors on this next line  */
     XXXXXXXmargin-left 120px
-    
-    padding: 1px 2px 3px 4px;   
+
+    padding: 1px 2px 3px 4px;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
@@ -2072,7 +2072,7 @@ module WinJSTests {
                     complete();
                 });
         };
-        
+
         // Verifies that if the data in the ListView's Binding.List is entirely replaced while
         // containers are still being created, the ListView will create enough containers for
         // the edits to fulfill its contract with the animation system (each modified item needs
@@ -2099,7 +2099,7 @@ module WinJSTests {
                     list.push(item);
                 });
             };
-            
+
             var placeholder = createListViewElement();
 
             var listView = new ListView(placeholder, {
@@ -2130,9 +2130,9 @@ module WinJSTests {
 
             return Helper.ListView.waitForReady(listView)().then(function () {
                 LiveUnit.Assert.areEqual(50, listView._view.containers.length);
-                
+
                 replaceData();
-                
+
                 jobNode.resume();
                 return Helper.ListView.waitForAllContainers(listView);
             }).then(function () {
@@ -5475,7 +5475,7 @@ module WinJSTests {
     generateAnimationDuringSezoZoomingTests("remove");
     generateAnimationDuringSezoZoomingTests("insertAtStart");
     generateAnimationDuringSezoZoomingTests("change");
-    
+
     function generateDomTrimTest(name, data, groups, scrollbarPos, viewportHeight, verify) {
         VirtualizedViewTests.prototype["testDomTrim" + name] = function (complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;

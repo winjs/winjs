@@ -1,8 +1,8 @@
-/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */
-#host .win-navbarcommand { 
-    width: 250px; 
-    height: 100px; 
-    margin: 5px; 
+/* Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */
+#host .win-navbarcommand {
+    width: 250px;
+    height: 100px;
+    margin: 5px;
     overflow: hidden;
 }
 #host,
@@ -11,9 +11,9 @@
     background-color: darkgreen;
 }
 
-#host .verticalTest .win-navbarcommand { 
-    width: 250px; 
-    height: 50px; 
-    margin: 5px; 
+#host .verticalTest .win-navbarcommand {
+    width: 250px;
+    height: 50px;
+    margin: 5px;
     overflow: hidden;
 }

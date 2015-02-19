@@ -12,9 +12,9 @@ There are many ways that you can contribute to the WinJS project:
 Note that all code submissions will be rigorously reviewed and tested by the team, and only those that meet an extremely high bar for both quality and design/roadmap appropriateness will be merged into the source.
 
 ### Pull Requests
-You will need to sign a [Contribution License Agreement](https://cla.msopentech.com/) ([CLA](https://cla.msopentech.com/)) before submitting your pull request be it a feature or a bug fix. To complete the CLA, you will need to submit the request via the form and then electronically sign the CLA when you receive the email containing the link to the document.
+You will need to sign a [Contribution License Agreement](https://cla.microsoft.com/) ([CLA](https://cla.microsoft.com/)) before submitting your pull request be it a feature or a bug fix. To complete the CLA, you will need to submit the request via the form and then electronically sign the CLA when you receive the email containing the link to the document.
 
-This needs to only be done once for any Microsoft Open Technologies project.
+This needs to only be done once for any Microsoft open source project.
 
 ### Feature Requests
 Before submitting a feature or substantial code contribution please discuss it with the team and ensure it aligns with the project's [roadmap](https://github.com/winjs/winjs/wiki/Roadmap).

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //  Distance Tests for the tooltip.  When we display tooltips, they should not appear off-screen and should appear a
 //  certain distance from the "anchor element" depending on whether touch, keyboard, or mouse triggered it.

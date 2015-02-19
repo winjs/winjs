@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <dictionary>appbar,Flyout,Flyouts,Statics</dictionary>
 define([
     'exports',
@@ -452,12 +452,12 @@ define([
                     // then don't mess up our current state.
                     if (this._element.winAnimating) {
                         this._reuseCurrent = true;
-                        // Queue us up to wait for the current animation to finish. 
+                        // Queue us up to wait for the current animation to finish.
                         // _checkDoNext() is always scheduled after the current animation completes.
                         this._doNext = "show";
                     } else if (Flyout._cascadeManager.reentrancyLock) {
                         this._reuseCurrent = true;
-                        // Queue us up to wait for the current animation to finish. 
+                        // Queue us up to wait for the current animation to finish.
                         // Schedule a call to _checkDoNext() for when the cascadeManager unlocks.
                         this._doNext = "show";
                         var that = this;
@@ -497,7 +497,7 @@ define([
 
                             // Store what had focus before showing the Flyout. This must happen after we've appended this
                             // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
-                            // collapse. Ensures that focus has already been restored to the correct element by the 
+                            // collapse. Ensures that focus has already been restored to the correct element by the
                             // previous branch before we try to record it here.
                             this._previousFocus = _Global.document.activeElement;
 

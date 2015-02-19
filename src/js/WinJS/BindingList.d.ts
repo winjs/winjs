@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 import Promise = require("Promise");
 
@@ -111,7 +111,7 @@ export declare class List<T> extends ListBaseWithMutators<T> {
 
     /**
      * Creates a List object.
-     * @constructor 
+     * @constructor
      * @param list The array containing the elements to initalize the list.
      * @param options You can set two Boolean options: binding and proxy. If options.binding is true, the list contains the result of calling as on the element values. If options.proxy is true, the list specified as the first parameter is used as the storage for the List. This option should be used with care, because uncoordinated edits to the data storage may result in errors.
     **/
@@ -1052,7 +1052,7 @@ export declare class Template {
 
     /**
      * Creates a template that provides a reusable declarative binding element.
-     * @constructor 
+     * @constructor
      * @param element The DOM element to convert to a template.
      * @param options If this parameter is supplied, the template is loaded from the URI and the content of the element parameter is ignored. You can add the following options: href.
     **/
