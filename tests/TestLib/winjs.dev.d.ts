@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 interface Object {
     [key: string]: any;
@@ -14,7 +14,7 @@ interface IStyleEquivalentsMap {
 }
 
 declare module WinJS {
-    
+
     interface IPosition {
         left: number;
         top: number;
@@ -154,7 +154,7 @@ declare module WinJS {
             static _DELAY_RESHOW_INFOTIP_NONTOUCH: number;
             static _RESHOW_THRESHOLD: number;
         }
-        
+
         interface IContentDialogDom {
             root: HTMLElement;
             backgroundOverlay: HTMLElement;
@@ -167,7 +167,7 @@ declare module WinJS {
             endBodyTab: HTMLElement;
             content: HTMLElement;
         }
-        
+
         class PrivateContentDialog extends WinJS.UI.ContentDialog {
             static _ClassNames: any;
             _playEntranceAnimation(): Promise<any>;
@@ -178,7 +178,7 @@ declare module WinJS {
             _updateTabIndices();
             _updateTabIndicesImpl();
         }
-        
+
         class PrivateSplitView extends WinJS.UI.SplitView {
             static _ClassNames: {
                 splitView: string;
@@ -188,7 +188,7 @@ declare module WinJS {
                 paneHidden: string;
                 paneShown: string;
             }
-            
+
             _playShowAnimation(): Promise<any>;
             _playHideAnimation(): Promise<any>;
             _prepareAnimation(paneRect: any, contentRect: any): void;
@@ -561,7 +561,7 @@ declare module WinJS {
         class PrivatePivotItem extends PivotItem {
             static _ClassName;
         }
-        
+
         class _CommandingSurface {
             public element: HTMLElement;
             public data: WinJS.Binding.List<ICommand>;

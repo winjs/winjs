@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 (function () {
     "use strict";
     function formatString(string) {
@@ -138,7 +138,7 @@
             }
 
             var testMenuTemplate =
-'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+'<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. -->    \r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\
 <head>                                                                                                                      \r\n\
@@ -159,7 +159,7 @@
 </html>';
 
             var testPageTemplate =
-'<!-- Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. -->    \r\n\
+'<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. -->    \r\n\
 <!-- saved from url=(0014)about:internet -->\r\n\
 <!DOCTYPE html>                                                                                                             \r\n\
 <html>                                                                                                                      \r\n\

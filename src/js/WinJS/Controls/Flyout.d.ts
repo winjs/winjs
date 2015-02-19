@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 /**
  * Displays lightweight UI that is either information, or requires user interaction. Unlike a dialog, a Flyout can be light dismissed by clicking or tapping off of it.
@@ -8,7 +8,7 @@ export declare class Flyout {
 
     /**
      * Creates a new Flyout object.
-     * @constructor 
+     * @constructor
      * @param element The DOM element that will host the control.
      * @param options The set of properties and values to apply to the new Flyout.
     **/

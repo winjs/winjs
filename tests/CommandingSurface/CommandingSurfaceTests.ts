@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts"/>
@@ -845,7 +845,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent, "Down arrow should skip '3' because that command is hidden");
 
                 Helper.keydown(commandingSurface.element, Key.rightArrow);
-                LiveUnit.Assert.areEqual(commandingSurface._overflowButton, document.activeElement); 
+                LiveUnit.Assert.areEqual(commandingSurface._overflowButton, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
@@ -857,7 +857,7 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual("s1", document.activeElement.textContent);
 
                 Helper.keydown(commandingSurface.element, Key.upArrow);
-                LiveUnit.Assert.areEqual(commandingSurface._overflowButton, document.activeElement); 
+                LiveUnit.Assert.areEqual(commandingSurface._overflowButton, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.upArrow);
                 LiveUnit.Assert.areEqual("4", document.activeElement.textContent);

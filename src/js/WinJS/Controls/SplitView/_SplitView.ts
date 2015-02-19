@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../../../../typings/require.d.ts" />
 
 import Animations = require('../../Animations');
@@ -163,7 +163,7 @@ export class SplitView {
     /// Display options for a SplitView's pane when it is hidden.
     /// </field>
     static HiddenDisplayMode = HiddenDisplayMode;
-    
+
     /// <field locid="WinJS.UI.SplitView.ShownDisplayMode" helpKeyword="WinJS.UI.SplitView.ShownDisplayMode">
     /// Display options for a SplitView's pane when it is shown.
     /// </field>
@@ -216,7 +216,7 @@ export class SplitView {
         if (element && element["winControl"]) {
             throw new _ErrorFromName("WinJS.UI.SplitView.DuplicateConstruction", Strings.duplicateConstruction);
         }
-        
+
         this._initializeDom(element || _Global.document.createElement("div"));
         this._machine = new _ShowHideMachine.ShowHideMachine({
             eventElement: this._dom.root,
@@ -226,7 +226,7 @@ export class SplitView {
 
                 this._isShownMode = true;
                 this._updateDomImpl();
-                
+
                 return this._playShowAnimation(hiddenPaneThickness);
             },
             onHide: () => {
@@ -243,7 +243,7 @@ export class SplitView {
                 this._updateDomImpl();
             }
         });
-        
+
         // Initialize private state.
         this._disposed = false;
         this._dismissable = new _LightDismissService.LightDismissableElement({
@@ -254,20 +254,20 @@ export class SplitView {
             }
         });
         this._cachedHiddenPaneThickness = null;
-        
+
         // Initialize public properties.
         this.paneHidden = true;
         this.hiddenDisplayMode = HiddenDisplayMode.inline;
         this.shownDisplayMode = ShownDisplayMode.overlay;
         this.panePlacement = PanePlacement.left;
         _Control.setOptions(this, options);
-        
+
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
             this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
             this._machine.initialized();
         });
-        
+
     }
 
     /// <field type="HTMLElement" domElement="true" readonly="true" hidden="true" locid="WinJS.UI.SplitView.element" helpKeyword="WinJS.UI.SplitView.element">
@@ -290,7 +290,7 @@ export class SplitView {
     get contentElement(): HTMLElement {
         return this._dom.content;
     }
-    
+
     private _hiddenDisplayMode: string;
     /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.HiddenDisplayMode" locid="WinJS.UI.SplitView.HiddenDisplayMode" helpKeyword="WinJS.UI.SplitView.HiddenDisplayMode">
     /// Gets or sets the display mode of the SplitView's pane when it is hidden.
@@ -402,13 +402,13 @@ export class SplitView {
 
         var panePlaceholderEl = _Global.document.createElement("div");
         panePlaceholderEl.className = ClassNames._panePlaceholder;
-        
+
         // contentWrapper is an extra element we need to allow heights to be specified as percentages (e.g. height: 100%)
         // for elements within the content area. It works around this Chrome bug:
         //   Issue 428049: 100% height doesn't work on child of a definite-flex-basis flex item (in vertical flex container)
         //   https://code.google.com/p/chromium/issues/detail?id=428049
         // The workaround is that putting a position: absolute element (_dom.content) within the flex item (_dom.contentWrapper)
-        // allows percentage heights to work within the absolutely positioned element (_dom.content). 
+        // allows percentage heights to work within the absolutely positioned element (_dom.content).
         var contentWrapperEl = _Global.document.createElement("div");
         contentWrapperEl.className = ClassNames._contentWrapper;
         contentWrapperEl.appendChild(contentEl);
@@ -557,7 +557,7 @@ export class SplitView {
             // 30% of the size change instantly and then animate the other 70%)
             var animationOffsetFactor = 0.3;
             var from = hiddenPaneThickness.total + animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
-            
+
             return Animations._resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                 from: from,
                 to: shownPaneThickness.total,
@@ -595,7 +595,7 @@ export class SplitView {
             // 30% of the size change instantly and then animate the other 70%)
             var animationOffsetFactor = 0.3;
             var from = shownPaneThickness.total - animationOffsetFactor * (shownPaneThickness.total - hiddenPaneThickness.total);
-            
+
             return Animations._resizeTransition(this._dom.paneWrapper, this._dom.pane, {
                 from: from,
                 to: hiddenPaneThickness.total,
@@ -617,7 +617,7 @@ export class SplitView {
             this._clearAnimation();
         });
     }
-    
+
     // State private to _updateDomImpl. No other method should make use of it.
     //
     // Nothing has been rendered yet so these are all initialized to undefined. Because
@@ -635,7 +635,7 @@ export class SplitView {
     };
     private _updateDomImpl(): void {
         var rendered = this._updateDomImpl_rendered;
-        
+
         var paneShouldBeFirst = this.panePlacement === PanePlacement.left || this.panePlacement === PanePlacement.top;
         if (paneShouldBeFirst !== rendered.paneIsFirst) {
             // TODO: restore focus
@@ -667,7 +667,7 @@ export class SplitView {
             addClass(this._dom.root, panePlacementClassMap[this.panePlacement]);
             rendered.panePlacement = this.panePlacement;
         }
-        
+
         if (rendered.hiddenDisplayMode !== this.hiddenDisplayMode) {
             removeClass(this._dom.root, hiddenDisplayModeClassMap[rendered.hiddenDisplayMode]);
             addClass(this._dom.root, hiddenDisplayModeClassMap[this.hiddenDisplayMode]);
@@ -679,9 +679,9 @@ export class SplitView {
             addClass(this._dom.root, shownDisplayModeClassMap[this.shownDisplayMode]);
             rendered.shownDisplayMode = this.shownDisplayMode;
         }
-        
+
         var isOverlayShown = this._isShownMode && this.shownDisplayMode === ShownDisplayMode.overlay;
-        
+
         // panePlaceholder's purpose is to take up the amount of space occupied by the
         // hidden pane while the pane is shown in overlay mode. Without this, the content
         // would shift as the pane shows and hides in overlay mode.
@@ -706,7 +706,7 @@ export class SplitView {
             rendered.panePlaceholderWidth = width;
             rendered.panePlaceholderHeight = height;
         }
-        
+
         if (rendered.isOverlayShown !== isOverlayShown) {
             if (isOverlayShown) {
                 _LightDismissService.shown(this._dismissable);

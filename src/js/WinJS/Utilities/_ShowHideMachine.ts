@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../../../typings/require.d.ts" />
 
 import _Global = require('../Core/_Global');
@@ -28,10 +28,10 @@ import _Signal = require('../_Signal');
 //   class MyControl {
 //       element: HTMLElement;
 //       private _machine: ShowHideMachine;
-//       
+//
 //       constructor(element?: HTMLElement, options: any = {}) {
 //           this.element = element || document.createElement("div");
-//           
+//
 //           // Create the machine.
 //           this._machine = new ShowHideMachine({
 //               eventElement: this.element,
@@ -55,17 +55,17 @@ import _Signal = require('../_Signal');
 //                   // cue to mutate that internal state to reflect the value of isShown.
 //               },
 //           });
-//           
+//
 //           // Initialize the control. During this time, the machine will not ask the control to
 //           // play any animations or update its DOM.
 //           this.hidden = true;
 //           _Control.setOptions(this, options);
-//           
+//
 //           // Tell the machine the control is initialized. After this, the machine will start asking
 //           // the control to play animations and update its DOM as appropriate.
 //           this._machine.initialized();
 //       }
-//       
+//
 //       get hidden() {
 //           return this._machine.hidden;
 //       }
@@ -125,34 +125,34 @@ export interface IShowHideControl {
 export class ShowHideMachine {
 	_control: IShowHideControl;
     _initializedSignal: _Signal<any>;
-    
+
     private _disposed: boolean;
     private _state: IShowHideState;
-    
+
     //
     // Methods called by the control
     //
-    
+
     // When the machine is created, it sits in the Init state. When in the Init state, calls to
     // updateDom will be postponed until the machine exits the Init state. Consequently, while in
     // this state, the control can feel free to call updateDom as many times as it wants without
     // worrying about it being expensive due to updating the DOM many times. The control should call
-    // *initialized* to move the machine out of the Init state. 
-    
+    // *initialized* to move the machine out of the Init state.
+
     constructor(args: IShowHideControl) {
         this._control = args;
         this._initializedSignal = new _Signal();
         this._disposed = false;
         this._setState(States.Init);
     }
-    
+
     // Moves the machine out of the Init state and into the Shown or Hidden state depending on whether
     // show or hide was called more recently.
     initialized() {
         this._initializedSignal.complete();
     }
-    
-    
+
+
     // These method calls are forwarded to the current state.
     updateDom() { this._state.updateDom(); }
     show() { this._state.show(); }
@@ -165,18 +165,18 @@ export class ShowHideMachine {
             this.show();
         }
     }
-    
+
     // Puts the machine into the Disposed state.
     dispose() {
         this._setState(States.Disposed);
         this._disposed = true;
         this._control = null;
     }
-    
+
     //
     // Methods called by states
     //
-    
+
     _setState(NewState: any, arg0?: any) {
         if (!this._disposed) {
             this._state && this._state.exit();
@@ -185,7 +185,7 @@ export class ShowHideMachine {
             this._state.enter(arg0);
         }
     }
-    
+
     // Triggers arbitrary app code
     _fireEvent(eventName: string, options?: { detail?: any; cancelable?: boolean; }): boolean {
         options = options || {};

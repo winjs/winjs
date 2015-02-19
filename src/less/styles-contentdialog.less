@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 @import "base.less";
 @import "mixins.less";
@@ -19,13 +19,13 @@
           height, dialog height = window height
         - Otherwise, dialog height sizes to its content
      */
-     
+
     @minWidth: 320px;
     @maxWidth: 456px;
     @minHeight: 184px;
     @maxHeight: 758px;
     @dialogVerticallyCenteredThreshold: 640px;
-    
+
     &.win-contentdialog-verticalalignment {
         z-index: 1005; /* Above AppBar and SettingsFlyout. Below Flyout. */
         position: fixed;
@@ -34,16 +34,16 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-        
+
         display: none;
         &.win-contentdialog-visible {
             #flex > .display-flex();
-        }	    
+        }
         #flex > .flex-flow(column; wrap);
         #flex > .justify-content(center); /* center on flex axis (vertically) */
         #flex > .align-content(center); /* maintain horizontal centering when the flexbox has 2 columns */
     }
-    
+
     .win-contentdialog-backgroundoverlay {
         position: absolute;
         top: 0;
@@ -51,31 +51,31 @@
         width: 100vw;
         height: 100vh;
     }
-    
+
     .win-contentdialog-dialog {
         #flex > .display-flex();
         #flex > .flex-direction(column);
-        
+
         #flex > .flex(@grow: 1; @shrink: 1);
         z-index: 1; /* Put the dialog's body above the backgroundoverlay */
-        
+
         outline-style: solid;
         outline-width: 1px;
         box-sizing: border-box;
         padding: 18px 24px 24px 24px;
-        
+
         width: 100vw;
         min-width: @minWidth;
         max-width: @maxWidth;
-    
+
         min-height: @minHeight;
         max-height: @maxHeight;
-    
+
         /* Center horizontally */
         margin-left: auto;
         margin-right: auto;
     }
-    
+
     /* Purpose of this element is to control the dialog body's height based on the height
        of the window. The dialog body's height should:
          - Match height of window when dialog body's intrinsic height < 50% of window height.
@@ -91,7 +91,7 @@
         #flex > .flex(@grow: 10000; @shrink: 0);
         width: 0;
     }
-    
+
     @media (min-height: @dialogVerticallyCenteredThreshold) {
         .win-contentdialog-dialog {
             #flex > .flex(@grow: 0; @shrink: 1); // shrink: 1 so dialog never becomes taller than window
@@ -101,15 +101,15 @@
             display: none;
         }
     }
-    
+
     .win-contentdialog-scroller {
         #flex > .flex(@grow: 1; @shrink: 1);
-        
+
         #flex > .display-flex();
         #flex > .flex-direction(column);
         overflow: auto;
     }
-    
+
     .win-contentdialog-title {
         #flex > .flex(@grow: 0; @shrink: 0);
         .win-type-subtitle();
@@ -118,18 +118,18 @@
         #flex > .flex(@grow: 1; @shrink: 0);
         .win-type-body();
     }
-    
+
     .win-contentdialog-commands {
         #flex > .flex(@grow: 0; @shrink: 0);
         #flex > .display-flex();
         margin-top: 24px;
         margin-right: -4px; /* Chop off margin on last command */
     }
-    
+
     .win-contentdialog-commandspacer {
         visibility: hidden;
     }
-    
+
     .win-contentdialog-commands > button {
         /* Each command should have the same width. Flexbox distributes widths using each
            item's width and flex-grow as weights. Giving each command a flex-grow of 1
@@ -137,7 +137,7 @@
          */
         #flex > .flex(@grow: 1; @shrink: 1);
         width: 0;
-        
+
         margin-right: 4px; /* 4px of space between each command */
         white-space: nowrap;
     }

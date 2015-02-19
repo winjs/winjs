@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'exports'
     ], function telemetryInit(exports) {
@@ -6,7 +6,7 @@ define([
 
     /// NOTE: This file should be included when NOT building
     /// Microsoft WinJS Framework Package which will be available in Windows Store.
-    
+
     exports.send = function (name, params) {
     /// <signature helpKeyword="WinJS._Telemetry.send">
     /// <summary locid="WinJS._Telemetry.send">

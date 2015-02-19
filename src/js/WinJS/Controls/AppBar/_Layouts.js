@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'exports',
     '../../Animations/_TransitionAnimation',
@@ -29,7 +29,7 @@ define([
             var strings = {
                 get nullCommand() { return "Invalid argument: command must not be null"; }
             };
-            
+
             var _AppBarBaseLayout = _Base.Class.define(function _AppBarBaseLayout_ctor(appBarEl, options) {
                 this._disposed = false;
 
@@ -462,7 +462,7 @@ define([
         _AppBarMenuLayout: _Base.Namespace._lazy(function () {
             var layoutClassName = _Constants.menuLayoutClass;
             var layoutType = _Constants.appBarLayoutMenu;
-            
+
             //
             // Resize animation
             //  The resize animation requires 2 animations to run simultaneously in sync with each other. It's implemented
@@ -478,7 +478,7 @@ define([
                 var transitionProperty = _BaseUtils._browserStyleEquivalents["transition"].scriptName;
                 element.style[transitionProperty] = duration + "ms " + transformNames.cssName + " " + transition.timing;
                 element.style[transformNames.scriptName] = transition.to;
-            
+
                 var finish;
                 return new Promise(function (c) {
                     var onTransitionEnd = function (eventObject) {
@@ -486,7 +486,7 @@ define([
                             finish();
                         }
                     };
-                    
+
                     var didFinish = false;
                     finish = function () {
                         if (!didFinish) {
@@ -497,12 +497,12 @@ define([
                         }
                         c();
                     };
-            
+
                     // Watch dog timeout
                     var timeoutId = _Global.setTimeout(function () {
                         timeoutId = _Global.setTimeout(finish, duration);
                     }, 50);
-            
+
                     element.addEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd);
                 }, function () {
                     finish(); // On cancelation, complete the promise successfully to match PVL
@@ -515,17 +515,17 @@ define([
                 var size = args.dimension;
                 var duration = args.duration || 367;
                 var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
-            
+
                 // Set up
                 elementClipper.style[size] = args.to.total + "px";
                 elementClipper.style[transformNames.scriptName] = translate + "(" + diff + "px)";
                 element.style[size] = args.to.content + "px";
                 element.style[transformNames.scriptName] = translate + "(" + -diff + "px)";
-            
+
                 // Resolve styles
                 _Global.getComputedStyle(elementClipper).opacity;
                 _Global.getComputedStyle(element).opacity;
-                
+
                 // Animate
                 var transition = {
                     duration: duration,
@@ -543,15 +543,15 @@ define([
                 var translate = args.dimension === "width" ? "translateX" : "translateY";
                 var duration = args.duration || 367;
                 var timing = args.timing || "cubic-bezier(0.1, 0.9, 0.2, 1)";
-            
+
                 // Set up
                 elementClipper.style[transformNames.scriptName] = "";
                 element.style[transformNames.scriptName] = "";
-            
+
                 // Resolve styles
                 _Global.getComputedStyle(elementClipper).opacity;
                 _Global.getComputedStyle(element).opacity;
-            
+
                 // Animate
                 var transition = {
                     duration: duration,
@@ -569,7 +569,7 @@ define([
             //   size should match element's size. Its purpose is to clip *element* during the animation to give
             //   it the illusion that it is resizing.
             // - element: The element that should look like it's resizing.
-            // - args: An object with the following required properties: 
+            // - args: An object with the following required properties:
             //   - from: An object representing the old width/height of the element.
             //   - to: An object representing the new width/height of the element.
             //     from/to are objects of the form { content: number; total: number; }. "content" is the
@@ -590,7 +590,7 @@ define([
                     return Promise.as();
                 }
             }
-            
+
             var _AppBarMenuLayout = _Base.Class.derive(exports._AppBarBaseLayout, function _AppBarMenuLayout_ctor(appBarEl) {
                 exports._AppBarBaseLayout.call(this, appBarEl, { _className: layoutClassName, _type: layoutType });
                 this._tranformNames = _BaseUtils._browserStyleEquivalents["transform"];

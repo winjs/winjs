@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../Core.d.ts" />
 import Animations = require("../../Animations");
 import _Base = require("../../Core/_Base");
@@ -400,8 +400,8 @@ export class _CommandingSurface {
 
         deleted = diffElements(currentShown, newShown);
         affected = diffElements(currentShown, deleted);
-        // "added" must also include the elements from "newHidden" to ensure that we continue 
-        // to animate any command elements that have underflowed back into the actionarea 
+        // "added" must also include the elements from "newHidden" to ensure that we continue
+        // to animate any command elements that have underflowed back into the actionarea
         // as a part of this data change.
         added = diffElements(newShown, currentShown).concat(newHidden);
 
@@ -760,7 +760,7 @@ export class _CommandingSurface {
     private _setupOverflowArea(additionalCommands: _Command.AppBarCommand[]) {
         this._writeProfilerMark("_setupOverflowArea,info");
 
-        // Set up custom flyout for "content" typed commands in the overflow area. 
+        // Set up custom flyout for "content" typed commands in the overflow area.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
         var hasCustomContent = additionalCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
 
@@ -791,7 +791,7 @@ export class _CommandingSurface {
             hasFlyoutCommands = false,
             menuCommands: _MenuCommand.MenuCommand[] = [];
 
-        // Add primary commands that have overflowed. 
+        // Add primary commands that have overflowed.
         additionalCommands.forEach((command) => {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
@@ -804,7 +804,7 @@ export class _CommandingSurface {
             menuCommands.push(this._getMenuCommand(command));
         });
 
-        // Add separator between primary and secondary command if applicable 
+        // Add separator between primary and secondary command if applicable
         var secondaryCommandsLength = this._secondaryCommands.length;
         if (additionalCommands.length > 0 && secondaryCommandsLength > 0) {
             var separator = new _CommandingSurfaceMenuCommand._MenuCommand(null, {
@@ -814,7 +814,7 @@ export class _CommandingSurface {
             menuCommands.push(separator);
         }
 
-        // Add secondary commands 
+        // Add secondary commands
         this._secondaryCommands.forEach((command) => {
             if (!command.hidden) {
                 if (command.type === _Constants.typeToggle) {

@@ -1,4 +1,4 @@
-/* Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information. */
+/* Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */
 /* Most of these values should NOT be same as the values in the controls.css style sheet, because
 ** we want to verify the different styles cascade through */
 
@@ -22,7 +22,7 @@ Tooltip control styling coming from dark/light css.
 }
 */
 
-.tooltip-test-css 
+.tooltip-test-css
 {
     font-family: Courier New;
     z-index: 9998;

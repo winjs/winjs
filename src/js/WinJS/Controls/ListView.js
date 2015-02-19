@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     '../Core/_Global',
     '../Core/_Base',
@@ -2214,7 +2214,7 @@ define([
                         var previousModifiedElementsHash = {};
                         this._modifiedElements = [];
                         this._countDifference += updater.countDifference;
-                        
+
                         for (i = 0; i < previousModifiedElements.length; i++) {
                             var modifiedElement = previousModifiedElements[i];
                             if (modifiedElement.newIndex === -1) {
@@ -2223,7 +2223,7 @@ define([
                                 previousModifiedElementsHash[modifiedElement.newIndex] = modifiedElement;
                             }
                         }
-                        
+
                         for (i = 0; i < updater.removed.length; i++) {
                             var removed = updater.removed[i];
                             var modifiedElement = previousModifiedElementsHash[removed.index];
@@ -2241,7 +2241,7 @@ define([
                             }
                             this._modifiedElements.push(modifiedElement);
                         }
-                        
+
                         var insertedKeys = Object.keys(this._insertedItems);
                         for (i = 0; i < insertedKeys.length; i++) {
                             this._modifiedElements.push({
@@ -2278,7 +2278,7 @@ define([
                             }
                         }
                         this._writeProfilerMark("_synchronize:update_modifiedElements,StopTM");
-                        
+
                         var previousIndices = Object.keys(previousModifiedElementsHash);
                         for (i = 0; i < previousIndices.length; i++) {
                             var key = previousIndices[i];
@@ -4141,7 +4141,7 @@ define([
 
                 _updateContainers: function ListView_updateContainers(groups, count, containersDelta, modifiedElements) {
                     var that = this;
-                    
+
                     // If the ListView is still in the middle of asynchronously creating containers (i.e. createContainersWorker isn't done),
                     // then we need to cap the number of containers we create here. Without the cap, we'll synchronously finish creating all
                     // of the containers nullifying the responsiveness benefits of the asynchronous create containers worker. However, if

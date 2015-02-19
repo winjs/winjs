@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
@@ -88,7 +88,7 @@ module SplitViewTests {
                 height: 0
             };
         }
-        
+
         var placementLeft = config.rtl ? SplitView.PanePlacement.right : SplitView.PanePlacement.left;
         var placementRight = config.rtl ? SplitView.PanePlacement.left : SplitView.PanePlacement.right;
 
@@ -191,7 +191,7 @@ module SplitViewTests {
         assertAreRectsEqual(expectedPaneRect(config), paneRect, "Pane rect");
         assertContentLayoutCorrect(splitView, config);
     }
-    
+
     interface ITestLayoutArgs {
          rootHeight: number;
          rootWidth: number;
@@ -222,7 +222,7 @@ module SplitViewTests {
                             splitView.hiddenDisplayMode = hiddenDisplayMode;
                             splitView.shownDisplayMode = shownDisplayMode;
                             splitView.paneHidden = paneHidden;
-    
+
                             var config = {
                                 panePlacement: panePlacement,
                                 hiddenDisplayMode: hiddenDisplayMode,
@@ -236,13 +236,13 @@ module SplitViewTests {
                                 shownPaneHeight: args.shownPaneHeight,
                                 rtl: rtl
                             };
-                            
+
                             args.verify(splitView, config);
                         });
                     });
                 });
             });
-            
+
             Helper.removeElement(splitView.element);
             splitView.dispose();
         });
@@ -435,7 +435,7 @@ module SplitViewTests {
                 paneHTML: '<div class="pane-sizer"></div>'
             });
         }
-        
+
         // Verifies that a percentage sized element (e.g. width/height: 100%) is given the appropriate
         // size when placed within the SplitView's content element.
         // https://github.com/winjs/winjs/issues/801
@@ -552,7 +552,7 @@ module SplitViewTests {
                  options.panePlacement = splitView.panePlacement = panePlacement;
                  verify();
             });
-            
+
             ["none", "inline"].forEach((hiddenDisplayMode) => {
                  options.hiddenDisplayMode = splitView.hiddenDisplayMode = hiddenDisplayMode;
                  verify();
@@ -562,7 +562,7 @@ module SplitViewTests {
                  options.shownDisplayMode = splitView.shownDisplayMode = shownDisplayMode;
                  verify();
             });
-            
+
             [false, true].forEach((paneHidden) => {
                  options.paneHidden = splitView.paneHidden = paneHidden;
                  verify();

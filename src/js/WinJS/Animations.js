@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'exports',
     './Core/_Global',
@@ -639,7 +639,7 @@ define([
     }, { // Static Members
         supportedForProcessing: false,
     });
-    
+
     //
     // Resize animation
     //  The resize animation requires 2 animations to run simultaneously in sync with each other. It's implemented
@@ -654,7 +654,7 @@ define([
         var transitionProperty = _BaseUtils._browserStyleEquivalents["transition"].scriptName;
         element.style[transitionProperty] = duration + "ms " + transformNames.cssName + " " + transition.timing;
         element.style[transformNames.scriptName] = transition.to;
-    
+
         var finish;
         return new Promise(function (c) {
             var onTransitionEnd = function (eventObject) {
@@ -662,7 +662,7 @@ define([
                     finish();
                 }
             };
-            
+
             var didFinish = false;
             finish = function () {
                 if (!didFinish) {
@@ -673,12 +673,12 @@ define([
                 }
                 c();
             };
-    
+
             // Watch dog timeout
             var timeoutId = _Global.setTimeout(function () {
                 timeoutId = _Global.setTimeout(finish, duration);
             }, 50);
-    
+
             element.addEventListener(_BaseUtils._browserEventEquivalents["transitionEnd"], onTransitionEnd);
         }, function () {
             finish(); // On cancelation, complete the promise successfully to match PVL
@@ -691,21 +691,21 @@ define([
         if (!args.anchorTrailingEdge) {
             start = -start;
             end = -end;
-        } 
+        }
         var translate = args.dimension === "width" ? "translateX" : "translateY";
         var transition = {
             duration: args.duration,
-            timing: args.timing 
+            timing: args.timing
         };
-    
+
         // Set up
         elementClipper.style[transformNames.scriptName] = translate + "(" + start + "px)";
         element.style[transformNames.scriptName] = translate + "(" + -start + "px)";
-    
+
         // Resolve styles
         _Global.getComputedStyle(elementClipper).opacity;
         _Global.getComputedStyle(element).opacity;
-        
+
         // Animate
         var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + end + "px)" });
         var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -end + "px)" });
@@ -970,7 +970,7 @@ define([
             /// </returns>
             /// </signature>
             writeAnimationProfilerMark("showEdgeUI,StartTM");
-            
+
             var isTransition = options && options.mechanism === "transition";
             var offsetArray = new OffsetArray(offset, "WinJS-showEdgeUI", [{ top: "-70px", left: "0px" }]);
             return _TransitionAnimation[(isTransition ? "executeTransition" : "executeAnimation")](
@@ -1055,7 +1055,7 @@ define([
             /// </returns>
             /// </signature>
             writeAnimationProfilerMark("hideEdgeUI,StartTM");
-            
+
             var isTransition = options && options.mechanism === "transition";
             var offsetArray = new OffsetArray(offset, "WinJS-hideEdgeUI", [{ top: "-70px", left: "0px" }]);
             return _TransitionAnimation[(isTransition ? "executeTransition" : "executeAnimation")](
@@ -2487,19 +2487,19 @@ define([
             function emptyAnimationFunction() {
                 return Promise.wrap();
             }
-            
+
             return {
                 exit: emptyAnimationFunction,
                 entrance: exports.enterPage
             };
         },
-        
+
         // Plays an animation which makes an element look like it is resizing in 1 dimension. Arguments:
         // - elementClipper: The parent of *element*. It shouldn't have any margin, border, or padding and its
         //   size should match element's size. Its purpose is to clip *element* during the animation to give
         //   it the illusion that it is resizing.
         // - element: The element that should look like it's resizing.
-        // - args: An object with the following properties (each is required unless noted otherwise): 
+        // - args: An object with the following properties (each is required unless noted otherwise):
         //   - from: A number representing the old total width/height of the element.
         //   - to: A number representing the new total width/height of the element.
         //   - actualSize: A number representing the actual total width/height of the element (should be at least
@@ -2524,7 +2524,7 @@ define([
                     timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
                 };
                 var defaultTransition = args.to > args.from ? growTransition : shrinkTransition;
-                
+
                 return resizeTransition(elementClipper, element, _BaseUtils._merge(args, {
                     duration: args.duration === undefined ? defaultTransition.duration : args.duration,
                     timing: args.timing === undefined ? defaultTransition.timing : args.timing

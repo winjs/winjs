@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 //-----------------------------------------------------------------------------
 //  Position Tests for the "anchor" element of the tooltip (absolute, fixed, relative, relative).
 //  Make sure the tooltip still appears at the correct spot when the "anchor" element is positioned

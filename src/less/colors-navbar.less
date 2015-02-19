@@ -1,7 +1,7 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 .Colors(@theme) {
     .colorDefinitions(@theme);
-    
+
     // The desired visual design is to stack 3 elements on top of each other and have
     // their colors blend together by making the upper elements transparent. For example:
     // 1. NavBar Container: solid background color
@@ -15,45 +15,45 @@
     @navBarCommandRest: @listHover;
     @navBarCommandHover: overlay(@listHover, @listHover);
     @navBarCommandPress: overlay(@listPress, @listHover);
-    
+
     @openSplitRest: @listSelectRest;
     @openSplitHover: @listSelectHover;
     @openSplitPress: @listSelectPress;
-    
+
     .win-navbarcontainer-pageindicator {
         background-color: @baseLow;
     }
     .win-navbarcontainer-pageindicator-current {
         background-color: @baseMid;
     }
-    
+
     .win-navbarcontainer-navarrow {
         background-color: @baseMediumMid;
         color: @altMediumHigh;
-        
+
         &.win-navbarcontainer-navarrow:hover:active {
             background-color: @baseMediumHigh;
         }
     }
-    
+
     .win-navbarcommand-button,
     .win-navbarcommand-splitbutton {
         background-color: @navBarCommandRest;
         color: @baseHigh;
-        
+
         &.win-pressed {
             background-color: @navBarCommandPress;
         }
     }
-    
+
     .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened {
         background-color: @openSplitRest;
-        
+
         &.win-pressed {
             background-color: @openSplitPress;
         }
     }
-    
+
     .win-navbarcommand-button.win-keyboard:focus::before {
         content: "";
         pointer-events: none;
@@ -65,30 +65,30 @@
         width: 100%;
         border: 1px dotted @baseHigh;
     }
-    
+
     .win-navbarcommand-splitbutton.win-keyboard:focus::before {
         border-color: @baseHigh;
     }
 }
 .ColorsHover(@theme) {
     .colorDefinitions(@theme);
-    
+
     .win-navbarcontainer-navarrow:hover {
         background-color: @baseMid;
     }
-    
+
     .win-navbarcommand-button:hover,
     .win-navbarcommand-splitbutton:hover {
         background-color: @navBarCommandHover;
-        
+
         &.win-pressed {
             background-color: @navBarCommandPress;
         }
     }
-    
+
     .win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover {
         background-color: @openSplitHover;
-        
+
         &.win-pressed {
             background-color: @openSplitPress;
         }

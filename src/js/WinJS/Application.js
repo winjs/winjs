@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'exports',
     './Core/_Global',
@@ -47,7 +47,7 @@ define([
     var TypeToSearch = {
         _suggestionManager: null,
         _registered: false,
-        
+
         updateRegistration: function Application_TypeToSearch_updateRegistration() {
             var ls = listeners._listeners && listeners._listeners[requestingFocusOnKeyboardInputET] || [];
             if (!TypeToSearch._registered && ls.length > 0) {
@@ -69,19 +69,19 @@ define([
                 TypeToSearch._registered = false;
             }
         },
-        
+
         _keydownCaptureHandler: function Application_TypeToSearch_keydownCaptureHandler(event) {
             if (TypeToSearch._registered && TypeToSearch._shouldKeyTriggerTypeToSearch(event)) {
                 requestingFocusOnKeyboardInput();
             }
         },
-    
+
         _frameLoadCaptureHandler: function Application_TypeToSearch_frameLoadCaptureHandler(event) {
             if (TypeToSearch._registered) {
                 TypeToSearch._updateKeydownCaptureListeners(event.target.contentWindow, true /*add*/);
             }
         },
-    
+
         _updateKeydownCaptureListeners: function Application_TypeToSearch_updateKeydownCaptureListeners(win, add) {
             // Register for child frame keydown events in order to support FocusOnKeyboardInput
             // when focus is in a child frame.  Also register for child frame load events so
@@ -96,12 +96,12 @@ define([
                 }
             } catch (e) { // if the IFrame crosses domains, we'll get a permission denied error
             }
-    
+
             if (win.frames) {
                 for (var i = 0, l = win.frames.length; i < l; i++) {
                     var childWin = win.frames[i];
                     TypeToSearch._updateKeydownCaptureListeners(childWin, add);
-    
+
                     try {
                         if (add) {
                             if (childWin.frameElement) {
@@ -117,7 +117,7 @@ define([
                 }
             }
         },
-    
+
         _shouldKeyTriggerTypeToSearch: function Application_TypeToSearch_shouldKeyTriggerTypeToSearch(event) {
             var shouldTrigger = false;
             // First, check if a metaKey is pressed (only applies to MacOS). If so, do nothing here.
@@ -137,7 +137,7 @@ define([
                         case 0x37:  //0x37 7 key
                         case 0x38:  //0x38 8 key
                         case 0x39:  //0x39 9 key
-    
+
                         case 0x41:  //0x41 A key
                         case 0x42:  //0x42 B key
                         case 0x43:  //0x43 C key
@@ -164,7 +164,7 @@ define([
                         case 0x58:  //0x58 X key
                         case 0x59:  //0x59 Y key
                         case 0x5A:  //0x5A Z key
-    
+
                         case 0x60:  // VK_NUMPAD0,             //0x60 Numeric keypad 0 key
                         case 0x61:  // VK_NUMPAD1,             //0x61 Numeric keypad 1 key
                         case 0x62:  // VK_NUMPAD2,             //0x62 Numeric keypad 2 key
@@ -181,7 +181,7 @@ define([
                         case 0x6D:  // VK_SUBTRACT,            //0x6D Subtract key
                         case 0x6E:  // VK_DECIMAL,             //0x6E Decimal key
                         case 0x6F:  // VK_DIVIDE,              //0x6F Divide key
-    
+
                         case 0xBA:  // VK_OEM_1,               //0xBA Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ';:' key
                         case 0xBB:  // VK_OEM_PLUS,            //0xBB For any country/region, the '+' key
                         case 0xBC:  // VK_OEM_COMMA,           //0xBC For any country/region, the ',' key
@@ -189,17 +189,17 @@ define([
                         case 0xBE:  // VK_OEM_PERIOD,          //0xBE For any country/region, the '.' key
                         case 0xBF:  // VK_OEM_2,               //0xBF Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '/?' key
                         case 0xC0:  // VK_OEM_3,               //0xC0 Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '`~' key
-    
+
                         case 0xDB:  // VK_OEM_4,               //0xDB Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '[{' key
                         case 0xDC:  // VK_OEM_5,               //0xDC Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the '\|' key
                         case 0xDD:  // VK_OEM_6,               //0xDD Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ']}' key
                         case 0xDE:  // VK_OEM_7,               //0xDE Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the 'single-quote/double-quote' key
                         case 0xDF:  // VK_OEM_8,               //0xDF Used for miscellaneous characters; it can vary by keyboard.
-    
+
                         case 0xE2:  // VK_OEM_102,             //0xE2 Either the angle bracket key or the backslash key on the RT 102-key keyboard
-    
+
                         case 0xE5:  // VK_PROCESSKEY,          //0xE5 IME PROCESS key
-    
+
                         case 0xE7:  // VK_PACKET,              //0xE7 Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
                             shouldTrigger = true;
                             break;
@@ -642,21 +642,21 @@ define([
         });
         dispatchEvent(eventRecord);
     }
-    
+
     function requestingFocusOnKeyboardInput() {
         // Built in listener for beforeRequestingFocusOnKeyboardInputET will trigger
         // requestingFocusOnKeyboardInputET if it wasn't handled.
         dispatchEvent({ type: beforeRequestingFocusOnKeyboardInputET });
     }
-    
+
     function edgyStarting(eventObject) {
         dispatchEvent({ type: edgyStartingET, kind: eventObject.kind });
     }
-    
+
     function edgyCompleted(eventObject) {
         dispatchEvent({ type: edgyCompletedET, kind: eventObject.kind });
     }
-    
+
     function edgyCanceled(eventObject) {
         dispatchEvent({ type: edgyCanceledET, kind: eventObject.kind });
     }
@@ -670,7 +670,7 @@ define([
             if (_Global.document) {
                 _Global.addEventListener("error", errorHandler, false);
                 if (_WinRT.Windows.UI.WebUI.WebUIApplication) {
-                    
+
                     var wui = _WinRT.Windows.UI.WebUI.WebUIApplication;
                     wui.addEventListener("activated", activatedHandler, false);
                     wui.addEventListener("suspending", suspendingHandler, false);
@@ -685,7 +685,7 @@ define([
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
                 }
-                
+
                 if (_WinRT.Windows.UI.Input.EdgeGesture) {
                     var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                     edgy.addEventListener("starting", edgyStarting);
@@ -721,7 +721,7 @@ define([
                 if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
                 }
-                
+
                 if (_WinRT.Windows.UI.Input.EdgeGesture) {
                     var edgy = _WinRT.Windows.UI.Input.EdgeGesture.getForCurrentView();
                     edgy.removeEventListener("starting", edgyStarting);
@@ -828,7 +828,7 @@ define([
         },
 
         queueEvent: queueEvent,
-        
+
         // Like queueEvent but fires the event synchronously. Useful in tests.
         _dispatchEvent: dispatchEvent,
 
@@ -840,7 +840,7 @@ define([
                 terminateAppHandler = value;
             }
         },
-        
+
         _applicationListener: _Base.Namespace._lazy(function () {
             // Use _lazy because publicNS can't be referenced in its own definition
             return new _ElementUtilities._GenericListener("Application", publicNS);

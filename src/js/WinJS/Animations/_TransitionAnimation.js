@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'exports',
     '../Core/_Global',
@@ -429,7 +429,7 @@ define([
     var animationTimeAdjustment = function _animationTimeAdjustmentImpl(v) {
         return v * animationFactor;
     };
-    
+
     var animationFactor = 1;
     var libraryDelay = 0;
 

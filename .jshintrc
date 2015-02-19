@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 {
     /*
         ENFORCING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce more warnings about your code.
@@ -6,21 +6,21 @@
     */
     "bitwise": false, // Prohibits the use of bitwise operators. Bitwise operators are very rare in JavaScript programs and quite often & is simply a mistyped &&.
     "camelcase": false, // Allows you to force all variable names to use either camelCase style or UPPER_CASE with underscores.
-    "curly": true, // Requires you to always put curly braces around blocks in loops and conditionals. 
+    "curly": true, // Requires you to always put curly braces around blocks in loops and conditionals.
     "eqeqeq": true, // Prohibits the use of == and != in favor of === and !==
     "es3": false, // Prohibits the use of syntax beynd ECMAScript 3 specification.
     "forin": false, // Requires all for in loops to filter object's items.
     "freeze": true, // Prohibits overwriting prototypes of native objects such as Array, Date and so on.
     "immed": true, // Prohibits the use of immediate function invocations without wrapping them in parentheses.
-    "indent": false, // Enforces specific tab width for your code. 
+    "indent": false, // Enforces specific tab width for your code.
     "latedef": false, // Prohibits the use of a variable before it was defined
     "newcap": false, // Requires you to capitalize names of constructor functions
-    "noarg": true, // Prohibits the use of arguments.caller and arguments.callee. 
+    "noarg": true, // Prohibits the use of arguments.caller and arguments.callee.
     "noempty": false, // Warns when you have an empty block in your code.
     "nonbsp": true, // Warns about "non-breaking whitespace" characters.
     "nonew": true, // Prohibits the use of constructor functions for side-effects.
     "plusplus": false, // Prohibits the use of unary increment and decrement operators.
-    "quotmark": false, // Enforces the consistency of quotation marks used throughout your code. 
+    "quotmark": false, // Enforces the consistency of quotation marks used throughout your code.
     "undef": true, // Prohibits the use of explicitly undeclared variables.
     "unused": "vars", // Warns when you define and never use your variables.
     "strict": true, // Requires all functions to run in ECMAScript 5's strict mode.
@@ -28,17 +28,17 @@
     "maxparams": false, // Lets you set the max number of formal parameters allowed per function.
     "maxdepth": false, // Lets you control how nested do you want your blocks to be.
     "maxstatements": false, // Lets you set the max number of statements allowed per function.
-    "maxcomplexity": false, // Lets you control cyclomatic complexity throughout your code. 
+    "maxcomplexity": false, // Lets you control cyclomatic complexity throughout your code.
     "maxlen": false, // lets you set the maximum length of a line.
 
-    /* 
+    /*
         RELAXING Options: When set to true, (or in some cases an integer value) these options will make JSHint produce less warnings about your code
         http://www.jshint.com/docs/options/#relaxing-options
     */
     "asi": false, // Suppresses warnings about missing semicolons.
     "boss": true, // Suppresses warnings about the use of assignments in cases where comparisons are expected. More often than not, code like if (a = 10) {} is a typo.
     "debug": false, // Suppresses warnings about the debugger statements in your code.
-    "eqnull": false, // Suppresses warnings about == null comparisons. 
+    "eqnull": false, // Suppresses warnings about == null comparisons.
     "esnext": false, // Tells JSHint that your code uses ECMAScript 6 specific syntax.
     "evil": false, // Suppresses warnings about the use of eval.
     "expr": true, // Suppresses warnings about the use of expressions where normally you would expect to see assignments or function calls.
@@ -47,19 +47,19 @@
     "globalstrict": true, // Suppresses warnings about the use of global strict mode.
     "iterator": false, // Suppresses warnings about the __iterator__ property.
     "lastsemic": false, // Suppresses warnings about missing semicolons, but only when the semicolon is omitted for the last statement in a one-line block.
-    "laxbreak": true, // Suppresses most of the warnings about possibly unsafe line breakings in your code. 
+    "laxbreak": true, // Suppresses most of the warnings about possibly unsafe line breakings in your code.
     "laxcomma": false, // Suppresses warnings about comma-first coding style.
     "loopfunc": true, // Suppresses warnings about functions inside of loops.
     "maxerr": 10000, // Allows you to set the maximum amount of warnings JSHint will produce before giving up on a given file. Default is 50.
-    "moz": false, // Options tells JSHint that your code uses Mozilla JavaScript extensions. 
+    "moz": false, // Options tells JSHint that your code uses Mozilla JavaScript extensions.
     "multistr": true, // Suppresses warnings about multi-line strings. Multi-line strings can be dangerous if you accidentally put a whitespace in between the escape character (\) and a new line.
-    "notypeof": false, // Suppresses warnings about invalid typeof operator values. 
+    "notypeof": false, // Suppresses warnings about invalid typeof operator values.
     "proto": false, // Suppresses warnings about the __proto__ property.
     "scripturl": false, // Suppresses warnings about the use of script-targeted URL's such as javascript:....
     "smarttabs": false, // Suppresses warnings about mixed tabs and spaces when the latter are used for alignmnent only.
     "shadow": true, // Suppresses warnings about variable shadowing i.e. declaring a variable that had been already declared somewhere in the outer scope.
     "sub": true, // Suppresses warnings about using [] notation when it can be expressed in dot notation: person['name'] vs. person.name.
-    "supernew": false, // Suppresses warnings about "weird" constructions like new function () { ... } and new Object;. 
+    "supernew": false, // Suppresses warnings about "weird" constructions like new function () { ... } and new Object;.
     "noyield": false, // Suppresses warnings about generator functions with no yield statement in them.
 
     /*
@@ -67,17 +67,17 @@
         http://www.jshint.com/docs/
     */
     "-W053": true, // Ignore (W053)  Do not use String as a constructor.
-    "-W018": true, // Ignore (W018)  Confusing use of '!'. This rule doesn't like !! for coercion.    
+    "-W018": true, // Ignore (W018)  Confusing use of '!'. This rule doesn't like !! for coercion.
 
 
-    /* 
+    /*
         ENVIORNMENT Options: These options let JSHint know about some pre-defined global variables.
-        http://www.jshint.com/docs/options/#environments 
+        http://www.jshint.com/docs/options/#environments
     */
-    "browser": false, // Defines globals exposed by modern browsers. Does not include development variables like alert or console.    
-    "node": false, // Defines globals available when your code is running inside of the Node runtime environment.    
+    "browser": false, // Defines globals exposed by modern browsers. Does not include development variables like alert or console.
+    "node": false, // Defines globals available when your code is running inside of the Node runtime environment.
 
-    /* 
+    /*
         GLOBAL WinJS enviornment variables: Tells JSHint about global variables used by WinJS that are defined elsewhere. If a value is false, JSHint will consider that variable as read-only.
         https://www.npmjs.org/package/grunt-contrib-jshint
     */

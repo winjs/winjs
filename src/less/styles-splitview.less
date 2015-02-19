@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 @import "base.less";
 @import "mixins.less";
@@ -9,26 +9,26 @@
     height: 100%;
     #flex > .display-flex();
     overflow: hidden;
-    
+
     &.win-splitview-placementtop,
     &.win-splitview-placementbottom {
         #flex > .flex-direction(column);
-        
+
         .win-splitview-panewrapper {
             #flex > .flex-direction(column);
         }
     }
-    
+
     .win-splitview-panewrapper {
         position: relative; // Enable absolute positioning to work inside of the pane
         z-index: 1;
         outline: none; // Don't render a focus visual
         #flex > .flex(none);
         overflow: hidden;
-        
+
         #flex > .display-flex();
     }
-    
+
     .win-splitview-pane,
     .win-splitview-paneplaceholder {
         #flex > .flex(none);
@@ -41,7 +41,7 @@
         #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
         overflow: hidden;
     }
-    
+
     .win-splitview-content {
         position: absolute;
         width: 100%;
@@ -55,14 +55,14 @@
                 width: 320px;
             }
         }
-        
+
         &.win-splitview-placementtop,
         &.win-splitview-placementbottom {
             .win-splitview-pane {
                 height: 60px;
             }
         }
-        
+
         &.win-splitview-showndisplayoverlay {
             &.win-splitview-placementtop .win-splitview-panewrapper {
                 position: absolute;
@@ -70,14 +70,14 @@
                 left: 0;
                 width: 100%;
             }
-    
+
             &.win-splitview-placementbottom .win-splitview-panewrapper {
                 position: absolute;
                 bottom: 0;
                 left: 0;
                 width: 100%;
             }
-        
+
             @pane-left: {
                 .win-splitview-panewrapper {
                     position: absolute;
@@ -87,7 +87,7 @@
                     height: 100%;
                 }
             };
-            
+
             @pane-right: {
                 .win-splitview-panewrapper {
                     position: absolute;
@@ -97,12 +97,12 @@
                     height: 100%;
                 }
             };
-            
+
             &.win-splitview-placementleft {
                 @pane-left();
                 .RTL(@pane-right);
             }
-            
+
             &.win-splitview-placementright {
                 @pane-right();
                 .RTL(@pane-left);
@@ -128,7 +128,7 @@
                 width: 48px;
             }
         }
-        
+
         &.win-splitview-hiddendisplaynone .win-splitview-pane {
             display: none;
         }
