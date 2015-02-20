@@ -647,7 +647,6 @@ _Global.document.addEventListener("DOMContentLoaded",() => {
 
 // Publish to WinJS namespace
 var toPublish = {
-    keyCodeMap: keyCodeMap,
     focusRoot: {
         get: function () {
             return focusRoot;
@@ -660,7 +659,10 @@ var toPublish = {
     enableXYFocus: enableXYFocus,
     disableXYFocus: disableXYFocus,
     findNextFocusElement: findNextFocusElement,
+    keyCodeMap: keyCodeMap,
     moveFocus: moveFocus,
+    onfocuschanged: _Events._createEventProperty(EventNames.focusChanged),
+    onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
 
     _xyFocus: _xyFocus
 };

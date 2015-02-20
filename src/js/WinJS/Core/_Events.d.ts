@@ -6,6 +6,14 @@
  * @returns The object with the specified properties. The names of the properties are prefixed with 'on'.
 **/
 export declare function createEventProperties(...events: string[]): any;
+
+/**
+ * Creates an event property.
+ * @param eventName The name of the event.
+ * @returns The event property.
+**/
+export declare function _createEventProperty(eventName: string): any;
+
 /**
  * A mixin that contains event-related functions.
 **/
