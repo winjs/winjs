@@ -153,7 +153,7 @@ export class _CommandingSurface {
         overflowButtonWidth: number;
         separatorWidth: number;
         standardCommandWidth: number;
-        contentCommandWidths: { [uniqueID: string]: number };
+        contentCommandWidths: { [uniqueID: string]: number; };
         actionAreaContentBoxWidth: number;
     };
 
@@ -740,7 +740,7 @@ export class _CommandingSurface {
                 actionAreaContentBoxWidth = _ElementUtilities.getContentWidth(this._dom.actionArea),
                 separatorWidth = 0,
                 standardCommandWidth = 0,
-                contentCommandWidths = {};
+                contentCommandWidths: { [uniqueID: string]: number; } = {};
 
             this._primaryCommands.forEach((command) => {
                 // Ensure that the element we are measuring does not have display: none (e.g. it was just added, and it
