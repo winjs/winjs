@@ -20,11 +20,13 @@
         .win-itemcontainer .win-focusedoutline {
             outline: rgb(255, 255, 255) dashed 2px;
         }
-        .win-listview .win-container.win-selected .win-selectionborder,
-        .win-itemcontainer.win-container.win-selected .win-selectionborder,
         .win-listview.win-selectionstylefilled .win-selected .win-selectionbackground,
         .win-itemcontainer.win-selectionstylefilled.win-selected .win-selectionbackground  {
             opacity: 0.6;
+        }
+        .win-listview.win-selectionstylefilled .win-selected,
+        .win-itemcontainer.win-selectionstylefilled.win-selected {
+            color: rgb(255, 255, 255);
         }
     }
 
@@ -45,11 +47,13 @@
         .win-itemcontainer .win-focusedoutline {
             outline: rgb(0, 0, 0) dashed 2px;
         }
-        .win-listview .win-container.win-selected .win-selectionborder,
-        .win-itemcontainer.win-container.win-selected .win-selectionborder,
         .win-listview.win-selectionstylefilled .win-selected .win-selectionbackground,
         .win-itemcontainer.win-selectionstylefilled.win-selected .win-selectionbackground {
             opacity: 0.4;
+        }
+        .win-listview.win-selectionstylefilled .win-selected,
+        .win-itemcontainer.win-selectionstylefilled.win-selected {
+            color: rgb(0, 0, 0);
         }
     }
 
@@ -144,10 +148,6 @@ html.win-hoverable .win-selectionstylefilled .win-itemcontainer.win-container:ho
 .win-selectionstylefilled .win-itemcontainer .win-itembox,
 .win-listview.win-selectionstylefilled .win-itembox {
     background-color: transparent;
-}
-.win-listview.win-selectionstylefilled .win-selected,
-.win-itemcontainer.win-selectionstylefilled.win-selected {
-    color: rgb(255, 255, 255);
 }
 .win-listview.win-selectionstylefilled .win-container.win-selected .win-selectionborder,
 .win-itemcontainer.win-selectionstylefilled.win-container.win-selected .win-selectionborder {
