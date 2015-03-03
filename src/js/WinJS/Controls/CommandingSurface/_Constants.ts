@@ -7,13 +7,15 @@ export var overflowButtonCssClass = "win-commandingsurface-overflowbutton";
 export var spacerCssClass = "win-commandingsurface-spacer";
 export var ellipsisCssClass = "win-commandingsurface-ellipsis";
 export var overflowAreaCssClass = "win-commandingsurface-overflowarea";
-export var overflowContentFlyoutCssClass = "win-commandingsurface-contentflyout";
+export var contentFlyoutCssClass = "win-commandingsurface-contentflyout";
 export var emptyCommandingSurfaceCssClass = "win-commandingsurface-empty";
 export var menuCssClass = "win-menu";
 export var menuContainsToggleCommandClass = "win-menu-containstogglecommand";
 export var menuContainsFlyoutCommandClass = "win-menu-containsflyoutcommand";
 
 export var contentMenuCommandDefaultLabel = "Custom content";
+
+export var defaultClosedDisplayMode = "compact";
 
 // Constants for commands
 export var typeSeparator = "separator";

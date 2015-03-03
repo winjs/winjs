@@ -18,9 +18,17 @@ module Helper._CommandingSurface {
         commandType: "WinJS.UI.AppBarCommand",
         secondaryCommandSection: "secondary",
         commandSelector: ".win-command",
+
+        actionAreaCommandWidth: 68,
+        actionAreaSeparatorWidth: 34,
+        actionAreaOverflowButtonWidth: 32,
+
         overflowCommandHeight: 44,
         overflowSeparatorHeight: 12,
         commandingSurfaceMinWidth: 68,
+
+        heightOfMinimal: 24,
+        heightOfCompact: 48,
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
@@ -46,8 +54,8 @@ module Helper._CommandingSurface {
         }
     }
 
-    export function verifyMainActionVisibleCommandsLabels(commandingSurface: WinJS.UI._CommandingSurface, labels: string[]) {
-        var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateCommandingSurface>commandingSurface.element.winControl)._mainActionArea);
+    export function verifyActionAreaVisibleCommandsLabels(commandingSurface: WinJS.UI._CommandingSurface, labels: string[]) {
+        var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateCommandingSurface>commandingSurface.element.winControl)._dom.actionArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);
@@ -56,7 +64,7 @@ module Helper._CommandingSurface {
 
     export function verifyOverflowAreaCommandsLabels(commandingSurface: WinJS.UI._CommandingSurface, labels: string[]) {
         var control = <WinJS.UI.PrivateCommandingSurface>commandingSurface.element.winControl;
-        var commands = getVisibleCommandsInElement(control._overflowArea);
+        var commands = getVisibleCommandsInElement(control._dom.overflowArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
             LiveUnit.Assert.areEqual(label, commands[index].winControl.label);

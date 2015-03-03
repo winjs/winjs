@@ -387,15 +387,16 @@ declare module WinJS {
             _disposed: boolean;
             _primaryCommands: ICommand[];
             _secondaryCommands: ICommand[];
-            _overflowButton: HTMLButtonElement;
-            _mainActionArea: HTMLElement;
-            _overflowArea: HTMLElement;
-            _separatorWidth: number;
-            _standardCommandWidth: number;
-            _overflowButtonWidth: number;
             _getCommandWidth(command: ICommand): number;
-            _customContentFlyout: WinJS.UI.Flyout;
-            _customContentContainer: HTMLElement;
+            _contentFlyout: WinJS.UI.Flyout;
+            _contentFlyoutInterior: HTMLElement;
+            _dom: {
+                root: HTMLElement;
+                actionArea: HTMLElement;
+                spacer: HTMLDivElement;
+                overflowButton: HTMLButtonElement;
+                overflowArea: HTMLElement;
+            };
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {
@@ -568,6 +569,13 @@ declare module WinJS {
             constructor(element?: HTMLElement, options?: any);
             public dispose(): void;
             public forceLayout(): void;
+            public closedDisplayMode: string;
+            public static ClosedDisplayMode: {
+                none: string;
+                minimal: string;
+                compact: string;
+                full: string;
+            };
         }
 
         class ToolBar {

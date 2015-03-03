@@ -1637,5 +1637,4 @@ define([
             return AppBar;
         })
     });
-
 });
