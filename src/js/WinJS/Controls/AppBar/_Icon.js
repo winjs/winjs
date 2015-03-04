@@ -203,7 +203,8 @@ define([
                     "threebars",
                     "fourbars",
                     "scan",
-                    "preview"];
+                    "preview",
+                    "hamburger"];
 
     // Provide properties to grab resources for each of the icons
     /// <summary locid="WinJS.UI.AppBarIcon">
