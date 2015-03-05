@@ -3,12 +3,11 @@
 
 ### Which symbols are included?
 
-![image](https://cloud.githubusercontent.com/assets/1873511/4743617/a1ca0458-5a29-11e4-87a6-04c173b3e19a.png)
-![image](https://cloud.githubusercontent.com/assets/1873511/4743753/9ee5e1ca-5a2a-11e4-89e8-8aca67823755.png)
-![image](https://cloud.githubusercontent.com/assets/1873511/4743636/c7c05630-5a29-11e4-871b-8e11a2459cc1.png)
-![image](https://cloud.githubusercontent.com/assets/1873511/4743645/d457173a-5a29-11e4-84a8-705ff6b7167a.png)
-![image](https://cloud.githubusercontent.com/assets/1873511/4743653/e42df700-5a29-11e4-88e9-c9c86ab0917f.png)
-![image](https://cloud.githubusercontent.com/assets/1873511/4743665/f108b276-5a29-11e4-9938-6292135862c0.png)
+![image](https://cloud.githubusercontent.com/assets/3892683/6515305/b673bc64-c33d-11e4-9c9a-b93c665a7900.png)
+![image](https://cloud.githubusercontent.com/assets/3892683/6515311/c8608b00-c33d-11e4-954a-efe920b7570b.png)
+![image](https://cloud.githubusercontent.com/assets/3892683/6515316/d173c2fc-c33d-11e4-882f-e62ed2c83830.png)
+![image](https://cloud.githubusercontent.com/assets/3892683/6515323/daaa49d6-c33d-11e4-82a0-ecb68d69cafc.png)
+![image](https://cloud.githubusercontent.com/assets/3892683/6515327/e284152e-c33d-11e4-9c4b-6743a40a22c6.png)
 
 ### How to reference them?
 
