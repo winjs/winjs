@@ -214,6 +214,7 @@
             cap["browserstack.user"] = "winjsproject";
             cap["browserstack.key"] = "scb8Tm2t5saetT1KzPBd";
             cap["browserstack.local"] = true;
+            cap["browserstack.debug"] = true;
         });
 
         var uris = [
