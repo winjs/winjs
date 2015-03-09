@@ -266,8 +266,8 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         //
         // If that is the case, we need to reset the coordinates to the edge of the target element.
         if (direction === DirectionNames.left || direction === DirectionNames.right) {
-            newHistoryRect.top = _Global.Math.max(result.targetRect.top, result.referenceRect.top, _historyRect ? _historyRect.top : Number.MIN_VALUE);
-            newHistoryRect.bottom = _Global.Math.min(result.targetRect.bottom, result.referenceRect.bottom, _historyRect ? _historyRect.bottom : Number.MAX_VALUE);
+            newHistoryRect.top = Math.max(result.targetRect.top, result.referenceRect.top, _historyRect ? _historyRect.top : Number.MIN_VALUE);
+            newHistoryRect.bottom = Math.min(result.targetRect.bottom, result.referenceRect.bottom, _historyRect ? _historyRect.bottom : Number.MAX_VALUE);
             if (newHistoryRect.bottom <= newHistoryRect.top) {
                 newHistoryRect.top = result.targetRect.top;
                 newHistoryRect.bottom = result.targetRect.bottom;
@@ -278,8 +278,8 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
             newHistoryRect.left = Number.MIN_VALUE;
             newHistoryRect.right = Number.MAX_VALUE;
         } else {
-            newHistoryRect.left = _Global.Math.max(result.targetRect.left, result.referenceRect.left, _historyRect ? _historyRect.left : Number.MIN_VALUE);
-            newHistoryRect.right = _Global.Math.min(result.targetRect.right, result.referenceRect.right, _historyRect ? _historyRect.right : Number.MAX_VALUE);
+            newHistoryRect.left = Math.max(result.targetRect.left, result.referenceRect.left, _historyRect ? _historyRect.left : Number.MIN_VALUE);
+            newHistoryRect.right = Math.min(result.targetRect.right, result.referenceRect.right, _historyRect ? _historyRect.right : Number.MAX_VALUE);
             if (newHistoryRect.right <= newHistoryRect.left) {
                 newHistoryRect.left = result.targetRect.left;
                 newHistoryRect.right = result.targetRect.right;
@@ -299,7 +299,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
     options.focusRoot = options.focusRoot || focusRoot || _Global.document.body;
     options.historyRect = options.historyRect || _defaultRect();
 
-    var maxDistance = _Global.Math.max(_Global.screen.availHeight, _Global.screen.availWidth);
+    var maxDistance = Math.max(_Global.screen.availHeight, _Global.screen.availWidth);
     var refObj = getReferenceObject(options.referenceElement, options.referenceRect);
 
     // Handle override
@@ -369,7 +369,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return 0;
         }
 
-        var pixelOverlapWithTheReferenceShadow = _Global.Math.min(maxReferenceCoord, maxPotentialCoord) - _Global.Math.max(minReferenceCoord, minPotentialCoord);
+        var pixelOverlapWithTheReferenceShadow = Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord);
         var referenceEdgeLength = maxReferenceCoord - minReferenceCoord;
         return pixelOverlapWithTheReferenceShadow / referenceEdgeLength;
     }
@@ -540,12 +540,12 @@ function _defaultRect(): IRect {
 
 function _toIRect(rect: IRect): IRect {
     return {
-        top: _Global.Math.floor(rect.top),
-        bottom: _Global.Math.floor(rect.top + rect.height),
-        right: _Global.Math.floor(rect.left + rect.width),
-        left: _Global.Math.floor(rect.left),
-        height: _Global.Math.floor(rect.height),
-        width: _Global.Math.floor(rect.width),
+        top: Math.floor(rect.top),
+        bottom: Math.floor(rect.top + rect.height),
+        right: Math.floor(rect.left + rect.width),
+        left: Math.floor(rect.left),
+        height: Math.floor(rect.height),
+        width: Math.floor(rect.width),
     };
 }
 
