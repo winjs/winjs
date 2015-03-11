@@ -13,6 +13,11 @@ interface IStyleEquivalentsMap {
     [key: string]: IStyleEquivalents;
 }
 
+interface IShowHideMachine {
+    _state: { name: string; } 
+}
+
+
 declare module WinJS {
 
     interface IPosition {
@@ -194,7 +199,7 @@ declare module WinJS {
             _prepareAnimation(paneRect: any, contentRect: any): void;
             _clearAnimation(): void;
             _disposed: boolean;
-            _machine: { _state: { name: string } };
+            _machine: IShowHideMachine
         }
 
         interface ISelect {
@@ -390,6 +395,8 @@ declare module WinJS {
             _getCommandWidth(command: ICommand): number;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
+            _playShowAnimation(): Promise<any>;
+            _playHideAnimation(): Promise<any>;
             _dom: {
                 root: HTMLElement;
                 actionArea: HTMLElement;
@@ -397,6 +404,7 @@ declare module WinJS {
                 overflowButton: HTMLButtonElement;
                 overflowArea: HTMLElement;
             };
+            _machine: IShowHideMachine;
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {
@@ -576,6 +584,16 @@ declare module WinJS {
                 compact: string;
                 full: string;
             };
+            public open(): void;
+            public close(): void;
+            public opened: boolean;
+            public onbeforeshow: (ev: CustomEvent) => void;
+            public onaftershow: (ev: CustomEvent) => void;
+            public onbeforehide: (ev: CustomEvent) => void;
+            public onafterhide: (ev: CustomEvent) => void;
+            public addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+            public removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+            public dispatchEvent(type: string, eventProperties: any): boolean;
         }
 
         class ToolBar {

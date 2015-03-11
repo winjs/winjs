@@ -78,6 +78,9 @@ import _Signal = require('../_Signal');
 //       hide() {
 //           this._machine.hide();
 //       }
+//       forceLayout() {
+//           this._machine.updateDom();
+//       }
 //       dispose() {
 //           this._machine.dispose();
 //       }

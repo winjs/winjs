@@ -4,6 +4,7 @@
     width: 100%;
     outline: none;
     min-width: 68px; /* enough for one primary command */
+    position:relative;
     .win-commandingsurface-actionarea {
         width: 100%;
         min-height: 24px;
@@ -18,7 +19,6 @@
             min-height: 48px; /* height of a primary command with no label */
             width: 0px;
         }
-
         .win-command,
         .win-commandingsurface-overflowbutton {
             #flex > .flex(none);
@@ -28,7 +28,7 @@
             width: 32px; /* 30px + 2px border */
             margin: 0px;
             padding: 0px;
-            border-width: 1px; 
+            border-width: 1px;
             border-style: dotted;
             min-width: 0px;
             min-height: 0px;
@@ -48,28 +48,49 @@
         }
     }
 
-    &.win-commandingsurface-closeddisplayfull .win-commandingsurface-actionarea {
-        height: auto;
-    }
-
-    &.win-commandingsurface-closeddisplaycompact .win-commandingsurface-actionarea {
-        height: 48px;
-
-        .win-command .win-label {
+    &.win-commandingsurface-empty {
+        .win-commandingsurface-overflowbutton {
             display: none;
         }
     }
 
-    &.win-commandingsurface-closeddisplayminimal .win-commandingsurface-actionarea {
-        height: 24px;
-
-        .win-command, .win-commandingsurface-spacer {
-            display: none;
+    &.win-commandingsurface-opened {
+        .win-commandingsurface-actionarea {
+            height: auto;
+        }
+        .win-commandingsurface-overflowarea {
+            display: block;
         }
     }
 
-    &.win-commandingsurface-closeddisplaynone {
-        display: none;
+    &.win-commandingsurface-closed {
+        &.win-commandingsurface-closeddisplayfull .win-commandingsurface-actionarea {
+            height: auto;
+        }
+
+        &.win-commandingsurface-closeddisplaycompact .win-commandingsurface-actionarea {
+            height: 48px;
+
+            .win-command .win-label {
+                display: none;
+            }
+        }
+
+        &.win-commandingsurface-closeddisplayminimal .win-commandingsurface-actionarea {
+            height: 24px;
+
+            .win-command, .win-commandingsurface-spacer {
+                display: none;
+            }
+        }
+
+        &.win-commandingsurface-closeddisplaynone {
+            display: none;
+        }
+
+        .win-commandingsurface-overflowarea {
+            display: none;
+        }
     }
 
     &.win-commandingsurface-empty {
@@ -83,17 +104,18 @@
         #flex > .flex-direction(column);
         min-width: 320px;
         min-height: 0;
-        max-height: 198px; /* 4.5 * 44px */
+        max-height: 50vh;
         overflow-y: auto;
         overflow-x: hidden;
         padding: 0;
+        position: absolute;
 
         &.win-menu {
             max-width: inherit; /* Turn off max-width styles from .win-menu */
         }
 
         button.win-command {
-            #flex > .flex(@grow: 0; @shrink: 0);
+            #flex > .flex(none);
             border: 1px dotted transparent;
             padding: 10px 11px 12px 11px;
             .win-type-body();
@@ -103,7 +125,7 @@
         }
 
         hr.win-command {
-            #flex > .flex(@grow: 0; @shrink: 0);
+            #flex > .flex(none);
             height: 2px;
             margin: 6px 12px 4px 12px;
         }
