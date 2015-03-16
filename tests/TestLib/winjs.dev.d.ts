@@ -678,7 +678,6 @@ declare module WinJS {
         module Fragments {
             var _cacheStore;
             function clearCache();
-            var _forceLocal;
             var _getFragmentContents;
             var _writeProfilerMark;
         }
