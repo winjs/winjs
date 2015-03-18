@@ -12,53 +12,10 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_UI',
     './_Constants'
-    ], function itemEventsHandlerInit(exports, _Global, _WinRT, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
+], function itemEventsHandlerInit(exports, _Global, _WinRT, _Base, _BaseUtils, _WriteProfilerMark, Animations, _TransitionAnimation, Promise, _ElementUtilities, _UI, _Constants) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
-    var MAX_TILT_ROTATION = 0.15;
-    var MAX_TILT_SHRINK = 0.025;
-
-    function unitVector3d(v) {
-        var mag = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-        return {
-            x: v.x / mag,
-            y: v.y / mag,
-            z: v.z / mag
-        };
-    }
-
-    // Returns a CSS rotation matrix which rotates by *angle* radians over *axis*.
-    // *axis* is an object of the form: { x: number, y: number, z: number }
-    function rotationTransform3d(angle, axis) {
-        var u = unitVector3d(axis);
-        var cos = Math.cos(angle);
-        var sin = Math.sin(angle);
-        var matrix = [
-            cos + u.x * u.x * (1 - cos),
-            u.x * u.y * (1 - cos) - u.z * sin,
-            u.x * u.z * (1 - cos) + u.y * sin,
-            0,
-
-            u.y * u.x * (1 - cos) + u.z * sin,
-            cos + u.y * u.y * (1 - cos),
-            u.y * u.z * (1 - cos) - u.x * sin,
-            0,
-
-            u.z * u.x * (1 - cos) - u.y * sin,
-            u.z * u.y * (1 - cos) + u.x * sin,
-            cos + u.z * u.z * (1 - cos),
-            0,
-
-            0, 0, 0, 1
-        ];
-
-        // Scientific notation in transform values breaks the CSS3 values spec.
-        matrix = matrix.map(function (value) {
-            return value.toFixed(8);
-        });
-        return "matrix3d(" + matrix.join(",") + ")";
-    }
 
     // Returns a CSS transformation to rotate and shrink an element when it is
     // pressed. The closer the click is to the center of the item, the more it
@@ -67,33 +24,41 @@ define([
     // of the parameters must be relative to the same coordinate system.
     // This function was translated from the Splash implementation.
     function tiltTransform(clickX, clickY, elementRect) {
-        // x and y range from 0.0 thru 1.0 inclusive with the origin being at the top left.
-        var x = _ElementUtilities._clamp((clickX - elementRect.left) / elementRect.width, 0, 1);
-        var y = _ElementUtilities._clamp((clickY - elementRect.top) / elementRect.height, 0, 1);
+        var minSize = 44,
+            maxSize = 750,
+            minRotationX = 2,
+            maxRotationX = 9,
+            minRotationY = 2.11,
+            maxRotationY = 13,
+            sizeRange = maxSize - minSize,
+            halfWidth = elementRect.width / 2,
+            halfHeight = elementRect.height / 2;
 
-        // Axis is perpendicular to the line drawn between the click position and the center of the item.
-        // We set z to a small value so that even if x and y turn out to be 0, we still have an axis.
-        var axis = {
-            x: y - 0.5,
-            y: -(x - 0.5),
-            z: 0.0001
-        };
+        var clampedWidth = _ElementUtilities._clamp(elementRect.width, minSize, maxSize);
+        var clampedHeight = _ElementUtilities._clamp(elementRect.height, minSize, maxSize);
 
-        // The angle of the rotation is larger when the click is farther away from the center.
-        var magnitude = Math.abs(x - 0.5) + Math.abs(y - 0.5); // an approximation
-        var angle = magnitude * MAX_TILT_ROTATION;
+        // The maximum rotation that any element is capable of is calculated by using its width and height and clamping it into the range calculated above.
+        // minRotationX|Y and maxRotationX|Y are the absolute minimums and maximums that any generic element can be rotated by, but in order to determine
+        // what the min/max rotations for our current element is (which will be inside of the absolute min/max described above), we need
+        // to calculate the max rotations for this element by clamping the sizes and doing a linear interpolation:
+        var maxElementRotationX = maxRotationX - (((clampedHeight - minSize) / sizeRange) * (maxRotationX - minRotationX));
+        var maxElementRotationY = maxRotationY - (((clampedWidth - minSize) / sizeRange) * (maxRotationY - minRotationY));
 
-        // The distance the control is pushed into z-space is larger when the click is closer to the center.
-        var scale = 1 - (1 - magnitude) * MAX_TILT_SHRINK;
+        // Now we calculate the distance of our current point from the center of our element and normalize it to be in the range of 0 - 1
+        var normalizedOffsetX = ((clickX - elementRect.left) - halfWidth) / halfWidth;
+        var normalizedOffsetY = ((clickY - elementRect.top) - halfHeight) / halfHeight;
 
-        var transform = "perspective(800px) scale(" + scale + ", " + scale + ") " + rotationTransform3d(angle, axis);
-
+        // Finally, we calculate the appropriate rotations and scale for the element by using the normalized click offsets and the
+        // maximum element rotation.
+        var rotationX = maxElementRotationX * normalizedOffsetY;
+        var rotationY = maxElementRotationY * normalizedOffsetX;
+        var scale = 0.97 + 0.03 * (Math.abs(normalizedOffsetX) + Math.abs(normalizedOffsetY)) / 2.0;
+        var transform = "perspective(800px) scale(" + scale + ") rotateX(" + -rotationX + "deg) rotateY(" + rotationY + "deg)";
         return transform;
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         // Expose these to the unit tests
-        _rotationTransform3d: rotationTransform3d,
         _tiltTransform: tiltTransform,
 
         _ItemEventsHandler: _Base.Namespace._lazy(function () {
@@ -108,7 +73,7 @@ define([
                 return element;
             }
 
-            var ItemEventsHandler =  _Base.Class.define(function ItemEventsHandler_ctor(site) {
+            var ItemEventsHandler = _Base.Class.define(function ItemEventsHandler_ctor(site) {
                 this._site = site;
 
                 this._work = [];
@@ -172,7 +137,7 @@ define([
                             if (this._site.pressedEntity.type === _UI.ObjectType.item) {
                                 this._site.pressedItemBox = site.itemBoxAtIndex(this._site.pressedEntity.index);
                                 this._site.pressedContainer = site.containerAtIndex(this._site.pressedEntity.index);
-                                this._site.animatedElement = _BaseUtils.isPhone ? this._site.pressedItemBox : this._site.pressedContainer;
+                                this._site.animatedElement = this._site.pressedContainer;
                                 this._site.pressedHeader = null;
                                 this._togglePressed(true, false, eventObject);
                                 this._site.pressedContainer.addEventListener('dragstart', this._DragStartBound);
@@ -252,6 +217,7 @@ define([
                     if ((this._site.pressedContainer || this._site.pressedHeader) && this._site.animatedElement) {
                         this._togglePressed(false);
                         if (this._site.pressedContainer) {
+                            this._site.pressedContainer.style[transformNames.scriptName] = "";
                             this._site.pressedContainer.removeEventListener('dragstart', this._DragStartBound);
                             _ElementUtilities._removeEventListener(this._site.pressedContainer, 'pointerenter', this._PointerEnterBound, false);
                             _ElementUtilities._removeEventListener(this._site.pressedContainer, 'pointerleave', this._PointerLeaveBound, false);
@@ -499,33 +465,12 @@ define([
                                 _WriteProfilerMark("WinJS.UI._ItemEventsHandler:applyPressedUI,info");
                                 _ElementUtilities.addClass(this._site.animatedElement, _Constants._pressedClass);
 
-                                if (eventObject && _BaseUtils.isPhone) {
-                                    var boundingElement = isHeader ? that._site.pressedHeader : that._site.pressedContainer;
-                                    var transform = tiltTransform(eventObject.clientX, eventObject.clientY, boundingElement.getBoundingClientRect());
-                                    // Timeout prevents item from looking like it was pressed down during pans
-                                    this._site.animatedDownPromise = Promise.timeout(50).then(function () {
-                                        applyDownVisual(transform);
-                                    });
-                                } else {
-                                    // Shrink by 97.5% unless that is larger than 7px in either direction. In that case we cap the
-                                    // scale so that it is no larger than 7px in either direction. We keep the scale uniform in both x
-                                    // and y directions. Note that this scale cap only works if getItemPosition returns synchronously
-                                    // which it does for the built in layouts.
-                                    var scale = 0.975;
-                                    var maxPixelsToShrink = 7;
-
-                                    this._site.getItemPosition(this._site.pressedEntity).then(function (pos) {
-                                        if (pos.contentWidth > 0) {
-                                            scale = Math.max(scale, (1 - (maxPixelsToShrink / pos.contentWidth)));
-                                        }
-                                        if (pos.contentHeight > 0) {
-                                            scale = Math.max(scale, (1 - (maxPixelsToShrink / pos.contentHeight)));
-                                        }
-                                    }, function () {
-                                        // Swallow errors in case data source changes
-                                    });
-                                    applyDownVisual("scale(" + scale + "," + scale + ")");
-                                }
+                                var boundingElement = isHeader ? that._site.pressedHeader : that._site.pressedContainer;
+                                var transform = tiltTransform(eventObject.clientX, eventObject.clientY, boundingElement.getBoundingClientRect());
+                                // Timeout prevents item from looking like it was pressed down during pans
+                                this._site.animatedDownPromise = Promise.timeout(50).then(function () {
+                                    applyDownVisual(transform);
+                                });
                             }
                         } else {
                             if (_ElementUtilities.hasClass(this._site.animatedElement, _Constants._pressedClass)) {
@@ -562,30 +507,20 @@ define([
                     function applyUpVisual(element, expectingStyle) {
                         _WriteProfilerMark("WinJS.UI._ItemEventsHandler:removePressedUI,info");
                         _ElementUtilities.removeClass(element, _Constants._pressedClass);
-                        if (_BaseUtils.isPhone) {
-                            if (that._containsTransform(element, expectingStyle)) {
-                                _TransitionAnimation.executeTransition(element, {
-                                    property: transformNames.cssName,
-                                    delay: 0,
-                                    duration: 500,
-                                    timing: "cubic-bezier(0.7025,0,0.9225,-0.115)",
-                                    to: element.style[transformNames.scriptName].replace(expectingStyle, "")
-                                });
-                            }
-                        } else {
-                            that._removeTransform(element, expectingStyle);
+                        if (that._containsTransform(element, expectingStyle)) {
+                            _TransitionAnimation.executeTransition(element, {
+                                property: transformNames.cssName,
+                                delay: 150,
+                                duration: 350,
+                                timing: "cubic-bezier(0.17,0.17,0.2,1)",
+                                to: element.style[transformNames.scriptName].replace(expectingStyle, "")
+                            });
                         }
                     }
                 },
 
                 _containsTransform: function ItemEventsHandler_containsTransform(element, transform) {
                     return transform && element.style[transformNames.scriptName].indexOf(transform) !== -1;
-                },
-
-                _removeTransform: function ItemEventsHandler_removeTransform(element, transform) {
-                    if (this._containsTransform(element, transform)) {
-                        element.style[transformNames.scriptName] = element.style[transformNames.scriptName].replace(transform, "");
-                    }
                 },
 
                 _resetPointerDownStateForPointerId: function ItemEventsHandler_resetPointerDownState(eventObject) {

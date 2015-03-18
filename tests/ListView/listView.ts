@@ -1816,13 +1816,6 @@ module WinJSTests {
     generateSetCurrentItemBeforeReady(WinJS.UI.ObjectType.groupHeader, 2);
 
     (function cssTransformTests() {
-        var identityMatrix = [
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        ];
-
         function push(obj, key, value) {
             if (obj[key] === undefined) {
                 obj[key] = value;
@@ -1887,155 +1880,55 @@ module WinJSTests {
             return result;
         }
 
-        ListViewTests.prototype['testRotationTransform3d'] = function () {
-            var testRotation = function (description, angle, axis, expectedMatrix) {
-                description = "Rotation transform: " + description;
-                var transform = parseCssTransform(WinJS.UI._rotationTransform3d(angle, axis));
-                Helper.Assert.areSetsEqual(Object.keys(transform), ["matrix3d"], "The transformation should consist of exactly 1 transform");
-
-                var actualMatrix = transform.matrix3d.split(",").map(function (n) {
-                    return Helper.round(parseFloat(n), 5);
-                });
-
-                Helper.Assert.areArraysEqual(expectedMatrix, actualMatrix, description);
-            };
-
-            var xAxis = { x: 1, y: 0, z: 0 };
-            var yAxis = { x: 0, y: 1, z: 0 };
-            var zAxis = { x: 0, y: 0, z: 1 };
-
-            [
-                { x: 5, y: 0, z: 0 },
-                { x: 0, y: -22, z: 0 },
-                { x: 0, y: 0, z: 1 },
-                { x: 3, y: -9, z: 17 },
-            ].forEach(function (axis) {
-                    testRotation("360 degree rotations should yield the identity matrix",
-                        2 * Math.PI, axis, identityMatrix);
-                });
-
-            var x180Matrix = [
-                1, 0, 0, 0,
-                0, -1, 0, 0,
-                0, 0, -1, 0,
-                0, 0, 0, 1
-            ];
-            var y180Matrix = [
-                -1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, -1, 0,
-                0, 0, 0, 1
-            ];
-            var z180Matrix = [
-                -1, 0, 0, 0,
-                0, -1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            ];
-            testRotation("180 degree rotation about x axis", Math.PI, xAxis, x180Matrix);
-            testRotation("180 degree rotation about x axis", -Math.PI, xAxis, x180Matrix);
-            testRotation("180 degree rotation about y axis", Math.PI, yAxis, y180Matrix);
-            testRotation("180 degree rotation about y axis", -Math.PI, yAxis, y180Matrix);
-            testRotation("180 degree rotation about z axis", Math.PI, zAxis, z180Matrix);
-            testRotation("180 degree rotation about z axis", -Math.PI, zAxis, z180Matrix);
-
-            testRotation("90 degree rotation about x axis", Math.PI / 2, xAxis, [
-                1, 0, 0, 0,
-                0, 0, -1, 0,
-                0, 1, 0, 0,
-                0, 0, 0, 1
-            ]);
-            testRotation("90 degree rotation about y axis", Math.PI / 2, yAxis, [
-                0, 0, 1, 0,
-                0, 1, 0, 0,
-                -1, 0, 0, 0,
-                0, 0, 0, 1
-            ]);
-            testRotation("90 degree rotation about z axis", Math.PI / 2, zAxis, [
-                0, -1, 0, 0,
-                1, 0, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            ]);
-
-            testRotation("Rotation about all axes", 0.5, { x: 0.6, y: 0.2, z: -0.4 }, [
-                0.95628, 0.2825, 0.07567, 0,
-                -0.23003, 0.88633, -0.40188, 0,
-                -0.1806, 0.36691, 0.91256, 0,
-                0, 0, 0, 1,
-            ]);
-        };
-
         ListViewTests.prototype['testTiltTransform'] = function () {
             var testTilt = function (description, clickX, clickY, elementRect, expectedTransform) {
                 description = "Tilt transform: " + description;
                 var transform = parseCssTransform(WinJS.UI._tiltTransform(clickX, clickY, elementRect));
-                Helper.Assert.areSetsEqual(Object.keys(transform), ["matrix3d", "perspective", "scale"], "The transformation should consist of exactly 3 transforms");
+                Helper.Assert.areSetsEqual(Object.keys(transform), ["rotateX", "rotateY", "perspective", "scale"], "The transformation should consist of exactly 4 transforms");
 
                 var scale = Helper.round(parseFloat(transform.scale), 5);
-                var matrix3d = transform.matrix3d.split(",").map(function (n) {
-                    return Helper.round(parseFloat(n), 5);
-                });
+                var rotateX = Helper.round(parseFloat(transform.rotateX), 5);
+                var rotateY = Helper.round(parseFloat(transform.rotateY), 5);
 
                 LiveUnit.Assert.areEqual("800px", transform.perspective, description);
                 LiveUnit.Assert.areEqual(expectedTransform.scale, scale, description);
-                Helper.Assert.areArraysEqual(expectedTransform.matrix3d, matrix3d, description);
+                LiveUnit.Assert.areEqual(expectedTransform.rotateX, rotateX, description);
+                LiveUnit.Assert.areEqual(expectedTransform.rotateY, rotateY, description);
             };
 
             var standardRect = {
                 left: 0, width: 100, right: 100,
                 top: 0, height: 100, bottom: 100
             };
-            var topRightCornerMatrix = [
-                0.99439, 0.00559, -0.10567, 0,
-                0.00564, 0.99439, 0.10567, 0,
-                0.10567, -0.10567, 0.98877, 0,
-                0, 0, 0, 1
-            ];
-
             testTilt("Click on center has no rotation & max shrink", 50, 50, standardRect, {
-                scale: 0.975,
-                matrix3d: identityMatrix
+                scale: 0.97,
+                rotateX: 0,
+                rotateY: 0
             });
             testTilt("Click on top left corner has a max rotation & no shrink", 0, 0, standardRect, {
                 scale: 1,
-                matrix3d: [
-                    0.99439, -0.00564, 0.10567, 0,
-                    -0.00559, 0.99439, 0.10567, 0,
-                    -0.10567, -0.10567, 0.98877, 0,
-                    0, 0, 0, 1
-                ]
+                rotateX: 8.44476,
+                rotateY: -12.13620
             });
             testTilt("Click on top right corner has a max rotation & no shrink", 100, 0, standardRect, {
                 scale: 1,
-                matrix3d: topRightCornerMatrix
+                rotateX: 8.44476,
+                rotateY: 12.13620
             });
             testTilt("Click on bottom left corner has a max rotation & no shrink", 0, 100, standardRect, {
                 scale: 1,
-                matrix3d: [
-                    0.99439, 0.00559, 0.10567, 0,
-                    0.00564, 0.99439, -0.10567, 0,
-                    -0.10567, 0.10567, 0.98877, 0,
-                    0, 0, 0, 1,
-                ]
+                rotateX: -8.44476,
+                rotateY: -12.13620
             });
             testTilt("Click on bottom right corner has a max rotation & no shrink", 100, 100, standardRect, {
                 scale: 1,
-                matrix3d: [
-                    0.99439, -0.00564, -0.10567, 0,
-                    -0.00559, 0.99439, -0.10567, 0,
-                    0.10567, 0.10567, 0.98877, 0,
-                    0, 0, 0, 1,
-                ]
+                rotateX: -8.44476,
+                rotateY: 12.13620
             });
             testTilt("Click on arbitrary point", 33, 65, standardRect, {
-                scale: 0.983,
-                matrix3d: [
-                    0.99935, 0.00055, 0.03598, 0,
-                    0.00059, 0.9995, -0.03175, 0,
-                    -0.03598, 0.03175, 0.99885, 0,
-                    0, 0, 0, 1
-                ]
+                scale: 0.9796,
+                rotateX: -2.53343,
+                rotateY: -4.12631
             });
 
             var realisticRect = {
@@ -2044,9 +1937,10 @@ module WinJSTests {
             };
             testTilt("Location and size of element are properly taken into account", 315, 1044, realisticRect, {
                 scale: 1,
-                matrix3d: topRightCornerMatrix
+                rotateX: 9,
+                rotateY: 9.93044
             });
         };
-    });
+    })();
 }
 LiveUnit.registerTestClass("WinJSTests.ListViewTests");
