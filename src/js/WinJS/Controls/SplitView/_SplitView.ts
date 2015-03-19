@@ -244,30 +244,31 @@ export class SplitView {
             }
         });
 
-        // Initialize private state.
-        this._disposed = false;
-        this._dismissable = new _LightDismissService.LightDismissableElement({
-            element: this._dom.paneWrapper,
-            tabIndex: -1,
-            onLightDismiss: () => {
-                this.hidePane();
-            }
-        });
-        this._cachedHiddenPaneThickness = null;
+        this._machine.initializing(new Promise((initialized) => {
+            // Initialize private state.
+            this._disposed = false;
+            this._dismissable = new _LightDismissService.LightDismissableElement({
+                element: this._dom.paneWrapper,
+                tabIndex: -1,
+                onLightDismiss: () => {
+                    this.hidePane();
+                }
+            });
+            this._cachedHiddenPaneThickness = null;
 
-        // Initialize public properties.
-        this.paneHidden = true;
-        this.hiddenDisplayMode = HiddenDisplayMode.inline;
-        this.shownDisplayMode = ShownDisplayMode.overlay;
-        this.panePlacement = PanePlacement.left;
-        _Control.setOptions(this, options);
+            // Initialize public properties.
+            this.paneHidden = true;
+            this.hiddenDisplayMode = HiddenDisplayMode.inline;
+            this.shownDisplayMode = ShownDisplayMode.overlay;
+            this.panePlacement = PanePlacement.left;
+            _Control.setOptions(this, options);
 
-        // Exit the Init state.
-        _ElementUtilities._inDom(this._dom.root).then(() => {
-            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
-            this._machine.initialized();
-        });
-
+            // Exit the Init state.
+            _ElementUtilities._inDom(this._dom.root).then(() => {
+                this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+                initialized();
+            });
+        }));
     }
 
     /// <field type="HTMLElement" domElement="true" readonly="true" hidden="true" locid="WinJS.UI.SplitView.element" helpKeyword="WinJS.UI.SplitView.element">

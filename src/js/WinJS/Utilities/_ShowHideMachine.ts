@@ -149,10 +149,20 @@ export class ShowHideMachine {
         this._setState(States.Init);
     }
 
+    private _counter = 0;
+
+    initializing(p: Promise<any>) {
+        ++this._counter;
+        p.then(() => {this._initialized()});
+    }
+
     // Moves the machine out of the Init state and into the Shown or Hidden state depending on whether
     // show or hide was called more recently.
-    initialized() {
-        this._initializedSignal.complete();
+    private _initialized() {
+        --this._counter;
+        if (this._counter === 0) {
+            this._initializedSignal.complete();
+        }
     }
 
 

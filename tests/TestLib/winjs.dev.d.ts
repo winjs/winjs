@@ -14,7 +14,7 @@ interface IStyleEquivalentsMap {
 }
 
 interface IShowHideMachine {
-    _state: { name: string; } 
+    _state: { name: string; }
 }
 
 
@@ -61,7 +61,7 @@ declare module WinJS {
 
         function _require(dep: string, callback);
         function _require(deps: string[], callback);
-        function _uniqueID(e: HTMLElement):string;
+        function _uniqueID(e: HTMLElement): string;
         function _isDOMElement(e: HTMLElement): boolean;
 
         function _yieldForEvents(handler: Function);
@@ -131,7 +131,7 @@ declare module WinJS {
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
             sort(sortFunc: (a: any, b: any) => number);
-            queue(f:()=>WinJS.Promise<any>, data?:any, first?:boolean);
+            queue(f: () => WinJS.Promise<any>, data?: any, first?: boolean);
         }
 
         class PrivateToggleSwitch extends WinJS.UI.ToggleSwitch {
@@ -240,7 +240,7 @@ declare module WinJS {
 
         module _ListViewAnimationHelper {
             function fadeInElement(element): Promise<any>;
-            function fadeOutElement(element): Promise < any>;
+            function fadeOutElement(element): Promise<any>;
             function animateEntrance(canvas, firstEntrance): Promise<any>;
         }
 
@@ -405,6 +405,16 @@ declare module WinJS {
                 overflowArea: HTMLElement;
             };
             _machine: IShowHideMachine;
+        }
+
+        class PrivateToolBarNew extends WinJS.UI.ToolBarNew {
+            _disposed: boolean;
+            _dom: {
+                root: HTMLElement;
+                commandingSurfaceEl: HTMLElement;
+                placeHolder: HTMLElement;
+            };
+            _commandingSurface: WinJS.UI.PrivateCommandingSurface;
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {
@@ -572,18 +582,46 @@ declare module WinJS {
         }
 
         class _CommandingSurface {
-            public element: HTMLElement;
-            public data: WinJS.Binding.List<ICommand>;
-            constructor(element?: HTMLElement, options?: any);
-            public dispose(): void;
-            public forceLayout(): void;
-            public closedDisplayMode: string;
             public static ClosedDisplayMode: {
                 none: string;
                 minimal: string;
                 compact: string;
                 full: string;
             };
+            public static OverflowDirection: {
+                bottom: string;
+                top: string;
+            };
+            public element: HTMLElement;
+            public data: WinJS.Binding.List<ICommand>;
+            constructor(element?: HTMLElement, options?: any);
+            public dispose(): void;
+            public forceLayout(): void;
+            public closedDisplayMode: string;
+            public open(): void;
+            public close(): void;
+            public opened: boolean;
+            public onbeforeshow: (ev: CustomEvent) => void;
+            public onaftershow: (ev: CustomEvent) => void;
+            public onbeforehide: (ev: CustomEvent) => void;
+            public onafterhide: (ev: CustomEvent) => void;
+            public overflowDirection: string;
+            public addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+            public removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+            public dispatchEvent(type: string, eventProperties: any): boolean;
+        }
+
+        class ToolBarNew {
+            public static ClosedDisplayMode: {
+                compact: string;
+                full: string;
+            };
+            public element: HTMLElement;
+            public data: WinJS.Binding.List<ICommand>;
+            constructor(element?: HTMLElement, options?: any);
+            public dispose(): void;
+            public forceLayout(): void;
+            public closedDisplayMode: string;
             public open(): void;
             public close(): void;
             public opened: boolean;
@@ -644,7 +682,7 @@ declare module WinJS {
 
         var _seenUrlsMaxSize: number;
         var _seenUrlsMRUMaxSize: number;
-        function _seenUrl(url:string);
+        function _seenUrl(url: string);
         function _getSeenUrlsMRU(): string[];
         function _getSeenUrls(): string[];
 

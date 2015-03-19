@@ -1689,7 +1689,7 @@ define([
                             // Get the top of our visible area in terms of its absolute distance from the top of document.documentElement.
                             // Normalizes any offsets which have have occured between the visual viewport and the layout viewport due to resizing the viewport to fit the IHM and/or optical zoom.
                             _visibleDocTop: function _visibleDocTop_Windows8WWA() {
-                                return _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
+                                return _Global.pageYOffset - _Global.document.documentElement.scrollTop;
                             },
 
                             // Get the bottom offset of the visual viewport from the bottom of the layout viewport, plus any IHM occlusion.
@@ -1698,11 +1698,11 @@ define([
                             },
 
                             _visualViewportHeight: function _visualViewportHeight_Windows8WWA() {
-                                return _Global.window.innerHeight;
+                                return _Global.innerHeight;
                             },
 
                             _visualViewportWidth: function _visualViewportWidth_Windows8WWA() {
-                                return _Global.window.innerWidth;
+                                return _Global.innerWidth;
                             },
                         };
 

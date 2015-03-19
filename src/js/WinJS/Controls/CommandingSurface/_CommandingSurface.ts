@@ -23,6 +23,7 @@ import Promise = require('../../Promise');
 import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
 import _ShowHideMachine = require('../../Utilities/_ShowHideMachine');
+import _Signal = require('../../_Signal');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/styles-commandingsurface"]);
@@ -55,7 +56,6 @@ interface IDataChangeInfo {
 }
 
 var strings = {
-    get ariaLabel() { return _Resources._getWinJSString("ui/commandingSurfaceAriaLabel").value; },
     get overflowButtonAriaLabel() { return _Resources._getWinJSString("ui/commandingSurfaceOverflowButtonAriaLabel").value; },
     get badData() { return "Invalid argument: The data property must an instance of a WinJS.Binding.List"; },
     get mustContainCommands() { return "The commandingSurface can only contain WinJS.UI.Command or WinJS.UI.AppBarCommand controls"; },
@@ -68,6 +68,20 @@ var CommandLayoutPipeline = {
     layoutStage: 1,
     idle: 0,
 };
+
+var OverflowDirection = {
+    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection.bottom" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection.bottom">
+    /// The _CommandingSurface expands towards the bottom of the screen when opened and the overflow area renders below the actionarea.
+    /// </field>
+    bottom: "bottom",
+    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection.top" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection.top">
+    /// The _CommandingSurface expands towards the top of the screen when opened and the overflow area renders above the actionarea.
+    /// </field>
+    top: "top",
+}
+var overflowDirectionClassMap = {};
+overflowDirectionClassMap[OverflowDirection.top] = _Constants.ClassNames.overflowTopClass;
+overflowDirectionClassMap[OverflowDirection.bottom] = _Constants.ClassNames.overflowBottomClass;
 
 var ClosedDisplayMode = {
     /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode.none" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode.none">
@@ -87,7 +101,6 @@ var ClosedDisplayMode = {
     /// </field>
     full: "full",
 };
-
 var closedDisplayModeClassMap = {};
 closedDisplayModeClassMap[ClosedDisplayMode.none] = _Constants.ClassNames.noneClass;
 closedDisplayModeClassMap[ClosedDisplayMode.minimal] = _Constants.ClassNames.minimalClass;
@@ -125,7 +138,7 @@ export class _CommandingSurface {
 
     private _id: string;
     private _contentFlyout: _Flyout.Flyout;
-    private _contentFlyoutInterior: HTMLElement;
+    private _contentFlyoutInterior: HTMLElement; /* The reparented content node inside of _contentFlyout.element */
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
     private _refreshBound: Function;
@@ -140,7 +153,7 @@ export class _CommandingSurface {
     private _rtl: boolean;
     private _disposed: boolean;
     private _nextLayoutStage: number;
-    private _isOpenedMode: boolean;
+    _isOpenedMode: boolean;
 
     // Measurements
     private _cachedMeasurements: {
@@ -164,6 +177,11 @@ export class _CommandingSurface {
     /// Display options for the actionarea when the _CommandingSurface is closed.
     /// </field>
     static ClosedDisplayMode = ClosedDisplayMode;
+
+    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection">
+    /// Display options used by the _Commandingsurface to determine which direction it should expand when opening.
+    /// </field>
+    static OverflowDirection = OverflowDirection;
 
     static supportedForProcessing: boolean = true;
 
@@ -199,7 +217,7 @@ export class _CommandingSurface {
 
     private _closedDisplayMode: string;
     /// <field type="String" locid="WinJS.UI._CommandingSurface.closedDisplayMode" helpKeyword="WinJS.UI._CommandingSurface.closedDisplayMode">
-    /// Gets or sets the closedDisplayMode for the CommandingSurface.
+    /// Gets or sets the closedDisplayMode for the CommandingSurface. Values are "none", "minimal", "compact", and "full".
     /// </field>
     get closedDisplayMode() {
         return this._closedDisplayMode;
@@ -211,6 +229,20 @@ export class _CommandingSurface {
         if (ClosedDisplayMode[value] && isChangingState) {
             this._closedDisplayMode = value;
             this._machine.updateDom();
+        }
+    }
+
+    private _overflowDirection: string;
+    /// <field type="String" hidden="true" locid="WinJS.UI._CommandingSurface.overflowDirection" helpKeyword="WinJS.UI._CommandingSurface.overflowDirection">
+    /// Gets or sets which direction the commandingSurface overflows when opened. Values are "top" and "bottom" for.
+    /// </field>
+    get overflowDirection(): string {
+        return this._overflowDirection;
+    }
+    set overflowDirection(value: string) {
+        var isChangingState = (value !== this._overflowDirection);
+        if (OverflowDirection[value] && isChangingState) {
+            this._overflowDirection = value;
         }
     }
 
@@ -248,34 +280,33 @@ export class _CommandingSurface {
         }
 
         this._initializeDom(element || _Global.document.createElement("div"));
-        this._machine = new _ShowHideMachine.ShowHideMachine({
+        this._machine = options.showHideMachine || new _ShowHideMachine.ShowHideMachine({
             eventElement: this._dom.root,
             onShow: () => {
                 //this._cachedHiddenPaneThickness = null;
                 //var hiddenPaneThickness = this._getHiddenPaneThickness();
-
-                this._isOpenedMode = true;
-                this._updateDomImpl();
-
+                this.synchronousOpen();
                 //return this._playShowAnimation(hiddenPaneThickness);
                 return Promise.wrap();
             },
             onHide: () => {
                 //return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
-                this._isOpenedMode = false;
-                this._updateDomImpl();
+                this.synchronousClose();
                 //});
 
                 return Promise.wrap();
             },
             onUpdateDom: () => {
-                this._updateDomImpl();
+                this.updateDomImpl();
             },
             onUpdateDomWithIsShown: (isShown: boolean) => {
                 this._isOpenedMode = isShown;
-                this._updateDomImpl();
+                this.updateDomImpl();
             }
         });
+        // Enter the Init state
+        var signal = new _Signal();
+        this._machine.initializing(signal.promise);
 
         // Initialize private state.
         this._disposed = false;
@@ -290,6 +321,7 @@ export class _CommandingSurface {
         this._isOpenedMode = _Constants.defaultOpened;
 
         // Initialize public properties.
+        this.overflowDirection = _Constants.defaultOverflowDirection;
         this.closedDisplayMode = _Constants.defaultClosedDisplayMode;
         this.opened = this._isOpenedMode;
         if (!options.data) {
@@ -308,9 +340,10 @@ export class _CommandingSurface {
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
             this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
-            this._machine.initialized();
+            signal.complete();
             this._writeProfilerMark("constructor,StopTM");
         });
+
     }
     /// <field type="Function" locid="WinJS.UI._CommandingSurface.onbeforeopen" helpKeyword="WinJS.UI._CommandingSurface.onbeforeopen">
     /// Occurs immediately before the control is opened.
@@ -380,6 +413,13 @@ export class _CommandingSurface {
         this._machine.updateDom();
     }
 
+    getBoundingRects(): { actionArea: ClientRect; overflowArea: ClientRect; } {
+        return {
+            actionArea: this._dom.actionArea.getBoundingClientRect(),
+            overflowArea: this._dom.overflowArea.getBoundingClientRect(),
+        };
+    }
+
     private _writeProfilerMark(text: string) {
         _WriteProfilerMark("WinJS.UI._CommandingSurface:" + this._id + ":" + text);
     }
@@ -398,18 +438,7 @@ export class _CommandingSurface {
         }
 
         _ElementUtilities.addClass(root, _Constants.ClassNames.controlCssClass);
-        _ElementUtilities.addClass(root, "win-disposable");
-
-        // Make sure we have an ARIA role
-        var role = root.getAttribute("role");
-        if (!role) {
-            root.setAttribute("role", "menubar");
-        }
-
-        var label = root.getAttribute("aria-label");
-        if (!label) {
-            root.setAttribute("aria-label", strings.ariaLabel);
-        }
+        _ElementUtilities.addClass(root, _Constants.ClassNames.disposableCssClass);
 
         var actionArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionArea, _Constants.ClassNames.actionAreaCssClass);
@@ -607,7 +636,7 @@ export class _CommandingSurface {
             child = this._dom.actionArea.children[i];
             if (child["winControl"] && child["winControl"] instanceof _Command.AppBarCommand) {
                 commands.push(child["winControl"]);
-            } else if (!this._dom.overflowButton) {
+            } else if (child !== this._dom.overflowButton && child !== this._dom.spacer) {
                 throw new _ErrorFromName("WinJS.UI._CommandingSurface.MustContainCommands", strings.mustContainCommands);
             }
         }
@@ -635,7 +664,6 @@ export class _CommandingSurface {
     private _playHideAnimation(): Promise<any> {
         return Promise.wrap();
     }
-
     private _dataDirty(): void {
         this._nextLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, this._nextLayoutStage);
     }
@@ -645,7 +673,18 @@ export class _CommandingSurface {
     private _layoutDirty(): void {
         this._nextLayoutStage = Math.max(CommandLayoutPipeline.layoutStage, this._nextLayoutStage);
     }
-    private _updateDomImpl(): void {
+
+    synchronousOpen(): void {
+        this._isOpenedMode = true;
+        this.updateDomImpl();
+    }
+
+    synchronousClose(): void {
+        this._isOpenedMode = false;
+        this.updateDomImpl();
+    }
+
+    updateDomImpl(): void {
         this._updateDomImpl_renderDisplayMode();
         this._updateDomImpl_updateCommands();
     }
@@ -657,12 +696,13 @@ export class _CommandingSurface {
     // rendered.
     private _updateDomImpl_renderedState = {
         closedDisplayMode: <string>undefined,
-        opened: <boolean>undefined,
+        isOpenedMode: <boolean>undefined,
+        overflowDirection: <string>undefined,
     };
     private _updateDomImpl_renderDisplayMode(): void {
         var rendered = this._updateDomImpl_renderedState;
 
-        if (rendered.opened !== this._isOpenedMode) {
+        if (rendered.isOpenedMode !== this._isOpenedMode) {
             if (this._isOpenedMode) {
                 // Render opened
                 removeClass(this._dom.root, _Constants.ClassNames.closedClass);
@@ -672,13 +712,19 @@ export class _CommandingSurface {
                 removeClass(this._dom.root, _Constants.ClassNames.openedClass);
                 addClass(this._dom.root, _Constants.ClassNames.closedClass);
             }
-            rendered.opened = this._isOpenedMode;
+            rendered.isOpenedMode = this._isOpenedMode;
         }
 
         if (rendered.closedDisplayMode !== this.closedDisplayMode) {
             removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
             addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
             rendered.closedDisplayMode = this.closedDisplayMode;
+        }
+
+        if (rendered.overflowDirection !== this.overflowDirection) {
+            removeClass(this._dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
+            addClass(this._dom.root, overflowDirectionClassMap[this.overflowDirection]);
+            rendered.overflowDirection = this.overflowDirection;
         }
     }
 
@@ -727,7 +773,7 @@ export class _CommandingSurface {
         var newHidden: HTMLElement[] = [];
         var newElements: HTMLElement[] = [];
 
-        Array.prototype.forEach.call(this._dom.actionArea.querySelectorAll(".win-command"), (commandElement: HTMLElement) => {
+        Array.prototype.forEach.call(this._dom.actionArea.querySelectorAll(_Constants.commandSelector), (commandElement: HTMLElement) => {
             if (commandElement.style.display !== "none") {
                 currentShown.push(commandElement);
             }
