@@ -7314,29 +7314,29 @@ declare module WinJS.UI {
         }
 
         /**
-         * Display options for a SplitView's pane when it is hidden.
+         * Display options for a SplitView's pane when it is closed.
         **/
-        static HiddenDisplayMode: {
+        static ClosedDisplayMode: {
             /**
-             * When the pane is hidden, it is not visible and doesn't take up any space.
+             * When the pane is closed, it is not visible and doesn't take up any space.
             **/
             none: string;
             /**
-             * When the pane is hidden, it occupies space leaving less room for the SplitView's content.
+             * When the pane is closed, it occupies space leaving less room for the SplitView's content.
             **/
             inline: string;
         }
 
         /**
-         * Display options for a SplitView's pane when it is shown.
+         * Display options for a SplitView's pane when it is open.
         **/
-        static ShownDisplayMode: {
+        static OpenedDisplayMode: {
             /**
-             * When the pane is shown, it occupies space leaving less room for the SplitView's content.
+             * When the pane is open, it occupies space leaving less room for the SplitView's content.
             **/
             inline: string;
             /**
-             * When the pane is shown, it doesn't take up any space and it is light dismissable.
+             * When the pane is open, it doesn't take up any space and it is light dismissable.
             **/
             overlay: string;
         }
@@ -7370,29 +7370,29 @@ declare module WinJS.UI {
         panePlacement: string;
 
         /**
-         * Gets or sets the display mode of the SplitView's pane when it is hidden.
+         * Gets or sets the display mode of the SplitView's pane when it is closed.
         **/
-        hiddenDisplayMode: string;
+        closedDisplayMode: string;
 
         /**
-         * Gets or sets the display mode of the SplitView's pane when it is shown.
+         * Gets or sets the display mode of the SplitView's pane when it is open.
         **/
-        shownDisplayMode: string;
+        openedDisplayMode: string;
 
         /**
-         * Gets or sets whether the SpitView's pane is currently collapsed.
+         * Gets or sets whether the SpitView's pane is currently open.
         **/
-        paneHidden: boolean;
+        paneOpened: boolean;
 
         /**
-         * Shows the SplitView's pane.
+         * Opens the SplitView's pane.
         **/
-        showPane(): void;
+        openPane(): void;
 
         /**
-         * Hides the SplitView's pane.
+         * Closes the SplitView's pane.
         **/
-        hidePane(): void;
+        closePane(): void;
 
         /**
          * Disposes this control.
@@ -7424,28 +7424,28 @@ declare module WinJS.UI {
         dispatchEvent(type: string, eventProperties: any): boolean;
 
         /**
-         * Raised just before showing the pane. Call preventDefault on this event to stop the pane from being shown.
+         * Raised just before opening the pane. Call preventDefault on this event to stop the pane from opening.
          * @param eventInfo An object that contains information about the event.
         **/
-        onbeforeshow(eventInfo: Event): void;
+        onbeforeopen(eventInfo: Event): void;
 
         /**
-         * Raised immediately after the pane is fully shown.
+         * Raised immediately after the pane is fully open.
          * @param eventInfo An object that contains information about the event.
         **/
-        onaftershow(eventInfo: Event): void;
+        onafteropen(eventInfo: Event): void;
 
         /**
-         * Raised just before hiding the pane. Call preventDefault on this event to stop the pane from being hidden.
+         * Raised just before closing the pane. Call preventDefault on this event to stop the pane from closing.
          * @param eventInfo An object that contains information about the event.
         **/
-        onbeforehide(eventInfo: Event): void;
+        onbeforeclose(eventInfo: Event): void;
 
         /**
-         * Raised immediately after the pane is fully hidden.
+         * Raised immediately after the pane is fully closed.
          * @param eventInfo An object that contains information about the event.
         **/
-        onafterhide(eventInfo: Event): void;
+        onafterclose(eventInfo: Event): void;
     }
 
     /**

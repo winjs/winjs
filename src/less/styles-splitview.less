@@ -48,7 +48,7 @@
         height: 100%;
     }
 
-    &.win-splitview-pane-shown {
+    &.win-splitview-pane-opened {
         &.win-splitview-placementleft,
         &.win-splitview-placementright {
             .win-splitview-pane {
@@ -63,7 +63,7 @@
             }
         }
 
-        &.win-splitview-showndisplayoverlay {
+        &.win-splitview-openeddisplayoverlay {
             &.win-splitview-placementtop .win-splitview-panewrapper {
                 position: absolute;
                 top: 0;
@@ -110,7 +110,7 @@
         }
     }
 
-    &.win-splitview-pane-hidden {
+    &.win-splitview-pane-closed {
         .win-splitview-paneplaceholder {
             display: none;
         }
@@ -129,12 +129,12 @@
             }
         }
 
-        &.win-splitview-hiddendisplaynone .win-splitview-pane {
+        &.win-splitview-closeddisplaynone .win-splitview-pane {
             display: none;
         }
     }
 
-    &.win-splitview-showndisplayinline .win-splitview-paneplaceholder {
+    &.win-splitview-openeddisplayinline .win-splitview-paneplaceholder {
         display: none;
     }
 }

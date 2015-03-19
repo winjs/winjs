@@ -8,39 +8,39 @@ import _Signal = require('../_Signal');
 "use strict";
 
 // This module provides a state machine which is designed to be used by controls which need to
-// show, hide, and fire related events (e.g. beforeshow, afterhide). The state machine handles
+// open, close, and fire related events (e.g. beforeopen, afterclose). The state machine handles
 // many edge cases. For example, what happens if:
-//  - show is called when we're already shown?
-//  - hide is called while we're in the middle of showing?
-//  - dispose is called while we're in the middle of firing beforeshow?
+//  - open is called when we're already opened?
+//  - close is called while we're in the middle of opening?
+//  - dispose is called while we're in the middle of firing beforeopen?
 // The state machine takes care of all of these edge cases so that the control doesn't have to.
-// The control is responible for knowing how to play its show/hide animations and update its DOM.
+// The control is responible for knowing how to play its open/close animations and update its DOM.
 // The state machine is responsible for ensuring that these things happen at the appropriate times.
 // This module is broken up into 3 major pieces:
-//   - ShowHideMachine: Controls should instantiate one of these. The machine keeps track of the
+//   - OpenCloseMachine: Controls should instantiate one of these. The machine keeps track of the
 //     current state and has methods for forwarding calls to the current state.
-//   - IShowHideControl: Controls must provide an object which implements this interface. The
-//     interface gives the machine hooks for invoking the control's show and hide animations.
-//   - States: The various states (e.g. Hidden, Shown, Showing) that the machine can be in. Each
-//     implements IShowHideState.
+//   - IOpenCloseControl: Controls must provide an object which implements this interface. The
+//     interface gives the machine hooks for invoking the control's open and close animations.
+//   - States: The various states (e.g. Closed, Opened, Opening) that the machine can be in. Each
+//     implements IOpenCloseState.
 
 // Example usage:
 //   class MyControl {
 //       element: HTMLElement;
-//       private _machine: ShowHideMachine;
+//       private _machine: OpenCloseMachine;
 //
 //       constructor(element?: HTMLElement, options: any = {}) {
 //           this.element = element || document.createElement("div");
 //
 //           // Create the machine.
-//           this._machine = new ShowHideMachine({
+//           this._machine = new OpenCloseMachine({
 //               eventElement: this.element,
-//               onShow: (): Promise<any> => {
-//                   // Do the work to render the contol in its shown state with an animation.
+//               onOpen: (): Promise<any> => {
+//                   // Do the work to render the contol in its opened state with an animation.
 //                   // Return the animation promise.
 //               },
-//               onHide: (): Promise<any> => {
-//                   // Do the work to render the contol in its hidden state with an animation.
+//               onClose: (): Promise<any> => {
+//                   // Do the work to render the contol in its closed state with an animation.
 //                   // Return the animation promise.
 //               },
 //               onUpdateDom() {
@@ -48,17 +48,17 @@ import _Signal = require('../_Signal');
 //                   // control restricts all its DOM modifications to onUpdateDom, the state machine
 //                   // can guarantee that the control won't modify its DOM while it is animating.
 //               },
-//               onUpdateDomWithIsShown: (isShown: boolean ) => {
+//               onUpdateDomWithIsOpened: (isOpened: boolean ) => {
 //                   // Do the same work as onUpdateDom but ensure that the DOM is rendered with either
-//                   // the shown or hidden visual as dictacted by isShown. The control should have some
-//                   // internal state to track whether it is currently shown or hidden. Treat this as a
-//                   // cue to mutate that internal state to reflect the value of isShown.
+//                   // the opened or closed visual as dictacted by isOpened. The control should have some
+//                   // internal state to track whether it is currently opened or closed. Treat this as a
+//                   // cue to mutate that internal state to reflect the value of isOpened.
 //               },
 //           });
 //
 //           // Initialize the control. During this time, the machine will not ask the control to
 //           // play any animations or update its DOM.
-//           this.hidden = true;
+//           this.opened = true;
 //           _Control.setOptions(this, options);
 //
 //           // Tell the machine the control is initialized. After this, the machine will start asking
@@ -66,17 +66,17 @@ import _Signal = require('../_Signal');
 //           this._machine.initialized();
 //       }
 //
-//       get hidden() {
-//           return this._machine.hidden;
+//       get opened() {
+//           return this._machine.opened;
 //       }
-//       set hidden(value: boolean) {
-//           this._machine.hidden = value;
+//       set opened(value: boolean) {
+//           this._machine.opened = value;
 //       }
-//       show() {
-//           this._machine.show();
+//       open() {
+//           this._machine.open();
 //       }
-//       hide() {
-//           this._machine.hide();
+//       close() {
+//           this._machine.close();
 //       }
 //       forceLayout() {
 //           this._machine.updateDom();
@@ -87,50 +87,50 @@ import _Signal = require('../_Signal');
 //   }
 
 var EventNames = {
-    beforeShow: "beforeshow",
-    afterShow: "aftershow",
-    beforeHide: "beforehide",
-    afterHide: "afterhide"
+    beforeOpen: "beforeopen",
+    afterOpen: "afteropen",
+    beforeClose: "beforeclose",
+    afterClose: "afterclose"
 };
 
 //
-// IShowHideControl
+// IOpenCloseControl
 //
 
-export interface IShowHideControl {
+export interface IOpenCloseControl {
     // The element on which the events should be dispatched. The events are:
-    //   - beforeshow (cancelable)
-    //   - aftershow
-    //   - beforehide (cancelable)
-    //   - afterhide
+    //   - beforeopen (cancelable)
+    //   - afteropen
+    //   - beforeclose (cancelable)
+    //   - afterclose
     eventElement: HTMLElement;
-    // Called when the control should render its shown state with an animation.
-    // onShow is called if the beforeshow event is not preventDefaulted. aftershow is fired
-    // upon completion of onShow's promise.
-    onShow(): Promise<any>;
-    // Called when the control should render its hidden state with an animation.
-    // onHide is called if the beforehide event is not preventDefaulted. afterhide is fired
-    // upon completion of onHide's promise.
-    onHide(): Promise<any>;
+    // Called when the control should render its opened state with an animation.
+    // onOpen is called if the beforeopen event is not preventDefaulted. afteropen is fired
+    // upon completion of onOpen's promise.
+    onOpen(): Promise<any>;
+    // Called when the control should render its closed state with an animation.
+    // onClose is called if the beforeclose event is not preventDefaulted. afterclose is fired
+    // upon completion of onClose's promise.
+    onClose(): Promise<any>;
     // Called when the control should render its current internal state to the DOM. If a
     // control restricts all its DOM modifications to onUpdateDom, the state machine can
     // guarantee that the control won't modify its DOM while it is animating.
     onUpdateDom(): void;
     // Same as onUpdateDom but enables the machine to force the control to update and render
-    // its hidden or shown visual as dictated by isShown.
-    onUpdateDomWithIsShown(isShown: boolean): void;
+    // its closed or opened visual as dictated by isOpened.
+    onUpdateDomWithIsOpened(isOpened: boolean): void;
 }
 
 //
-// ShowHideMachine
+// OpenCloseMachine
 //
 
-export class ShowHideMachine {
-	_control: IShowHideControl;
+export class OpenCloseMachine {
+	_control: IOpenCloseControl;
     _initializedSignal: _Signal<any>;
 
     private _disposed: boolean;
-    private _state: IShowHideState;
+    private _state: IOpenCloseState;
 
     //
     // Methods called by the control
@@ -142,13 +142,13 @@ export class ShowHideMachine {
     // worrying about it being expensive due to updating the DOM many times. The control should call
     // *initialized* to move the machine out of the Init state.
 
-    constructor(args: IShowHideControl) {
+    constructor(args: IOpenCloseControl) {
         this._control = args;
         this._initializedSignal = new _Signal();
         this._disposed = false;
         this._setState(States.Init);
     }
-
+    
     private _counter = 0;
 
     initializing(p: Promise<any>) {
@@ -156,8 +156,8 @@ export class ShowHideMachine {
         p.then(() => {this._initialized()});
     }
 
-    // Moves the machine out of the Init state and into the Shown or Hidden state depending on whether
-    // show or hide was called more recently.
+    // Moves the machine out of the Init state and into the Opened or Closed state depending on whether
+    // open or close was called more recently.
     private _initialized() {
         --this._counter;
         if (this._counter === 0) {
@@ -168,14 +168,14 @@ export class ShowHideMachine {
 
     // These method calls are forwarded to the current state.
     updateDom() { this._state.updateDom(); }
-    show() { this._state.show(); }
-    hide() { this._state.hide(); }
-    get hidden() { return this._state.hidden; }
-    set hidden(value: boolean) {
+    open() { this._state.open(); }
+    close() { this._state.close(); }
+    get opened() { return this._state.opened; }
+    set opened(value: boolean) {
         if (value) {
-            this.hide();
+            this.open();
         } else {
-            this.show();
+            this.close();
         }
     }
 
@@ -211,22 +211,22 @@ export class ShowHideMachine {
     }
 
     // Triggers arbitrary app code
-    _fireBeforeShow(): boolean {
-        return this._fireEvent(EventNames.beforeShow, {
+    _fireBeforeOpen(): boolean {
+        return this._fireEvent(EventNames.beforeOpen, {
             cancelable: true
         });
     }
 
     // Triggers arbitrary app code
-    _fireBeforeHide(): boolean {
-        return this._fireEvent(EventNames.beforeHide, {
+    _fireBeforeClose(): boolean {
+        return this._fireEvent(EventNames.beforeClose, {
             cancelable: true
         });
     }
 }
 
 //
-// States (each implements IShowHideState)
+// States (each implements IOpenCloseState)
 //
 
 // WinJS animation promises always complete successfully. This
@@ -284,7 +284,7 @@ function cancelInterruptibles() {
     });
 }
 
-interface IShowHideState {
+interface IOpenCloseState {
     // Debugging
     name: string;
     // State lifecyle
@@ -293,27 +293,27 @@ interface IShowHideState {
                   // In general, the current state is responsible for switching to the next state. The
                   // one exception is dispose where the machine will force the current state to exit.
     // Machine's API surface
-    hidden: boolean; // read only. Writes go thru show/hide.
-    show(): void;
-    hide(): void;
+    opened: boolean; // read only. Writes go thru open/close.
+    open(): void;
+    close(): void;
     updateDom(): void; // If a state decides to postpone updating the DOM, it should
                        // update the DOM immediately before switching to the next state.
     // Provided by _setState for use within the state
-    machine: ShowHideMachine;
+    machine: OpenCloseMachine;
 }
 
 // Transitions:
 //   When created, the state machine will take one of the following initialization
 //   transitions depending on how the machines's APIs have been used by the time
 //   initialized() is called on it:
-//     Init -> Hidden
-//     Init -> Shown
+//     Init -> Closed
+//     Init -> Opened
 //   Following that, the life of the machine will be dominated by the following
 //   sequences of transitions. In geneneral, these sequences are uninterruptible.
-//     Hidden -> BeforeShow -> Hidden (when preventDefault is called on beforeshow event)
-//     Hidden -> BeforeShow -> Showing -> Shown
-//     Shown -> BeforeHide -> Shown (when preventDefault is called on beforehide event)
-//     Shown -> BeforeHide -> Hiding -> Hidden
+//     Closed -> BeforeOpen -> Closed (when preventDefault is called on beforeopen event)
+//     Closed -> BeforeOpen -> Opening -> Opened
+//     Opened -> BeforeClose -> Opened (when preventDefault is called on beforeclose event)
+//     Opened -> BeforeClose -> Closing -> Closed
 //   However, any state can be interrupted to go to the Disposed state:
 //     * -> Disposed
 
@@ -325,192 +325,192 @@ module States {
     // Initial state. Gives the control the opportunity to initialize itself without
     // triggering any animations or DOM modifications. When done, the control should
     // call *initialized* to move the machine to the next state.
-    export class Init implements IShowHideState {
-        private _hidden: boolean;
+    export class Init implements IOpenCloseState {
+        private _opened: boolean;
 
-        machine: ShowHideMachine;
+        machine: OpenCloseMachine;
         name = "Init";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
                     return this.machine._initializedSignal.promise;
                 }).then(() => {
-                    this.machine._control.onUpdateDomWithIsShown(!this._hidden);
-                    this.machine._setState(this._hidden ? Hidden : Shown);
+                    this.machine._control.onUpdateDomWithIsOpened(this._opened);
+                    this.machine._setState(this._opened ? Opened : Closed);
                 });
             });
         }
         exit = cancelInterruptibles;
-        get hidden(): boolean {
-            return this._hidden;
+        get opened(): boolean {
+            return this._opened;
         }
-        show() {
-            this._hidden = false;
+        open() {
+            this._opened = true;
         }
-        hide() {
-            this._hidden = true;
+        close() {
+            this._opened = false;
         }
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
-    // A rest state. The control is hidden and is waiting for the app to call show.
-    class Hidden implements IShowHideState {
-        machine: ShowHideMachine;
-        name = "Hidden";
-        enter(args?: { showIsPending?: boolean; }) {
+    // A rest state. The control is closed and is waiting for the app to call open.
+    class Closed implements IOpenCloseState {
+        machine: OpenCloseMachine;
+        name = "Closed";
+        enter(args?: { openIsPending?: boolean; }) {
             args = args || {};
-            if (args.showIsPending) {
-                this.show();
+            if (args.openIsPending) {
+                this.open();
             }
         }
         exit = _;
-        hidden = true;
-        show() {
-            this.machine._setState(BeforeShow);
+        opened = false;
+        open() {
+            this.machine._setState(BeforeOpen);
         }
-        hide = _;
+        close = _;
         updateDom = updateDomImpl;
     }
 
-    // An event state. The control fires the beforeshow event.
-    class BeforeShow implements IShowHideState {
-        machine: ShowHideMachine;
-        name = "BeforeShow";
+    // An event state. The control fires the beforeopen event.
+    class BeforeOpen implements IOpenCloseState {
+        machine: OpenCloseMachine;
+        name = "BeforeOpen";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    return this.machine._fireBeforeShow(); // Give opportunity for chain to be canceled when triggering app code
-                }).then((shouldShow) => {
-                    if (shouldShow) {
-                        this.machine._setState(Showing);
+                    return this.machine._fireBeforeOpen(); // Give opportunity for chain to be canceled when triggering app code
+                }).then((shouldOpen) => {
+                    if (shouldOpen) {
+                        this.machine._setState(Opening);
                     } else {
-                        this.machine._setState(Hidden);
+                        this.machine._setState(Closed);
                     }
                 });
             });
         }
         exit = cancelInterruptibles;
-        hidden = true;
-        show = _;
-        hide = _;
+        opened = false;
+        open = _;
+        close = _;
         updateDom = updateDomImpl;
     }
 
-    // An animation/event state. The control plays its show animation and fires aftershow.
-    class Showing implements IShowHideState {
-        private _hideIsPending: boolean;
+    // An animation/event state. The control plays its open animation and fires afteropen.
+    class Opening implements IOpenCloseState {
+        private _closeIsPending: boolean;
 
-        machine: ShowHideMachine;
-        name = "Showing";
+        machine: OpenCloseMachine;
+        name = "Opening";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    this._hideIsPending = false;
-                    return cancelablePromise(this.machine._control.onShow());
+                    this._closeIsPending = false;
+                    return cancelablePromise(this.machine._control.onOpen());
                 }).then(() => {
-                    this.machine._fireEvent(EventNames.afterShow); // Give opportunity for chain to be canceled when triggering app code
+                    this.machine._fireEvent(EventNames.afterOpen); // Give opportunity for chain to be canceled when triggering app code
                 }).then(() => {
                     this.machine._control.onUpdateDom();
-                    this.machine._setState(Shown, { hideIsPending: this._hideIsPending });
+                    this.machine._setState(Opened, { closeIsPending: this._closeIsPending });
                 });
             });
         }
         exit = cancelInterruptibles;
-        get hidden() {
-            return this._hideIsPending;
+        get opened() {
+            return !this._closeIsPending;
         }
-        show() {
-            this._hideIsPending = false;
+        open() {
+            this._closeIsPending = false;
         }
-        hide() {
-            this._hideIsPending = true;
+        close() {
+            this._closeIsPending = true;
         }
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
-    // A rest state. The control is shown and is waiting for the app to call hide.
-    class Shown implements IShowHideState {
-        machine: ShowHideMachine;
-        name = "Shown";
-        enter(args?: { hideIsPending?: boolean }) {
+    // A rest state. The control is opened and is waiting for the app to call close.
+    class Opened implements IOpenCloseState {
+        machine: OpenCloseMachine;
+        name = "Opened";
+        enter(args?: { closeIsPending?: boolean }) {
             args = args || {};
-            if (args.hideIsPending) {
-                this.hide();
+            if (args.closeIsPending) {
+                this.close();
             }
         }
         exit = _;
-        hidden = false;
-        show = _;
-        hide() {
-            this.machine._setState(BeforeHide);
+        opened = true;
+        open = _;
+        close() {
+            this.machine._setState(BeforeClose);
         }
         updateDom = updateDomImpl;
     }
 
-    // An event state. The control fires the beforehide event.
-    class BeforeHide implements IShowHideState {
-        machine: ShowHideMachine;
-        name = "BeforeHide";
+    // An event state. The control fires the beforeclose event.
+    class BeforeClose implements IOpenCloseState {
+        machine: OpenCloseMachine;
+        name = "BeforeClose";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    return this.machine._fireBeforeHide(); // Give opportunity for chain to be canceled when triggering app code
-                }).then((shouldHide) => {
-                    if (shouldHide) {
-                        this.machine._setState(Hiding);
+                    return this.machine._fireBeforeClose(); // Give opportunity for chain to be canceled when triggering app code
+                }).then((shouldClose) => {
+                    if (shouldClose) {
+                        this.machine._setState(Closing);
                     } else {
-                        this.machine._setState(Shown);
+                        this.machine._setState(Opened);
                     }
                 });
             });
         }
         exit = cancelInterruptibles;
-        hidden = false;
-        show = _;
-        hide = _;
+        opened = true;
+        open = _;
+        close = _;
         updateDom = updateDomImpl;
     }
 
-    // An animation/event state. The control plays the hide animation and fires the afterhide event.
-    class Hiding implements IShowHideState {
-        private _showIsPending: boolean;
+    // An animation/event state. The control plays the close animation and fires the afterclose event.
+    class Closing implements IOpenCloseState {
+        private _openIsPending: boolean;
 
-        machine: ShowHideMachine;
-        name = "Hiding";
+        machine: OpenCloseMachine;
+        name = "Closing";
         enter() {
             interruptible(this, (ready) => {
                 return ready.then(() => {
-                    this._showIsPending = false;
-                    return cancelablePromise(this.machine._control.onHide());
+                    this._openIsPending = false;
+                    return cancelablePromise(this.machine._control.onClose());
                 }).then(() => {
-                    this.machine._fireEvent(EventNames.afterHide); // Give opportunity for chain to be canceled when triggering app code
+                    this.machine._fireEvent(EventNames.afterClose); // Give opportunity for chain to be canceled when triggering app code
                 }).then(() => {
                     this.machine._control.onUpdateDom();
-                    this.machine._setState(Hidden, { showIsPending: this._showIsPending });
+                    this.machine._setState(Closed, { openIsPending: this._openIsPending });
                 });
             });
         }
         exit = cancelInterruptibles;
-        get hidden() {
-            return !this._showIsPending;
+        get opened() {
+            return this._openIsPending;
         }
-        show() {
-            this._showIsPending = true;
+        open() {
+            this._openIsPending = true;
         }
-        hide() {
-            this._showIsPending = false;
+        close() {
+            this._openIsPending = false;
         }
         updateDom = _; // Postponed until immediately before we switch to another state
     }
 
-    export class Disposed implements IShowHideState {
-        machine: ShowHideMachine;
+    export class Disposed implements IOpenCloseState {
+        machine: OpenCloseMachine;
         name = "Disposed";
         enter = _;
         exit = _;
-        hidden = true;
-        show = _;
-        hide = _;
+        opened = false;
+        open = _;
+        close = _;
         updateDom = _;
     }
 }
