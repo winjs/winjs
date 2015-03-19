@@ -772,7 +772,7 @@ module Helper.ListView {
         var layoutInfo = computeExpectedLayoutInformation(options);
         var styleElement = addStylesForView(root, options);
         root.style.direction = options.rtl ? "rtl" : "ltr";
-        var bindingList = <WinJS.Binding.GroupedSortedListProjection<any>> getBasicDataSource(options.itemsCount, options.grouped, options.itemsPerGroup);
+        var bindingList = <WinJS.Binding.GroupedSortedListProjection<any, any>> getBasicDataSource(options.itemsCount, options.grouped, options.itemsPerGroup);
         var layoutOptions: any = {
             orientation: options.orientation
         };
