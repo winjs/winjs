@@ -177,10 +177,6 @@ export class ToolBarNew {
                 this._commandingSurface.updateDomImpl();
             }
         });
-        // Enter the Init state.
-        var signal = new _Signal();
-        stateMachine.initializing(signal.promise);
-
         // Initialize private state.
         this._disposed = false;
         this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
@@ -193,7 +189,9 @@ export class ToolBarNew {
 
         // Exit the Init state.
         _ElementUtilities._inDom(this.element).then(() => {
-            signal.complete();
+            return this._commandingSurface.initialized;
+        }).then(() => {
+            stateMachine.exitInit();
             this._writeProfilerMark("constructor,StopTM");
         });
     }

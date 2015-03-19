@@ -153,6 +153,7 @@ export class _CommandingSurface {
     private _rtl: boolean;
     private _disposed: boolean;
     private _nextLayoutStage: number;
+    private _initializedSignal: _Signal<any>;
     _isOpenedMode: boolean;
 
     // Measurements
@@ -304,10 +305,7 @@ export class _CommandingSurface {
                 this.updateDomImpl();
             }
         });
-        // Enter the Init state
-        var signal = new _Signal();
-        this._machine.initializing(signal.promise);
-
+        
         // Initialize private state.
         this._disposed = false;
         this._primaryCommands = [];
@@ -317,6 +315,7 @@ export class _CommandingSurface {
         this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._dom.root);
         this._refreshPending = false;
         this._rtl = false;
+        this._initializedSignal = new _Signal();
         this._nextLayoutStage = CommandLayoutPipeline.idle;
         this._isOpenedMode = _Constants.defaultOpened;
 
@@ -340,7 +339,11 @@ export class _CommandingSurface {
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
             this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
-            signal.complete();
+            if (!options.openCloseMachine) {
+                // We should only call exitInit on the machine when we own the machine.
+                this._machine.exitInit();
+            }
+            this._initializedSignal.complete();
             this._writeProfilerMark("constructor,StopTM");
         });
 
@@ -418,6 +421,10 @@ export class _CommandingSurface {
             actionArea: this._dom.actionArea.getBoundingClientRect(),
             overflowArea: this._dom.overflowArea.getBoundingClientRect(),
         };
+    }
+    
+    get initialized(): Promise<any> {
+        return this._initializedSignal.promise;
     }
 
     private _writeProfilerMark(text: string) {

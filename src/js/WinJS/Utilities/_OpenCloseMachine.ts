@@ -63,7 +63,7 @@ import _Signal = require('../_Signal');
 //
 //           // Tell the machine the control is initialized. After this, the machine will start asking
 //           // the control to play animations and update its DOM as appropriate.
-//           this._machine.initialized();
+//           this._machine.exitInit();
 //       }
 //
 //       get opened() {
@@ -140,7 +140,7 @@ export class OpenCloseMachine {
     // updateDom will be postponed until the machine exits the Init state. Consequently, while in
     // this state, the control can feel free to call updateDom as many times as it wants without
     // worrying about it being expensive due to updating the DOM many times. The control should call
-    // *initialized* to move the machine out of the Init state.
+    // *exitInit* to move the machine out of the Init state.
 
     constructor(args: IOpenCloseControl) {
         this._control = args;
@@ -148,21 +148,11 @@ export class OpenCloseMachine {
         this._disposed = false;
         this._setState(States.Init);
     }
-    
-    private _counter = 0;
-
-    initializing(p: Promise<any>) {
-        ++this._counter;
-        p.then(() => {this._initialized()});
-    }
 
     // Moves the machine out of the Init state and into the Opened or Closed state depending on whether
     // open or close was called more recently.
-    private _initialized() {
-        --this._counter;
-        if (this._counter === 0) {
-            this._initializedSignal.complete();
-        }
+    exitInit() {
+        this._initializedSignal.complete();
     }
 
 
@@ -305,7 +295,7 @@ interface IOpenCloseState {
 // Transitions:
 //   When created, the state machine will take one of the following initialization
 //   transitions depending on how the machines's APIs have been used by the time
-//   initialized() is called on it:
+//   exitInit() is called on it:
 //     Init -> Closed
 //     Init -> Opened
 //   Following that, the life of the machine will be dominated by the following
@@ -324,7 +314,7 @@ module States {
 
     // Initial state. Gives the control the opportunity to initialize itself without
     // triggering any animations or DOM modifications. When done, the control should
-    // call *initialized* to move the machine to the next state.
+    // call *exitInit* to move the machine to the next state.
     export class Init implements IOpenCloseState {
         private _opened: boolean;
 
