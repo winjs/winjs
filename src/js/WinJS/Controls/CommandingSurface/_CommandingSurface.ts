@@ -22,7 +22,7 @@ import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
 import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
-import _ShowHideMachine = require('../../Utilities/_ShowHideMachine');
+import _OpenCloseMachine = require('../../Utilities/_OpenCloseMachine');
 import _Signal = require('../../_Signal');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
@@ -144,7 +144,7 @@ export class _CommandingSurface {
     private _refreshBound: Function;
     private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
-    private _machine: _ShowHideMachine.ShowHideMachine;
+    private _machine: _OpenCloseMachine.OpenCloseMachine;
     private _data: BindingList.List<_Command.ICommand>;
     private _primaryCommands: _Command.ICommand[];
     private _secondaryCommands: _Command.ICommand[];
@@ -250,10 +250,10 @@ export class _CommandingSurface {
     /// Gets or sets whether the _CommandingSurface is currently opened.
     /// </field>
     get opened(): boolean {
-        return !this._machine.hidden;
+        return this._machine.opened;
     }
     set opened(value: boolean) {
-        this._machine.hidden = !value;
+        this._machine.opened = value;
     }
 
     constructor(element?: HTMLElement, options: any = {}) {
@@ -280,16 +280,16 @@ export class _CommandingSurface {
         }
 
         this._initializeDom(element || _Global.document.createElement("div"));
-        this._machine = options.showHideMachine || new _ShowHideMachine.ShowHideMachine({
+        this._machine = options.openCloseMachine || new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this._dom.root,
-            onShow: () => {
+            onOpen: () => {
                 //this._cachedHiddenPaneThickness = null;
                 //var hiddenPaneThickness = this._getHiddenPaneThickness();
                 this.synchronousOpen();
                 //return this._playShowAnimation(hiddenPaneThickness);
                 return Promise.wrap();
             },
-            onHide: () => {
+            onClose: () => {
                 //return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
                 this.synchronousClose();
                 //});
@@ -299,8 +299,8 @@ export class _CommandingSurface {
             onUpdateDom: () => {
                 this.updateDomImpl();
             },
-            onUpdateDomWithIsShown: (isShown: boolean) => {
-                this._isOpenedMode = isShown;
+            onUpdateDomWithIsOpened: (isOpened: boolean) => {
+                this._isOpenedMode = isOpened;
                 this.updateDomImpl();
             }
         });
@@ -348,19 +348,19 @@ export class _CommandingSurface {
     /// <field type="Function" locid="WinJS.UI._CommandingSurface.onbeforeopen" helpKeyword="WinJS.UI._CommandingSurface.onbeforeopen">
     /// Occurs immediately before the control is opened.
     /// </field>
-    onbeforeshow: (ev: CustomEvent) => void;
+    onbeforeopen: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI._CommandingSurface.onafteropen" helpKeyword="WinJS.UI._CommandingSurface.onafteropen">
     /// Occurs immediately after the control is opened.
     /// </field>
-    onaftershow: (ev: CustomEvent) => void;
+    onafteropen: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI._CommandingSurface.onbeforeclose" helpKeyword="WinJS.UI._CommandingSurface.onbeforeclose">
     /// Occurs immediately before the control is closed.
     /// </field>
-    onbeforehide: (ev: CustomEvent) => void;
+    onbeforeclose: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI._CommandingSurface.onafterclose" helpKeyword="WinJS.UI._CommandingSurface.onafterclose">
     /// Occurs immediately after the control is closed.
     /// </field>
-    onafterhide: (ev: CustomEvent) => void;
+    onafterclose: (ev: CustomEvent) => void;
 
     open(): void {
         /// <signature helpKeyword="WinJS.UI._CommandingSurface.open">
@@ -368,7 +368,7 @@ export class _CommandingSurface {
         /// Opens the _CommandingSurface's actionarea and overflowarea
         /// </summary>
         /// </signature>
-        this._machine.show();
+        this._machine.open();
     }
 
     close(): void {
@@ -377,7 +377,7 @@ export class _CommandingSurface {
         /// Closes the _CommandingSurface's actionarea and overflowarea
         /// </summary>
         /// </signature>
-        this._machine.hide();
+        this._machine.close();
     }
 
     dispose(): void {
@@ -1148,10 +1148,10 @@ export class _CommandingSurface {
 }
 
 _Base.Class.mix(_CommandingSurface, _Events.createEventProperties(
-    _Constants.EventNames.beforeShow,
-    _Constants.EventNames.afterShow,
-    _Constants.EventNames.beforeHide,
-    _Constants.EventNames.afterHide));
+    _Constants.EventNames.beforeOpen,
+    _Constants.EventNames.afterOpen,
+    _Constants.EventNames.beforeClose,
+    _Constants.EventNames.afterClose));
 
 // addEventListener, removeEventListener, dispatchEvent
 _Base.Class.mix(_CommandingSurface, _Control.DOMEventMixin);

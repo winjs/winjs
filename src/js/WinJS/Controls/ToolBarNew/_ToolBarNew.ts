@@ -23,7 +23,7 @@ import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
 import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
-import _ShowHideMachine = require('../../Utilities/_ShowHideMachine');
+import _OpenCloseMachine = require('../../Utilities/_OpenCloseMachine');
 import _Signal = require('../../_Signal');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
@@ -152,9 +152,9 @@ export class ToolBarNew {
         }
 
         this._initializeDom(element || _Global.document.createElement("div"));
-        var stateMachine = new _ShowHideMachine.ShowHideMachine({
+        var stateMachine = new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this.element,
-            onShow: () => {
+            onOpen: () => {
 
                 this._synchronousOpen();
 
@@ -162,7 +162,7 @@ export class ToolBarNew {
                 return Promise.wrap();
             },
 
-            onHide: () => {
+            onClose: () => {
 
                 this._synchronousClose()
 
@@ -172,8 +172,8 @@ export class ToolBarNew {
             onUpdateDom: () => {
                 this._commandingSurface.updateDomImpl();
             },
-            onUpdateDomWithIsShown: (isShown: boolean) => {
-                this._commandingSurface._isOpenedMode = isShown;
+            onUpdateDomWithIsOpened: (isOpened: boolean) => {
+                this._commandingSurface._isOpenedMode = isOpened;
                 this._commandingSurface.updateDomImpl();
             }
         });
@@ -183,7 +183,7 @@ export class ToolBarNew {
 
         // Initialize private state.
         this._disposed = false;
-        this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { showHideMachine: stateMachine });
+        this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
         this._isOpenedMode = _Constants.defaultOpened;
 
         // Initialize public properties.
@@ -201,19 +201,19 @@ export class ToolBarNew {
     /// <field type="Function" locid="WinJS.UI.ToolBarNew.onbeforeopen" helpKeyword="WinJS.UI.ToolBarNew.onbeforeopen">
     /// Occurs immediately before the control is opened.
     /// </field>
-    onbeforeshow: (ev: CustomEvent) => void;
+    onbeforeopen: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI.ToolBarNew.onafteropen" helpKeyword="WinJS.UI.ToolBarNew.onafteropen">
     /// Occurs immediately after the control is opened.
     /// </field>
-    onaftershow: (ev: CustomEvent) => void;
+    onafteropen: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI.ToolBarNew.onbeforeclose" helpKeyword="WinJS.UI.ToolBarNew.onbeforeclose">
     /// Occurs immediately before the control is closed.
     /// </field>
-    onbeforehide: (ev: CustomEvent) => void;
+    onbeforeclose: (ev: CustomEvent) => void;
     /// <field type="Function" locid="WinJS.UI.ToolBarNew.onafterclose" helpKeyword="WinJS.UI.ToolBarNew.onafterclose">
     /// Occurs immediately after the control is closed.
     /// </field>
-    onafterhide: (ev: CustomEvent) => void;
+    onafterclose: (ev: CustomEvent) => void;
 
     open(): void {
         /// <signature helpKeyword="WinJS.UI.ToolBarNew.open">
@@ -244,7 +244,7 @@ export class ToolBarNew {
         }
 
         this._disposed = true;
-        // Disposing the _commandingSurface will trigger dispose on its ShowHideMachine and synchronously complete any animations that might have been running.
+        // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine and synchronously complete any animations that might have been running.
         this._commandingSurface.dispose();
         // If page navigation is happening, we don't want to ToolBar left behind in the body.
         // Synchronoulsy close the ToolBar to force it out of the body and back into its parent element.
@@ -427,10 +427,10 @@ export class ToolBarNew {
 }
 
 _Base.Class.mix(ToolBarNew, _Events.createEventProperties(
-    _Constants.EventNames.beforeShow,
-    _Constants.EventNames.afterShow,
-    _Constants.EventNames.beforeHide,
-    _Constants.EventNames.afterHide));
+    _Constants.EventNames.beforeOpen,
+    _Constants.EventNames.afterOpen,
+    _Constants.EventNames.beforeClose,
+    _Constants.EventNames.afterClose));
 
 // addEventListener, removeEventListener, dispatchEvent
 _Base.Class.mix(ToolBarNew, _Control.DOMEventMixin);

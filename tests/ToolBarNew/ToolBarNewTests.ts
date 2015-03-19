@@ -25,25 +25,25 @@ module CorsicaTests {
         Helper._CommandingSurface.useSynchronousAnimations(toolBarNew._commandingSurface);
 
         var counter = 0;
-        registerForEvent(toolBarNew, _Constants.EventNames.beforeShow, () => {
-            LiveUnit.Assert.areEqual(1, counter, _Constants.EventNames.beforeShow + " fired out of order");
+        registerForEvent(toolBarNew, _Constants.EventNames.beforeOpen, () => {
+            LiveUnit.Assert.areEqual(1, counter, _Constants.EventNames.beforeOpen + " fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(toolBarNew.opened, _Constants.EventNames.beforeShow + ": ToolBarNew should not be in opened state");
+            LiveUnit.Assert.isFalse(toolBarNew.opened, _Constants.EventNames.beforeOpen + ": ToolBarNew should not be in opened state");
         });
-        registerForEvent(toolBarNew, _Constants.EventNames.afterShow, () => {
-            LiveUnit.Assert.areEqual(2, counter, _Constants.EventNames.afterShow + " fired out of order");
+        registerForEvent(toolBarNew, _Constants.EventNames.afterOpen, () => {
+            LiveUnit.Assert.areEqual(2, counter, _Constants.EventNames.afterOpen + " fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(toolBarNew.opened, _Constants.EventNames.afterShow + ": ToolBarNew should be in opened state");
+            LiveUnit.Assert.isTrue(toolBarNew.opened, _Constants.EventNames.afterOpen + ": ToolBarNew should be in opened state");
         });
-        registerForEvent(toolBarNew, _Constants.EventNames.beforeHide, () => {
-            LiveUnit.Assert.areEqual(4, counter, _Constants.EventNames.beforeHide + " fired out of order");
+        registerForEvent(toolBarNew, _Constants.EventNames.beforeClose, () => {
+            LiveUnit.Assert.areEqual(4, counter, _Constants.EventNames.beforeClose + " fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(toolBarNew.opened, _Constants.EventNames.beforeHide + ": ToolBarNew should be in opened state");
+            LiveUnit.Assert.isTrue(toolBarNew.opened, _Constants.EventNames.beforeClose + ": ToolBarNew should be in opened state");
         });
-        registerForEvent(toolBarNew, _Constants.EventNames.afterHide, () => {
-            LiveUnit.Assert.areEqual(5, counter, _Constants.EventNames.afterHide + " fired out of order");
+        registerForEvent(toolBarNew, _Constants.EventNames.afterClose, () => {
+            LiveUnit.Assert.areEqual(5, counter, _Constants.EventNames.afterClose + " fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(toolBarNew.opened, _Constants.EventNames.afterHide + ": ToolBarNew should not be in opened state");
+            LiveUnit.Assert.isFalse(toolBarNew.opened, _Constants.EventNames.afterClose + ": ToolBarNew should not be in opened state");
         });
 
         LiveUnit.Assert.areEqual(0, counter, "before open: wrong number of events fired");
@@ -188,10 +188,10 @@ module CorsicaTests {
             toolBarNew.open();
 
             var msg = "Shouldn't have fired due to control being disposed";
-            toolBarNew.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            toolBarNew.onbeforehide = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            toolBarNew.onaftershow = failEventHandler(_Constants.EventNames.afterShow, msg);
-            toolBarNew.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            toolBarNew.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            toolBarNew.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            toolBarNew.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            toolBarNew.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             toolBarNew.dispose();
             LiveUnit.Assert.isTrue(toolBarNew._disposed, "ToolBarNew didn't mark itself as disposed");
@@ -1353,10 +1353,10 @@ module CorsicaTests {
             });
 
             var msg = "Changing the closedDisplayMode property should not trigger this event";
-            toolBarNew.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            toolBarNew.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            toolBarNew.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            toolBarNew.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            toolBarNew.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            toolBarNew.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            toolBarNew.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            toolBarNew.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             Object.keys(ToolBarNew.ClosedDisplayMode).forEach(function (mode) {
                 toolBarNew.closedDisplayMode = mode;
@@ -1422,10 +1422,10 @@ module CorsicaTests {
             Helper._CommandingSurface.useSynchronousAnimations(toolBarNew._commandingSurface);
 
             var msg = "Opening an already opened AppBar should not fire events";
-            toolBarNew.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            toolBarNew.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            toolBarNew.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            toolBarNew.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            toolBarNew.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            toolBarNew.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            toolBarNew.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            toolBarNew.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when opening again.
             toolBarNew.open();
@@ -1459,10 +1459,10 @@ module CorsicaTests {
             Helper._CommandingSurface.useSynchronousAnimations(toolBarNew._commandingSurface);
 
             var msg = "Closing an already closed AppBar should not fire events";
-            toolBarNew.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            toolBarNew.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            toolBarNew.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            toolBarNew.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            toolBarNew.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            toolBarNew.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            toolBarNew.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            toolBarNew.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when closing again.
             toolBarNew.close();
@@ -1500,15 +1500,15 @@ module CorsicaTests {
             });
         }
 
-        testBeforeShowIsCancelable() {
+        testBeforeOpenIsCancelable() {
             var toolBarNew = new ToolBarNew(this._element, { opened: false });
             Helper._CommandingSurface.useSynchronousAnimations(toolBarNew._commandingSurface);
 
-            toolBarNew.onbeforeshow = function (eventObject) {
+            toolBarNew.onbeforeopen = function (eventObject) {
                 eventObject.preventDefault();
             };
-            toolBarNew.onaftershow = function (eventObject) {
-                LiveUnit.Assert.fail("aftershow shouldn't have fired due to beforeshow being canceled");
+            toolBarNew.onafteropen = function (eventObject) {
+                LiveUnit.Assert.fail("afteropen shouldn't have fired due to beforeopen being canceled");
             };
 
             toolBarNew.open();
@@ -1518,15 +1518,15 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(toolBarNew.opened, "ToolBarNew should still be closed");
         }
 
-        testBeforeHideIsCancelable() {
+        testBeforeCloseIsCancelable() {
             var toolBarNew = new ToolBarNew(this._element, { opened: true });
             Helper._CommandingSurface.useSynchronousAnimations(toolBarNew._commandingSurface);
 
-            toolBarNew.onbeforehide = function (eventObject) {
+            toolBarNew.onbeforeclose = function (eventObject) {
                 eventObject.preventDefault();
             };
-            toolBarNew.onafterhide = function (eventObject) {
-                LiveUnit.Assert.fail("afterhide shouldn't have fired due to beforehide being canceled");
+            toolBarNew.onafterclose = function (eventObject) {
+                LiveUnit.Assert.fail("afterclose shouldn't have fired due to beforeclose being canceled");
             };
 
             toolBarNew.close();

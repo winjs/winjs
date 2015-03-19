@@ -29,11 +29,10 @@ export var ClassNames = {
 };
 
 export var EventNames = {
-    /* TODO Update the string literals to the proper open/close nomenclature once we move the state machine and splitview over to the new names. */
-    beforeShow: "beforeshow",
-    afterShow: "aftershow",
-    beforeHide: "beforehide",
-    afterHide: "afterhide"
+    beforeOpen: "beforeopen",
+    afterOpen: "afteropen",
+    beforeClose: "beforeclose",
+    afterClose: "afterclose"
 };
 
 export var controlMinWidth: number = _CommandingSurfaceConstants.controlMinWidth;

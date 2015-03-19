@@ -25,25 +25,25 @@ module CorsicaTests {
         Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
         var counter = 0;
-        registerForEvent(commandingSurface, _Constants.EventNames.beforeShow, () => {
-            LiveUnit.Assert.areEqual(1, counter, _Constants.EventNames.beforeShow + " fired out of order");
+        registerForEvent(commandingSurface, _Constants.EventNames.beforeOpen, () => {
+            LiveUnit.Assert.areEqual(1, counter, _Constants.EventNames.beforeOpen + " fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(commandingSurface.opened, _Constants.EventNames.beforeShow + ": CommandingSurface should not be in opened state");
+            LiveUnit.Assert.isFalse(commandingSurface.opened, _Constants.EventNames.beforeOpen + ": CommandingSurface should not be in opened state");
         });
-        registerForEvent(commandingSurface, _Constants.EventNames.afterShow, () => {
-            LiveUnit.Assert.areEqual(2, counter, _Constants.EventNames.afterShow + " fired out of order");
+        registerForEvent(commandingSurface, _Constants.EventNames.afterOpen, () => {
+            LiveUnit.Assert.areEqual(2, counter, _Constants.EventNames.afterOpen + " fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(commandingSurface.opened, _Constants.EventNames.afterShow + ": CommandingSurface should be in opened state");
+            LiveUnit.Assert.isTrue(commandingSurface.opened, _Constants.EventNames.afterOpen + ": CommandingSurface should be in opened state");
         });
-        registerForEvent(commandingSurface, _Constants.EventNames.beforeHide, () => {
-            LiveUnit.Assert.areEqual(4, counter, _Constants.EventNames.beforeHide + " fired out of order");
+        registerForEvent(commandingSurface, _Constants.EventNames.beforeClose, () => {
+            LiveUnit.Assert.areEqual(4, counter, _Constants.EventNames.beforeClose + " fired out of order");
             counter++;
-            LiveUnit.Assert.isTrue(commandingSurface.opened, _Constants.EventNames.beforeHide + ": CommandingSurface should be in opened state");
+            LiveUnit.Assert.isTrue(commandingSurface.opened, _Constants.EventNames.beforeClose + ": CommandingSurface should be in opened state");
         });
-        registerForEvent(commandingSurface, _Constants.EventNames.afterHide, () => {
-            LiveUnit.Assert.areEqual(5, counter, _Constants.EventNames.afterHide + " fired out of order");
+        registerForEvent(commandingSurface, _Constants.EventNames.afterClose, () => {
+            LiveUnit.Assert.areEqual(5, counter, _Constants.EventNames.afterClose + " fired out of order");
             counter++;
-            LiveUnit.Assert.isFalse(commandingSurface.opened, _Constants.EventNames.afterHide + ": CommandingSurface should not be in opened state");
+            LiveUnit.Assert.isFalse(commandingSurface.opened, _Constants.EventNames.afterClose + ": CommandingSurface should not be in opened state");
         });
 
         LiveUnit.Assert.areEqual(0, counter, "before open: wrong number of events fired");
@@ -191,10 +191,10 @@ module CorsicaTests {
             commandingSurface.open();
 
             var msg = "Shouldn't have fired due to control being disposed";
-            commandingSurface.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            commandingSurface.onbeforehide = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            commandingSurface.onaftershow = failEventHandler(_Constants.EventNames.afterShow, msg);
-            commandingSurface.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            commandingSurface.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            commandingSurface.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            commandingSurface.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             commandingSurface.dispose();
             LiveUnit.Assert.isTrue(commandingSurface._disposed, "CommandingSurface didn't mark itself as disposed");
@@ -1334,10 +1334,10 @@ module CorsicaTests {
             });
 
             var msg = "Changing the closedDisplayMode property should not trigger this event";
-            commandingSurface.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            commandingSurface.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            commandingSurface.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            commandingSurface.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            commandingSurface.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            commandingSurface.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            commandingSurface.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             Object.keys(_CommandingSurface.ClosedDisplayMode).forEach(function (mode) {
                 commandingSurface.closedDisplayMode = mode;
@@ -1403,10 +1403,10 @@ module CorsicaTests {
             Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
             var msg = "Opening an already opened AppBar should not fire events";
-            commandingSurface.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            commandingSurface.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            commandingSurface.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            commandingSurface.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            commandingSurface.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            commandingSurface.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            commandingSurface.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when opening again.
             commandingSurface.open();
@@ -1440,10 +1440,10 @@ module CorsicaTests {
             Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
             var msg = "Closing an already closed AppBar should not fire events";
-            commandingSurface.onbeforeshow = failEventHandler(_Constants.EventNames.beforeShow, msg);
-            commandingSurface.onbeforehide = failEventHandler(_Constants.EventNames.afterShow, msg);
-            commandingSurface.onaftershow = failEventHandler(_Constants.EventNames.beforeHide, msg);
-            commandingSurface.onafterhide = failEventHandler(_Constants.EventNames.afterHide, msg);
+            commandingSurface.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
+            commandingSurface.onbeforeclose = failEventHandler(_Constants.EventNames.beforeClose, msg);
+            commandingSurface.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
+            commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when closing again.
             commandingSurface.close();
@@ -1481,15 +1481,15 @@ module CorsicaTests {
             });
         }
 
-        testBeforeShowIsCancelable() {
+        testBeforeOpenIsCancelable() {
             var commandingSurface = new _CommandingSurface(this._element, { opened: false });
             Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
-            commandingSurface.onbeforeshow = function (eventObject) {
+            commandingSurface.onbeforeopen = function (eventObject) {
                 eventObject.preventDefault();
             };
-            commandingSurface.onaftershow = function (eventObject) {
-                LiveUnit.Assert.fail("aftershow shouldn't have fired due to beforeshow being canceled");
+            commandingSurface.onafteropen = function (eventObject) {
+                LiveUnit.Assert.fail("afteropen shouldn't have fired due to beforeopen being canceled");
             };
 
             commandingSurface.open();
@@ -1499,15 +1499,15 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(commandingSurface.opened, "CommandingSurface should still be closed");
         }
 
-        testBeforeHideIsCancelable() {
+        testBeforeCloseIsCancelable() {
             var commandingSurface = new _CommandingSurface(this._element, { opened: true });
             Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
-            commandingSurface.onbeforehide = function (eventObject) {
+            commandingSurface.onbeforeclose = function (eventObject) {
                 eventObject.preventDefault();
             };
-            commandingSurface.onafterhide = function (eventObject) {
-                LiveUnit.Assert.fail("afterhide shouldn't have fired due to beforehide being canceled");
+            commandingSurface.onafterclose = function (eventObject) {
+                LiveUnit.Assert.fail("afterclose shouldn't have fired due to beforeclose being canceled");
             };
 
             commandingSurface.close();
