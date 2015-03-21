@@ -11,7 +11,7 @@ module CorsicaTests {
 
     var MenuCommand = <typeof WinJS.UI.PrivateMenuCommand> WinJS.UI.MenuCommand,
         Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,
-        _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
+        _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants");
 
     function verifyPropertyChangeDeactivatesFlyoutMenuCommand(property: string, value: any, msg: string) {
         return new WinJS.Promise((c) => {

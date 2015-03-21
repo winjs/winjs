@@ -6,6 +6,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Events',
     '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
@@ -14,9 +15,9 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
-    './AppBar/_Constants',
+    './_LegacyAppBar/_Constants',
     './Flyout/_Overlay'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -52,6 +53,7 @@ define([
                 get badAlignment() { return "Invalid argument: Flyout alignment should be 'center' (default), 'left', or 'right'."; }
             };
 
+            var createEvent = _Events._createEventProperty;
 
             // Singleton class for managing cascading flyouts
             var _CascadeManager = _Base.Class.define(function _CascadeManager_ctor() {
@@ -302,6 +304,45 @@ define([
                     }
                 },
 
+                /// <field type="Boolean" locid="WinJS.UI.Flyout.disabled" helpKeyword="WinJS.UI.Flyout.disabled">Disable a Flyout, setting or getting the HTML disabled attribute.  When disabled the Flyout will no longer display with show(), and will hide if currently visible.</field>
+                disabled: {
+                    get: function () {
+                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
+                        return !!this._element.disabled;
+                    },
+                    set: function (value) {
+                        // Force this check into a boolean because our current state could be a bit confused since we tie to the DOM element
+                        value = !!value;
+                        var oldValue = !!this._element.disabled;
+                        if (oldValue !== value) {
+                            this._element.disabled = value;
+                            if (!this.hidden && this._element.disabled) {
+                                this.hide();
+                            }
+                        }
+                    }
+                },
+
+                /// <field type="Function" locid="WinJS.UI.Flyout.onbeforeshow" helpKeyword="WinJS.UI.Flyout.onbeforeshow">
+                /// Occurs immediately before the control is shown.
+                /// </field>
+                onbeforeshow: createEvent(_Overlay._Overlay.beforeShow),
+
+                /// <field type="Function" locid="WinJS.UI.Flyout.onaftershow" helpKeyword="WinJS.UI.Flyout.onaftershow">
+                /// Occurs immediately after the control is shown.
+                /// </field>
+                onaftershow: createEvent(_Overlay._Overlay.afterShow),
+
+                /// <field type="Function" locid="WinJS.UI.Flyout.onbeforehide" helpKeyword="WinJS.UI.Flyout.onbeforehide">
+                /// Occurs immediately before the control is hidden.
+                /// </field>
+                onbeforehide: createEvent(_Overlay._Overlay.beforeHide),
+
+                /// <field type="Function" locid="WinJS.UI.Flyout.onafterhide" helpKeyword="WinJS.UI.Flyout.onafterhide">
+                /// Occurs immediately after the control is hidden.
+                /// </field>
+                onafterhide: createEvent(_Overlay._Overlay.afterHide),
+
                 _dispose: function Flyout_dispose() {
                     _Dispose.disposeSubTree(this.element);
                     this._hide();
@@ -364,7 +405,7 @@ define([
 
                             // _isAppBarOrChild may return a CED or sentinal
                             var appBar = _Overlay._Overlay._isAppBarOrChild(this._previousFocus);
-                            if (!appBar || (appBar.winControl && !appBar.winControl.hidden && !appBar.winAnimating)) {
+                            if (!appBar || (appBar.winControl && appBar.winControl.opened && !appBar.winAnimating)) {
                                 // Don't move focus back to a appBar that is hidden
                                 // We cannot rely on element.style.visibility because it will be visible while animating
                                 var role = this._previousFocus.getAttribute("role");

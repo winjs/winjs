@@ -7,7 +7,7 @@
 module CorsicaTests {
     "use strict";
 
-    var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants"),
+    var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants"),
         Key = WinJS.Utilities.Key,
         Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout,
         Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,

@@ -13,7 +13,7 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_KeyboardBehavior',
-    './AppBar/_Constants',
+    './_LegacyAppBar/_Constants',
     './Flyout',
     './Flyout/_Overlay',
     './Menu/_Command'

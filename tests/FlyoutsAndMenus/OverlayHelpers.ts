@@ -4,7 +4,7 @@
 module OverlayHelpers {
     "use strict";
 
-    var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
+    var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants");
 
     export function show(overlay): WinJS.Promise<any> {
          return new WinJS.Promise(function (c, e, p): void {

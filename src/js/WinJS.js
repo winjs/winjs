@@ -33,7 +33,7 @@ define([
     'WinJS/Controls/Pivot',
     'WinJS/Controls/Hub',
     'WinJS/Controls/Flyout',
-    'WinJS/Controls/AppBar',
+    'WinJS/Controls/_LegacyAppBar',
     'WinJS/Controls/Menu',
     'WinJS/Controls/SearchBox',
     'WinJS/Controls/SettingsFlyout',
@@ -41,10 +41,9 @@ define([
     'WinJS/Controls/Tooltip',
     'WinJS/Controls/ViewBox',
     'WinJS/Controls/ContentDialog',
-    'WinJS/Controls/ToolBar',
     'WinJS/Controls/SplitView',
-    'WinJS/Controls/CommandingSurface',
-    'WinJS/Controls/ToolBarNew',
+    'WinJS/Controls/ToolBar',
+    'WinJS/Controls/AppBar',
     ], function (_WinJS) {
     "use strict";
 

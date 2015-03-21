@@ -234,7 +234,7 @@ div.win-command:focus {
 /*
 AppBar
 */
-.win-appbar {
+.win-legacyappbar {
     z-index: 1002;
     border-width: 0;
     width: 100%;
@@ -244,35 +244,35 @@ AppBar
     position: -ms-device-fixed;
     min-height: 48px;
 
-    &.win-appbar-minimal {
+    &.win-legacyappbar-minimal {
         min-height: 25px;
 
-        &.win-appbar-hidden .win-appbar-invokebutton .win-appbar-ellipsis {
+        &.win-legacyappbar-closed .win-legacyappbar-invokebutton .win-legacyappbar-ellipsis {
             top: 5px;
         }
     }
 
-    &.win-appbar-hiding.win-appbar-minimal > :not(.win-appbar-invokebutton) {
+    &.win-legacyappbar-closing.win-legacyappbar-minimal > :not(.win-legacyappbar-invokebutton) {
         opacity: 0;
     }
 
-    &.win-menulayout.win-appbar-hiding .win-appbar-menu {
+    &.win-menulayout.win-legacyappbar-closing .win-legacyappbar-menu {
         opacity: 1;
     }
 
-    &.win-appbar-hidden.win-appbar-minimal > :not(.win-appbar-invokebutton) {
+    &.win-legacyappbar-closed.win-legacyappbar-minimal > :not(.win-legacyappbar-invokebutton) {
         display: none !important;
     }
 
-    &.win-appbar-hiding.win-appbar-minimal .win-appbar-invokebutton,
-    &.win-appbar-hidden.win-appbar-minimal .win-appbar-invokebutton {
+    &.win-legacyappbar-closing.win-legacyappbar-minimal .win-legacyappbar-invokebutton,
+    &.win-legacyappbar-closed.win-legacyappbar-minimal .win-legacyappbar-invokebutton {
         width: 100%;
     }
 
-    &.win-menulayout.win-appbar-showing,
-    &.win-menulayout.win-appbar-shown,
-    &.win-menulayout.win-appbar-hiding  {
-        .win-appbar-invokebutton {
+    &.win-menulayout.win-legacyappbar-opening,
+    &.win-menulayout.win-legacyappbar-opened,
+    &.win-menulayout.win-legacyappbar-closing  {
+        .win-legacyappbar-invokebutton {
             visibility: hidden;
         }
         .win-toolbar.win-toolbar-showndisplayfull .win-toolbar-overflowbutton {
@@ -280,7 +280,7 @@ AppBar
         }
     }
 
-    .win-appbar-invokebutton {
+    .win-legacyappbar-invokebutton {
         width: 32px;
         height: 100%;
         min-height: 25px;
@@ -295,7 +295,7 @@ AppBar
         // Setting explicit z-index here works around draw ordering issue that occurs in IE when other positioned elements are present in a custom AppBar.
         z-index: 1;
 
-        .win-appbar-ellipsis {
+        .win-legacyappbar-ellipsis {
             width: 32px;
             height: 100%;
             right: 0px;
@@ -314,15 +314,15 @@ AppBar
     }
 
     .RTL({
-        .win-appbar-invokebutton,
-        .win-appbar-invokebutton .win-appbar-ellipsis {
+        .win-legacyappbar-invokebutton,
+        .win-legacyappbar-invokebutton .win-legacyappbar-ellipsis {
             right: auto;
             left: 0px;
         }
     });
 
-    &.win-appbar-minimal .win-appbar-invokebutton,
-    &.win-appbar-compact .win-appbar-invokebutton {
+    &.win-legacyappbar-minimal .win-legacyappbar-invokebutton,
+    &.win-legacyappbar-compact .win-legacyappbar-invokebutton {
         display: block;
     }
 }
@@ -361,40 +361,40 @@ AppBar commands layout
         #flex > .flex(0; 0; auto);
     }
 
-    &.win-appbar-showing,
-    &.win-appbar-shown,
-    &.win-appbar-hiding {
+    &.win-legacyappbar-opening,
+    &.win-legacyappbar-opened,
+    &.win-legacyappbar-closing {
         min-height: 62px;
     }
 
-    &.win-appbar-showing.win-appbar-compact,
-    &.win-appbar-shown.win-appbar-compact,
-    &.win-appbar-hiding.win-appbar-compact {
+    &.win-legacyappbar-opening.win-legacyappbar-compact,
+    &.win-legacyappbar-opened.win-legacyappbar-compact,
+    &.win-legacyappbar-closing.win-legacyappbar-compact {
         min-height: 48px;
     }
 
-    &.win-appbar-minimal,
-    &.win-appbar-compact {
+    &.win-legacyappbar-minimal,
+    &.win-legacyappbar-compact {
         // Minimal and compact AppBar with commands layout makes room for the invokeButton.
         padding-right: 32px;
         width: ~"calc(100% - 32px)";
     }
 
-    &.win-appbar-compact {
+    &.win-legacyappbar-compact {
         button.win-command .win-label {
             display: none;
         }
     }
 
-    &.win-appbar-compact.win-appbar-hiding {
+    &.win-legacyappbar-compact.win-legacyappbar-closing {
         button.win-command .win-label {
             display: block;
             visibility: hidden;
         }
     }
 
-    &.win-appbar-compact.win-appbar-shown,
-    &.win-appbar-compact.win-appbar-showing {
+    &.win-legacyappbar-compact.win-legacyappbar-opened,
+    &.win-legacyappbar-compact.win-legacyappbar-opening {
         button.win-command .win-label {
             display: block;
             visibility: visible;
@@ -405,8 +405,8 @@ AppBar commands layout
 /* CommandsLayout RTL */
 .win-commandlayout {
     .RTL({
-        &.win-appbar-minimal,
-        &.win-appbar-compact {
+        &.win-legacyappbar-minimal,
+        &.win-legacyappbar-compact {
             padding-right: 0px;
             padding-left: 32px;
         }
@@ -417,7 +417,7 @@ AppBar commands layout
 AppBar menu layout
 */
 .win-menulayout {
-    .win-appbar-menu {
+    .win-legacyappbar-menu {
         position:absolute;
         right:0;
         top:0;
@@ -430,7 +430,7 @@ AppBar menu layout
         overflow: hidden;
     }
 
-    &.win-bottom .win-appbar-menu {
+    &.win-bottom .win-legacyappbar-menu {
         overflow: visible;
     }
 
@@ -438,29 +438,29 @@ AppBar menu layout
         max-width: 100vw;
     }
 
-    &.win-appbar-compact {
+    &.win-legacyappbar-compact {
         button.win-command .win-label {
             display: none;
             visibility: hidden;
         }
     }
 
-    &.win-appbar-compact.win-appbar-hiding,
-    &.win-appbar-compact.win-appbar-showing {
+    &.win-legacyappbar-compact.win-legacyappbar-closing,
+    &.win-legacyappbar-compact.win-legacyappbar-opening {
         button.win-command .win-label {
             display: block;
             visibility: visible;
         }
     }
 
-    &.win-appbar-compact.win-appbar-shown  {
+    &.win-legacyappbar-compact.win-legacyappbar-opened  {
         button.win-command .win-label {
             display: block;
             visibility: visible;
         }
     }
 
-    &.win-appbar-compact.win-appbar-hidden {
+    &.win-legacyappbar-compact.win-legacyappbar-closed {
         overflow: hidden;
 
         .win-toolbar-overflowarea {
@@ -476,44 +476,44 @@ High contrast AppBar needs a border
     /*
     AppBar Borders
     */
-    .win-appbar {
+    .win-legacyappbar {
         border: solid 2px;
     }
 
-    .win-appbar.win-top {
+    .win-legacyappbar.win-top {
         border-top: none;
         border-left: none;
         border-right: none;
     }
 
-    .win-appbar.win-bottom {
+    .win-legacyappbar.win-bottom {
         border-bottom: none;
         border-left: none;
         border-right: none;
     }
 
-    .win-appbar.win-top button.win-command,
-    .win-appbar.win-top div.win-command {
+    .win-legacyappbar.win-top button.win-command,
+    .win-legacyappbar.win-top div.win-command {
         padding-bottom: 7px; /* 7px - 2px smaller to account for the high-constrast appbar border */
     }
 
-    .win-appbar.win-bottom button.win-command,
-    .win-appbar.win-bottom div.win-command {
+    .win-legacyappbar.win-bottom button.win-command,
+    .win-legacyappbar.win-bottom div.win-command {
         padding-top: 7px; /* 7px - 2px smaller to account for the high-constrast appbar border */
     }
 
-    .win-appbar.win-top hr.win-command {
+    .win-legacyappbar.win-top hr.win-command {
         margin-bottom: 28px;
     }
 
-    .win-appbar.win-bottom hr.win-command {
+    .win-legacyappbar.win-bottom hr.win-command {
         margin-top: 8px;
     }
 
     .win-commandlayout {
-        &.win-appbar-showing,
-        &.win-appbar-shown,
-        &.win-appbar-hiding {
+        &.win-legacyappbar-opening,
+        &.win-legacyappbar-opened,
+        &.win-legacyappbar-closing {
             min-height: 62px;
         }
     }

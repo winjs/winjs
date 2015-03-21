@@ -6,6 +6,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Events',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
@@ -15,9 +16,9 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_ElementListUtilities',
     '../Utilities/_Hoverable',
-    './AppBar/_Constants',
+    './_LegacyAppBar/_Constants',
     './Flyout/_Overlay'
-    ], function settingsFlyoutInit(_Global,_WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _Constants, _Overlay) {
+    ], function settingsFlyoutInit(_Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -46,6 +47,8 @@ define([
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         SettingsFlyout: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
+
+            var createEvent = _Events._createEventProperty;
 
             var settingsPageIsFocusedOnce;
 
@@ -201,6 +204,45 @@ define([
                         this._settingsCommandId = value;
                     }
                 },
+
+                /// <field type="Boolean" locid="WinJS.UI.SettingsFlyout.disabled" helpKeyword="WinJS.UI.SettingsFlyout.disabled">Disable SettingsFlyout, setting or getting the HTML disabled attribute.  When disabled the SettingsFlyout will no longer display with show(), and will hide if currently visible.</field>
+                disabled: {
+                    get: function () {
+                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
+                        return !!this._element.disabled;
+                    },
+                    set: function (value) {
+                        // Force this check into a boolean because our current state could be a bit confused since we tie to the DOM element
+                        value = !!value;
+                        var oldValue = !!this._element.disabled;
+                        if (oldValue !== value) {
+                            this._element.disabled = value;
+                            if (!this.hidden && this._element.disabled) {
+                                this._dismiss();
+                            }
+                        }
+                    }
+                },
+
+                /// <field type="Function" locid="WinJS.UI.SettingsFlyout.onbeforeshow" helpKeyword="WinJS.UI.SettingsFlyout.onbeforeshow">
+                /// Occurs immediately before the control is shown.
+                /// </field>
+                onbeforeshow: createEvent(_Overlay._Overlay.beforeShow),
+
+                /// <field type="Function" locid="WinJS.UI.SettingsFlyout.onaftershow" helpKeyword="WinJS.UI.SettingsFlyout.onaftershow">
+                /// Occurs immediately after the control is shown.
+                /// </field>
+                onaftershow: createEvent(_Overlay._Overlay.afterShow),
+
+                /// <field type="Function" locid="WinJS.UI.SettingsFlyout.onbeforehide" helpKeyword="WinJS.UI.SettingsFlyout.onbeforehide">
+                /// Occurs immediately before the control is hidden.
+                /// </field>
+                onbeforehide: createEvent(_Overlay._Overlay.beforeHide),
+
+                /// <field type="Function" locid="WinJS.UI.SettingsFlyout.onafterhide" helpKeyword="WinJS.UI.SettingsFlyout.onafterhide">
+                /// Occurs immediately after the control is hidden.
+                /// </field>
+                onafterhide: createEvent(_Overlay._Overlay.afterHide),
 
                 show: function () {
                     /// <signature helpKeyword="WinJS.UI.SettingsFlyout.show">

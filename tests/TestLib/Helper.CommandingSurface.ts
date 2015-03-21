@@ -4,8 +4,8 @@
 
 module Helper._CommandingSurface {
     "use strict";
-
     var _Constants = Helper.require("WinJS/Controls/CommandingSurface/_Constants");
+    var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
 
     export interface ISizeForCommandsArgs { numStandardCommands?: number; numSeparators?: number; additionalWidth?: number; visibleOverflowButton?: boolean; };
     export function sizeForCommands(element: HTMLElement, args: ISizeForCommandsArgs) {
@@ -50,7 +50,7 @@ module Helper._CommandingSurface {
         }
     }
 
-    export function verifyActionAreaVisibleCommandsLabels(commandingSurface: WinJS.UI._CommandingSurface, labels: string[]) {
+    export function verifyActionAreaVisibleCommandsLabels(commandingSurface: WinJS.UI.PrivateCommandingSurface, labels: string[]) {
         var commands = getVisibleCommandsInElement((<WinJS.UI.PrivateCommandingSurface>commandingSurface.element.winControl)._dom.actionArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
         labels.forEach((label, index) => {
@@ -58,7 +58,7 @@ module Helper._CommandingSurface {
         });
     }
 
-    export function verifyOverflowAreaCommandsLabels(commandingSurface: WinJS.UI._CommandingSurface, labels: string[]) {
+    export function verifyOverflowAreaCommandsLabels(commandingSurface: WinJS.UI.PrivateCommandingSurface, labels: string[]) {
         var control = <WinJS.UI.PrivateCommandingSurface>commandingSurface.element.winControl;
         var commands = getVisibleCommandsInElement(control._dom.overflowArea);
         LiveUnit.Assert.areEqual(labels.length, commands.length);
@@ -139,13 +139,13 @@ module Helper._CommandingSurface {
             overflowButtonTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowButton);
 
         switch (closedDisplayMode) {
-            case WinJS.UI._CommandingSurface.ClosedDisplayMode.none:
+            case _CommandingSurface.ClosedDisplayMode.none:
                 LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface.element).display);
                 LiveUnit.Assert.areEqual(0, actionAreaTotalHeight);
                 LiveUnit.Assert.areEqual(0, overflowButtonTotalHeight);
                 break;
 
-            case WinJS.UI._CommandingSurface.ClosedDisplayMode.minimal:
+            case _CommandingSurface.ClosedDisplayMode.minimal:
                 LiveUnit.Assert.areEqual(actionAreaTotalHeight, commandingSurfaceTotalHeight, "Height of CommandingSurface should size to its actionarea.");
                 LiveUnit.Assert.areEqual(_Constants.heightOfMinimal, actionAreaContentBoxHeight, "invalid ActionArea content height for 'minimal' closedDisplayMode");
                 LiveUnit.Assert.areEqual(actionAreaContentBoxHeight, overflowButtonTotalHeight, "overflowButton should stretch to the height of the actionarea");
@@ -158,7 +158,7 @@ module Helper._CommandingSurface {
                 }
                 break;
 
-            case WinJS.UI._CommandingSurface.ClosedDisplayMode.compact:
+            case _CommandingSurface.ClosedDisplayMode.compact:
                 LiveUnit.Assert.areEqual(actionAreaTotalHeight, commandingSurfaceTotalHeight, "Height of CommandingSurface should size to its actionarea.");
                 LiveUnit.Assert.areEqual(_Constants.heightOfCompact, actionAreaContentBoxHeight, "invalid ActionArea content height for 'compact' closedDisplayMode");
                 LiveUnit.Assert.areEqual(actionAreaContentBoxHeight, overflowButtonTotalHeight, "overflowButton should stretch to the height of the actionarea");
@@ -179,7 +179,7 @@ module Helper._CommandingSurface {
                 }
                 break;
 
-            case WinJS.UI._CommandingSurface.ClosedDisplayMode.full:
+            case _CommandingSurface.ClosedDisplayMode.full:
                 // closedDisplayMode "full" actionarea, and opened actionarea, render exactly the same.
                 verifyRenderedOpened_actionArea(commandingSurface);
                 break;

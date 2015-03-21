@@ -8,15 +8,10 @@
 /// <reference path="../TestLib/winjs.dev.d.ts" />
 
 module CorsicaTests {
-    var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> WinJS.UI._CommandingSurface;
+    var _Constants = Helper.require("WinJS/Controls/CommandingSurface/_Constants");
+    var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
     var Util = WinJS.Utilities;
-
-    var _Constants
-
-    WinJS.Utilities._require(["WinJS/Controls/CommandingSurface/_Constants"], function (constants) {
-        _Constants = constants;
-    })
 
     // Taking the registration mechanism as a parameter allows us to use this code to test both
     // DOM level 0 (e.g. onbeforeopen) and DOM level 2 (e.g. addEventListener) events.
@@ -508,7 +503,7 @@ module CorsicaTests {
 
         }
 
-        testOverflowBehaviorOfToggleChangingValues() {
+        testOverflowBehaviorOfToggleCommandChangingValues() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeToggle, label: "1", extraClass: "c1", selected: true }),
                 new Command(null, { type: _Constants.typeButton, label: "2", extraClass: "c2", disabled: true }),
@@ -1076,7 +1071,7 @@ module CorsicaTests {
             });
         }
 
-        xtestKeyboarding_Closed(complete) {
+        xtestKeyboarding_Closed(complete) { // TODO reenable when new keyboarding model is decided.
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([

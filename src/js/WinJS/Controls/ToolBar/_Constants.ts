@@ -1,27 +1,42 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+import _CommandingSurfaceConstants = require("../CommandingSurface/_Constants");
 
-// ToolBar class names
-export var controlCssClass = "win-toolbar";
-export var actionAreaCssClass = "win-toolbar-actionarea";
-export var overflowButtonCssClass = "win-toolbar-overflowbutton";
-export var spacerCssClass = "win-toolbar-spacer";
-export var ellipsisCssClass = "win-toolbar-ellipsis";
-export var overflowAreaCssClass = "win-toolbar-overflowarea";
-export var overflowContentFlyoutCssClass = "win-toolbar-contentflyout";
-export var shownDisplayReducedCssClass = "win-toolbar-showndisplayreduced";
-export var shownDisplayFullCssClass = "win-toolbar-showndisplayfull";
-export var emptyToolBarCssClass = "win-toolbar-empty";
-export var menuCssClass = "win-menu";
-export var menuContainsToggleCommandClass = "win-menu-containstogglecommand";
-export var menuContainsFlyoutCommandClass = "win-menu-containsflyoutcommand";
+// toolbar class names
+export var ClassNames = {
+    controlCssClass: "win-toolbar",
+    disposableCssClass: "win-disposable",
+    actionAreaCssClass: "win-toolbar-actionarea",
+    overflowButtonCssClass: "win-toolbar-overflowbutton",
+    spacerCssClass: "win-toolbar-spacer",
+    ellipsisCssClass: "win-toolbar-ellipsis",
+    overflowAreaCssClass: "win-toolbar-overflowarea",
+    contentFlyoutCssClass: "win-toolbar-contentflyout",
+    emptytoolbarCssClass: "win-toolbar-empty",
+    menuCssClass: "win-menu",
+    menuContainsToggleCommandClass: "win-menu-containstogglecommand",
+    menuContainsFlyoutCommandClass: "win-menu-containsflyoutcommand",
+    openingClass: "win-toolbar-opening",
+    openedClass: "win-toolbar-opened",
+    closingClass: "win-toolbar-closing",
+    closedClass: "win-toolbar-closed",
+    compactClass: "win-toolbar-closeddisplaycompact",
+    fullClass: "win-toolbar-closeddisplayfull",
+    overflowTopClass: "win-toolbar-overflowtop",
+    overflowBottomClass: "win-toolbar-overflowbottom",
+    placeHolderCssClass: "win-toolbar-placeholder",
+};
 
-export var contentMenuCommandDefaultLabel = "Custom content";
+export var EventNames = {
+    beforeOpen: "beforeopen",
+    afterOpen: "afteropen",
+    beforeClose: "beforeclose",
+    afterClose: "afterclose"
+};
 
-// Constants for shownDisplayModes
-export var shownDisplayModes = {
-    full: "full",
-    reduced: "reduced",
-}
+export var controlMinWidth: number = _CommandingSurfaceConstants.controlMinWidth;
+
+export var defaultClosedDisplayMode = "compact";
+export var defaultOpened = false;
 
 // Constants for commands
 export var typeSeparator = "separator";
@@ -29,3 +44,8 @@ export var typeContent = "content";
 export var typeButton = "button";
 export var typeToggle = "toggle";
 export var typeFlyout = "flyout";
+
+export var commandSelector = ".win-command";
+
+export var primaryCommandSection = "primary";
+export var secondaryCommandSection = "secondary";

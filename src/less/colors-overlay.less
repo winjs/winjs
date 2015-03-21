@@ -146,18 +146,18 @@
             color: @textColorDisabled;
         }
 
-        &.win-appbar, .win-appbar {
+        &.win-legacyappbar, .win-legacyappbar {
             background-color: @appbarBackgroundColor;
             border-color: @appbarBorderColor;
 
             &.win-menulayout {
-                .win-appbar-menu,
+                .win-legacyappbar-menu,
                 .win-toolbar {
                     background-color: inherit;
                 }
             }
 
-            button.win-appbar-invokebutton.win-appbar-invokebutton {
+            button.win-legacyappbar-invokebutton.win-legacyappbar-invokebutton {
                 background-color: transparent;
                 outline: none;
                 border-color: transparent;
@@ -168,7 +168,7 @@
                         background-color: transparent;
                     }
 
-                    .win-appbar-ellipsis {
+                    .win-legacyappbar-ellipsis {
                         color: @textColor;
                     }
 
@@ -182,18 +182,18 @@
                         background-color: transparent;
                     }
 
-                    .win-appbar-ellipsis {
+                    .win-legacyappbar-ellipsis {
                         color: @textColorDisabled;
                     }
                 }
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
-            &.win-appbar-hiding, &.win-appbar-hidden,
-            &.win-appbar-showing, &.win-appbar-shown {
-                button.win-appbar-invokebutton.win-appbar-invokebutton:enabled:hover:active {
+            &.win-legacyappbar-closing, &.win-legacyappbar-closed,
+            &.win-legacyappbar-opening, &.win-legacyappbar-opened {
+                button.win-legacyappbar-invokebutton.win-legacyappbar-invokebutton:enabled:hover:active {
                     background-color: @commandActiveBackgroundColor;
 
-                    .win-appbar-ellipsis {
+                    .win-legacyappbar-ellipsis {
                         color: @textColorActive;
                     }
                 }
@@ -258,29 +258,29 @@
         #win-overlay > .variableDefs(@theme);
 
         /* Appbar control colors */
-        &.win-appbar, .win-appbar {
+        &.win-legacyappbar, .win-legacyappbar {
 
-            button.win-appbar-invokebutton:enabled:hover,
-            button.win-appbar-invokebutton:disabled:hover {
+            button.win-legacyappbar-invokebutton:enabled:hover,
+            button.win-legacyappbar-invokebutton:disabled:hover {
                 background-color: transparent;
             }
 
             // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
-            &.win-appbar-showing, &.win-appbar-shown {
-                button.win-appbar-invokebutton:enabled:hover {
+            &.win-legacyappbar-opening, &.win-legacyappbar-opened {
+                button.win-legacyappbar-invokebutton:enabled:hover {
                     background-color: @commandHoverBackgroundColor;
 
-                    .win-appbar-ellipsis {
+                    .win-legacyappbar-ellipsis {
                         color: @textColorHover;
                     }
                 }
             }
             // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
-            &.win-appbar-hiding, &.win-appbar-hidden {
-                button.win-appbar-invokebutton:enabled:hover {
+            &.win-legacyappbar-closing, &.win-legacyappbar-closed {
+                button.win-legacyappbar-invokebutton:enabled:hover {
                     background-color: @commandHoverBackgroundColor;
 
-                    .win-appbar-ellipsis {
+                    .win-legacyappbar-ellipsis {
                         color: @textColorHover;
                     }
                 }

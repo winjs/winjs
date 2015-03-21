@@ -60,7 +60,7 @@ module WinJSTests {
                 data: navUtils.getNavBarCommandsData(20, true, false, false, false, false, true)
             });
 
-            navbar.show();
+            navbar.open();
 
             function waitForScrollComplete(viewportEl) {
                 return new WinJS.Promise(function (c, e, p) {
@@ -80,7 +80,7 @@ module WinJSTests {
                 });
             }
 
-            Helper.waitForEvent(navbar, "aftershow").
+            Helper.waitForEvent(navbar, "afteropen").
                 then(function () {
                     // Move focus to the last command
                     var firstNavItem = navbarContainer._surfaceEl.children[0].winControl;
@@ -100,13 +100,13 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(lastNavItem.splitOpened);
 
                     // Hide the navbar
-                    navbar.hide();
-                    return Helper.waitForEvent(navbar, "afterhide");
+                    navbar.close();
+                    return Helper.waitForEvent(navbar, "afterclose");
                 }).
                 then(function () {
                     // Show the navbar
-                    navbar.show();
-                    return Helper.waitForEvent(navbar, "aftershow");
+                    navbar.open();
+                    return Helper.waitForEvent(navbar, "afteropen");
                 }).
                 then(function () {
                     // Verify the focus state was reset
@@ -154,9 +154,9 @@ module WinJSTests {
                 checkAttribute(cmd._splitButtonEl, "aria-expanded", "false");
             }
 
-            navbar.show();
+            navbar.open();
 
-            Helper.waitForEvent(navbar, "aftershow").
+            Helper.waitForEvent(navbar, "afteropen").
                 then(function () {
                     // Click on split button and verify aria-expanded
                     var splitEl = navbarCmds[0].winControl._splitButtonEl;

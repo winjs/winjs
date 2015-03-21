@@ -16,7 +16,7 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_Dispose',
     '../../Utilities/_ElementUtilities',
-    './_Command',
+    '../AppBar/_Command',
     './_Constants'
 ], function appBarLayoutsInit(exports, _TransitionAnimation, BindingList, _BaseUtils, _Global, _Base, _ErrorFromName, _Resources, _WriteProfilerMark, ToolBar, _ToolBarConstants, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Command, _Constants) {
     "use strict";
@@ -322,7 +322,7 @@ define([
                     if (!this._disposed) {
                         // Check for horizontal window resizes.
                         this._appBarTotalKnownWidth = null;
-                        if (!this.appBarEl.winControl.hidden) {
+                        if (this.appBarEl.winControl.opened) {
                             this.scale();
                         }
                     }
@@ -423,8 +423,8 @@ define([
                     if (_Global.document.body.contains(this.appBarEl)) {
                         this._needToMeasureNewCommands = false;
 
-                        var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
-                        _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+                        var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
+                        _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
 
                         // Make sure AppBar and children have width dimensions.
                         var prevAppBarDisplay = this.appBarEl.style.display;
@@ -447,7 +447,7 @@ define([
                         // Restore state to AppBar.
                         this.appBarEl.style.display = prevAppBarDisplay;
                         if (hadHiddenClass) {
-                            _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                            _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
                         }
 
                         this.commandsUpdated();
@@ -719,9 +719,9 @@ define([
                 },
 
                 _updateData: function _AppBarMenuLayout_updateData(data) {
-                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
-                    var hadShownClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.shownClass);
-                    _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
+                    var hadShownClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-opened");
+                    _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
 
                     // Make sure AppBar and children have width dimensions.
                     var prevAppBarDisplay = this.appBarEl.style.display;
@@ -736,7 +736,7 @@ define([
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
                     if (hadHiddenClass) {
-                        _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                        _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
                     }
 
                     if (hadShownClass) {
@@ -790,8 +790,8 @@ define([
                 _createToolBar: function _AppBarMenuLayout_createToolBar(commands) {
                     this._writeProfilerMark("_createToolBar,info");
 
-                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, _Constants.hiddenClass);
-                    _ElementUtilities.removeClass(this.appBarEl, _Constants.hiddenClass);
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
+                    _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
 
                     // Make sure AppBar and children have width dimensions.
                     var prevAppBarDisplay = this.appBarEl.style.display;
@@ -814,7 +814,7 @@ define([
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
                     if (hadHiddenClass) {
-                        _ElementUtilities.addClass(this.appBarEl, _Constants.hiddenClass);
+                        _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
                     }
                 },
 

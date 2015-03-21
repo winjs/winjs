@@ -10,12 +10,12 @@ define([
     '../Scheduler',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
-    './AppBar',
+    './_LegacyAppBar',
     './NavBar/_Command',
     './NavBar/_Container',
     'require-style!less/styles-navbar',
     'require-style!less/colors-navbar'
-], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, AppBar, _Command, _Container) {
+], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, _LegacyAppBar, _Command, _Container) {
     "use strict";
 
     var customLayout = "custom";
@@ -23,7 +23,7 @@ define([
     _Base.Namespace.define("WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.NavBar">
-        /// Displays navigation commands in a toolbar that the user can show or hide.
+        /// Displays navigation commands in a toolbar that the user can open or close.
         /// </summary>
         /// <compatibleWith platform="Windows" minVersion="8.1"/>
         /// </field>
@@ -34,10 +34,10 @@ define([
         /// <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{location:'/pages/home/home.html',label:'Home',icon:WinJS.UI.AppBarIcon.home}"></div>
         /// </div>
         /// </div>]]></htmlSnippet>
-        /// <event name="beforeshow" locid="WinJS.UI.NavBar_e:beforeshow">Raised just before showing the NavBar.</event>
-        /// <event name="aftershow" locid="WinJS.UI.NavBar_e:aftershow">Raised immediately after an NavBar is fully shown.</event>
-        /// <event name="beforehide" locid="WinJS.UI.NavBar_e:beforehide">Raised just before hiding the  NavBar.</event>
-        /// <event name="afterhide" locid="WinJS.UI.NavBar_e:afterhide">Raised immediately after the NavBar is fully hidden.</event>
+        /// <event name="beforeopen" locid="WinJS.UI.NavBar_e:beforeopen">Raised just before opening the NavBar.</event>
+        /// <event name="afteropen" locid="WinJS.UI.NavBar_e:afteropen">Raised immediately after an NavBar is fully opened.</event>
+        /// <event name="beforeclose" locid="WinJS.UI.NavBar_e:beforeclose">Raised just before closing the  NavBar.</event>
+        /// <event name="afterclose" locid="WinJS.UI.NavBar_e:afterclose">Raised immediately after the NavBar is fully closed.</event>
         /// <event name="childrenprocessed" locid="WinJS.UI.NavBar_e:childrenprocessed">Fired when children of NavBar control have been processed from a WinJS.UI.processAll call.</event>
         /// <part name="navbar" class="win-navbar" locid="WinJS.UI.NavBar_part:navbar">Styles the entire NavBar.</part>
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
@@ -46,7 +46,7 @@ define([
             var childrenProcessedEventName = "childrenprocessed";
             var createEvent = _Events._createEventProperty;
 
-            var NavBar = _Base.Class.derive(AppBar.AppBar, function NavBar_ctor(element, options) {
+            var NavBar = _Base.Class.derive(_LegacyAppBar._LegacyAppBar, function NavBar_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.NavBar.NavBar">
                 /// <summary locid="WinJS.UI.NavBar.constructor">
                 /// Creates a new NavBar.
@@ -74,9 +74,9 @@ define([
                 options.layout = customLayout;
                 options.closedDisplayMode = options.closedDisplayMode || "minimal";
 
-                AppBar.AppBar.call(this, element, options);
+                _LegacyAppBar._LegacyAppBar.call(this, element, options);
 
-                this._element.addEventListener("beforeshow", this._handleBeforeShow.bind(this));
+                this._element.addEventListener("beforeopen", this._handleBeforeShow.bind(this));
 
                 _ElementUtilities.addClass(this.element, NavBar._ClassName.navbar);
 
@@ -86,20 +86,6 @@ define([
                     Scheduler.schedule(this._processChildren.bind(this), Scheduler.Priority.idle, null, "WinJS.UI.NavBar.processChildren");
                 }
             }, {
-                // Block others from setting the layout property.
-
-                /// <field type="String" defaultValue="commands" oamOptionsDatatype="WinJS.UI.NavBar.layout" locid="WinJS.UI.NavBar.layout" helpKeyword="WinJS.UI.NavBar.layout">
-                /// The layout of the NavBar contents.
-                /// <compatibleWith platform="Windows" minVersion="8.1"/>
-                /// </field>
-                layout: {
-                    get: function () {
-                        return customLayout;
-                    },
-                    set: function () {
-                        Object.getOwnPropertyDescriptor(AppBar.AppBar.prototype, "layout").set.call(this, customLayout);
-                    },
-                },
 
                 // Restrict values of closedDisplayMode to 'none' or 'minimal'
 
@@ -112,7 +98,7 @@ define([
                     },
                     set: function (value) {
                         var newValue = (value  === "none" ? "none" : "minimal");
-                        Object.getOwnPropertyDescriptor(AppBar.AppBar.prototype, "closedDisplayMode").set.call(this, newValue);
+                        Object.getOwnPropertyDescriptor(_LegacyAppBar._LegacyAppBar.prototype, "closedDisplayMode").set.call(this, newValue);
                         this._closedDisplayMode = newValue;
                     },
                 },
@@ -167,13 +153,13 @@ define([
                     }
                     var that = this;
                     this._processChildren().then(function () {
-                        AppBar.AppBar.prototype._show.call(that);
+                        _LegacyAppBar._LegacyAppBar.prototype._show.call(that);
                     });
                 },
 
                 _handleBeforeShow: function NavBar_handleBeforeShow() {
-                    // Navbar needs to ensure its elements to have their correct height and width after AppBar changes display="none"
-                    // to  display="" and AppBar needs the elements to have their final height before it measures its own element height
+                    // Navbar needs to ensure its elements to have their correct height and width after _LegacyAppBar changes display="none"
+                    // to  display="" and _LegacyAppBar needs the elements to have their final height before it measures its own element height
                     // to do the slide in animation over the correct amount of pixels.
                     if (this._disposed) {
                         return;

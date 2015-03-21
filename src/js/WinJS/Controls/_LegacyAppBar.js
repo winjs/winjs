@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
-// AppBar
+// _LegacyAppBar
 /// <dictionary>appbar,appBars,Flyout,Flyouts,iframe,Statics,unfocus,WinJS</dictionary>
 define([
     'exports',
@@ -8,6 +8,7 @@ define([
     '../Core/_Base',
     '../Core/_BaseUtils',
     '../Core/_ErrorFromName',
+    '../Core/_Events',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
     '../Animations',
@@ -18,40 +19,48 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_KeyboardBehavior',
-    './AppBar/_Constants',
-    './AppBar/_Layouts',
+    './_LegacyAppBar/_Constants',
+    './_LegacyAppBar/_Layouts',
     './AppBar/_Command',
     './AppBar/_Icon',
     './Flyout/_Overlay',
     '../Application'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
-        /// <summary locid="WinJS.UI.AppBar">
+        /// <summary locid="WinJS.UI._LegacyAppBar">
         /// Represents an application toolbar for display commands.
         /// </summary>
         /// </field>
         /// <icon src="ui_winjs.ui.appbar.12x12.png" width="12" height="12" />
         /// <icon src="ui_winjs.ui.appbar.16x16.png" width="16" height="16" />
-        /// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI.AppBar">
+        /// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI._LegacyAppBar">
         /// <button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{id:'',label:'example',icon:'back',type:'button',onclick:null,section:'primary'}"></button>
         /// </div>]]></htmlSnippet>
-        /// <event name="beforeshow" locid="WinJS.UI.AppBar_e:beforeshow">Raised just before showing the AppBar.</event>
-        /// <event name="aftershow" locid="WinJS.UI.AppBar_e:aftershow">Raised immediately after the AppBar is fully shown.</event>
-        /// <event name="beforehide" locid="WinJS.UI.AppBar_e:beforehide">Raised just before hiding the AppBar.</event>
-        /// <event name="afterhide" locid="WinJS.UI.AppBar_e:afterhide">Raised immediately after the AppBar is fully hidden.</event>
-        /// <part name="appbar" class="win-commandlayout" locid="WinJS.UI.AppBar_part:appbar">The AppBar control itself.</part>
-        /// <part name="appBarCustom" class="win-appbar" locid="WinJS.UI.AppBar_part:appBarCustom">Style for a custom layout AppBar.</part>
+        /// <event name="beforeopen" locid="WinJS.UI._LegacyAppBar_e:beforeopen">Raised just before showing the _LegacyAppBar.</event>
+        /// <event name="afteropen" locid="WinJS.UI._LegacyAppBar_e:afteropen">Raised immediately after the _LegacyAppBar is fully shown.</event>
+        /// <event name="beforeclose" locid="WinJS.UI._LegacyAppBar_e:beforeclose">Raised just before hiding the _LegacyAppBar.</event>
+        /// <event name="afterclose" locid="WinJS.UI._LegacyAppBar_e:afterclose">Raised immediately after the _LegacyAppBar is fully hidden.</event>
+        /// <part name="appbar" class="win-commandlayout" locid="WinJS.UI._LegacyAppBar_part:appbar">The _LegacyAppBar control itself.</part>
+        /// <part name="appBarCustom" class="win-legacyappbar" locid="WinJS.UI._LegacyAppBar_part:appBarCustom">Style for a custom layout _LegacyAppBar.</part>
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
-        AppBar: _Base.Namespace._lazy(function () {
+        _LegacyAppBar: _Base.Namespace._lazy(function () {
             var Key = _ElementUtilities.Key;
+
+            var EVENTS = {
+                beforeOpen: "beforeopen",
+                afterOpen: "afteropen",
+                beforeClose: "beforeclose",
+                afterClose: "afterclose",
+            }
+
+            var createEvent = _Events._createEventProperty;
 
             // Enum of known constant pixel values for display modes.
             var knownVisibleHeights = {
-                disabled: 0,
                 none: 0,
                 hidden: 0,
                 minimal: 25,
@@ -60,7 +69,6 @@ define([
 
             // Maps each notion of a display modes to the corresponding visible position
             var displayModeVisiblePositions = {
-                disabled: "hidden",
                 none: "hidden",
                 hidden: "hidden",
                 minimal: "minimal",
@@ -96,14 +104,14 @@ define([
                 } else {
                     // Edgy wasn't happening, so toggle
                     var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
-                    AppBar._toggleAllAppBarsState(keyboardInvoked);
+                    _LegacyAppBar._toggleAllAppBarsState(keyboardInvoked);
                 }
             }
 
             function _startingEdgy() {
                 if (!edgyHappening) {
                     // Edgy wasn't happening, so toggle & start it
-                    edgyHappening = AppBar._toggleAllAppBarsState(false);
+                    edgyHappening = _LegacyAppBar._toggleAllAppBarsState(false);
                 }
             }
 
@@ -134,35 +142,35 @@ define([
             }
 
             // Get all the non-sticky bars and return them.
-            // Returns array of AppBar objects.
+            // Returns array of _LegacyAppBar objects.
             // The array also has _hidden and/or _shown set if ANY are hidden or shown.
             function _getDynamicBarsForEdgy() {
                 var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 var len = elements.length;
-                var AppBars = [];
-                AppBars._shown = false;
-                AppBars._hidden = false;
+                var _LegacyAppBars = [];
+                _LegacyAppBars._shown = false;
+                _LegacyAppBars._hidden = false;
                 for (var i = 0; i < len; i++) {
                     var element = elements[i];
                     if (element.disabled) {
-                        // Skip disabled AppBars
+                        // Skip disabled _LegacyAppBars
                         continue;
                     }
-                    var AppBar = element.winControl;
-                    if (AppBar) {
-                        AppBars.push(AppBar);
-                        if (_ElementUtilities.hasClass(AppBar._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(AppBar._element, _Constants.hidingClass)) {
-                            AppBars._hidden = true;
+                    var _LegacyAppBar = element.winControl;
+                    if (_LegacyAppBar) {
+                        _LegacyAppBars.push(_LegacyAppBar);
+                        if (_ElementUtilities.hasClass(_LegacyAppBar._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(_LegacyAppBar._element, _Constants.hidingClass)) {
+                            _LegacyAppBars._hidden = true;
                         } else {
-                            AppBars._shown = true;
+                            _LegacyAppBars._shown = true;
                         }
                     }
                 }
 
-                return AppBars;
+                return _LegacyAppBars;
             }
 
-            // Sets focus to the last AppBar in the provided appBars array with given placement.
+            // Sets focus to the last _LegacyAppBar in the provided appBars array with given placement.
             // Returns true if focus was set.  False otherwise.
             function _setFocusToPreviousAppBarHelper(startIndex, appBarPlacement, appBars) {
                 var appBar;
@@ -170,7 +178,7 @@ define([
                     appBar = appBars[i].winControl;
                     if (appBar
                      && appBar.placement === appBarPlacement
-                     && !appBar.hidden
+                     && appBar.opened
                      && appBar._focusOnLastFocusableElement
                      && appBar._focusOnLastFocusableElement()) {
                         return true;
@@ -179,11 +187,11 @@ define([
                 return false;
             }
 
-            // Sets focus to the last tab stop of the previous AppBar
-            // AppBar tabbing order:
-            //    1) Bottom AppBars
-            //    2) Top AppBars
-            // DOM order is respected, because an AppBar should not have a defined tabIndex
+            // Sets focus to the last tab stop of the previous _LegacyAppBar
+            // _LegacyAppBar tabbing order:
+            //    1) Bottom _LegacyAppBars
+            //    2) Top _LegacyAppBars
+            // DOM order is respected, because an _LegacyAppBar should not have a defined tabIndex
             function _setFocusToPreviousAppBar() {
                 /*jshint validthis: true */
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -213,7 +221,7 @@ define([
                 }
             }
 
-            // Sets focus to the first AppBar in the provided appBars array with given placement.
+            // Sets focus to the first _LegacyAppBar in the provided appBars array with given placement.
             // Returns true if focus was set.  False otherwise.
             function _setFocusToNextAppBarHelper(startIndex, appBarPlacement, appBars) {
                 var appBar;
@@ -221,7 +229,7 @@ define([
                     appBar = appBars[i].winControl;
                     if (appBar
                      && appBar.placement === appBarPlacement
-                     && !appBar.hidden
+                     && appBar.opened
                      && appBar._focusOnFirstFocusableElement
                      && appBar._focusOnFirstFocusableElement()) {
                         return true;
@@ -230,11 +238,11 @@ define([
                 return false;
             }
 
-            // Sets focus to the first tab stop of the next AppBar
-            // AppBar tabbing order:
-            //    1) Bottom AppBars
-            //    2) Top AppBars
-            // DOM order is respected, because an AppBar should not have a defined tabIndex
+            // Sets focus to the first tab stop of the next _LegacyAppBar
+            // _LegacyAppBar tabbing order:
+            //    1) Bottom _LegacyAppBars
+            //    2) Top _LegacyAppBars
+            // DOM order is respected, because an _LegacyAppBar should not have a defined tabIndex
             function _setFocusToNextAppBar() {
                 /*jshint validthis: true */
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -260,34 +268,34 @@ define([
                 }
             }
 
-            // Updates the firstDiv & finalDiv of all shown AppBars
+            // Updates the firstDiv & finalDiv of all shown _LegacyAppBars
             function _updateAllAppBarsFirstAndFinalDiv() {
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 var appBar;
                 for (var i = 0; i < appBars.length; i++) {
                     appBar = appBars[i].winControl;
                     if (appBar
-                     && !appBar.hidden
+                     && appBar.opened
                      && appBar._updateFirstAndFinalDiv) {
                         appBar._updateFirstAndFinalDiv();
                     }
                 }
             }
 
-            // Returns true if a visible non-sticky (light dismiss) AppBar is found in the document
+            // Returns true if a visible non-sticky (light dismiss) _LegacyAppBar is found in the document
             function _isThereVisibleNonStickyBar() {
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                 for (var i = 0; i < appBars.length; i++) {
                     var appBarControl = appBars[i].winControl;
                     if (appBarControl && !appBarControl.sticky &&
-                        (!appBarControl.hidden || appBarControl._element.winAnimating === displayModeVisiblePositions.shown)) {
+                        (appBarControl.opened || appBarControl._element.winAnimating === displayModeVisiblePositions.shown)) {
                         return true;
                     }
                 }
                 return false;
             }
 
-            // If the previous focus was not a AppBar or CED, store it in the cache
+            // If the previous focus was not a _LegacyAppBar or CED, store it in the cache
             // (_isAppBarOrChild tests CED for us).
             function _checkStorePreviousFocus(focusEvent) {
                 if (focusEvent.relatedTarget
@@ -314,23 +322,22 @@ define([
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
                 get requiresCommands() { return "Invalid argument: commands must not be empty"; },
                 get cannotChangePlacementWhenVisible() { return "Invalid argument: The placement property cannot be set when the AppBar is visible, call hide() first"; },
-                get badLayout() { return "Invalid argument: The layout property must be 'custom', 'menu' or 'commands'"; },
                 get cannotChangeLayoutWhenVisible() { return "Invalid argument: The layout property cannot be set when the AppBar is visible, call hide() first"; }
             };
 
-            var AppBar = _Base.Class.derive(_Overlay._Overlay, function AppBar_ctor(element, options) {
-                /// <signature helpKeyword="WinJS.UI.AppBar.AppBar">
-                /// <summary locid="WinJS.UI.AppBar.constructor">
-                /// Creates a new AppBar control.
+            var _LegacyAppBar = _Base.Class.derive(_Overlay._Overlay, function _LegacyAppBar_ctor(element, options) {
+                /// <signature helpKeyword="WinJS.UI._LegacyAppBar._LegacyAppBar">
+                /// <summary locid="WinJS.UI._LegacyAppBar.constructor">
+                /// Creates a new _LegacyAppBar control.
                 /// </summary>
-                /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
+                /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI._LegacyAppBar.constructor_p:element">
                 /// The DOM element that will host the control.
                 /// </param>
-                /// <param name="options" type="Object" locid="WinJS.UI.AppBar.constructor_p:options">
-                /// The set of properties and values to apply to the new AppBar control.
+                /// <param name="options" type="Object" locid="WinJS.UI._LegacyAppBar.constructor_p:options">
+                /// The set of properties and values to apply to the new _LegacyAppBar control.
                 /// </param>
-                /// <returns type="WinJS.UI.AppBar" locid="WinJS.UI.AppBar.constructor_returnValue">
-                /// The new AppBar control.
+                /// <returns type="WinJS.UI._LegacyAppBar" locid="WinJS.UI._LegacyAppBar.constructor_returnValue">
+                /// The new _LegacyAppBar control.
                 /// </returns>
                 /// </signature>
 
@@ -358,21 +365,12 @@ define([
                 }
 
                 // Call the _Overlay constructor helper to finish setting up our element.
-                // Don't pass constructor options, AppBar needs to set those itself specific order.
+                // Don't pass constructor options, _LegacyAppBar needs to set those itself specific order.
                 this._baseOverlayConstructor(this._element);
 
                 // Start off hidden
                 this._lastPositionVisited = displayModeVisiblePositions.none;
                 _ElementUtilities.addClass(this._element, _Constants.hiddenClass);
-
-                // validate that if they didn't set commands, but want command
-                // layout that the HTML only contains commands.  Do this first
-                // so that we don't leave partial AppBars in the DOM.
-                if (options.layout !== _Constants.appBarLayoutCustom && !options.commands && this._element) {
-                    // Shallow copy object so we can modify it.
-                    options = _BaseUtils._shallowCopy(options);
-                    options.commands = this._verifyCommandsOnly(this._element, "WinJS.UI.AppBarCommand");
-                }
 
                 // Add Invoke button.
                 this._invokeButton = _Global.document.createElement("button");
@@ -382,12 +380,19 @@ define([
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
                 this._element.appendChild(this._invokeButton);
                 var that = this;
-                this._invokeButton.addEventListener("click", function () { AppBar._toggleAllAppBarsState(_KeyboardBehavior._keyboardSeenLast, that); }, false);
+                this._invokeButton.addEventListener("click", function () {
+                    that._keyboardInvoked = _KeyboardBehavior._keyboardSeenLast;
+                    if (that.opened) {
+                        that._hide();
+                    } else {
+                        that._show();
+                    }
+                }, false);
 
                 // Run layout setter immediately. We need to know our layout in order to correctly
                 // position any commands that may be getting set through the constructor.
-                this.layout = options.layout || _Constants.appBarLayoutMenu;
-                delete options.layout;
+                this._layout = _Constants.appBarLayoutCustom;
+                delete options._layout;
 
                 // Need to set placement before closedDisplayMode, closedDisplayMode sets our starting position, which is dependant on placement.
                 this.placement = options.placement || _Constants.appBarPlacementBottom;
@@ -400,7 +405,7 @@ define([
                     if (that._disposed) {
                         return;
                     }
-                    if (!that.hidden) {
+                    if (that.opened) {
                         ev.preventDefault();
                     }
                     commandsUpdatedBound();
@@ -438,8 +443,8 @@ define([
 
 
                 if (this.closedDisplayMode === closedDisplayModes.none && this.layout === _Constants.appBarLayoutCommands) {
-                    // Remove the commands layout AppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
-                    // the window resizes or when CSS changes are applied to the commands layout AppBar's parent element.
+                    // Remove the commands layout _LegacyAppBar from the layout tree at this point so we don't cause unnecessary layout costs whenever
+                    // the window resizes or when CSS changes are applied to the commands layout _LegacyAppBar's parent element.
                     this._element.style.display = "none";
                 }
 
@@ -451,12 +456,12 @@ define([
             }, {
                 // Public Properties
 
-                /// <field type="String" defaultValue="bottom" oamOptionsDatatype="WinJS.UI.AppBar.placement" locid="WinJS.UI.AppBar.placement" helpKeyword="WinJS.UI.AppBar.placement">The placement of the AppBar on the display.  Values are "top" or "bottom".</field>
+                /// <field type="String" defaultValue="bottom" oamOptionsDatatype="WinJS.UI._LegacyAppBar.placement" locid="WinJS.UI._LegacyAppBar.placement" helpKeyword="WinJS.UI._LegacyAppBar.placement">The placement of the _LegacyAppBar on the display.  Values are "top" or "bottom".</field>
                 placement: {
-                    get: function AppBar_get_placement() {
+                    get: function _LegacyAppBar_get_placement() {
                         return this._placement;
                     },
-                    set: function AppBar_set_placement(value) {
+                    set: function _LegacyAppBar_set_placement(value) {
                         // In designer we may have to move it
                         var wasShown = false;
                         if (_WinRT.Windows.ApplicationModel.DesignMode.designModeEnabled) {
@@ -464,8 +469,8 @@ define([
                             wasShown = true;
                         }
 
-                        if (!this.hidden) {
-                            throw new _ErrorFromName("WinJS.UI.AppBar.CannotChangePlacementWhenVisible", strings.cannotChangePlacementWhenVisible);
+                        if (this.opened) {
+                            throw new _ErrorFromName("WinJS.UI._LegacyAppBar.CannotChangePlacementWhenVisible", strings.cannotChangePlacementWhenVisible);
                         }
 
                         // Set placement, coerce invalid values to 'bottom'
@@ -489,18 +494,17 @@ define([
                     }
                 },
 
-                /// <field type="String" defaultValue="commands" oamOptionsDatatype="WinJS.UI.AppBar.layout" locid="WinJS.UI.AppBar.layout" helpKeyword="WinJS.UI.AppBar.layout">
-                /// Gets or sets the layout of the AppBar contents to either "commands" or "custom".
+                /// <field type="String" defaultValue="commands" oamOptionsDatatype="WinJS.UI._LegacyAppBar.layout" locid="WinJS.UI._LegacyAppBar.layout" helpKeyword="WinJS.UI._LegacyAppBar.layout">
+                /// Gets or sets the layout of the _LegacyAppBar contents to either "commands" or "custom".
                 /// </field>
-                layout: {
-                    get: function AppBar_get_layout() {
-                        return this._layout.type;
+                _layout: {
+                    get: function _LegacyAppBar_get_layout() {
+                        return this._layoutImpl.type;
                     },
                     set: function (layout) {
                         if (layout !== _Constants.appBarLayoutCommands &&
                             layout !== _Constants.appBarLayoutCustom &&
                             layout !== _Constants.appBarLayoutMenu) {
-                            throw new _ErrorFromName("WinJS.UI.AppBar.BadLayout", strings.badLayout);
                         }
 
                         // In designer we may have to redraw it
@@ -510,8 +514,8 @@ define([
                             wasShown = true;
                         }
 
-                        if (!this.hidden) {
-                            throw new _ErrorFromName("WinJS.UI.AppBar.CannotChangeLayoutWhenVisible", strings.cannotChangeLayoutWhenVisible);
+                        if (this.opened) {
+                            throw new _ErrorFromName("WinJS.UI._LegacyAppBar.CannotChangeLayoutWhenVisible", strings.cannotChangeLayoutWhenVisible);
                         }
 
                         var commands;
@@ -519,23 +523,23 @@ define([
                             // Gather commands in preparation for hand off to new layout.
                             // We expect prev layout to return commands in the order they were set in,
                             // not necessarily the current DOM order the layout is using.
-                            commands = this._layout.commandsInOrder;
-                            this._layout.disconnect();
+                            commands = this._layoutImpl.commandsInOrder;
+                            this._layoutImpl.disconnect();
                         }
 
                         // Set layout
                         if (layout === _Constants.appBarLayoutCommands) {
-                            this._layout = new _Layouts._AppBarCommandsLayout();
+                            this._layoutImpl = new _Layouts._AppBarCommandsLayout();
                         } else if (layout === _Constants.appBarLayoutMenu) {
-                            this._layout = new _Layouts._AppBarMenuLayout();
+                            this._layoutImpl = new _Layouts._AppBarMenuLayout();
                         } else {
-                            // Custom layout uses Base AppBar Layout class.
-                            this._layout = new _Layouts._AppBarBaseLayout();
+                            // Custom layout uses Base _LegacyAppBar Layout class.
+                            this._layoutImpl = new _Layouts._AppBarBaseLayout();
                         }
-                        this._layout.connect(this._element);
+                        this._layoutImpl.connect(this._element);
 
                         if (commands && commands.length) {
-                            // Reset AppBar since layout changed.
+                            // Reset _LegacyAppBar since layout changed.
                             this._layoutCommands(commands);
                         }
 
@@ -547,54 +551,14 @@ define([
                     configurable: true
                 },
 
-                /// <field type="Boolean" locid="WinJS.UI.AppBar.sticky" isAdvanced="true" helpKeyword="WinJS.UI.AppBar.sticky">
-                /// Gets or sets value that indicates whether the AppBar is sticky.
-                /// This value is true if the AppBar is sticky; otherwise, it's false.
-                /// </field>
-                sticky: {
-                    get: function AppBar_get_sticky() {
-                        return this._sticky;
-                    },
-                    set: function AppBar_set_sticky(value) {
-                        // If it doesn't change, do nothing
-                        if (this._sticky === !!value) {
-                            return;
-                        }
-
-                        this._sticky = !!value;
-
-                        // Note: caller still has to call .show() if also want it shown.
-
-                        // Show or hide the click eating div based on sticky value
-                        if (!this.hidden && this._element.style.visibility === "visible") {
-                            // May have changed sticky state for keyboard navigation
-                            _updateAllAppBarsFirstAndFinalDiv();
-
-                            // Ensure that the click eating div is in the correct state
-                            if (this._sticky) {
-                                if (!_isThereVisibleNonStickyBar()) {
-                                    _Overlay._Overlay._hideClickEatingDivAppBar();
-                                }
-                            } else {
-                                _Overlay._Overlay._showClickEatingDivAppBar();
-
-                                if (this._shouldStealFocus()) {
-                                    _storePreviousFocus(_Global.document.activeElement);
-                                    this._setFocusToAppBar();
-                                }
-                            }
-                        }
-                    }
-                },
-
-                /// <field type="Array" locid="WinJS.UI.AppBar.commands" helpKeyword="WinJS.UI.AppBar.commands" isAdvanced="true">
-                /// Sets the AppBarCommands in the AppBar. This property accepts an array of AppBarCommand objects.
+                /// <field type="Array" locid="WinJS.UI._LegacyAppBar.commands" helpKeyword="WinJS.UI._LegacyAppBar.commands" isAdvanced="true">
+                /// Sets the AppBarCommands in the _LegacyAppBar. This property accepts an array of AppBarCommand objects.
                 /// </field>
                 commands: {
-                    set: function AppBar_set_commands(commands) {
+                    set: function _LegacyAppBar_set_commands(commands) {
                         // Fail if trying to set when shown
-                        if (!this.hidden) {
-                            throw new _ErrorFromName("WinJS.UI.AppBar.CannotChangeCommandsWhenVisible", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeCommandsWhenVisible, "AppBar"));
+                        if (this.opened) {
+                            throw new _ErrorFromName("WinJS.UI._LegacyAppBar.CannotChangeCommandsWhenVisible", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeCommandsWhenVisible, "_LegacyAppBar"));
                         }
 
                         // Dispose old commands before tossing them out.
@@ -606,10 +570,10 @@ define([
                     }
                 },
 
-                _layoutCommands: function AppBar_layoutCommands(commands) {
-                    // Function precondition: AppBar must not be shown.
+                _layoutCommands: function _LegacyAppBar_layoutCommands(commands) {
+                    // Function precondition: _LegacyAppBar must not be shown.
 
-                    // Empties AppBar HTML and repopulates with passed in commands.
+                    // Empties _LegacyAppBar HTML and repopulates with passed in commands.
                     _ElementUtilities.empty(this._element);
                     this._element.appendChild(this._invokeButton); // Keep our Show/Hide button.
 
@@ -618,17 +582,17 @@ define([
                         commands = [commands];
                     }
 
-                    this._layout.layout(commands);
+                    this._layoutImpl.layout(commands);
                 },
 
-                /// <field type="String" defaultValue="compact" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode" isAdvanced="true">
-                /// Gets/Sets how AppBar will display itself while hidden. Values are "none", "minimal" and '"compact".
+                /// <field type="String" defaultValue="compact" locid="WinJS.UI._LegacyAppBar.closedDisplayMode" helpKeyword="WinJS.UI._LegacyAppBar.closedDisplayMode" isAdvanced="true">
+                /// Gets/Sets how _LegacyAppBar will display itself while hidden. Values are "none", "minimal" and '"compact".
                 /// </field>
                 closedDisplayMode: {
-                    get: function AppBar_get_closedDisplayMode() {
+                    get: function _LegacyAppBar_get_closedDisplayMode() {
                         return this._closedDisplayMode;
                     },
-                    set: function AppBar_set_closedDisplayMode(value) {
+                    set: function _LegacyAppBar_set_closedDisplayMode(value) {
                         var oldValue = this._closedDisplayMode;
 
                         if (oldValue !== value) {
@@ -656,8 +620,8 @@ define([
                                 _ElementUtilities.removeClass(this._element, _Constants.minimalClass);
                             }
 
-                            // The invoke button has changed the amount of available space in the AppBar. Layout might need to scale.
-                            this._layout.resize();
+                            // The invoke button has changed the amount of available space in the _LegacyAppBar. Layout might need to scale.
+                            this._layoutImpl.resize();
 
                             if (changeVisiblePosition) {
                                 // If the value is being set while we are not showing, change to our new position.
@@ -667,55 +631,52 @@ define([
                     },
                 },
 
-                /// <field type="Boolean" locid="WinJS.UI.AppBar.disabled" helpKeyword="WinJS.UI.AppBar.disabled">
-                /// Disable an AppBar, setting or getting the HTML disabled attribute. While disabled, the AppBar is hidden completely, and will not respond to attempts to show it.
-                /// </field>
-                disabled: {
+                
+
+                /// <field type="Boolean" hidden="true" locid="WinJS.UI._AppBar.opened" helpKeyword="WinJS.UI._AppBar.opened">Read only, true if an _LegacyAppBar is 'hidden'.</field>
+                opened: {
                     get: function () {
-                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
-                        return !!this._element.disabled;
-                    },
-                    set: function (disable) {
-                        var disable = !!disable;
-                        if (this.disabled !== disable) {
-                            this._element.disabled = disable;
-                            var toPosition;
-                            if (disable) {
-                                // Disabling. Move to the position mapped to the disabled state.
-                                toPosition = displayModeVisiblePositions.disabled;
-                            } else {
-                                // Enabling. Move to the position mapped to our closedDisplayMode.
-                                toPosition = displayModeVisiblePositions[this.closedDisplayMode];
-                            }
-                            this._hide(toPosition);
-                        }
+                        // Returns true if _LegacyAppBar is not 'hidden'.
+                        return !_ElementUtilities.hasClass(this._element, _Constants.hiddenClass) &&
+                            !_ElementUtilities.hasClass(this._element, _Constants.hidingClass) &&
+                            this._doNext !== displayModeVisiblePositions.minimal &&
+                            this._doNext !== displayModeVisiblePositions.compact &&
+                            this._doNext !== displayModeVisiblePositions.none;
                     },
                 },
 
-                /// <field type="Boolean" hidden="true" locid="WinJS.UI._AppBar.hidden" helpKeyword="WinJS.UI._AppBar.hidden">Read only, true if an AppBar is 'hidden'.</field>
-                hidden: {
-                    get: function () {
-                        // Returns true if AppBar is 'hidden'.
-                        return _ElementUtilities.hasClass(this._element, _Constants.hiddenClass) ||
-                            _ElementUtilities.hasClass(this._element, _Constants.hidingClass) ||
-                            this._doNext === displayModeVisiblePositions.minimal ||
-                            this._doNext === displayModeVisiblePositions.compact ||
-                            this._doNext === displayModeVisiblePositions.none;
-                    },
-                },
+                /// <field type="Function" locid="WinJS.UI._LegacyAppBar.onbeforeopen" helpKeyword="WinJS.UI._LegacyAppBar.onbeforeopen">
+                /// Occurs immediately before the control is opened.
+                /// </field>
+                onbeforeopen: createEvent(EVENTS.beforeOpen),
+
+                /// <field type="Function" locid="WinJS.UI._LegacyAppBar.onafteropen" helpKeyword="WinJS.UI._LegacyAppBar.onafteropen">
+                /// Occurs immediately after the control is opened.
+                /// </field>
+                onafteropen: createEvent(EVENTS.afterOpen),
+
+                /// <field type="Function" locid="WinJS.UI._LegacyAppBar.onbeforeclose" helpKeyword="WinJS.UI._LegacyAppBar.onbeforeclose">
+                /// Occurs immediately before the control is closed.
+                /// </field>
+                onbeforeclose: createEvent(EVENTS.beforeClose),
+
+                /// <field type="Function" locid="WinJS.UI._LegacyAppBar.onafterclose" helpKeyword="WinJS.UI._LegacyAppBar.onafterclose">
+                /// Occurs immediately after the control is closed.
+                /// </field>
+                onafterclose: createEvent(EVENTS.afterClose),
 
                 getCommandById: function (id) {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.getCommandById">
-                    /// <summary locid="WinJS.UI.AppBar.getCommandById">
-                    /// Retrieves the command with the specified ID from this AppBar.
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.getCommandById">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.getCommandById">
+                    /// Retrieves the command with the specified ID from this _LegacyAppBar.
                     /// If more than one command is found, this method returns them all.
                     /// </summary>
-                    /// <param name="id" type="String" locid="WinJS.UI.AppBar.getCommandById_p:id">Id of the command to return.</param>
-                    /// <returns type="object" locid="WinJS.UI.AppBar.getCommandById_returnValue">
+                    /// <param name="id" type="String" locid="WinJS.UI._LegacyAppBar.getCommandById_p:id">Id of the command to return.</param>
+                    /// <returns type="object" locid="WinJS.UI._LegacyAppBar.getCommandById_returnValue">
                     /// The command found, an array of commands if more than one have the same ID, or null if no command is found.
                     /// </returns>
                     /// </signature>
-                    var commands = this._layout.commandsInOrder.filter(function (command) {
+                    var commands = this._layoutImpl.commandsInOrder.filter(function (command) {
                         return command.id === id || command.element.id === id;
                     });
 
@@ -729,55 +690,55 @@ define([
                 },
 
                 showCommands: function (commands) {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.showCommands">
-                    /// <summary locid="WinJS.UI.AppBar.showCommands">
-                    /// Show the specified commands of the AppBar.
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.showCommands">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.showCommands">
+                    /// Show the specified commands of the _LegacyAppBar.
                     /// </summary>
-                    /// <param name="commands" type="Array" locid="WinJS.UI.AppBar.showCommands_p:commands">
+                    /// <param name="commands" type="Array" locid="WinJS.UI._LegacyAppBar.showCommands_p:commands">
                     /// An array of the commands to show. The array elements may be AppBarCommand objects, or the string identifiers (IDs) of commands.
                     /// </param>
                     /// </signature>
                     if (!commands) {
-                        throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI._LegacyAppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._layout.showCommands(commands);
+                    this._layoutImpl.showCommands(commands);
                 },
 
                 hideCommands: function (commands) {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.hideCommands">
-                    /// <summary locid="WinJS.UI.AppBar.hideCommands">
-                    /// Hides the specified commands of the AppBar.
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.hideCommands">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.hideCommands">
+                    /// Hides the specified commands of the _LegacyAppBar.
                     /// </summary>
-                    /// <param name="commands" type="Array" locid="WinJS.UI.AppBar.hideCommands_p:commands">Required. Command or Commands to hide, either String, DOM elements, or WinJS objects.</param>
+                    /// <param name="commands" type="Array" locid="WinJS.UI._LegacyAppBar.hideCommands_p:commands">Required. Command or Commands to hide, either String, DOM elements, or WinJS objects.</param>
                     /// </signature>
                     if (!commands) {
-                        throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI._LegacyAppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._layout.hideCommands(commands);
+                    this._layoutImpl.hideCommands(commands);
                 },
 
                 showOnlyCommands: function (commands) {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.showOnlyCommands">
-                    /// <summary locid="WinJS.UI.AppBar.showOnlyCommands">
-                    /// Show the specified commands, hiding all of the others in the AppBar.
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.showOnlyCommands">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.showOnlyCommands">
+                    /// Show the specified commands, hiding all of the others in the _LegacyAppBar.
                     /// </summary>
-                    /// <param name="commands" type="Array" locid="WinJS.UI.AppBar.showOnlyCommands_p:commands">
+                    /// <param name="commands" type="Array" locid="WinJS.UI._LegacyAppBar.showOnlyCommands_p:commands">
                     /// An array of the commands to show. The array elements may be AppBarCommand objects, or the string identifiers (IDs) of commands.
                     /// </param>
                     /// </signature>
                     if (!commands) {
-                        throw new _ErrorFromName("WinJS.UI.AppBar.RequiresCommands", strings.requiresCommands);
+                        throw new _ErrorFromName("WinJS.UI._LegacyAppBar.RequiresCommands", strings.requiresCommands);
                     }
 
-                    this._layout.showOnlyCommands(commands);
+                    this._layoutImpl.showOnlyCommands(commands);
                 },
 
-                show: function () {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.show">
-                    /// <summary locid="WinJS.UI.AppBar.show">
-                    /// Shows the AppBar, if hidden and not disabled, regardless of other state.
+                open: function () {
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.open">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.open">
+                    /// Opens the _LegacyAppBar, if closed and not disabled, regardless of other state.
                     /// </summary>
                     /// </signature>
                     // Just wrap the private one, turning off keyboard invoked flag
@@ -787,7 +748,7 @@ define([
                     this._show();
                 },
 
-                _show: function AppBar_show() {
+                _show: function _LegacyAppBar_show() {
 
                     var toPosition = displayModeVisiblePositions.shown;
                     var showing = null;
@@ -820,15 +781,15 @@ define([
                                 _storePreviousFocus(_Global.document.activeElement);
                             }
 
-                            this._layout.setFocusOnShow();
+                            this._layoutImpl.setFocusOnShow();
                         }
                     }
                 },
 
-                hide: function () {
-                    /// <signature helpKeyword="WinJS.UI.AppBar.hide">
-                    /// <summary locid="WinJS.UI.AppBar.hide">
-                    /// Hides the AppBar.
+                close: function () {
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar.close">
+                    /// <summary locid="WinJS.UI._LegacyAppBar.close">
+                    /// Closes the _LegacyAppBar.
                     /// </summary>
                     /// </signature>
                     // Just wrap the private one
@@ -836,7 +797,7 @@ define([
                     this._hide();
                 },
 
-                _hide: function AppBar_hide(toPosition) {
+                _hide: function _LegacyAppBar_hide(toPosition) {
 
                     var toPosition = toPosition || displayModeVisiblePositions[this.closedDisplayMode];
                     var hiding = null;
@@ -848,17 +809,17 @@ define([
 
                     this._changeVisiblePosition(toPosition, hiding);
                     if (hiding) {
-                        // Determine if there are any AppBars that are shown.
-                        // Set the focus to the next shown AppBar.
+                        // Determine if there are any _LegacyAppBars that are shown.
+                        // Set the focus to the next shown _LegacyAppBar.
                         // If there are none, set the focus to the control stored in the cache, which
-                        //   is what had focus before the AppBars were given focus.
+                        //   is what had focus before the _LegacyAppBars were given focus.
                         var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
                         var areOtherAppBars = false;
                         var areOtherNonStickyAppBars = false;
                         var i;
                         for (i = 0; i < appBars.length; i++) {
                             var appBarControl = appBars[i].winControl;
-                            if (appBarControl && !appBarControl.hidden && (appBarControl !== this)) {
+                            if (appBarControl && appBarControl.opened && (appBarControl !== this)) {
                                 areOtherAppBars = true;
 
                                 if (!appBarControl.sticky) {
@@ -879,21 +840,21 @@ define([
                         }
 
                         if (!areOtherNonStickyAppBars && !areVisibleSettingsFlyouts) {
-                            // Hide the click eating div because there are no other AppBars showing
+                            // Hide the click eating div because there are no other _LegacyAppBars showing
                             _Overlay._Overlay._hideClickEatingDivAppBar();
                         }
 
                         var that = this;
                         if (!areOtherAppBars) {
-                            // Set focus to what had focus before showing the AppBar
+                            // Set focus to what had focus before showing the _LegacyAppBar
                             if (_Overlay._Overlay._ElementWithFocusPreviousToAppBar &&
                                 (!_Global.document.activeElement || _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement))) {
                                 _restorePreviousFocus();
                             }
                             // Always clear the previous focus (to prevent temporary leaking of element)
                             _Overlay._Overlay._ElementWithFocusPreviousToAppBar = null;
-                        } else if (AppBar._isWithinAppBarOrChild(_Global.document.activeElement, that.element)) {
-                            // Set focus to next visible AppBar in DOM
+                        } else if (_LegacyAppBar._isWithinAppBarOrChild(_Global.document.activeElement, that.element)) {
+                            // Set focus to next visible _LegacyAppBar in DOM
 
                             var foundCurrentAppBar = false;
                             for (i = 0; i <= appBars.length; i++) {
@@ -904,7 +865,7 @@ define([
                                 var appBar = appBars[i];
                                 if (appBar === this.element) {
                                     foundCurrentAppBar = true;
-                                } else if (foundCurrentAppBar && !appBar.winControl.hidden) {
+                                } else if (foundCurrentAppBar && appBar.winControl.opened) {
                                     appBar.winControl._keyboardInvoked = !!this._keyboardInvoked;
                                     appBar.winControl._setFocusToAppBar();
                                     break;
@@ -912,8 +873,8 @@ define([
                             }
                         }
 
-                        // If we are hiding the last lightDismiss AppBar,
-                        //   then we need to update the tabStops of the other AppBars
+                        // If we are hiding the last lightDismiss _LegacyAppBar,
+                        //   then we need to update the tabStops of the other _LegacyAppBars
                         if (!this.sticky && !_isThereVisibleNonStickyBar()) {
                             _updateAllAppBarsFirstAndFinalDiv();
                         }
@@ -924,27 +885,28 @@ define([
                     }
                 },
 
-                _dispose: function AppBar_dispose() {
+                _dispose: function _LegacyAppBar_dispose() {
                     _Dispose.disposeSubTree(this.element);
-                    this._layout.dispose();
+                    this._layoutImpl.dispose();
                     this.disabled = true;
+                    this.close();
                 },
 
-                _disposeChildren: function AppBar_disposeChildren() {
+                _disposeChildren: function _LegacyAppBar_disposeChildren() {
                     // Be purposeful about what we dispose.
-                    this._layout.disposeChildren();
+                    this._layoutImpl.disposeChildren();
                 },
 
-                _isLightDismissible: function AppBar_isLightDismissible() {
-                    // An AppBar is considered light dismissible if there is at least one visible non sticky AppBar.
+                _isLightDismissible: function _LegacyAppBar_isLightDismissible() {
+                    // An _LegacyAppBar is considered light dismissible if there is at least one visible non sticky _LegacyAppBar.
                     return _Overlay._Overlay.prototype._isLightDismissible.call(this) || _isThereVisibleNonStickyBar();
                 },
 
-                _handleKeyDown: function AppBar_handleKeyDown(event) {
+                _handleKeyDown: function _LegacyAppBar_handleKeyDown(event) {
                     // On Left/Right arrow keys, moves focus to previous/next AppbarCommand element.
-                    // On "Esc" key press hide flyouts and hide light dismiss AppBars.
+                    // On "Esc" key press hide flyouts and hide light dismiss _LegacyAppBars.
 
-                    // Esc hides light-dismiss AppBars in all layouts but if the user has a text box with an IME
+                    // Esc hides light-dismiss _LegacyAppBars in all layouts but if the user has a text box with an IME
                     // candidate window open, we want to skip the ESC key event since it is handled by the IME.
                     // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
                     if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
@@ -953,10 +915,10 @@ define([
                         this._lightDismiss(true);
                     }
 
-                    // If the current active element isn't an intrinsic part of the AppBar,
+                    // If the current active element isn't an intrinsic part of the _LegacyAppBar,
                     // Layout might want to handle additional keys.
                     if (!this._invokeButton.contains(_Global.document.activeElement)) {
-                        this._layout.handleKeyDown(event);
+                        this._layoutImpl.handleKeyDown(event);
                     }
                 },
 
@@ -994,14 +956,14 @@ define([
                 },
 
                 _changeVisiblePosition: function (toPosition, newState) {
-                    /// <signature helpKeyword="WinJS.UI.AppBar._changeVisiblePosition">
-                    /// <summary locid="WinJS.UI.AppBar._changeVisiblePosition">
-                    /// Changes the visible position of the AppBar.
+                    /// <signature helpKeyword="WinJS.UI._LegacyAppBar._changeVisiblePosition">
+                    /// <summary locid="WinJS.UI._LegacyAppBar._changeVisiblePosition">
+                    /// Changes the visible position of the _LegacyAppBar.
                     /// </summary>
-                    /// <param name="toPosition" type="String" locid="WinJS.UI.AppBar._changeVisiblePosition_p:toPosition">
+                    /// <param name="toPosition" type="String" locid="WinJS.UI._LegacyAppBar._changeVisiblePosition_p:toPosition">
                     /// Name of the visible position we want to move to.
                     /// </param>
-                    /// <param name="newState" type="String" locid="WinJS.UI.AppBar._changeVisiblePosition_p:newState">
+                    /// <param name="newState" type="String" locid="WinJS.UI._LegacyAppBar._changeVisiblePosition_p:newState">
                     /// Name of the state we are entering. Values can be "showing", "hiding" or null.
                     /// If the value is null, then we are not changing states, only changing visible position.
                     /// </param>
@@ -1040,7 +1002,7 @@ define([
                                 // We can skip our animation and just hide.
                                 performAnimation = false;
                             } else {
-                                // Some portion of the AppBar should be visible to users after its position changes.
+                                // Some portion of the _LegacyAppBar should be visible to users after its position changes.
 
                                 // Un-obscure ourselves and become visible to the user again.
                                 // Need to animate to our desired position as if we were coming up from behind the keyboard.
@@ -1071,7 +1033,7 @@ define([
                     }
                 },
 
-                _afterPositionChange: function AppBar_afterPositionChange(newPosition, newState) {
+                _afterPositionChange: function _LegacyAppBar_afterPositionChange(newPosition, newState) {
                     // Defines body of work to perform after changing positions.
                     if (this._disposed) {
                         return;
@@ -1116,7 +1078,7 @@ define([
                         }
 
                         // If we had something queued, do that
-                        Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI.AppBar._checkDoNext");
+                        Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._LegacyAppBar._checkDoNext");
                     }
 
                     this._afterPositionChangeCallBack();
@@ -1126,11 +1088,11 @@ define([
                     // Leave this blank for unit tests to overwrite.
                 },
 
-                _beforeShow: function AppBar_beforeShow() {
+                _beforeShow: function _LegacyAppBar_beforeShow() {
                     // Each overlay tracks the size of the <HTML> element for triggering light-dismiss in the window resize handler.
                     this._cachedDocumentSize = this._cachedDocumentSize || _Overlay._Overlay._sizeOfDocument();
 
-                    // In case their event 'beforeshow' event listener is going to manipulate commands,
+                    // In case their event 'beforeopen' event listener is going to manipulate commands,
                     // first see if there are any queued command animations we can handle while we're still hidden.
                     if (this._queuedCommandAnimation) {
                         this._showAndHideFast(this._queuedToShow, this._queuedToHide);
@@ -1139,7 +1101,7 @@ define([
                     }
 
                     // Make sure everything fits before showing
-                    this._layout.scale();
+                    this._layoutImpl.scale();
 
                     if (this.closedDisplayMode === closedDisplayModes.compact) {
                         this._heightWithoutLabels = this._element.offsetHeight;
@@ -1148,31 +1110,31 @@ define([
                     _ElementUtilities.removeClass(this._element, _Constants.hiddenClass);
                     _ElementUtilities.addClass(this._element, _Constants.showingClass);
 
-                    // Send our "beforeShow" event
-                    this._sendEvent(_Overlay._Overlay.beforeShow);
+                    // Send our "beforeopen" event
+                    this._sendEvent(EVENTS.beforeOpen);
                 },
 
-                _afterShow: function AppBar_afterShow() {
+                _afterShow: function _LegacyAppBar_afterShow() {
                     _ElementUtilities.removeClass(this._element, _Constants.showingClass);
                     _ElementUtilities.addClass(this._element, _Constants.shownClass);
 
-                    // Send our "afterShow" event
-                    this._sendEvent(_Overlay._Overlay.afterShow);
+                    // Send our "afteropen" event
+                    this._sendEvent(EVENTS.afterOpen);
                     this._writeProfilerMark("show,StopTM");
                 },
 
-                _beforeHide: function AppBar_beforeHide() {
+                _beforeHide: function _LegacyAppBar_beforeHide() {
 
                     _ElementUtilities.removeClass(this._element, _Constants.shownClass);
                     _ElementUtilities.addClass(this._element, _Constants.hidingClass);
 
-                    // Send our "beforeHide" event
-                    this._sendEvent(_Overlay._Overlay.beforeHide);
+                    // Send our "beforeclose" event
+                    this._sendEvent(EVENTS.beforeClose);
                 },
 
-                _afterHide: function AppBar_afterHide() {
+                _afterHide: function _LegacyAppBar_afterHide() {
 
-                    // In case their 'afterhide' event handler is going to manipulate commands,
+                    // In case their 'afterclose' event handler is going to manipulate commands,
                     // first see if there are any queued command animations we can handle now we're hidden.
                     if (this._queuedCommandAnimation) {
                         this._showAndHideFast(this._queuedToShow, this._queuedToHide);
@@ -1183,15 +1145,15 @@ define([
                     _ElementUtilities.removeClass(this._element, _Constants.hidingClass);
                     _ElementUtilities.addClass(this._element, _Constants.hiddenClass);
 
-                    // Send our "afterHide" event
-                    this._sendEvent(_Overlay._Overlay.afterHide);
+                    // Send our "afterclose" event
+                    this._sendEvent(EVENTS.afterClose);
                     this._writeProfilerMark("hide,StopTM");
                 },
 
-                _animatePositionChange: function AppBar_animatePositionChange(fromPosition, toPosition) {
+                _animatePositionChange: function _LegacyAppBar_animatePositionChange(fromPosition, toPosition) {
                     // Determines and executes the proper transition between visible positions
 
-                    var layoutElementsAnimationPromise = this._layout.positionChanging(fromPosition, toPosition),
+                    var layoutElementsAnimationPromise = this._layoutImpl.positionChanging(fromPosition, toPosition),
                         appBarElementAnimationPromise;
 
                     // Get values in terms of pixels to perform animation.
@@ -1222,7 +1184,7 @@ define([
                     return Promise.join([layoutElementsAnimationPromise, appBarElementAnimationPromise]);
                 },
 
-                _checkDoNext: function AppBar_checkDoNext() {
+                _checkDoNext: function _LegacyAppBar_checkDoNext() {
                     // Do nothing if we're still animating
                     if (this._animating || this._needToHandleShowingKeyboard || this._needToHandleHidingKeyboard || this._disposed) {
                         return;
@@ -1245,7 +1207,7 @@ define([
                     }
                 },
 
-                _isABottomAppBarInTheProcessOfShowing: function AppBar_isABottomAppBarInTheProcessOfShowing() {
+                _isABottomAppBarInTheProcessOfShowing: function _LegacyAppBar_isABottomAppBarInTheProcessOfShowing() {
                     var appbars = _Global.document.querySelectorAll("." + _Constants.appBarClass + "." + _Constants.bottomClass);
                     for (var i = 0; i < appbars.length; i++) {
                         if (appbars[i].winAnimating === displayModeVisiblePositions.shown) {
@@ -1262,7 +1224,7 @@ define([
                 //   3) What currently has focus is neither a bottom appbar nor a top appbar
                 //      AND a bottom appbar is not in the process of showing.
                 // Otherwise Returns false
-                _shouldStealFocus: function AppBar_shouldStealFocus() {
+                _shouldStealFocus: function _LegacyAppBar_shouldStealFocus() {
                     var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement);
                     if (this._element === activeElementAppBar) {
                         // This appbar already has focus and we don't want to move focus
@@ -1282,7 +1244,7 @@ define([
                     }
                     if (!activeElementAppBar.winControl) {
                         // This should not happen, but if it does we want to make sure
-                        // that an AppBar ends up with focus.
+                        // that an _LegacyAppBar ends up with focus.
                         return true;
                     }
                     if ((activeElementAppBar.winControl._placement !== _Constants.appBarPlacementBottom)
@@ -1296,51 +1258,51 @@ define([
                     return false;
                 },
 
-                // Set focus to the passed in AppBar
-                _setFocusToAppBar: function AppBar_setFocusToAppBar(useSetActive, scroller) {
+                // Set focus to the passed in _LegacyAppBar
+                _setFocusToAppBar: function _LegacyAppBar_setFocusToAppBar(useSetActive, scroller) {
                     if (!this._focusOnFirstFocusableElement(useSetActive, scroller)) {
                         // No first element, set it to appbar itself
                         _Overlay._Overlay._trySetActive(this._element, scroller);
                     }
                 },
 
-                _commandsUpdated: function AppBar_commandsUpdated() {
+                _commandsUpdated: function _LegacyAppBar_commandsUpdated() {
                     // If we are still initializing then we don't have a layout yet so it doesn't need updating.
                     if (!this._initializing) {
-                        this._layout.commandsUpdated();
-                        this._layout.scale();
+                        this._layoutImpl.commandsUpdated();
+                        this._layoutImpl.scale();
                     }
                 },
 
-                _beginAnimateCommands: function AppBar_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
+                _beginAnimateCommands: function _LegacyAppBar_beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands) {
                     // The parameters are 3 mutually exclusive arrays of win-command elements contained in this Overlay.
                     // 1) showCommands[]: All of the HIDDEN win-command elements that ARE scheduled to show.
                     // 2) hideCommands[]: All of the VISIBLE win-command elements that ARE scheduled to hide.
                     // 3) otherVisibleCommands[]: All VISIBLE win-command elements that ARE NOT scheduled to hide.
-                    this._layout.beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands);
+                    this._layoutImpl.beginAnimateCommands(showCommands, hideCommands, otherVisibleCommands);
                 },
 
-                _endAnimateCommands: function AppBar_endAnimateCommands() {
-                    this._layout.endAnimateCommands();
+                _endAnimateCommands: function _LegacyAppBar_endAnimateCommands() {
+                    this._layoutImpl.endAnimateCommands();
                     this._endAnimateCommandsCallBack();
                 },
 
-                _endAnimateCommandsCallBack: function AppBar_endAnimateCommandsCallBack() {
+                _endAnimateCommandsCallBack: function _LegacyAppBar_endAnimateCommandsCallBack() {
                     // Leave this blank for unit tests to overwrite.
                 },
 
                 // Get the top offset for top appbars.
-                _getTopOfVisualViewport: function AppBar_getTopOfVisualViewPort() {
+                _getTopOfVisualViewport: function _LegacyAppBar_getTopOfVisualViewPort() {
                     return _Overlay._Overlay._keyboardInfo._visibleDocTop;
                 },
 
                 // Get the bottom offset for bottom appbars.
-                _getAdjustedBottom: function AppBar_getAdjustedBottom() {
+                _getAdjustedBottom: function _LegacyAppBar_getAdjustedBottom() {
                     // Need the distance the IHM moved as well.
                     return _Overlay._Overlay._keyboardInfo._visibleDocBottomOffset;
                 },
 
-                _showingKeyboard: function AppBar_showingKeyboard(event) {
+                _showingKeyboard: function _LegacyAppBar_showingKeyboard(event) {
                     // Remember keyboard showing state.
                     this._keyboardObscured = false;
                     this._needToHandleHidingKeyboard = false;
@@ -1352,7 +1314,7 @@ define([
 
                     this._needToHandleShowingKeyboard = true;
                     // If focus is in the appbar, don't cause scrolling.
-                    if (!this.hidden && this._element.contains(_Global.document.activeElement)) {
+                    if (this.opened && this._element.contains(_Global.document.activeElement)) {
                         event.ensuredFocusedElementInView = true;
                     }
 
@@ -1370,7 +1332,7 @@ define([
                     _Global.setTimeout(function (e) { that._checkKeyboardTimer(e); }, _Overlay._Overlay._keyboardInfo._animationShowLength + _Overlay._Overlay._scrollTimeout);
                 },
 
-                _hidingKeyboard: function AppBar_hidingKeyboard() {
+                _hidingKeyboard: function _LegacyAppBar_hidingKeyboard() {
                     // We'll either just reveal the current space under the IHM or restore the window height.
 
                     // We won't be obscured
@@ -1392,7 +1354,7 @@ define([
                     // Else resize should clear keyboardHiding.
                 },
 
-                _resize: function AppBar_resize(event) {
+                _resize: function _LegacyAppBar_resize(event) {
                     // If we're hidden by the keyboard, then hide bottom appbar so it doesn't pop up twice when it scrolls
                     if (this._needToHandleShowingKeyboard) {
                         // Top is allowed to scroll off the top, but we don't want bottom to peek up when
@@ -1416,17 +1378,17 @@ define([
 
                     // Make sure everything still fits.
                     if (!this._initializing) {
-                        this._layout.resize(event);
+                        this._layoutImpl.resize(event);
                     }
                 },
 
-                _checkKeyboardTimer: function AppBar_checkKeyboardTimer() {
+                _checkKeyboardTimer: function _LegacyAppBar_checkKeyboardTimer() {
                     if (!this._scrollHappened) {
                         this._mayEdgeBackIn();
                     }
                 },
 
-                _manipulationChanged: function AppBar_manipulationChanged(event) {
+                _manipulationChanged: function _LegacyAppBar_manipulationChanged(event) {
                     // See if we're at the not manipulating state, and we had a scroll happen,
                     // which is implicitly after the keyboard animated.
                     if (event.currentState === 0 && this._scrollHappened) {
@@ -1434,7 +1396,7 @@ define([
                     }
                 },
 
-                _mayEdgeBackIn: function AppBar_mayEdgeBackIn() {
+                _mayEdgeBackIn: function _LegacyAppBar_mayEdgeBackIn() {
                     // May need to react to IHM being resized event
                     if (this._needToHandleShowingKeyboard) {
                         // If not top appbar or viewport isn't still at top, then need to show again
@@ -1454,8 +1416,8 @@ define([
                     this._scrollHappened = false;
                 },
 
-                _ensurePosition: function AppBar_ensurePosition() {
-                    // Position the AppBar element relative to the top or bottom edge of the visible
+                _ensurePosition: function _LegacyAppBar_ensurePosition() {
+                    // Position the _LegacyAppBar element relative to the top or bottom edge of the visible
                     // document, based on the the visible position we think we need to be in.
                     var offSet = this._computePositionOffset();
                     this._element.style.bottom = offSet.bottom;
@@ -1463,8 +1425,8 @@ define([
 
                 },
 
-                _computePositionOffset: function AppBar_computePositionOffset() {
-                    // Calculates and returns top and bottom offsets for the AppBar element, relative to the top or bottom edge of the visible
+                _computePositionOffset: function _LegacyAppBar_computePositionOffset() {
+                    // Calculates and returns top and bottom offsets for the _LegacyAppBar element, relative to the top or bottom edge of the visible
                     // document.
                     var positionOffSet = {};
 
@@ -1481,7 +1443,7 @@ define([
                     return positionOffSet;
                 },
 
-                _checkScrollPosition: function AppBar_checkScrollPosition() {
+                _checkScrollPosition: function _LegacyAppBar_checkScrollPosition() {
                     // If IHM has appeared, then remember we may come in
                     if (this._needToHandleShowingKeyboard) {
                         // Tag that it's OK to edge back in.
@@ -1497,16 +1459,16 @@ define([
                     }
                 },
 
-                _alreadyInPlace: function AppBar_alreadyInPlace() {
+                _alreadyInPlace: function _LegacyAppBar_alreadyInPlace() {
                     // See if we're already where we're supposed to be.
                     var offSet = this._computePositionOffset();
                     return (offSet.top === this._element.style.top && offSet.bottom === this._element.style.bottom);
                 },
 
-                // If there is a shown non-sticky AppBar then it sets the firstDiv tabIndex to
-                //   the minimum tabIndex found in the AppBars and finalDiv to the max found.
+                // If there is a shown non-sticky _LegacyAppBar then it sets the firstDiv tabIndex to
+                //   the minimum tabIndex found in the _LegacyAppBars and finalDiv to the max found.
                 // Otherwise sets their tabIndex to -1 so they are not tab stops.
-                _updateFirstAndFinalDiv: function AppBar_updateFirstAndFinalDiv() {
+                _updateFirstAndFinalDiv: function _LegacyAppBar_updateFirstAndFinalDiv() {
                     var appBarFirstDiv = this._element.querySelectorAll("." + _Constants.firstDivClass);
                     appBarFirstDiv = appBarFirstDiv.length >= 1 ? appBarFirstDiv[0] : null;
 
@@ -1527,7 +1489,7 @@ define([
                     if (!appBarFirstDiv) {
                         // Add a firstDiv that will be the first child of the appBar.
                         // On focus set focus to the previous appBar.
-                        // The div should only be focusable if there are shown non-sticky AppBars.
+                        // The div should only be focusable if there are shown non-sticky _LegacyAppBars.
                         appBarFirstDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFirstDiv.style.display = "inline";
@@ -1545,7 +1507,7 @@ define([
                     if (!appBarFinalDiv) {
                         // Add a finalDiv that will be the last child of the appBar.
                         // On focus set focus to the next appBar.
-                        // The div should only be focusable if there are shown non-sticky AppBars.
+                        // The div should only be focusable if there are shown non-sticky _LegacyAppBars.
                         appBarFinalDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFinalDiv.style.display = "inline";
@@ -1557,7 +1519,7 @@ define([
                     }
 
 
-                    // invokeButton should be the second to last element in the AppBar's tab order. Second to the finalDiv.
+                    // invokeButton should be the second to last element in the _LegacyAppBar's tab order. Second to the finalDiv.
                     if (this._element.children[this._element.children.length - 2] !== this._invokeButton) {
                         this._element.insertBefore(this._invokeButton, appBarFinalDiv);
                     }
@@ -1584,11 +1546,13 @@ define([
                     }
                 },
 
-                _writeProfilerMark: function AppBar_writeProfilerMark(text) {
-                    _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
+                _writeProfilerMark: function _LegacyAppBar_writeProfilerMark(text) {
+                    _WriteProfilerMark("WinJS.UI._LegacyAppBar:" + this._id + ":" + text);
                 }
             }, {
                 // Statics
+                _Events: EVENTS,
+
                 _appBarsSynchronizationPromise: Promise.as(),
 
                 // Returns true if the element or what had focus before the element (if a Flyout) is either:
@@ -1606,27 +1570,27 @@ define([
                     return (flyout && appBar.contains(flyout._previousFocus));
                 },
 
-                // Callback for AppBar invokeButton and Edgy Event Command
+                // Callback for _LegacyAppBar invokeButton and Edgy Event Command
                 _toggleAllAppBarsState: function (keyboardInvoked, sourceAppBar) {
                     var bars = _getDynamicBarsForEdgy();
 
                     var hiding;
                     if (sourceAppBar) {
-                        // If the sourceAppBar is shown, hide all AppBars, else show all AppBars.
+                        // If the sourceAppBar is shown, hide all _LegacyAppBars, else show all _LegacyAppBars.
                         hiding = _ElementUtilities.hasClass(sourceAppBar._element, _Constants.showingClass) || _ElementUtilities.hasClass(sourceAppBar._element, _Constants.shownClass);
                     } else {
                         // EDGY event behavior. No sourceAppBar specified.
-                        // If every AppBar is shown, hide them. Otherwise show them all.
+                        // If every _LegacyAppBar is shown, hide them. Otherwise show them all.
                         hiding = bars._shown && !bars._hidden;
                     }
 
                     if (hiding) {
-                        AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
+                        _LegacyAppBar._appBarsSynchronizationPromise = _LegacyAppBar._appBarsSynchronizationPromise.then(function () {
                             return _Overlay._Overlay._hideAppBars(bars, keyboardInvoked);
                         });
                         return "hiding";
                     } else {
-                        AppBar._appBarsSynchronizationPromise = AppBar._appBarsSynchronizationPromise.then(function () {
+                        _LegacyAppBar._appBarsSynchronizationPromise = _LegacyAppBar._appBarsSynchronizationPromise.then(function () {
                             return _Overlay._Overlay._showAppBars(bars, keyboardInvoked);
                         });
                         return "showing";
@@ -1634,7 +1598,7 @@ define([
                 },
             });
 
-            return AppBar;
+            return _LegacyAppBar;
         })
     });
 });

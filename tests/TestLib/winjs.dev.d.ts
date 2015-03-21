@@ -407,7 +407,16 @@ declare module WinJS {
             _machine: IOpenCloseMachine;
         }
 
-        class PrivateToolBarNew extends WinJS.UI.ToolBarNew {
+        class PrivateAppBar extends WinJS.UI.AppBar {
+            _disposed: boolean;
+            _dom: {
+                root: HTMLElement;
+                commandingSurfaceEl: HTMLElement;
+            };
+            _commandingSurface: WinJS.UI.PrivateCommandingSurface;
+        }
+
+        class PrivateToolBar extends WinJS.UI.ToolBar {
             _disposed: boolean;
             _dom: {
                 root: HTMLElement;
@@ -417,24 +426,7 @@ declare module WinJS {
             _commandingSurface: WinJS.UI.PrivateCommandingSurface;
         }
 
-        class PrivateToolBar extends WinJS.UI.ToolBar {
-            _disposed: boolean;
-            _primaryCommands: ICommand[];
-            _secondaryCommands: ICommand[];
-            _overflowButton: HTMLButtonElement;
-            _mainActionArea: HTMLElement;
-            _menu: WinJS.UI.Menu;
-            _separatorWidth: number;
-            _standardCommandWidth: number;
-            _overflowButtonWidth: number;
-            _getCommandWidth(command: ICommand): number;
-            _customContentFlyout: WinJS.UI.Flyout;
-            _customContentContainer: HTMLElement;
-            _inlineOverflowArea: HTMLElement;
-        }
-
-        class PrivateCommand extends WinJS.UI.AppBarCommand implements ICommand {
-            priority: number;
+        class PrivateCommand extends WinJS.UI.AppBarCommand {
             winControl: ICommand;
             _commandBarIconButton;
             _disposed;
@@ -442,31 +434,33 @@ declare module WinJS {
             _lastElementFocus;
         }
 
-        // Move to WinJS.d.ts after the ToolBar API review
-        export interface ICommand {
+        /**
+        * Remnants of the previous implementation of the AppBar control, contains limited functionality. 
+          Currently only used by NavBar and is planned to be replaced by a new implementation.
+        **/
+        class _LegacyAppBar {
+            constructor(element?: HTMLElement, options?: any);
+            onafterclose(eventInfo: Event): void;
+            onafteropen(eventInfo: Event): void;
+            onbeforeclose(eventInfo: Event): void;
+            onbeforeopen(eventInfo: Event): void;
             addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+            dispatchEvent(type: string, eventProperties: any): boolean;
             dispose(): void;
+            getCommandById(id: string): AppBarCommand;
+            close(): void;
+            hideCommands(commands: any[], immediate?: boolean): void;
             removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
-            disabled: boolean;
+            open(): void;
+            showCommands(commands: any[], immediate?: boolean): void;
+            showOnlyCommands(commands: any[], immediate?: boolean): void;
+            closedDisplayMode: string;
+            commands: AppBarCommand[];
             element: HTMLElement;
-            extraClass: string;
-            firstElementFocus: HTMLElement;
-            flyout: WinJS.UI.Flyout;
-            hidden: boolean;
-            icon: string;
-            id: string;
-            label: string;
-            lastElementFocus: HTMLElement;
-            onclick: Function;
-            section: string;
-            selected: boolean;
-            tooltip: string;
-            type: string;
-            priority: number;
-            winControl: ICommand
+            opened: boolean;
+            placement: string;
         }
-
-        class PrivateAppBar extends AppBar {
+        class PrivateLegacyAppBar extends _LegacyAppBar {
             getCommandById(id: string): PrivateCommand;
             showCommands(commands: any[], immediate?: boolean): void;
             showCommands(commands: any, immediate?: boolean): void;
@@ -480,7 +474,9 @@ declare module WinJS {
             _uniqueId;
             _updateFirstAndFinalDiv;
             _layout;
+            _layoutImpl;
             _visiblePosition;
+            _invokeButton: HTMLButtonElement;
 
             static _currentAppBarId;
             static _appBarsSynchronizationPromise;
@@ -609,39 +605,6 @@ declare module WinJS {
             public addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
             public removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
             public dispatchEvent(type: string, eventProperties: any): boolean;
-        }
-
-        class ToolBarNew {
-            public static ClosedDisplayMode: {
-                compact: string;
-                full: string;
-            };
-            public element: HTMLElement;
-            public data: WinJS.Binding.List<ICommand>;
-            constructor(element?: HTMLElement, options?: any);
-            public dispose(): void;
-            public forceLayout(): void;
-            public closedDisplayMode: string;
-            public open(): void;
-            public close(): void;
-            public opened: boolean;
-            public onbeforeopen: (ev: CustomEvent) => void;
-            public onafteropen: (ev: CustomEvent) => void;
-            public onbeforeclose: (ev: CustomEvent) => void;
-            public onafterclose: (ev: CustomEvent) => void;
-            public addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
-            public removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
-            public dispatchEvent(type: string, eventProperties: any): boolean;
-        }
-
-        class ToolBar {
-            public element: HTMLElement;
-            public shownDisplayMode: string;
-            public data: WinJS.Binding.List<ICommand>;
-            public extraClass: string;
-            constructor(element?: HTMLElement, options?: any);
-            public dispose(): void;
-            public forceLayout(): void;
         }
 
         class PrivateItemContainer extends WinJS.UI.ItemContainer {

@@ -1,6 +1,7 @@
 ﻿{
     "appBarAriaLabel": "App Bar",
     "appBarCommandAriaLabel": "App Bar Item",
+	"appBarOverflowButtonAriaLabel": "View more",
     "autoSuggestBoxAriaLabel": "Autosuggestbox",
     "autoSuggestBoxAriaLabelInputNoPlaceHolder": "Autosuggestbox, enter to submit query, esc to clear text",
     "autoSuggestBoxAriaLabelInputPlaceHolder": "Autosuggestbox, {0}, enter to submit query, esc to clear text",

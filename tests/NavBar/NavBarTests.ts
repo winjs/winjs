@@ -65,7 +65,7 @@ module WinJSTests {
                         navbar = document.querySelector(".win-navbar").winControl;
 
                     LiveUnit.Assert.areEqual(navbar.element, element, "Unexpected winControl");
-                    return utils.waitForEvent(navbar, "aftershow", navbar.show.bind(navbar));
+                    return utils.waitForEvent(navbar, "afteropen", navbar.open.bind(navbar));
                 }).
                 then(function () {
                     LiveUnit.Assert.isTrue(eventFired);
@@ -74,20 +74,11 @@ module WinJSTests {
                 });
         };
 
-        testNavBarLayoutProperty = function () {
+        testNavBar_LayoutProperty = function () {
             var navBar;
 
             navBar = new WinJS.UI.NavBar();
-            LiveUnit.Assert.areEqual("custom", navBar.layout);
-
-            navBar = new WinJS.UI.NavBar(null, { layout: "commands" });
-            LiveUnit.Assert.areEqual("custom", navBar.layout);
-
-            navBar = new WinJS.UI.NavBar();
-
-            // The layout setter of the NavBar is a no-op.
-            navBar.layout = "commands";
-            LiveUnit.Assert.areEqual("custom", navBar.layout);
+            LiveUnit.Assert.areEqual("custom", navBar._layout);
         };
 
         testNavBarClosedDisplayModeProperty = function () {
@@ -124,7 +115,7 @@ module WinJSTests {
             var element = document.getElementById("navbarDiv"),
                 navBar = <WinJS.UI.PrivateNavBar>new WinJS.UI.NavBar(element);
 
-            utils.waitForEvent(navBar, "aftershow", navBar.show.bind(navBar)).
+            utils.waitForEvent(navBar, "afteropen", navBar.open.bind(navBar)).
                 then(function () {
                     LiveUnit.Assert.isFalse(navBar._disposed);
                     navBar.dispose();

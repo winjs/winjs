@@ -20,7 +20,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../../Utilities/_KeyboardBehavior',
     '../../Utilities/_UI',
-    '../AppBar/_Constants',
+    '../_LegacyAppBar/_Constants',
     '../Repeater',
     './_Command'
 ], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
@@ -403,9 +403,9 @@ define([
                 _updateAppBarReference: function NavBarContainer_updateAppBarReference() {
                     if (!this._appBarEl || !this._appBarEl.contains(this.element)) {
                         if (this._appBarEl) {
-                            this._appBarEl.removeEventListener('beforeshow', this._closeSplitAndResetBound);
-                            this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
-                            this._appBarEl.removeEventListener('aftershow', this._focusCurrentItemPassivelyBound);
+                            this._appBarEl.removeEventListener('beforeopen', this._closeSplitAndResetBound);
+                            this._appBarEl.removeEventListener('beforeopen', this._resizeImplBound);
+                            this._appBarEl.removeEventListener('afteropen', this._focusCurrentItemPassivelyBound);
                         }
 
                         var appBarEl = this.element.parentNode;
@@ -415,8 +415,8 @@ define([
                         this._appBarEl = appBarEl;
 
                         if (this._appBarEl) {
-                            this._appBarEl.addEventListener('beforeshow', this._closeSplitAndResetBound);
-                            this._appBarEl.addEventListener('aftershow', this._focusCurrentItemPassivelyBound);
+                            this._appBarEl.addEventListener('beforeopen', this._closeSplitAndResetBound);
+                            this._appBarEl.addEventListener('afteropen', this._focusCurrentItemPassivelyBound);
                         }
                     }
                 },
@@ -705,10 +705,10 @@ define([
 
                         this._updateAppBarReference();
 
-                        if (this._appBarEl && this._appBarEl.winControl && this._appBarEl.winControl.hidden) {
+                        if (this._appBarEl && this._appBarEl.winControl && !this._appBarEl.winControl.opened) {
                             // Do resize lazily.
                             Scheduler.schedule(this._resizeImplBound, Scheduler.Priority.idle, null, "WinJS.UI.NavBarContainer._resizeImpl");
-                            this._appBarEl.addEventListener('beforeshow', this._resizeImplBound);
+                            this._appBarEl.addEventListener('beforeopen', this._resizeImplBound);
                         } else {
                             // Do resize now
                             this._resizeImpl();
@@ -720,7 +720,7 @@ define([
                     if (!this._disposed && this._pendingResize) {
                         this._pendingResize = false;
                         if (this._appBarEl) {
-                            this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
+                            this._appBarEl.removeEventListener('beforeopen', this._resizeImplBound);
                         }
 
                         this._keyboardBehavior.currentIndex = 0;
@@ -1358,8 +1358,8 @@ define([
                     this._disposed = true;
 
                     if (this._appBarEl) {
-                        this._appBarEl.removeEventListener('beforeshow', this._closeSplitAndResetBound);
-                        this._appBarEl.removeEventListener('beforeshow', this._resizeImplBound);
+                        this._appBarEl.removeEventListener('beforeopen', this._closeSplitAndResetBound);
+                        this._appBarEl.removeEventListener('beforeopen', this._resizeImplBound);
                     }
 
                     Navigation.removeEventListener('navigated', this._closeSplitAndResetBound);

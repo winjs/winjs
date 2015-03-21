@@ -244,6 +244,7 @@ export class _CommandingSurface {
         var isChangingState = (value !== this._overflowDirection);
         if (OverflowDirection[value] && isChangingState) {
             this._overflowDirection = value;
+            this._machine.updateDom();
         }
     }
 
@@ -421,6 +422,11 @@ export class _CommandingSurface {
             actionArea: this._dom.actionArea.getBoundingClientRect(),
             overflowArea: this._dom.overflowArea.getBoundingClientRect(),
         };
+    }
+
+    deferredDomUpate(): void { 
+        // Notify the machine that an update has been requested.
+        this._machine.updateDom();
     }
     
     get initialized(): Promise<any> {

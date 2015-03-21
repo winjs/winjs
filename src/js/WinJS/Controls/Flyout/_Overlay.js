@@ -17,7 +17,7 @@ define([
     '../../Scheduler',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
-    '../AppBar/_Constants',
+    '../_LegacyAppBar/_Constants',
     'require-style!less/styles-overlay',
     'require-style!less/colors-overlay'
 ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _Constants) {
@@ -190,14 +190,6 @@ define([
                 },
             });
 
-            var createEvent = _Events._createEventProperty;
-
-            // Event Names
-            var BEFORESHOW = "beforeshow";
-            var AFTERSHOW = "aftershow";
-            var BEFOREHIDE = "beforehide";
-            var AFTERHIDE = "afterhide";
-
             // Helper to get DOM elements from input single object or array or IDs/toolkit/dom elements
             function _resolveElements(elements) {
                 // No input is just an empty array
@@ -322,45 +314,6 @@ define([
                     }
                 },
 
-                /// <field type="Boolean" locid="WinJS.UI._Overlay.disabled" helpKeyword="WinJS.UI._Overlay.disabled">Disable an Overlay, setting or getting the HTML disabled attribute.  When disabled the Overlay will no longer display with show(), and will hide if currently visible.</field>
-                disabled: {
-                    get: function () {
-                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
-                        return !!this._element.disabled;
-                    },
-                    set: function (value) {
-                        // Force this check into a boolean because our current state could be a bit confused since we tie to the DOM element
-                        value = !!value;
-                        var oldValue = !!this._element.disabled;
-                        if (oldValue !== value) {
-                            this._element.disabled = value;
-                            if (!this.hidden && this._element.disabled) {
-                                this._hideOrDismiss();
-                            }
-                        }
-                    }
-                },
-
-                /// <field type="Function" locid="WinJS.UI._Overlay.onbeforeshow" helpKeyword="WinJS.UI._Overlay.onbeforeshow">
-                /// Occurs immediately before the control is shown.
-                /// </field>
-                onbeforeshow: createEvent(BEFORESHOW),
-
-                /// <field type="Function" locid="WinJS.UI._Overlay.onaftershow" helpKeyword="WinJS.UI._Overlay.onaftershow">
-                /// Occurs immediately after the control is shown.
-                /// </field>
-                onaftershow: createEvent(AFTERSHOW),
-
-                /// <field type="Function" locid="WinJS.UI._Overlay.onbeforehide" helpKeyword="WinJS.UI._Overlay.onbeforehide">
-                /// Occurs immediately before the control is hidden.
-                /// </field>
-                onbeforehide: createEvent(BEFOREHIDE),
-
-                /// <field type="Function" locid="WinJS.UI._Overlay.onafterhide" helpKeyword="WinJS.UI._Overlay.onafterhide">
-                /// Occurs immediately after the control is hidden.
-                /// </field>
-                onafterhide: createEvent(AFTERHIDE),
-
                 dispose: function () {
                     /// <signature helpKeyword="WinJS.UI.Overlay.dispose">
                     /// <summary locid="WinJS.UI.Overlay.dispose">
@@ -379,29 +332,9 @@ define([
                     // To be overridden by subclasses
                 },
 
-                show: function () {
-                    /// <signature helpKeyword="WinJS.UI._Overlay.show">
-                    /// <summary locid="WinJS.UI._Overlay.show">
-                    /// Shows the Overlay, if hidden, regardless of other state
-                    /// </summary>
-                    /// </signature>
-                    // call private show to distinguish it from public version
-                    this._show();
-                },
-
                 _show: function _Overlay_show() {
                     // We call our base _baseShow because AppBar may need to override show
                     this._baseShow();
-                },
-
-                hide: function () {
-                    /// <signature helpKeyword="WinJS.UI._Overlay.hide">
-                    /// <summary locid="WinJS.UI._Overlay.hide">
-                    /// Hides the Overlay, if visible, regardless of other state
-                    /// </summary>
-                    /// </signature>
-                    // call private hide to distinguish it from public version
-                    this._hide();
                 },
 
                 _hide: function _Overlay_hide() {
@@ -1051,6 +984,8 @@ define([
                     var element = this._element;
                     if (element && _ElementUtilities.hasClass(element, _Constants.settingsFlyoutClass)) {
                         this._dismiss();
+                    } else if (element && _ElementUtilities.hasClass(element, _Constants.appBarClass)) {
+                        this.close();
                     } else {
                         this.hide();
                     }
@@ -1228,7 +1163,7 @@ define([
                     var appBars = [];
                     for (var i = 0; i < len; i++) {
                         var appBar = elements[i].winControl;
-                        if (appBar && !appBar.sticky && !appBar.hidden) {
+                        if (appBar && !appBar.sticky && appBar.opened) {
                             appBars.push(appBar);
                         }
                     }
@@ -1473,7 +1408,7 @@ define([
                 _hideAppBars: function _Overlay_hideAppBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
-                        bar.hide();
+                        bar.close();
                         return bar._animationPromise;
                     });
                     return Promise.join(allBarsAnimationPromises);
@@ -1624,10 +1559,10 @@ define([
                 _scrollTimeout: 150,
 
                 // Events
-                beforeShow: BEFORESHOW,
-                beforeHide: BEFOREHIDE,
-                afterShow: AFTERSHOW,
-                afterHide: AFTERHIDE,
+                beforeShow: "beforeshow",
+                beforeHide: "beforehide",
+                afterShow: "aftershow",
+                afterHide: "afterhide",
 
                 commonstrings: {
                     get cannotChangeCommandsWhenVisible() { return "Invalid argument: You must call hide() before changing {0} commands"; },

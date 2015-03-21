@@ -15,12 +15,6 @@ function getModule() {
     return module._CommandingSurface;
 }
 
-_Base.Namespace.define("WinJS.UI", {
-    _CommandingSurface: {
-        get: getModule
-    }
-});
-
 var publicMembers = Object.create({}, {
     _CommandingSurface: {
         get: function () {

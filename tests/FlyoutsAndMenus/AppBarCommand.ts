@@ -6,7 +6,7 @@
 module CorsicaTests {
     "use strict";
 
-    var PrivateAppBar = <typeof WinJS.UI.PrivateAppBar>WinJS.UI.AppBar;
+    var PrivateLegacyAppBar = <typeof WinJS.UI.PrivateLegacyAppBar>WinJS.UI._LegacyAppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
 
     export class AppBarCommandTests {
@@ -226,33 +226,26 @@ module CorsicaTests {
             var AppBarElement = document.createElement("div");
             document.body.appendChild(AppBarElement);
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the AppBar element");
-            var AppBar = new PrivateAppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });
+            var AppBar = new PrivateLegacyAppBar(AppBarElement, { commands: { type: 'separator', id: 'sep' } });
             LiveUnit.LoggingCore.logComment("set commands");
             AppBar.commands = [{ id: 'cmdA', label: 'One', icon: 'back', section: 'primary', tooltip: 'Test glyph by name' }];
             var commandVisibilityChangedCount = 0;
             AppBarElement.addEventListener("commandvisibilitychanged", function () {
                 commandVisibilityChangedCount++;
             });
-            AppBar.hide();
+
             var cmd = AppBar.getCommandById("cmdA");
             cmd.hidden = true;
             LiveUnit.Assert.areEqual(true, cmd.hidden, "verify the command is now hidden");
             LiveUnit.Assert.areEqual(1, commandVisibilityChangedCount, "commandvisibilitychanged event should have been fired");
 
-            AppBar.show();
-            var result = false;
-            try {
-                cmd.hidden = false;
-            } catch (err) {
-                // we throw
-                result = true;
-            } finally {
-                LiveUnit.Assert.areEqual(true, cmd.hidden, "verify that hidden property did not change");
-                LiveUnit.Assert.areEqual(true, result, "verify the hidden property throw the exception");
-                LiveUnit.Assert.areEqual(2, commandVisibilityChangedCount, "commandvisibilitychanged event should have been fired");
-                AppBar.hide();
-                document.body.removeChild(AppBarElement);
-            }
+            cmd.hidden = false;
+
+            LiveUnit.Assert.areEqual(false, cmd.hidden, "verify the command is now visible");
+            LiveUnit.Assert.areEqual(2, commandVisibilityChangedCount, "commandvisibilitychanged event should have been fired");
+            AppBar.close();
+            document.body.removeChild(AppBarElement);
+
         }
 
         // Tests for dispose members and requirements

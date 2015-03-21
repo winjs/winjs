@@ -13,7 +13,7 @@ define([
     '../../Utilities/_ElementUtilities',
     '../Flyout/_Overlay',
     '../Tooltip',
-    './_Constants',
+    '../_LegacyAppBar/_Constants',
     './_Icon'
     ], function appBarCommandInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
@@ -434,7 +434,6 @@ define([
                         if (!this._sendEvent(_Constants.commandVisibilityChanged)) {
                             style.visibility = originalVisibility;
                             style.display = originalDisplay;
-                            throw new _ErrorFromName("WinJS.UI.AppBarCommand.CannotChangeHiddenProperty", _Resources._formatString(_Overlay._Overlay.commonstrings.cannotChangeHiddenProperty, ""));
                         }
                     }
                 },
@@ -495,7 +494,7 @@ define([
                     /// Registers an event handler for the specified event.
                     /// </summary>
                     /// <param name="type" type="String" locid="WinJS.UI.AppBarCommand.addEventListener_p:type">
-                    /// Required. The name of the event to register. It must be "beforeshow", "beforehide", "aftershow", or "afterhide".
+                    /// Required. The name of the event to register.
                     /// </param>
                     /// <param name="listener" type="Function" locid="WinJS.UI.AppBarCommand.addEventListener_p:listener">Required. The event handler function to associate with this event.</param>
                     /// <param name="useCapture" type="Boolean" locid="WinJS.UI.AppBarCommand.addEventListener_p:useCapture">
