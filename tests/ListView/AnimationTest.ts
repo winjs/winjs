@@ -8,7 +8,6 @@ module WinJSTests {
 
     "use strict";
     var ITEMS_COUNT = 5;
-    var animationHelperHook = null;
     var ListView = <typeof WinJS.UI.PrivateListView> WinJS.UI.ListView;
 
     function getDataSource(count = ITEMS_COUNT) {
@@ -30,27 +29,6 @@ module WinJSTests {
                 element.textContent = item.data.itemInfo;
             })
         };
-    }
-
-    function hookAnimationsHelper() {
-        var realFunctions = {
-            animateEntrance: WinJS.UI._ListViewAnimationHelper.animateEntrance
-        };
-
-        var animationCallsRecord = {
-            entranceAnimation: 0,
-            reset: function () {
-                animationCallsRecord.entranceAnimation = 0;
-            },
-            cleanup: function () {
-                WinJS.UI._ListViewAnimationHelper.animateEntrance = realFunctions.animateEntrance;
-            }
-        };
-        WinJS.UI._ListViewAnimationHelper.animateEntrance = function (canvas, firstEntrance) {
-            animationCallsRecord.entranceAnimation++;
-            return realFunctions.animateEntrance(canvas, firstEntrance);
-        };
-        return animationCallsRecord;
     }
 
     function verifyListLayout(listView) {
@@ -105,10 +83,6 @@ module WinJSTests {
 
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
-            if (animationHelperHook) {
-                animationHelperHook.cleanup();
-                animationHelperHook = null;
-            }
             var element = document.getElementById("AnimationTest");
             if (element) {
                 WinJS.Utilities.disposeSubTree(element);
@@ -116,43 +90,6 @@ module WinJSTests {
             }
         }
     };
-
-    function generate(name, testFunction) {
-        function generateTest(animationsEnabled, rtl, layoutName) {
-            var fullName = name + layoutName + (animationsEnabled ? "_animationsEnabled_" : "_animationsDisabled_") + (rtl ? "rtl" : "ltr");
-            ListViewAnimationTest.prototype[fullName] = function (complete) {
-                LiveUnit.LoggingCore.logComment("in " + fullName);
-
-                var animationCounts = animationHelperHook = hookAnimationsHelper();
-
-                var element = document.getElementById("AnimationTest");
-                if (layoutName === "GridLayout") {
-                    element.style.height = "150px";
-                }
-                element.style.direction = rtl ? "rtl" : "ltr";
-                animationCounts.reset();
-                var listView = new ListView(element, { itemDataSource: getDataSource(), itemTemplate: basicRenderer, layout: new WinJS.UI[layoutName]() });
-                listView._animationsDisabled = function () {
-                    return !animationsEnabled;
-                }
-
-                testFunction(listView, animationCounts, animationsEnabled, ((layoutName === "ListLayout") ? verifyListLayout : verifyGridLayout), complete);
-            };
-        }
-
-        function generateTestSuite(layoutName) {
-            generateTest(true, true, layoutName);
-            generateTest(true, false, layoutName);
-            generateTest(false, true, layoutName);
-            generateTest(false, false, layoutName);
-        }
-
-        // UNDONE
-        /*
-        generateTestSuite("ListLayout");
-        generateTestSuite("GridLayout");
-        */
-    }
 
     function generateDelayedEntranceAnimation(layoutName) {
         ListViewAnimationTest.prototype["testDelayedEntranceAnimation" + layoutName] = function (complete) {
@@ -165,8 +102,12 @@ module WinJSTests {
             element.style.height = "150px";
             element.style.direction = "ltr";
 
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 delayedPromiseDone = false;
             var animationEventHandler = function (e) {
@@ -174,7 +115,7 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(1, countAnimationHandlerCalled);
                 LiveUnit.Assert.areEqual(WinJS.UI.ListViewAnimationType.entrance, e.detail.type);
                 var delayPromise = WinJS.Promise.timeout(1000).then(function () {
-                    LiveUnit.Assert.areEqual(0, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(0, entranceAnimationCount);
                     delayedPromiseDone = true;
                 });
                 e.detail.setPromise(delayPromise);
@@ -184,7 +125,7 @@ module WinJSTests {
             var viewCompleteEventHandler = function (e) {
                 if (listView && listView.loadingState === "complete") {
                     LiveUnit.Assert.areEqual(1, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(1, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(1, entranceAnimationCount);
                     element.removeEventListener("contentanimating", animationEventHandler, false);
                     element.removeEventListener("loadingstatechanged", viewCompleteEventHandler, false);
                     complete();
@@ -206,8 +147,12 @@ module WinJSTests {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 delayedPromiseDone = false;
             var animationEventHandler = function (e) {
@@ -221,7 +166,7 @@ module WinJSTests {
             var viewCompleteEventHandler = function (e) {
                 if (listView && listView.loadingState === "complete") {
                     LiveUnit.Assert.areEqual(1, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(0, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(0, entranceAnimationCount);
                     element.removeEventListener("contentanimating", animationEventHandler, false);
                     element.removeEventListener("loadingstatechanged", viewCompleteEventHandler, false);
                     complete();
@@ -243,8 +188,12 @@ module WinJSTests {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 delayedPromiseDone = false;
             var animationEventHandler = function (e) {
@@ -263,13 +212,13 @@ module WinJSTests {
             var tests = [
                 function () {
                     LiveUnit.Assert.areEqual(1, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(1, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(1, entranceAnimationCount);
                     listView.itemDataSource = getDataSource();
                     return true;
                 },
                 function () {
                     LiveUnit.Assert.areEqual(2, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(1, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(1, entranceAnimationCount);
                     element.removeEventListener("contentanimating", animationEventHandler, false);
                     complete();
                 }
@@ -289,8 +238,12 @@ module WinJSTests {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 delayedPromiseDone = false;
             var animationEventHandler = function (e) {
@@ -314,7 +267,7 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(interruptionDone);
                     LiveUnit.Assert.isFalse(delayedPromiseDone);
                     LiveUnit.Assert.areEqual(2, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(1, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(1, entranceAnimationCount);
                     element.removeEventListener("contentanimating", animationEventHandler, false);
                     element.removeEventListener("loadingstatechanged", viewCompleteEventHandler, false);
                     complete();
@@ -341,8 +294,12 @@ module WinJSTests {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 delayedPromiseDone = false;
             var animationEventHandler = function (e) {
@@ -367,7 +324,7 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(interruptionDone);
                     LiveUnit.Assert.isFalse(delayedPromiseDone);
                     LiveUnit.Assert.areEqual(2, countAnimationHandlerCalled);
-                    LiveUnit.Assert.areEqual(0, animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual(0, entranceAnimationCount);
                     element.removeEventListener("contentanimating", animationEventHandler, false);
                     element.removeEventListener("loadingstatechanged", viewCompleteEventHandler, false);
                     complete();
@@ -397,8 +354,12 @@ module WinJSTests {
             var element = document.getElementById("AnimationTest");
             element.style.height = "150px";
             element.style.direction = "ltr";
-            animationHelperHook = hookAnimationsHelper();
-            animationHelperHook.reset();
+            var entranceAnimationCount = 0;
+            WinJS.Utilities["_addEventListener"](element, "animationstart", function (e) {
+                if (e.animationName.indexOf("enterContent") !== -1) {
+                    entranceAnimationCount++;
+                }
+            });
             var countAnimationHandlerCalled = 0,
                 // Since we're hacking the ListView's animations disabled function via setting _animationsDisabled below, it's possible that a synchronous listview will
                 // complete and fire viewstatecomplete + entrance animation events before we've had a chance to override animations disabled. If that happens a couple counts
@@ -423,13 +384,13 @@ module WinJSTests {
 
             var tests = [
                 function () {
-                    LiveUnit.Assert.areEqual((offByOne ? 1 : 0), animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual((offByOne ? 1 : 0), entranceAnimationCount);
                     LiveUnit.Assert.areEqual((offByOne ? 1 : 0), countAnimationHandlerCalled);
                     listView.itemDataSource = getDataSource();
                     return true;
                 },
                 function () {
-                    LiveUnit.Assert.areEqual((offByOne ? 1 : 0), animationHelperHook.entranceAnimation);
+                    LiveUnit.Assert.areEqual((offByOne ? 1 : 0), entranceAnimationCount);
                     LiveUnit.Assert.areEqual((offByOne ? 1 : 0), countAnimationHandlerCalled);
                     complete();
                 }

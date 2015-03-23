@@ -71,7 +71,6 @@ module WinJSTests {
             "</div>";
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -79,7 +78,6 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            Helper.ListView.restoreListviewAnimations();
         }
 
         testScrollToItemValidation = function (complete) {

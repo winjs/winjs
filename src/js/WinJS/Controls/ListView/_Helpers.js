@@ -2,9 +2,8 @@
 define([
     'exports',
     '../../Core/_Base',
-    '../ItemContainer/_Constants',
-    '../../Animations'
-], function helpersInit(exports, _Base, _Constants, Animations) {
+    '../ItemContainer/_Constants'
+], function helpersInit(exports, _Base, _Constants) {
     "use strict";
 
     function nodeListToArray(nodeList) {
@@ -45,17 +44,6 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _nodeListToArray: nodeListToArray,
         _repeat: repeat,
-        _stripedContainers: stripedContainers,
-        _ListViewAnimationHelper: {
-            fadeInElement: function (element) {
-                return Animations.fadeIn(element);
-            },
-            fadeOutElement: function (element) {
-                return Animations.fadeOut(element);
-            },
-            animateEntrance: function (canvas, firstEntrance) {
-                return Animations.enterContent(canvas, [{ left: firstEntrance ? "100px" : "40px", top: "0px", rtlflip: true }], { mechanism: "transition" });
-            },
-        }
+        _stripedContainers: stripedContainers
     });
 });

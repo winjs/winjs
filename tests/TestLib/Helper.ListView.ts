@@ -439,51 +439,6 @@ module Helper.ListView {
         });
     }
 
-    export function createTrivialAnimationTracker() {
-        return {
-            getCompletionPromise: function () {
-                return WinJS.Promise.wrap();
-            }
-        };
-    }
-
-    export var trivialAnimationHelper = {
-        animateEntrance: function () {
-            return WinJS.Promise.wrap();
-        },
-        fadeInElement: function (e) {
-            return WinJS.Promise.wrap();
-        },
-        fadeOutElement: function (e) {
-            return WinJS.Promise.wrap();
-        }
-    }
-    export var realAnimationHelper = {
-    },
-        realHelperRecorded = false;
-    export function removeListviewAnimations() {
-        var functions;
-        if (!realHelperRecorded) {
-            functions = Object.keys(WinJS.UI._ListViewAnimationHelper);
-            for (var i = 0; i < functions.length; i++) {
-                realAnimationHelper[functions[i]] = WinJS.UI._ListViewAnimationHelper[functions[i]];
-            }
-            realHelperRecorded = true;
-        }
-        functions = Object.keys(trivialAnimationHelper);
-        for (var i = 0; i < functions.length; i++) {
-            WinJS.UI._ListViewAnimationHelper[functions[i]] = trivialAnimationHelper[functions[i]];
-        }
-    }
-    export function restoreListviewAnimations() {
-        if (realHelperRecorded) {
-            var functions = Object.keys(realAnimationHelper);
-            for (var i = 0; i < functions.length; i++) {
-                WinJS.UI._ListViewAnimationHelper[functions[i]] = realAnimationHelper[functions[i]];
-            }
-        }
-    }
-
     export function containerFrom(element) {
         while (element && !WinJS.Utilities.hasClass(element, WinJS.UI._containerClass)) {
             element = element.parentNode;

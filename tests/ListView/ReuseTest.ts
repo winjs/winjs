@@ -255,7 +255,6 @@ module WinJSTests {
             newItems = 0;
             disposedItemsCount = 0;
             disposedItems = [];
-            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -263,7 +262,6 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            Helper.ListView.restoreListviewAnimations();
         }
 
         // Ensures dispose is called due to the following data source changes:

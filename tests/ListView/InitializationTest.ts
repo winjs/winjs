@@ -117,7 +117,6 @@ module WinJSTests {
             "<div id='test2' style='width:600px;height:400px;'></div>";
             testRootEl.appendChild(newNode);
             document.body.appendChild(testRootEl);
-            Helper.ListView.removeListviewAnimations();
         }
 
         tearDown() {
@@ -125,7 +124,6 @@ module WinJSTests {
 
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
-            Helper.ListView.restoreListviewAnimations();
         }
 
         // Test listView initialization with an invalid element like H1

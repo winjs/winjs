@@ -27,14 +27,12 @@ module WinJSTests {
 
 
         setUp() {
-            Helper.ListView.removeListviewAnimations();
             testRootEl = document.createElement("div");
             testRootEl.className = "file-listview-css";
             document.body.appendChild(testRootEl);
         }
 
         tearDown() {
-            Helper.ListView.restoreListviewAnimations();
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
         }
@@ -403,7 +401,6 @@ module WinJSTests {
 
 
         testWin8_769820 = function (complete) {
-            Helper.ListView.restoreListviewAnimations();
 
             var items = [],
                 tiles = [];

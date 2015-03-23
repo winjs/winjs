@@ -37,7 +37,6 @@ module WinJSTests {
             var root = addNode(sezoRootId);
             addNode(zoomedInListViewId, root);
             addNode(zoomedOutListViewId, root);
-            Helper.ListView.removeListviewAnimations();
 
             //WinBlue: 298587
             _oldMaxTimePerCreateContainers = WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers;
@@ -54,7 +53,6 @@ module WinJSTests {
             removeNode(zoomedOutListViewId);
             removeNode(zoomedInListViewId);
             removeNode(sezoRootId);
-            Helper.ListView.restoreListviewAnimations();
         }
 
     };

@@ -227,8 +227,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "List Animations: Before edits: Correct number of transitions");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "List Animations: Before edits: Correct number of transitions");
                         transitionEnd = [];
                     }
                     bindingList.splice(1, 0, getItem());
@@ -253,8 +252,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "List Animations: Before edits: Correct number of transitions");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "List Animations: Before edits: Correct number of transitions");
                         transitionEnd = [];
                     }
                     bindingList.splice(1, 0, getItem());
@@ -388,8 +386,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "Grid Animations: Before edits: Correct number of transitions");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "Grid Animations: Before edits: Correct number of transitions");
                         transitionEnd = [];
                     }
                     bindingList.splice(6, 0, getItem());
@@ -464,8 +461,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "Grid Animations: Before edits: Correct number of transitions");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "Grid Animations: Before edits: Correct number of transitions");
                         transitionEnd = [];
                     }
                     bindingList.splice(6, 0, getItem());
@@ -531,8 +527,7 @@ module WinJSTests {
 
             Helper.ListView.waitForReady(listView)().
                 then(function () {
-                    // 2 is for entrance animation.
-                    LiveUnit.Assert.areEqual(2, transitionEnd.length, "Grid Grouped Animations: Before edits: Correct number of transitions");
+                    LiveUnit.Assert.areEqual(1, transitionEnd.length, "Grid Grouped Animations: Before edits: Correct number of transitions");
                     transitionEnd = [];
                     bindingList.splice(6, 0, getItem());
                     return Helper.ListView.waitForReady(listView, -1)();
@@ -639,8 +634,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "List Overlapping edits:");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "List Overlapping edits:");
                         transitionEnd = [];
                     }
                     bindingList.splice(0, 0, getItem());
@@ -673,8 +667,7 @@ module WinJSTests {
             Helper.ListView.waitForReady(listView)().
                 then(function () {
                     if (!WinJS.Utilities.isPhone) {
-                        // 2 is for entrance animation.
-                        LiveUnit.Assert.areEqual(2, transitionEnd.length, "List Overlapping edits:");
+                        LiveUnit.Assert.areEqual(1, transitionEnd.length, "List Overlapping edits:");
                         transitionEnd = [];
                     }
                     bindingList.splice(0, 1);

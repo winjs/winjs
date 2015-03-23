@@ -780,7 +780,7 @@ define([
 
                                                 if (!this._fireEntrance || this._fireEvent(Hub._EventName.contentAnimating, eventDetail)) {
                                                     this._viewportElement.style["-ms-overflow-style"] = "none";
-                                                    onScreenItemsAnimatedPromise = Animations.enterContent(this._viewportElement, [{ left: this._fireEntrance ? "100px" : "40px", top: "0px", rtlflip: true }], { mechanism: "transition" }).then(function () {
+                                                    onScreenItemsAnimatedPromise = Animations.enterContent(this._viewportElement).then(function () {
                                                         this._viewportElement.style["-ms-overflow-style"] = "";
                                                     }.bind(this));
                                                 }

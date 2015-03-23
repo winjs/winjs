@@ -375,6 +375,33 @@ export declare function turnstileBackwardIn(incoming: any): Promise<any>;
 **/
 export declare function turnstileBackwardOut(outgoing: any): Promise<any>;
 
+/**
+ * Execute a drill in incoming animation.
+ * @param incoming Single element or collection of elements to animate.
+ * @returns A Promise that completes when the animation is finished.
+**/
+export declare function drillInIncoming(incoming: any): Promise<any>;
+
+/**
+ * Execute a drill in outgoing animation.
+ * @param outgoing Single element or collection of elements to animate.
+ * @returns A Promise that completes when the animation is finished.
+**/
+export declare function drillInOutgoing(outgoing: any): Promise<any>;
+
+/**
+ * Execute a drill out incoming animation.
+ * @param incoming Single element or collection of elements to animate.
+ * @returns A Promise that completes when the animation is finished.
+**/
+export declare function drillOutIncoming(incoming: any): Promise<any>;
+
+/**
+ * Execute a drill out outgoing animation.
+ * @param outgoing Single element or collection of elements to animate.
+ * @returns A Promise that completes when the animation is finished.
+**/
+export declare function drillOutOutgoing(outgoing: any): Promise<any>;
 
 //#endregion export declare functions
 

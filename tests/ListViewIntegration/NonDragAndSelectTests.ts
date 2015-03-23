@@ -86,13 +86,11 @@ module WinJSTests {
             newNode.style.width = "500px";
             newNode.style.height = "500px";
             document.body.appendChild(newNode);
-            Helper.ListView.removeListviewAnimations();
         }
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             var element = document.getElementById("NonDragAndSelectTests");
             document.body.removeChild(element);
-            Helper.ListView.restoreListviewAnimations();
         }
 
     }

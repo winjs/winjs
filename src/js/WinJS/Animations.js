@@ -1404,7 +1404,7 @@ define([
             writeAnimationProfilerMark("enterContent,StartTM");
 
             var animationPromise;
-            var offsetArray = new OffsetArray(offset, "WinJS-enterContent", [{ top: "0px", left: "40px", rtlflip: true }]);
+            var offsetArray = new OffsetArray(offset, "WinJS-enterContent", [{ top: "28px", left: "0px", rtlflip: false }]);
             if (options && options.mechanism === "transition") {
                 animationPromise = _TransitionAnimation.executeTransition(
                     incoming,
@@ -1727,7 +1727,7 @@ define([
             /// </signature>
             writeAnimationProfilerMark("enterPage,StartTM");
 
-            var offsetArray = new OffsetArray(offset, "WinJS-enterPage", [{ top: "0px", left: "100px", rtlflip: true }]);
+            var offsetArray = new OffsetArray(offset, "WinJS-enterPage", [{ top: "28px", left: "0px", rtlflip: false }]);
             var promise1 = _TransitionAnimation.executeAnimation(
                 element,
                 {

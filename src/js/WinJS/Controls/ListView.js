@@ -8,6 +8,7 @@ define([
     '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
+    '../Animations',
     '../Animations/_TransitionAnimation',
     '../BindingList',
     '../Promise',
@@ -35,7 +36,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/styles-listview',
     'require-style!less/colors-listview'
-], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -66,8 +67,6 @@ define([
     function getOffsetRight(element) {
         return element.offsetParent ? (element.offsetParent.offsetWidth - element.offsetLeft - element.offsetWidth) : 0;
     }
-
-    var AnimationHelper = _Helpers._ListViewAnimationHelper;
 
     var strings = {
         get notCompatibleWithSemanticZoom() { return "ListView can only be used with SemanticZoom if randomAccess loading behavior is specified."; },
@@ -3186,7 +3185,7 @@ define([
                         this._progressIndicatorDelayTimer = Promise.timeout(_Constants._LISTVIEW_PROGRESS_DELAY).then(function () {
                             if (!that._isZombie()) {
                                 parent.appendChild(progressBar);
-                                AnimationHelper.fadeInElement(progressBar);
+                                Animations.fadeIn(progressBar);
                                 that._progressIndicatorDelayTimer = null;
                             }
                         });
@@ -3205,7 +3204,7 @@ define([
                     if (progressBar.parentNode && !this._fadingProgressBar) {
                         this._fadingProgressBar = true;
                         var that = this;
-                        AnimationHelper.fadeOutElement(progressBar).then(function () {
+                        Animations.fadeOut(progressBar).then(function () {
                             if (progressBar.parentNode) {
                                 progressBar.parentNode.removeChild(progressBar);
                             }
@@ -3742,7 +3741,7 @@ define([
                             if (!eventDetails.prevented) {
                                 that._fadingViewportOut = true;
                                 that._viewport.style.overflow = "hidden";
-                                AnimationHelper.fadeOutElement(that._viewport).then(function () {
+                                Animations.fadeOut(that._viewport).then(function () {
                                     if (that._isZombie()) { return; }
                                     that._fadingViewportOut = false;
                                     that._viewport.style.opacity = 1.0;
@@ -3803,7 +3802,7 @@ define([
                             if (!that._isZombie()) {
                                 that._canvas.style.opacity = 1;
 
-                                return AnimationHelper.animateEntrance(that._viewport, firstTime).then(function () {
+                                return Animations.enterContent(that._viewport).then(function () {
                                     if (!that._isZombie()) {
                                         that._waitingEntranceAnimationPromise = null;
                                         that._viewport.style.overflow = "";

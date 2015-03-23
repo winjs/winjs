@@ -15,7 +15,6 @@ module WinJSTests {
             var newNode = document.createElement("div");
             newNode.id = "CommonLayoutTests";
             document.body.appendChild(newNode);
-            Helper.ListView.removeListviewAnimations();
         }
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
@@ -24,7 +23,6 @@ module WinJSTests {
                 WinJS.Utilities.disposeSubTree(element);
                 document.body.removeChild(element);
             }
-            Helper.ListView.restoreListviewAnimations();
         }
     }
 
