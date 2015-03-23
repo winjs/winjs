@@ -243,7 +243,7 @@ export class SplitView {
                 this._updateDomImpl();
             }
         });
-        
+
         // Initialize private state.
         this._disposed = false;
         this._dismissable = new _LightDismissService.LightDismissableElement({
@@ -291,7 +291,7 @@ export class SplitView {
     }
 
     private _closedDisplayMode: string;
-    /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.ClosedDisplayMode" locid="WinJS.UI.SplitView.ClosedDisplayMode" helpKeyword="WinJS.UI.SplitView.ClosedDisplayMode">
+    /// <field type="String" oamOptionsDatatype="WinJS.UI.SplitView.closedDisplayMode" locid="WinJS.UI.SplitView.closedDisplayMode" helpKeyword="WinJS.UI.SplitView.closedDisplayMode">
     /// Gets or sets the display mode of the SplitView's pane when it is hidden.
     /// </field>
     get closedDisplayMode(): string {
