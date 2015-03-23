@@ -103,13 +103,13 @@ module CorsicaTests {
 
 
     function hideAllAppBars() {
-        var AppBars = document.querySelectorAll(".win-legacyappbar");
+        var AppBars = document.querySelectorAll(".win-navbar");
         AppBars = Array.prototype.map.call(AppBars, function (AppBar) { return AppBar.winControl; });
         return WinJS.UI._Overlay._hideAppBars(AppBars);
     };
 
     function showAllAppBars() {
-        var AppBars = document.querySelectorAll(".win-legacyappbar");
+        var AppBars = document.querySelectorAll(".win-navbar");
         AppBars = Array.prototype.map.call(AppBars, function (AppBar) { return AppBar.winControl; });
         return WinJS.UI._Overlay._showAppBars(AppBars);
     }
@@ -347,7 +347,7 @@ module CorsicaTests {
             _element.innerHTML = htmlString;
             WinJS.UI.processAll().
                 then(function () {
-                    var appbar = document.querySelector(".win-legacyappbar").winControl;
+                    var appbar = document.querySelector(".win-navbar").winControl;
                     appbar.open();
                     appbar.close();
                     appbar.open();
@@ -991,7 +991,7 @@ module CorsicaTests {
                 verifyHasInvokeButton(appBar);
 
                 // Now that we have verified the invoke button, ensure that all other immediate children are not displayed or tabbable.
-                var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-legacyappbar-invokebutton)");
+                var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-navbar-invokebutton)");
                 msg = "Except for InvokeButton, children of Closed Minimal AppBar should not be visible or have dimensions.";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 failures = checkShouldBeDisplayNone(childrenMinusInvokeButton, true);
@@ -1031,7 +1031,7 @@ module CorsicaTests {
                 verifyHasInvokeButton(appBar);
 
                 // Now that we have verified the invoke button, ensure that all other immediate children are not displayed or tabbable.
-                var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-legacyappbar-invokebutton)");
+                var childrenMinusInvokeButton = document.body.querySelectorAll("#" + appBar.id + " > :not(.win-navbar-invokebutton)");
                 msg = "Children of Closed Compact AppBar should be visible or have dimensions.";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 failures = checkShouldBeDisplayNone(childrenMinusInvokeButton, false);
@@ -1133,7 +1133,7 @@ module CorsicaTests {
                 if (appBar.winControl._layoutImpl !== _Constants.appBarLayoutMenu) {
                     msg = "Content hosted by Open AppBar should have dimensions. Menu _layout can have hidden elements (e.g. leading/trailing separators)";
                     LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    var contents = appBar.querySelectorAll("*:not(.win-legacyappbar-invokebutton):not(.win-finaldiv):not(.win-firstdiv)");
+                    var contents = appBar.querySelectorAll("*:not(.win-navbar-invokebutton):not(.win-finaldiv):not(.win-firstdiv)");
                     failures = checkShouldBeDisplayNone(contents, false);
                     LiveUnit.Assert.isFalse(failures.length, msg);
                 }
@@ -1141,7 +1141,7 @@ module CorsicaTests {
                 // Verify appBar sub components are in proper DOM order.
                 var firstDiv = appBar.querySelector(".win-firstdiv");
                 var finalDiv = appBar.querySelector(".win-finaldiv");
-                var invokeButton = appBar.querySelector(".win-legacyappbar-invokebutton");
+                var invokeButton = appBar.querySelector(".win-navbar-invokebutton");
                 var children = appBar.children;
 
                 msg = "firstDiv should be first element in open AppBar";
@@ -1164,12 +1164,12 @@ module CorsicaTests {
                 var msg,
                     failures;
 
-                var invokeButton = appBar.querySelector(".win-legacyappbar-invokebutton");
+                var invokeButton = appBar.querySelector(".win-navbar-invokebutton");
                 if (appBar.winControl._layoutImpl === _Constants.appBarLayoutMenu &&
                     getComputedStyle(invokeButton).visibility === "hidden") {
                     invokeButton = appBar.querySelector("." + _ToolBarConstants.overflowButtonCssClass);
                 }
-                var invokeButtonSubTree = appBar.querySelectorAll(".win-legacyappbar-invokebutton *");
+                var invokeButtonSubTree = appBar.querySelectorAll(".win-navbar-invokebutton *");
 
                 msg = "AppBar with closedDisplayMode !== 'none' should have InvokeButton TabStop.";
                 failures = checkShouldBeTabStop(invokeButton, true);
@@ -1200,8 +1200,8 @@ module CorsicaTests {
                 var msg,
                     failures;
 
-                var invokeButton = appBar.querySelector(".win-legacyappbar-invokebutton");
-                var invokeButtonSubTree = appBar.querySelectorAll(".win-legacyappbar-invokebutton *");
+                var invokeButton = appBar.querySelector(".win-navbar-invokebutton");
+                var invokeButtonSubTree = appBar.querySelectorAll(".win-navbar-invokebutton *");
 
                 msg = "AppBar with 'none' closedDisplayMode should not have InvokeButton tab stop.";
                 failures = checkShouldBeTabStop(invokeButton, false);
@@ -1639,7 +1639,7 @@ module CorsicaTests {
             root.appendChild(appBarEl);
 
             var appBar = new PrivateLegacyAppBar(appBarEl, { _layout: 'menu', commands: commands }),
-                appBarMenuElement = appBar.element.querySelector(".win-legacyappbar-menu"),
+                appBarMenuElement = appBar.element.querySelector(".win-navbar-menu"),
                 toolBarElement = appBarMenuElement.querySelector(".win-toolbar"),
                 overFlowElement = toolBarElement.querySelector(".win-toolbar-overflowarea");
 

@@ -44,7 +44,7 @@ define([
         /// <event name="beforeclose" locid="WinJS.UI._LegacyAppBar_e:beforeclose">Raised just before hiding the _LegacyAppBar.</event>
         /// <event name="afterclose" locid="WinJS.UI._LegacyAppBar_e:afterclose">Raised immediately after the _LegacyAppBar is fully hidden.</event>
         /// <part name="appbar" class="win-commandlayout" locid="WinJS.UI._LegacyAppBar_part:appbar">The _LegacyAppBar control itself.</part>
-        /// <part name="appBarCustom" class="win-legacyappbar" locid="WinJS.UI._LegacyAppBar_part:appBarCustom">Style for a custom layout _LegacyAppBar.</part>
+        /// <part name="appBarCustom" class="win-navbar" locid="WinJS.UI._LegacyAppBar_part:appBarCustom">Style for a custom layout _LegacyAppBar.</part>
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         _LegacyAppBar: _Base.Namespace._lazy(function () {

@@ -14,7 +14,6 @@ export var ClassNames = {
     emptyappbarCssClass: "win-appbar-empty",
     menuCssClass: "win-menu",
     menuContainsToggleCommandClass: "win-menu-containstogglecommand",
-    menuContainsFlyoutCommandClass: "win-menu-containsflyoutcommand",
     openingClass: "win-appbar-opening",
     openedClass: "win-appbar-opened",
     closingClass: "win-appbar-closing",

@@ -423,8 +423,8 @@ define([
                     if (_Global.document.body.contains(this.appBarEl)) {
                         this._needToMeasureNewCommands = false;
 
-                        var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
-                        _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
+                        var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-navbar-closed");
+                        _ElementUtilities.removeClass(this.appBarEl, "win-navbar-closed");
 
                         // Make sure AppBar and children have width dimensions.
                         var prevAppBarDisplay = this.appBarEl.style.display;
@@ -447,7 +447,7 @@ define([
                         // Restore state to AppBar.
                         this.appBarEl.style.display = prevAppBarDisplay;
                         if (hadHiddenClass) {
-                            _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
+                            _ElementUtilities.addClass(this.appBarEl, "win-navbar-closed");
                         }
 
                         this.commandsUpdated();
@@ -719,9 +719,9 @@ define([
                 },
 
                 _updateData: function _AppBarMenuLayout_updateData(data) {
-                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
-                    var hadShownClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-opened");
-                    _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-navbar-closed");
+                    var hadShownClass = _ElementUtilities.hasClass(this.appBarEl, "win-navbar-opened");
+                    _ElementUtilities.removeClass(this.appBarEl, "win-navbar-closed");
 
                     // Make sure AppBar and children have width dimensions.
                     var prevAppBarDisplay = this.appBarEl.style.display;
@@ -736,7 +736,7 @@ define([
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
                     if (hadHiddenClass) {
-                        _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
+                        _ElementUtilities.addClass(this.appBarEl, "win-navbar-closed");
                     }
 
                     if (hadShownClass) {
@@ -790,8 +790,8 @@ define([
                 _createToolBar: function _AppBarMenuLayout_createToolBar(commands) {
                     this._writeProfilerMark("_createToolBar,info");
 
-                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-legacyappbar-closed");
-                    _ElementUtilities.removeClass(this.appBarEl, "win-legacyappbar-closed");
+                    var hadHiddenClass = _ElementUtilities.hasClass(this.appBarEl, "win-navbar-closed");
+                    _ElementUtilities.removeClass(this.appBarEl, "win-navbar-closed");
 
                     // Make sure AppBar and children have width dimensions.
                     var prevAppBarDisplay = this.appBarEl.style.display;
@@ -814,7 +814,7 @@ define([
                     // Restore state to AppBar.
                     this.appBarEl.style.display = prevAppBarDisplay;
                     if (hadHiddenClass) {
-                        _ElementUtilities.addClass(this.appBarEl, "win-legacyappbar-closed");
+                        _ElementUtilities.addClass(this.appBarEl, "win-navbar-closed");
                     }
                 },
 

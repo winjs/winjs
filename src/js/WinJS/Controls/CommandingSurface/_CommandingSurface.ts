@@ -961,7 +961,6 @@ export class _CommandingSurface {
 
         _ElementUtilities.empty(this._dom.overflowArea);
         var hasToggleCommands = false,
-            hasFlyoutCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
         // Add primary commands that have overflowed. 
@@ -969,11 +968,6 @@ export class _CommandingSurface {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
             }
-
-            if (command.type === _Constants.typeFlyout) {
-                hasFlyoutCommands = true;
-            }
-
             menuCommandProjections.push(this._projectAsMenuCommand(command));
         });
 
@@ -993,11 +987,6 @@ export class _CommandingSurface {
                 if (command.type === _Constants.typeToggle) {
                     hasToggleCommands = true;
                 }
-
-                if (command.type === _Constants.typeFlyout) {
-                    hasFlyoutCommands = true;
-                }
-
                 menuCommandProjections.push(this._projectAsMenuCommand(command));
             }
         });
@@ -1008,7 +997,6 @@ export class _CommandingSurface {
         })
 
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsToggleCommandClass);
-        _ElementUtilities[hasFlyoutCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsFlyoutCommandClass);
 
         this._writeProfilerMark("_layoutCommands,StopTM");
 

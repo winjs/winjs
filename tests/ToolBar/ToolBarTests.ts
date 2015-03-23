@@ -1530,6 +1530,21 @@ module CorsicaTests {
             toolBar.opened = false;
             LiveUnit.Assert.isTrue(toolBar.opened, "ToolBar should still be open");
         }
+
+        testCSSClasses() {
+            // Make sure the appropriate ToolBar CSS classes are on _CommandingSurface subcomponents to allow for proper developer styling story.
+
+            var toolBar = new ToolBar(this._element, { opened: true });
+            var actionArea = toolBar._commandingSurface._dom.actionArea;
+            var overflowArea = toolBar._commandingSurface._dom.overflowArea;
+            var overflowButton = toolBar._commandingSurface._dom.overflowButton;
+            var overflowButtonEllipsis = <HTMLElement>overflowButton.querySelector(".win-commandingsurface-ellipsis");
+
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(actionArea, _Constants.ClassNames.actionAreaCssClass), "ToolBar missing actionarea class");
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowArea, _Constants.ClassNames.overflowAreaCssClass), "ToolBar missing overflowarea class");
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButton, _Constants.ClassNames.overflowButtonCssClass), "ToolBar missing overflowbutton class");
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButtonEllipsis, _Constants.ClassNames.ellipsisCssClass), "ToolBar missing ellipsis class");
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests.ToolBarTests");

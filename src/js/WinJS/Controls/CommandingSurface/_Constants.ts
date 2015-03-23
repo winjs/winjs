@@ -13,7 +13,6 @@ export var ClassNames = {
     emptyCommandingSurfaceCssClass: "win-commandingsurface-empty",
     menuCssClass: "win-menu",
     menuContainsToggleCommandClass: "win-menu-containstogglecommand",
-    menuContainsFlyoutCommandClass: "win-menu-containsflyoutcommand",
     openingClass: "win-commandingsurface-opening",
     openedClass: "win-commandingsurface-opened",
     closingClass: "win-commandingsurface-closing",
