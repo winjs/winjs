@@ -1340,7 +1340,7 @@ module CorsicaTests {
             Object.keys(AppBar.ClosedDisplayMode).forEach(function (mode) {
                 appBar.closedDisplayMode = mode;
                 LiveUnit.Assert.areEqual(mode, appBar.closedDisplayMode, "closedDisplayMode property should be writeable.");
-                Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+                Helper.AppBar.verifyRenderedClosed(appBar);
             });
         }
 
@@ -1364,15 +1364,15 @@ module CorsicaTests {
             ]);
             var appBar = new AppBar(this._element, { data: data, opened: false });
             Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
-            Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
 
             appBar.opened = true;
             LiveUnit.Assert.isTrue(appBar.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedOpened(appBar);
 
             appBar.opened = false;
             LiveUnit.Assert.isFalse(appBar.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
         }
 
         testPlacementConstructorOptions() {
@@ -1407,7 +1407,7 @@ module CorsicaTests {
             Object.keys(AppBar.Placement).forEach(function (placement) {
                 appBar.placement = placement;
                 LiveUnit.Assert.areEqual(placement, appBar.placement, "placement property should be writeable.");
-                Helper.AppBar.verifyPlacement(appBar);
+                Helper.AppBar.verifyPlacementProperty(appBar);
             });
         }
 
@@ -1422,7 +1422,7 @@ module CorsicaTests {
 
             appBar.open();
             LiveUnit.Assert.isTrue(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedOpened(appBar);
         }
 
         testOpenIsIdempotent() {
@@ -1445,7 +1445,7 @@ module CorsicaTests {
             // Verify nothing changes when opening again.
             appBar.open();
             LiveUnit.Assert.isTrue(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedOpened(appBar);
         }
 
         testClose() {
@@ -1455,11 +1455,11 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var appBar = new AppBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             appBar.close();
             LiveUnit.Assert.isFalse(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
         }
 
         testCloseIsIdempotent() {
@@ -1482,7 +1482,7 @@ module CorsicaTests {
             // Verify nothing changes when closing again.
             appBar.close();
             LiveUnit.Assert.isFalse(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
         }
 
         testOverFlowButtonClick() {
@@ -1496,11 +1496,11 @@ module CorsicaTests {
 
             appBar._commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isFalse(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
 
             appBar._commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isTrue(appBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedOpened(appBar);
         }
 
         testDomLevel0_OpenCloseEvents() {

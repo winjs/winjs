@@ -54,6 +54,14 @@ var closedDisplayModeClassMap = {};
 closedDisplayModeClassMap[ClosedDisplayMode.compact] = _Constants.ClassNames.compactClass;
 closedDisplayModeClassMap[ClosedDisplayMode.full] = _Constants.ClassNames.fullClass;
 
+// Versions of add/removeClass that are no ops when called with falsy class names.
+function addClass(element: HTMLElement, className: string): void {
+    className && _ElementUtilities.addClass(element, className);
+}
+function removeClass(element: HTMLElement, className: string): void {
+    className && _ElementUtilities.removeClass(element, className);
+}
+
 /// <field>
 /// <summary locid="WinJS.UI.ToolBar">
 /// Displays ICommands within the flow of the app. Use the ToolBar around other statically positioned app content.
@@ -325,6 +333,7 @@ export class ToolBar {
     // rendered.
     private _updateDomImpl_renderedState = {
         isOpenedMode: <boolean>undefined,
+        closedDisplayMode: <string>undefined,
         prevInlineWidth: <string>undefined,
     };
     private _updateDomImpl(): void {
@@ -338,6 +347,13 @@ export class ToolBar {
             }
             rendered.isOpenedMode = this._isOpenedMode;
         }
+
+        if (rendered.closedDisplayMode !== this.closedDisplayMode) {
+            removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
+            addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
+            rendered.closedDisplayMode = this.closedDisplayMode;
+        }
+
         this._commandingSurface.updateDomImpl();
     }
 

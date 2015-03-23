@@ -22,7 +22,7 @@ module CorsicaTests {
     // DOM level 0 (e.g. onbeforeopen) and DOM level 2 (e.g. addEventListener) events.
     function testEvents(testElement, registerForEvent: (toolBar: WinJS.UI.PrivateToolBar, eventName: string, handler: Function) => void) {
         var toolBar = new ToolBar(testElement);
-        Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+        Helper.ToolBar.useSynchronousAnimations(toolBar);
 
         var counter = 0;
         registerForEvent(toolBar, _Constants.EventNames.beforeOpen, () => {
@@ -184,7 +184,7 @@ module CorsicaTests {
 
         testDispose() {
             var toolBar = new ToolBar(this._element);
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
             toolBar.open();
 
             var msg = "Shouldn't have fired due to control being disposed";
@@ -231,7 +231,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "opt 2", section: _Constants.secondaryCommandSection })
             ]);
             var toolBar = new ToolBar(this._element, { opened: true, data: data });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar.dispose();
             Helper.ToolBar.verifyRenderedClosed(toolBar);
@@ -1356,7 +1356,7 @@ module CorsicaTests {
             Object.keys(ToolBar.ClosedDisplayMode).forEach(function (mode) {
                 toolBar.closedDisplayMode = mode;
                 LiveUnit.Assert.areEqual(mode, toolBar.closedDisplayMode, "closedDisplayMode property should be writeable.");
-                Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+                Helper.ToolBar.verifyRenderedClosed(toolBar);
             });
         }
 
@@ -1379,16 +1379,16 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var toolBar = new ToolBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
-            Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
+            Helper.ToolBar.verifyRenderedClosed(toolBar);
 
             toolBar.opened = true;
             LiveUnit.Assert.isTrue(toolBar.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedOpened(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedOpened(toolBar);
 
             toolBar.opened = false;
             LiveUnit.Assert.isFalse(toolBar.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedClosed(toolBar);
         }
 
         testOpen() {
@@ -1398,11 +1398,11 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var toolBar = new ToolBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar.open();
             LiveUnit.Assert.isTrue(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedOpened(toolBar);
         }
 
         testOpenIsIdempotent() {
@@ -1414,7 +1414,7 @@ module CorsicaTests {
 
             // Initialize opened.
             var toolBar = new ToolBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             var msg = "Opening an already opened ToolBar should not fire events";
             toolBar.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
@@ -1425,7 +1425,7 @@ module CorsicaTests {
             // Verify nothing changes when opening again.
             toolBar.open();
             LiveUnit.Assert.isTrue(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedOpened(toolBar);
         }
 
         testClose() {
@@ -1435,11 +1435,11 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var toolBar = new ToolBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar.close();
             LiveUnit.Assert.isFalse(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedClosed(toolBar);
         }
 
         testCloseIsIdempotent() {
@@ -1451,7 +1451,7 @@ module CorsicaTests {
 
             // Initialize closed.
             var toolBar = new ToolBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             var msg = "Closing an already closed ToolBar should not fire events";
             toolBar.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
@@ -1462,7 +1462,7 @@ module CorsicaTests {
             // Verify nothing changes when closing again.
             toolBar.close();
             LiveUnit.Assert.isFalse(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedClosed(toolBar);
         }
 
         testOverFlowButtonClick() {
@@ -1472,15 +1472,15 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var toolBar = new ToolBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar._commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isFalse(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedClosed(toolBar);
 
             toolBar._commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isTrue(toolBar.opened)
-            Helper._CommandingSurface.verifyRenderedOpened(toolBar._commandingSurface);
+            Helper.ToolBar.verifyRenderedOpened(toolBar);
         }
 
         testDomLevel0_OpenCloseEvents() {
@@ -1497,7 +1497,7 @@ module CorsicaTests {
 
         testBeforeOpenIsCancelable() {
             var toolBar = new ToolBar(this._element, { opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar.onbeforeopen = function (eventObject) {
                 eventObject.preventDefault();
@@ -1515,7 +1515,7 @@ module CorsicaTests {
 
         testBeforeCloseIsCancelable() {
             var toolBar = new ToolBar(this._element, { opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(toolBar._commandingSurface);
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
 
             toolBar.onbeforeclose = function (eventObject) {
                 eventObject.preventDefault();

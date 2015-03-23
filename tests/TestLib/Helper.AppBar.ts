@@ -10,21 +10,37 @@ module Helper.AppBar {
     var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
 
     export function verifyRenderedOpened(appBar: WinJS.UI.PrivateAppBar): void {
+        
+        var appBarRect = appBar.element.getBoundingClientRect();
+        var commandingSurfaceRect = appBar._dom.commandingSurfaceEl.getBoundingClientRect();
 
         //TODO Verify correct commandingsurface overflowdirection based on AppBar placement?
 
-        // TODO verify that the AppBar element has the same bounding rect as the the Commanding surface element.
+        // Verify that the opened AppBar element has the same bounding rect as the the CommandingSurface element.
+        LiveUnit.Assert.areEqual(appBarRect.height, commandingSurfaceRect.height, "Opened AppBar and CommandingSurface must have the same height.");
+        LiveUnit.Assert.areEqual(appBarRect.width, commandingSurfaceRect.width, "Opened AppBar and CommandingSurface must have the same width.");
+        LiveUnit.Assert.areEqual(appBarRect.top, commandingSurfaceRect.top, "Opened AppBar and CommandingSurface must have the same top offset.");
+        LiveUnit.Assert.areEqual(appBarRect.left, commandingSurfaceRect.left, "Opened AppBar and CommandingSurface must have the same left offet.");
 
         Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
     }
 
     export function verifyRenderedClosed(appBar: WinJS.UI.PrivateAppBar): void {
 
-        // TODO verify that the AppBar element has the same bounding rect as the the Commanding surface element.
+        var appBarRect = appBar.element.getBoundingClientRect();
+        var commandingSurfaceRect = appBar._dom.commandingSurfaceEl.getBoundingClientRect();
+
+        // Verify that the closed AppBar element has the same bounding rect as the the CommandingSurface element.
+        LiveUnit.Assert.areEqual(appBarRect.height, commandingSurfaceRect.height, "Closed AppBar and CommandingSurface must have the same height.");
+        LiveUnit.Assert.areEqual(appBarRect.width, commandingSurfaceRect.width, "Closed  AppBar and CommandingSurface must have the same width.");
+        LiveUnit.Assert.areEqual(appBarRect.top, commandingSurfaceRect.top, "Closed  AppBar and CommandingSurface must have the same top offset.");
+        LiveUnit.Assert.areEqual(appBarRect.left, commandingSurfaceRect.left, "Closed  AppBar and CommandingSurface must have the same left offet.");
+
+        // Verify CommandingSurface rendered closed.
         Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
     }
 
-    export function verifyPlacement(appBar: WinJS.UI.PrivateAppBar): void {
+    export function verifyPlacementProperty(appBar: WinJS.UI.PrivateAppBar): void {
 
         var placement = appBar.placement,
             topOfViewPort = 0,
@@ -48,6 +64,10 @@ module Helper.AppBar {
                 break;
         }
 
+    }
+
+    export function useSynchronousAnimations(appBar: WinJS.UI.PrivateAppBar) {
+        Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
     }
 
 }

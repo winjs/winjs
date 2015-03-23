@@ -59,8 +59,8 @@ var ClosedDisplayMode = {
 };
 
 var closedDisplayModeClassMap = {};
-closedDisplayModeClassMap[ClosedDisplayMode.compact] = _Constants.ClassNames.compactClass;
-closedDisplayModeClassMap[ClosedDisplayMode.full] = _Constants.ClassNames.fullClass;
+closedDisplayModeClassMap[ClosedDisplayMode.none] = _Constants.ClassNames.noneClass;
+closedDisplayModeClassMap[ClosedDisplayMode.minimal] = _Constants.ClassNames.minimalClass;
 closedDisplayModeClassMap[ClosedDisplayMode.compact] = _Constants.ClassNames.compactClass;
 closedDisplayModeClassMap[ClosedDisplayMode.full] = _Constants.ClassNames.fullClass;
 
@@ -375,6 +375,7 @@ export class AppBar {
     private _updateDomImpl_renderedState = {
         isOpenedMode: <boolean>undefined,
         placement: <string>undefined,
+        closedDisplayMode: <string>undefined,
     };
     private _updateDomImpl(): void {
         var rendered = this._updateDomImpl_renderedState;
@@ -393,6 +394,13 @@ export class AppBar {
             addClass(this._dom.root, placementClassMap[this.placement]);
             rendered.placement = this.placement;
         }
+
+        if (rendered.closedDisplayMode !== this.closedDisplayMode) {
+            removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
+            addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
+            rendered.closedDisplayMode = this.closedDisplayMode;
+        }
+
         this._commandingSurface.updateDomImpl();
     }
     private _updateDomImpl_renderOpened(): void {
