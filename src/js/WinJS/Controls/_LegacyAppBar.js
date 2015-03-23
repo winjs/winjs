@@ -55,7 +55,7 @@ define([
                 afterOpen: "afteropen",
                 beforeClose: "beforeclose",
                 afterClose: "afterclose",
-            }
+            };
 
             var createEvent = _Events._createEventProperty;
 
@@ -494,9 +494,6 @@ define([
                     }
                 },
 
-                /// <field type="String" defaultValue="commands" oamOptionsDatatype="WinJS.UI._LegacyAppBar.layout" locid="WinJS.UI._LegacyAppBar.layout" helpKeyword="WinJS.UI._LegacyAppBar.layout">
-                /// Gets or sets the layout of the _LegacyAppBar contents to either "commands" or "custom".
-                /// </field>
                 _layout: {
                     get: function _LegacyAppBar_get_layout() {
                         return this._layoutImpl.type;
@@ -631,9 +628,9 @@ define([
                     },
                 },
 
-                
 
-                /// <field type="Boolean" hidden="true" locid="WinJS.UI._AppBar.opened" helpKeyword="WinJS.UI._AppBar.opened">Read only, true if an _LegacyAppBar is 'hidden'.</field>
+
+                /// <field type="Boolean" hidden="true" locid="WinJS.UI._LegacyAppBar.opened" helpKeyword="WinJS.UI._LegacyAppBar.opened">Read only, true if an _LegacyAppBar is 'hidden'.</field>
                 opened: {
                     get: function () {
                         // Returns true if _LegacyAppBar is not 'hidden'.

@@ -70,13 +70,9 @@ var CommandLayoutPipeline = {
 };
 
 var OverflowDirection = {
-    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection.bottom" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection.bottom">
     /// The _CommandingSurface expands towards the bottom of the screen when opened and the overflow area renders below the actionarea.
-    /// </field>
     bottom: "bottom",
-    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection.top" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection.top">
     /// The _CommandingSurface expands towards the top of the screen when opened and the overflow area renders above the actionarea.
-    /// </field>
     top: "top",
 }
 var overflowDirectionClassMap = {};
@@ -84,21 +80,13 @@ overflowDirectionClassMap[OverflowDirection.top] = _Constants.ClassNames.overflo
 overflowDirectionClassMap[OverflowDirection.bottom] = _Constants.ClassNames.overflowBottomClass;
 
 var ClosedDisplayMode = {
-    /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode.none" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode.none">
     /// When the _CommandingSurface is closed, the actionarea is not visible and doesn't take up any space.
-    /// </field>
     none: "none",
-    /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode.minimal" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode.minimal">
     /// When the _CommandingSurface is closed, the height of the actionarea is reduced to the minimal height required to display only the actionarea overflowbutton. All other content in the actionarea is not displayed.
-    /// </field>
     minimal: "minimal",
-    /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode.compact" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode.compact">
     /// When the _CommandingSurface is closed, the height of the actionarea is reduced such that button commands are still visible, but their labels are hidden.
-    /// </field>
     compact: "compact",
-    /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode.full" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode.full">
     /// When the _CommandingSurface is closed, the height of the actionarea is always sized to content and does not change between opened and closed states.
-    /// </field>
     full: "full",
 };
 var closedDisplayModeClassMap = {};
@@ -121,19 +109,7 @@ function diffElements(lhs: Array<HTMLElement>, rhs: Array<HTMLElement>): Array<H
     return lhs.filter((commandElement) => { return rhs.indexOf(commandElement) < 0 })
 }
 
-/// <field>
-/// <summary locid="WinJS.UI._CommandingSurface">
 /// Represents an apaptive surface for displaying commands.
-/// </summary>
-/// </field>
-/// <htmlSnippet supportsContent="true"><![CDATA[<div data-win-control="WinJS.UI._CommandingSurface">
-/// <button data-win-control="WinJS.UI.Command" data-win-options="{id:'',label:'example',icon:'back',type:'button',onclick:null,section:'primary'}"></button>
-/// </div>]]></htmlSnippet>
-/// <part name="commandingSurface" class="win-commandingSurface" locid="WinJS.UI._CommandingSurface_part:commandingSurface">The entire CommandingSurface control.</part>
-/// <part name="commandingSurface-overflowbutton" class="win-commandingSurface-overflowbutton" locid="WinJS.UI._CommandingSurface_part:CommandingSurface-overflowbutton">The commandingSurface overflow button.</part>
-/// <part name="commandingSurface-overflowarea" class="win-commandingsurface-overflowarea" locid="WinJS.UI._CommandingSurface_part:CommandingSurface-overflowarea">The container for commands that overflow.</part>
-/// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
-/// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
 export class _CommandingSurface {
 
     private _id: string;
@@ -174,28 +150,20 @@ export class _CommandingSurface {
         overflowArea: HTMLElement;
     };
 
-    /// <field locid="WinJS.UI._CommandingSurface.ClosedDisplayMode" helpKeyword="WinJS.UI._CommandingSurface.ClosedDisplayMode">
     /// Display options for the actionarea when the _CommandingSurface is closed.
-    /// </field>
     static ClosedDisplayMode = ClosedDisplayMode;
 
-    /// <field locid="WinJS.UI._CommandingSurface.OverflowDirection" helpKeyword="WinJS.UI._CommandingSurface.OverflowDirection">
     /// Display options used by the _Commandingsurface to determine which direction it should expand when opening.
-    /// </field>
     static OverflowDirection = OverflowDirection;
 
     static supportedForProcessing: boolean = true;
 
-    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI._CommandingSurface.element" helpKeyword="WinJS.UI._CommandingSurface.element">
     /// Gets the DOM element that hosts the CommandingSurface.
-    /// </field>
     get element() {
         return this._dom.root;
     }
 
-    /// <field type="WinJS.Binding.List" locid="WinJS.UI._CommandingSurface.data" helpKeyword="WinJS.UI._CommandingSurface.data">
     /// Gets or sets the Binding List of WinJS.UI.Command for the CommandingSurface.
-    /// </field>
     get data() {
         return this._data;
     }
@@ -217,9 +185,7 @@ export class _CommandingSurface {
     }
 
     private _closedDisplayMode: string;
-    /// <field type="String" locid="WinJS.UI._CommandingSurface.closedDisplayMode" helpKeyword="WinJS.UI._CommandingSurface.closedDisplayMode">
     /// Gets or sets the closedDisplayMode for the CommandingSurface. Values are "none", "minimal", "compact", and "full".
-    /// </field>
     get closedDisplayMode() {
         return this._closedDisplayMode;
     }
@@ -234,9 +200,7 @@ export class _CommandingSurface {
     }
 
     private _overflowDirection: string;
-    /// <field type="String" hidden="true" locid="WinJS.UI._CommandingSurface.overflowDirection" helpKeyword="WinJS.UI._CommandingSurface.overflowDirection">
     /// Gets or sets which direction the commandingSurface overflows when opened. Values are "top" and "bottom" for.
-    /// </field>
     get overflowDirection(): string {
         return this._overflowDirection;
     }
@@ -248,9 +212,7 @@ export class _CommandingSurface {
         }
     }
 
-    /// <field type="Boolean" hidden="true" locid="WinJS.UI._CommandingSurface.opened" helpKeyword="WinJS.UI._CommandingSurface.opened">
     /// Gets or sets whether the _CommandingSurface is currently opened.
-    /// </field>
     get opened(): boolean {
         return this._machine.opened;
     }
@@ -259,20 +221,10 @@ export class _CommandingSurface {
     }
 
     constructor(element?: HTMLElement, options: any = {}) {
-        /// <signature helpKeyword="WinJS.UI._CommandingSurface._CommandingSurface">
-        /// <summary locid="WinJS.UI._CommandingSurface.constructor">
         /// Creates a new CommandingSurface control.
-        /// </summary>
-        /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI._CommandingSurface.constructor_p:element">
-        /// The DOM element that will host the control.
-        /// </param>
-        /// <param name="options" type="Object" locid="WinJS.UI._CommandingSurface.constructor_p:options">
-        /// The set of properties and values to apply to the new CommandingSurface control.
-        /// </param>
-        /// <returns type="WinJS.UI._CommandingSurface" locid="WinJS.UI._CommandingSurface.constructor_returnValue">
-        /// The new CommandingSurface control.
-        /// </returns>
-        /// </signature>
+        /// @param element: The DOM element that will host the control.
+        /// @param options: The set of properties and values to apply to the new CommandingSurface control.
+        /// @return: The new CommandingSurface control.
 
         this._writeProfilerMark("constructor,StartTM");
 
@@ -306,7 +258,7 @@ export class _CommandingSurface {
                 this.updateDomImpl();
             }
         });
-        
+
         // Initialize private state.
         this._disposed = false;
         this._primaryCommands = [];
@@ -349,47 +301,27 @@ export class _CommandingSurface {
         });
 
     }
-    /// <field type="Function" locid="WinJS.UI._CommandingSurface.onbeforeopen" helpKeyword="WinJS.UI._CommandingSurface.onbeforeopen">
     /// Occurs immediately before the control is opened.
-    /// </field>
     onbeforeopen: (ev: CustomEvent) => void;
-    /// <field type="Function" locid="WinJS.UI._CommandingSurface.onafteropen" helpKeyword="WinJS.UI._CommandingSurface.onafteropen">
     /// Occurs immediately after the control is opened.
-    /// </field>
     onafteropen: (ev: CustomEvent) => void;
-    /// <field type="Function" locid="WinJS.UI._CommandingSurface.onbeforeclose" helpKeyword="WinJS.UI._CommandingSurface.onbeforeclose">
     /// Occurs immediately before the control is closed.
-    /// </field>
     onbeforeclose: (ev: CustomEvent) => void;
-    /// <field type="Function" locid="WinJS.UI._CommandingSurface.onafterclose" helpKeyword="WinJS.UI._CommandingSurface.onafterclose">
     /// Occurs immediately after the control is closed.
-    /// </field>
     onafterclose: (ev: CustomEvent) => void;
 
     open(): void {
-        /// <signature helpKeyword="WinJS.UI._CommandingSurface.open">
-        /// <summary locid="WinJS.UI._CommandingSurface.open">
         /// Opens the _CommandingSurface's actionarea and overflowarea
-        /// </summary>
-        /// </signature>
         this._machine.open();
     }
 
     close(): void {
-        /// <signature helpKeyword="WinJS.UI._CommandingSurface.close">
-        /// <summary locid="WinJS.UI._CommandingSurface.close">
         /// Closes the _CommandingSurface's actionarea and overflowarea
-        /// </summary>
-        /// </signature>
         this._machine.close();
     }
 
     dispose(): void {
-        /// <signature helpKeyword="WinJS.UI._CommandingSurface.dispose">
-        /// <summary locid="WinJS.UI._CommandingSurface.dispose">
         /// Disposes this CommandingSurface.
-        /// </summary>
-        /// </signature>
         if (this._disposed) {
             return;
         }
@@ -408,11 +340,7 @@ export class _CommandingSurface {
     }
 
     forceLayout(): void {
-        /// <signature helpKeyword="WinJS.UI._CommandingSurface.forceLayout">
-        /// <summary locid="WinJS.UI._CommandingSurface.forceLayout">
         /// Forces the CommandingSurface to update its layout. Use this function when the window did not change size, but the container of the CommandingSurface changed size.
-        /// </summary>
-        /// </signature>
         this._meaurementsDirty();
         this._machine.updateDom();
     }
@@ -424,11 +352,11 @@ export class _CommandingSurface {
         };
     }
 
-    deferredDomUpate(): void { 
+    deferredDomUpate(): void {
         // Notify the machine that an update has been requested.
         this._machine.updateDom();
     }
-    
+
     get initialized(): Promise<any> {
         return this._initializedSignal.promise;
     }
@@ -936,7 +864,7 @@ export class _CommandingSurface {
         var showOverflowButton = (overflowCommands.length > 0 || this._secondaryCommands.length > 0);
         this._dom.overflowButton.style.display = showOverflowButton ? "" : "none";
 
-        // Set up a custom content flyout if there will be "content" typed commands in the overflowarea. 
+        // Set up a custom content flyout if there will be "content" typed commands in the overflowarea.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
         var hasCustomContent = overflowCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
 
@@ -963,7 +891,7 @@ export class _CommandingSurface {
         var hasToggleCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
-        // Add primary commands that have overflowed. 
+        // Add primary commands that have overflowed.
         overflowCommands.forEach((command) => {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
@@ -971,7 +899,7 @@ export class _CommandingSurface {
             menuCommandProjections.push(this._projectAsMenuCommand(command));
         });
 
-        // Add separator between primary and secondary command if applicable 
+        // Add separator between primary and secondary command if applicable
         var secondaryCommandsLength = this._secondaryCommands.length;
         if (overflowCommands.length > 0 && secondaryCommandsLength > 0) {
             var separator = new _CommandingSurfaceMenuCommand._MenuCommand(null, {
@@ -981,7 +909,7 @@ export class _CommandingSurface {
             menuCommandProjections.push(separator);
         }
 
-        // Add secondary commands 
+        // Add secondary commands
         this._secondaryCommands.forEach((command) => {
             if (!command.hidden) {
                 if (command.type === _Constants.typeToggle) {

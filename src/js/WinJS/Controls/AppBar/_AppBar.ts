@@ -65,11 +65,11 @@ closedDisplayModeClassMap[ClosedDisplayMode.compact] = _Constants.ClassNames.com
 closedDisplayModeClassMap[ClosedDisplayMode.full] = _Constants.ClassNames.fullClass;
 
 var Placement = {
-    /// <field locid="WinJS.UI.AppBar.Placment.top" helpKeyword="WinJS.UI.AppBar.Placment.top">
+    /// <field locid="WinJS.UI.AppBar.Placement.top" helpKeyword="WinJS.UI.AppBar.Placement.top">
     /// The AppBar appears at the top of the main view
     /// </field>
     top: "top",
-    /// <field locid="WinJS.UI.AppBar.Placment.bottom" helpKeyword="WinJS.UI.AppBar.Placment.bottom">
+    /// <field locid="WinJS.UI.AppBar.Placement.bottom" helpKeyword="WinJS.UI.AppBar.Placement.bottom">
     /// The AppBar appears at the bottom of the main view
     /// </field>
     bottom: "bottom",
@@ -155,7 +155,7 @@ export class AppBar {
     }
 
     private _placement: string;
-    /// <field type="Boolean" hidden="true" locid="WinJS.UI.AppBar.opened" helpKeyword="WinJS.UI.AppBar.opened">
+    /// <field type="Boolean" hidden="true" locid="WinJS.UI.AppBar.placement" helpKeyword="WinJS.UI.AppBar.placement">
     /// Gets or sets a value that specifies whether the AppBar appears at the top or bottom of the main view.
     /// </field>
     get placement(): string {
@@ -192,7 +192,7 @@ export class AppBar {
         /// Creates a new AppBar control.
         /// </summary>
         /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.AppBar.constructor_p:element">
-        /// The DOM element that will host the control. 
+        /// The DOM element that will host the control.
         /// </param>
         /// <param name="options" type="Object" locid="WinJS.UI.AppBar.constructor_p:options">
         /// The set of properties and values to apply to the new AppBar control.
