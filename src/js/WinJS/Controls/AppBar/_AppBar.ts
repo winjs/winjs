@@ -112,12 +112,12 @@ export class AppBar {
         commandingSurfaceEl: HTMLElement;
     }
 
-    // <field locid="WinJS.UI.AppBar.ClosedDisplayMode" helpKeyword="WinJS.UI.AppBar.ClosedDisplayMode">
+    /// <field locid="WinJS.UI.AppBar.ClosedDisplayMode" helpKeyword="WinJS.UI.AppBar.ClosedDisplayMode">
     /// Display options for the AppBar when closed.
     /// </field>
     static ClosedDisplayMode = ClosedDisplayMode;
 
-    // <field locid="WinJS.UI.AppBar.Placement" helpKeyword="WinJS.UI.AppBar.Placement">
+    /// <field locid="WinJS.UI.AppBar.Placement" helpKeyword="WinJS.UI.AppBar.Placement">
     /// Display options for AppBar placement in relation to the main view.
     /// </field>
     static Placement = Placement;

@@ -89,7 +89,7 @@ export class ToolBar {
         placeHolder: HTMLElement;
     }
 
-    // <field locid="WinJS.UI.ToolBar.ClosedDisplayMode" helpKeyword="WinJS.UI.ToolBar.ClosedDisplayMode">
+    /// <field locid="WinJS.UI.ToolBar.ClosedDisplayMode" helpKeyword="WinJS.UI.ToolBar.ClosedDisplayMode">
     /// Display options for the actionarea when the ToolBar is closed.
     /// </field>
     static ClosedDisplayMode = ClosedDisplayMode;
@@ -142,7 +142,7 @@ export class ToolBar {
         /// Creates a new ToolBar control.
         /// </summary>
         /// <param name="element" type="HTMLElement" domElement="true" locid="WinJS.UI.ToolBar.constructor_p:element">
-        /// The DOM element that will host the control. 
+        /// The DOM element that will host the control.
         /// </param>
         /// <param name="options" type="Object" locid="WinJS.UI.ToolBar.constructor_p:options">
         /// The set of properties and values to apply to the new ToolBar control.
@@ -395,11 +395,11 @@ export class ToolBar {
             tolerance = 1;
 
         var alignTop = () => {
-            this._commandingSurface.overflowDirection = "bottom"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al) 
+            this._commandingSurface.overflowDirection = "bottom"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
             this._dom.root.style.top = closedActionAreaRect.top + "px";
         }
         var alignBottom = () => {
-            this._commandingSurface.overflowDirection = "top"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al) 
+            this._commandingSurface.overflowDirection = "top"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
             this._dom.root.style.bottom = (bottomOfViewport - closedActionAreaRect.bottom) + "px";
         }
         function fitsBelow(): boolean {
