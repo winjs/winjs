@@ -25,7 +25,6 @@
 
             var requirejs = grunt.config.get("requirejs");
 
-            var pkgRoot = "node_modules/winjs-modules/";
             var requireConfig = {
                 baseUrl: ".",
                 name: "WinJS-custom",
@@ -36,12 +35,6 @@
                 wrap: {
                     start: requirejs.header("WinJS-custom", []),
                     end: requirejs.footer("WinJS-custom"),
-                },
-                paths: {
-                    "amd": pkgRoot + "amd",
-                    "require-style": pkgRoot + "require-style",
-                    "require-json": pkgRoot + "require-json",
-                    "WinJS": pkgRoot + "WinJS"
                 },
                 findNestedDependencies: true
             };
