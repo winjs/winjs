@@ -1551,7 +1551,7 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(appBar.opened, "AppBar should still be open");
         }
 
-        testCSSClasses() {
+        testAppBarAddsClassNamesToCommandingSurface() {
             // Make sure the appropriate AppBar CSS classes are on _CommandingSurface subcomponents to allow for proper developer styling story.
 
             var appBar = new AppBar(this._element, { opened: true });
@@ -1564,6 +1564,20 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowArea, _Constants.ClassNames.overflowAreaCssClass), "AppBar missing overflowarea class");
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButton, _Constants.ClassNames.overflowButtonCssClass), "AppBar missing overflowbutton class");
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButtonEllipsis, _Constants.ClassNames.ellipsisCssClass), "AppBar missing ellipsis class");
+        }
+
+        testBackgroundColorPercolatesToCommandingSurface() {
+            // Verifies that background color changes to the AppBar are not impeded by the CommandingSurface element.
+            var appBar = new AppBar(this._element, { opened: true });
+            var commandingSurface = appBar._commandingSurface;
+
+            appBar.element.style.backgroundColor = "rgb(255, 100, 05)";
+            var appBarStyle = getComputedStyle(appBar.element),
+                commandingSurfaceStyle = getComputedStyle(commandingSurface.element);
+
+            var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
         }
     }
 }

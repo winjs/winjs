@@ -1581,22 +1581,6 @@ module CorsicaTests {
             verifyPositionChanged(oldRect, newRect);
         }
 
-        xtestAppBarWithMenuLayoutCustomBackgrounColorPercolates() { // TODO delete entirely or migrate into commanding surface tests. 
-            // Verifies that the background color of the entire AppBar changes when styling the appbar element.
-
-            var root = document.getElementById("appBarDiv");
-            var appBar = new PrivateLegacyAppBar(null, { _layout: "menu" });
-            root.appendChild(appBar.element);
-
-            appBar.element.style.backgroundColor = "rgb(255, 100, 05)";
-            var appBarStyle = getComputedStyle(appBar.element),
-                toolBarStyle = getComputedStyle(appBar.element.querySelector(".win-toolbar"));
-
-            var msg = "AppBar menu _layout's ToolBar element should match the color of the AppBar element";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, toolBarStyle.backgroundColor, msg);
-        }
-
         xtestGetCommandById() { // TODO delete entirely or migrate into commanding surface tests. 
             var pairWiseOptions = {
                 type: ['button', 'separator', 'toggle', 'flyout', 'content'],

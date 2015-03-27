@@ -187,7 +187,7 @@
                     }
                 }
             }
-            // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+            // When the LegacyAppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-navbar-closing, &.win-navbar-closed,
             &.win-navbar-opening, &.win-navbar-opened {
                 button.win-navbar-invokebutton.win-navbar-invokebutton:enabled:hover:active {
@@ -257,7 +257,7 @@
 
         #win-overlay > .variableDefs(@theme);
 
-        /* Appbar control colors */
+        /* LegacyAppBar control colors */
         &.win-navbar, .win-navbar {
 
             button.win-navbar-invokebutton:enabled:hover,
@@ -265,7 +265,7 @@
                 background-color: transparent;
             }
 
-            // When the AppBar is showing or shown, only the ellipsis has a hover background.*/
+            // When the LegacyAppBar is showing or shown, only the ellipsis has a hover background.*/
             &.win-navbar-opening, &.win-navbar-opened {
                 button.win-navbar-invokebutton:enabled:hover {
                     background-color: @commandHoverBackgroundColor;
@@ -275,7 +275,7 @@
                     }
                 }
             }
-            // When the AppBar is hiding or hidden, the entire invokebutton has a hover background.
+            // When the LegacyAppBar is hiding or hidden, the entire invokebutton has a hover background.
             &.win-navbar-closing, &.win-navbar-closed {
                 button.win-navbar-invokebutton:enabled:hover {
                     background-color: @commandHoverBackgroundColor;
