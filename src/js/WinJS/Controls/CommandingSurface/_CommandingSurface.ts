@@ -17,6 +17,7 @@ import _Flyout = require("../../Controls/Flyout");
 import _Global = require("../../Core/_Global");
 import _Hoverable = require("../../Utilities/_Hoverable");
 import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
+import _Log = require('../../Core/_Log');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
@@ -130,7 +131,8 @@ export class _CommandingSurface {
     private _disposed: boolean;
     private _nextLayoutStage: number;
     private _initializedSignal: _Signal<any>;
-    _isOpenedMode: boolean;
+    private _isOpenedMode: boolean;
+    private _overflowAlignmentOffset: number;
 
     // Measurements
     private _cachedMeasurements: {
@@ -254,8 +256,11 @@ export class _CommandingSurface {
                 this.updateDomImpl();
             },
             onUpdateDomWithIsOpened: (isOpened: boolean) => {
-                this._isOpenedMode = isOpened;
-                this.updateDomImpl();
+                if (isOpened) {
+                    this.synchronousOpen();
+                } else {
+                    this.synchronousClose();
+                }
             }
         });
 
@@ -301,11 +306,11 @@ export class _CommandingSurface {
         });
 
     }
-    /// Occurs immediately before the control is opened.
+    /// Occurs immediately before the control is opened. Is cancelable.
     onbeforeopen: (ev: CustomEvent) => void;
     /// Occurs immediately after the control is opened.
     onafteropen: (ev: CustomEvent) => void;
-    /// Occurs immediately before the control is closed.
+    /// Occurs immediately before the control is closed. Is cancelable.
     onbeforeclose: (ev: CustomEvent) => void;
     /// Occurs immediately after the control is closed.
     onafterclose: (ev: CustomEvent) => void;
@@ -345,9 +350,9 @@ export class _CommandingSurface {
         this._machine.updateDom();
     }
 
-    getBoundingRects(): { actionArea: ClientRect; overflowArea: ClientRect; } {
+    getBoundingRects(): { commandingSurface: ClientRect; overflowArea: ClientRect; } {
         return {
-            actionArea: this._dom.actionArea.getBoundingClientRect(),
+            commandingSurface: this._dom.root.getBoundingClientRect(),
             overflowArea: this._dom.overflowArea.getBoundingClientRect(),
         };
     }
@@ -616,8 +621,45 @@ export class _CommandingSurface {
     }
 
     synchronousOpen(): void {
+
+        this._overflowAlignmentOffset = 0;
         this._isOpenedMode = true;
         this.updateDomImpl();
+        this._overflowAlignmentOffset = this._computeAdjustedOverflowAreaOffset();
+        this.updateDomImpl();
+    }
+
+    private _computeAdjustedOverflowAreaOffset(): number {
+        // Returns any negative offset needed to prevent the shown overflowarea from clipping outside of the viewport.
+        // This function should only be called when CommandingSurface has been rendered in the opened state with
+        // an overflowAlignmentOffset of 0.
+        if (_Log.log) {
+            !this._updateDomImpl_renderedState.isOpenedMode &&
+            _Log.log("The CommandingSurface should only attempt to compute adjusted overflowArea offset " +
+                " when it has been rendered opened");
+
+            this._updateDomImpl_renderedState.overflowAlignmentOffset !== 0 &&
+            _Log.log("The CommandingSurface should only attempt to compute adjusted overflowArea offset " +
+            " when it has been rendered with an overflowAlignementOffset of 0");
+        }
+
+        var overflowArea = this._dom.overflowArea,
+            boundingClientRects = this.getBoundingRects(),
+            adjustedOffset = 0;
+        if (this._rtl) {
+            // In RTL the left edge of overflowarea prefers to align to the LEFT edge of the commandingSurface. 
+            // Make sure we avoid clipping through the RIGHT edge of the viewport
+            var viewportRight = window.innerWidth,
+                rightOffsetFromViewport = boundingClientRects.overflowArea.right;
+            adjustedOffset = Math.min(viewportRight - rightOffsetFromViewport, 0);
+        } else {
+            // In LTR the right edge of overflowarea prefers to align to the RIGHT edge of the commandingSurface.
+            // Make sure we avoid clipping through the LEFT edge of the viewport.
+            var leftOffsetFromViewport = boundingClientRects.overflowArea.left;
+            adjustedOffset = Math.min(0, leftOffsetFromViewport);
+        }
+
+        return adjustedOffset;
     }
 
     synchronousClose(): void {
@@ -639,9 +681,11 @@ export class _CommandingSurface {
         closedDisplayMode: <string>undefined,
         isOpenedMode: <boolean>undefined,
         overflowDirection: <string>undefined,
+        overflowAlignmentOffset: <number>undefined,
     };
     private _updateDomImpl_renderDisplayMode(): void {
         var rendered = this._updateDomImpl_renderedState;
+
 
         if (rendered.isOpenedMode !== this._isOpenedMode) {
             if (this._isOpenedMode) {
@@ -666,6 +710,12 @@ export class _CommandingSurface {
             removeClass(this._dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
             addClass(this._dom.root, overflowDirectionClassMap[this.overflowDirection]);
             rendered.overflowDirection = this.overflowDirection;
+        }
+
+        if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
+            var offsetProperty = (this._rtl ? "left" : "right");
+            var offsetTextValue = this._overflowAlignmentOffset + "px";
+            this._dom.overflowArea.style[offsetProperty] = offsetTextValue;
         }
     }
 

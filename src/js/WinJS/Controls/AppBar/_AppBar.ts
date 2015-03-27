@@ -141,7 +141,6 @@ export class AppBar {
         this._commandingSurface.data = value;
     }
 
-    private _closedDisplayMode: string;
     /// <field type="String" locid="WinJS.UI.AppBar.closedDisplayMode" helpKeyword="WinJS.UI.AppBar.closedDisplayMode">
     /// Gets or sets the closedDisplayMode for the AppBar. Values are "none", "minimal", "compact" and "full".
     /// </field>

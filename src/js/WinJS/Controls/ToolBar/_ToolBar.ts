@@ -113,7 +113,6 @@ export class ToolBar {
         this._commandingSurface.data = value;
     }
 
-    private _closedDisplayMode: string;
     /// <field type="String" locid="WinJS.UI.ToolBar.closedDisplayMode" helpKeyword="WinJS.UI.ToolBar.closedDisplayMode">
     /// Gets or sets the closedDisplayMode for the ToolBar. Values are "compact" and "full".
     /// </field>
@@ -364,13 +363,13 @@ export class ToolBar {
     private _updateDomImpl_renderOpened(): void {
 
         // Measure closed state.
-        var closedActionAreaRect = this._commandingSurface.getBoundingRects().actionArea;
+        var closedCommandingSurfaceRect = this._commandingSurface.getBoundingRects().commandingSurface;
         this._updateDomImpl_renderedState.prevInlineWidth = this._dom.root.style.width;
 
         // Get replacement element
         var placeHolder = this._dom.placeHolder;
-        placeHolder.style.width = closedActionAreaRect.width + "px";
-        placeHolder.style.height = closedActionAreaRect.height + "px";
+        placeHolder.style.width = closedCommandingSurfaceRect.width + "px";
+        placeHolder.style.height = closedCommandingSurfaceRect.height + "px";
 
         // Move ToolBar element to the body and leave placeHolder element in our place to avoid reflowing surrounding app content.
         this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
@@ -379,8 +378,8 @@ export class ToolBar {
         // Render opened state
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
-        this._dom.root.style.width = closedActionAreaRect.width + "px";
-        this._dom.root.style.left = closedActionAreaRect.left + "px";
+        this._dom.root.style.width = closedCommandingSurfaceRect.width + "px";
+        this._dom.root.style.left = closedCommandingSurfaceRect.left + "px";
 
         this._commandingSurface.synchronousOpen();
 
@@ -396,20 +395,20 @@ export class ToolBar {
 
         var alignTop = () => {
             this._commandingSurface.overflowDirection = "bottom"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
-            this._dom.root.style.top = closedActionAreaRect.top + "px";
+            this._dom.root.style.top = closedCommandingSurfaceRect.top + "px";
         }
         var alignBottom = () => {
             this._commandingSurface.overflowDirection = "top"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
-            this._dom.root.style.bottom = (bottomOfViewport - closedActionAreaRect.bottom) + "px";
+            this._dom.root.style.bottom = (bottomOfViewport - closedCommandingSurfaceRect.bottom) + "px";
         }
         function fitsBelow(): boolean {
             // If we orient the commandingSurface from top to bottom, would the bottom of the overflow area fit above the bottom edge of the window?
-            var bottomOfOverFlowArea = closedActionAreaRect.top + openedRects.actionArea.height + openedRects.overflowArea.height;
+            var bottomOfOverFlowArea = closedCommandingSurfaceRect.top + openedRects.commandingSurface.height + openedRects.overflowArea.height;
             return bottomOfOverFlowArea < bottomOfViewport + tolerance;
         }
         function fitsAbove(): boolean {
             // If we orient the commandingSurface from bottom to top, would the top of the overflow area fit below the top edge of the window?
-            var topOfOverFlowArea = closedActionAreaRect.bottom - openedRects.actionArea.height - openedRects.overflowArea.height;
+            var topOfOverFlowArea = closedCommandingSurfaceRect.bottom - openedRects.commandingSurface.height - openedRects.overflowArea.height;
             return topOfOverFlowArea > topOfViewport - tolerance;
         }
 

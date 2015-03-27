@@ -133,7 +133,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(2, commandingSurface.data.length, "CommandingSurface data has an invalid length");
         }
 
-        testBadData() { 
+        testBadData() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
                 new Command(null, { type: _Constants.typeButton, label: "opt 2" })
@@ -1558,6 +1558,101 @@ module CorsicaTests {
             });
         }
 
+        testOverflowAreaHorizontalAlignment() {
+
+            ["LTR", "RTL"].forEach((direction: string) => {
+
+                var edgeOfViewport,
+                    offsetCommandingSurfaceBy,
+                    left,
+                    right,
+                    Left,
+                    Right,
+                    prevLang = document.documentElement.lang;
+
+                if (direction === "LTR") {
+                    document.documentElement.lang = "en-us";
+                    edgeOfViewport = 0;
+                    offsetCommandingSurfaceBy = 10;
+                    right = "right";
+                    left = "left";
+                    Right = "Right";
+                    Left = "Left";
+                } else {
+                    document.documentElement.lang = "ar-sa";
+                    offsetCommandingSurfaceBy = -10;
+                    edgeOfViewport = window.innerWidth;
+                    right = "left";
+                    left = "right";
+                    Right = "Left";
+                    Left = "Right";
+                }
+
+                LiveUnit.LoggingCore.logComment(
+                    "When the " + direction + " CommandingSurface is opening, the overflowarea will typically align its " + right + " edge with the " + right + " edge of the CommandingSurface, " +
+                    "However, if while trying to align this way, part of the overflowarea would clip through the " + left + " edge of the viewport, then the " +
+                    "overflowarea should instead align its " + left + " edge to the " + left + " edge of the viewport."
+                    );
+
+                var data = new WinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, section: _Constants.secondaryCommandSection, label: "opt 1" }),
+                ]);
+
+                var initialMargin = Math.abs(offsetCommandingSurfaceBy);
+                var el = document.createElement("DIV");
+                el.style.width = "10px";
+                el.style["margin" + Left] = initialMargin + "px";
+                document.body.appendChild(el);
+                var commandingSurface = new _CommandingSurface(el, {
+                    data: data,
+                    overflowDirection: _CommandingSurface.OverflowDirection.bottom
+                });
+
+                Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+
+                // Measure
+                commandingSurface.open();
+                var overflowArea = commandingSurface._dom.overflowArea,
+                    commandingSurfaceRect = el.getBoundingClientRect(),
+                    overflowAreaRect = overflowArea.getBoundingClientRect();
+
+                LiveUnit.LoggingCore.logComment(
+                    "Verify that we start from a sane place. " +
+                    "Test that there is " + initialMargin + " space between the " + left + " edge of the CommandingSurface and the " + left + " edge of the view. " +
+                    "Test that the overflowarea width with one command is greater than the " + left + " offset of the commandingsurface width with no commands."
+                    );
+                Helper.Assert.areFloatsEqual(edgeOfViewport + offsetCommandingSurfaceBy, commandingSurfaceRect[left], "TEST ERROR: " + direction + " Test expects the CommandingSurface to be " + initialMargin + " from the " + left + " edge of the view.", 1);
+                LiveUnit.Assert.isTrue(commandingSurfaceRect.width + 10 < overflowAreaRect.width, "TEST ERROR: " + direction + " Test expects the overflowarea to be wider than the CommandingSurface + " + initialMargin + ".");
+
+                LiveUnit.LoggingCore.logComment(
+                    "Because there is NOT enough room to display the " + right + " aligned overflowarea without clipping through the " + left + " edge of the viewport, " +
+                    "verify that overflowarea " + left + " edge is instead aligned to the " + left + " edge of the viewport."
+                    );
+                Helper.Assert.areFloatsEqual(edgeOfViewport, overflowAreaRect[left], "OverflowArea in " + direction + " should align its " + left + " edge with the " + left + " edge of the viewport to avoid clipping through it", 1);
+
+                LiveUnit.LoggingCore.logComment(
+                    "Move the CommandingSurface further away from the " + left + " edge."
+                    );
+                commandingSurface.close();
+                commandingSurface.element.style["margin" + Left] = overflowAreaRect.width + "px";
+
+                // Re Measure
+                commandingSurface.open();
+                commandingSurfaceRect = el.getBoundingClientRect(),
+                overflowAreaRect = overflowArea.getBoundingClientRect();
+
+                LiveUnit.LoggingCore.logComment(
+                    "Because there IS now enough room to display the " + right + " aligned overflowarea without clipping through the " + left + " edge of the viewport, " +
+                    "verify that overflowarea " + right + " edge is aligned to the " + right + " edge of the CommandingSurface."
+                    );
+                LiveUnit.Assert.areEqual(commandingSurfaceRect[right], overflowAreaRect[right], direction + " OverflowArea should be " + right + " aligned with the CommandingSurface");
+
+                // Cleanup
+                el.parentElement.removeChild(el);
+                commandingSurface.dispose();
+                document.documentElement.lang = prevLang;
+            });
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests._CommandingSurfaceTests");

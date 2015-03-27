@@ -115,7 +115,7 @@
     .win-commandingsurface-overflowarea {
         #flex > .display-flex();
         #flex > .flex-direction(column);
-        min-width: 320px;
+        min-width: 160px;
         min-height: 0;
         max-height: 50vh;
         overflow-y: auto;
@@ -123,6 +123,7 @@
         padding: 0;
         position: absolute;
         right: 0;
+        left: auto;
 
        .RTL({
             left:0;
@@ -130,7 +131,7 @@
         });
 
         &.win-menu {
-            max-width: inherit; /* Turn off max-width styles from .win-menu */
+            max-width: 480px; /* override max-width styles from WinJS.UI.Menu */
         }
 
         button.win-command {
@@ -148,4 +149,11 @@
             margin: 6px 12px 4px 12px;
         }
     }
+}
+
+@media(max-width:480px) {
+    .win-commandingsurface .win-commandingsurface-overflowarea.win-menu{
+        width:100vw;
+    }
+
 }
