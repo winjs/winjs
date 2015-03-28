@@ -59,16 +59,21 @@
     function header(name, dependencies) {
         var header = "\n" +
 "/*! Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */\n" +
-"(function (global) {\n" +
+"(function (globalObject) {\n" +
 "\n" +
+"    var globalObject = \n" +
+"        typeof window !== 'undefined' ? window :\n" +
+"        typeof self !== 'undefined' ? self :\n" +
+"        typeof global !== 'undefined' ? global :\n" +
+"        {};\n" +
 "    (function (factory) {\n" +
 "        if (typeof define === 'function' && define.amd) {\n" +
 "            define([" + dependencies.map(JSON.stringify).join(",") + "], factory);\n" +
 "        } else {\n" +
-"            global.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StartTM');\n" +
-// global.WinJS is here for the have dependencies case where they have already defined WinJS
-"            factory(global.WinJS);\n" +
-"            global.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StopTM');\n" +
+"            globalObject.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StartTM');\n" +
+// globalObject.WinJS is here for the have dependencies case where they have already defined WinJS
+"            factory(globalObject.WinJS);\n" +
+"            globalObject.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StopTM');\n" +
 "        }\n" +
 "    }(function (WinJS) {\n" +
 "\n";
@@ -86,11 +91,11 @@
     function footer(name) {
         return "\n" +
 "        require(['WinJS/Core/_WinJS', '" + name + "'], function (_WinJS) {\n" +
-"            global.WinJS = _WinJS;\n" +
+"            globalObject.WinJS = _WinJS;\n" +
 "        });\n" +
-"        return global.WinJS;\n" +
+"        return globalObject.WinJS;\n" +
 "    }));\n" +
-"}(this));\n" +
+"}());\n" +
 "\n";
     }
 
