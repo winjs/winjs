@@ -640,24 +640,31 @@ define([
                 _ElementUtilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
                 this._pointerType = PT_MOUSE;
 
+                // Title element
                 this._titleElement = _Global.document.createElement("DIV");
                 this._titleElement.style.display = "none";
                 _ElementUtilities.addClass(this._titleElement, Pivot._ClassName.pivotTitle);
                 this._element.appendChild(this._titleElement);
 
+                // Header Area
+                this._headerAreaElement = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerAreaElement, Pivot._ClassName.pivotHeaderArea);
+                this._element.appendChild(this._headerAreaElement);
+
+                // Headers Container
                 this._headersContainerElement = _Global.document.createElement("DIV");
                 _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
-                this._element.appendChild(this._headersContainerElement);
+                this._headerAreaElement.appendChild(this._headersContainerElement);
                 this._element.addEventListener('click', this._elementClickedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerdown", this._elementPointerDownHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerup", this._elementPointerUpHandler.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
-
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                 this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
+                // Viewport
                 this._viewportElement = _Global.document.createElement("DIV");
                 this._viewportElement.className = Pivot._ClassName.pivotViewport;
                 this._element.appendChild(this._viewportElement);
@@ -671,6 +678,7 @@ define([
                 this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
 
+                // Surface
                 this._surfaceElement = _Global.document.createElement("DIV");
                 this._surfaceElement.className = Pivot._ClassName.pivotSurface;
                 this._viewportElement.appendChild(this._surfaceElement);
