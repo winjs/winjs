@@ -95,7 +95,7 @@ define([
 
                     headersContainerLeadingMargin: 12,
 
-                    headerPadding: 4,
+                    headerPadding: 6,
                     headerHorizontalMargin: 12,
 
                     getCumulativeHeaderWidth: function headersState_getCumulativeHeaderWidth(pivot, index) {
@@ -732,6 +732,39 @@ define([
                     }
                 },
 
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentLeft" helpKeyword="WinJS.UI.Pivot.customHeaderContentLeft">
+                /// Gets or sets the left custom header content.
+                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
+                /// </field>
+                customHeaderContentLeft: {
+                    get: function () {
+                        return this._headerCustomContentLeft.firstElementChild;
+                    },
+                    set: function (value) {
+                        _Dispose.disposeSubTree(this._headerCustomContentLeft);
+                        _ElementUtilities.empty(this._headerCustomContentLeft);
+                        this._headerCustomContentLeft.appendChild(value);
+                        this.forceLayout();
+                    }
+                },
+
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentRight" helpKeyword="WinJS.UI.Pivot.customHeaderContentRight">
+                /// Gets or sets the right custom header content.
+                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
+                /// </field>
+                customHeaderContentRight: {
+                    get: function () {
+                        return this._headerCustomContentRight.firstElementChild;
+                    },
+                    set: function (value) {
+                        _Dispose.disposeSubTree(this._headerCustomContentRight);
+                        _ElementUtilities.empty(this._headerCustomContentRight);
+                        this._headerCustomContentRight.appendChild(value);
+                        this.forceLayout();
+                        
+                    }
+                },
+
                 /// <field type="Boolean" locid="WinJS.UI.Pivot.locked" helpKeyword="WinJS.UI.Pivot.locked">
                 /// Gets or sets a value that specifies whether the Pivot is locked to the current item.
                 /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
@@ -933,6 +966,9 @@ define([
                             this._headerItemsElWidth = parseFloat(_Global.getComputedStyle(this._headerItemsElement).width);
                         }
                         return this._headerItemsElWidth || Pivot._invalidViewportWidth;
+                    },
+                    set: function (value) {
+                        this._headerItemsElWidth = value;
                     }
                 },
 
@@ -1038,9 +1074,12 @@ define([
                     }
 
                     var oldViewportWidth = this._viewportWidth;
-                    // Invalidate the viewportWidth
+                    var oldHeaderItemsWidth = this._headerItemsWidth;
+                    // Invalidate the viewportWidth and header items width, note that _viewportWidth and _headerItemsWidth are
+                    // private properties that remeasure their values on access when their current value is null
                     this._viewportWidth = null;
-                    if (oldViewportWidth !== this._viewportWidth) {
+                    this._headerItemsWidth = null;
+                    if (oldViewportWidth !== this._viewportWidth || oldHeaderItemsWidth !== this._headerItemsWidth) {
                         _Log.log && _Log.log('_resizeHandler from:' + oldViewportWidth + " to: " + this._viewportWidth);
 
                         this._hidePivotItemAnimation && this._hidePivotItemAnimation.cancel();
