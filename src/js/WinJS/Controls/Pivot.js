@@ -131,10 +131,10 @@ define([
                         var width = this._cachedWidth || this.getCumulativeHeaderWidth(pivot, pivot.items.length);
                         this._cachedWidth = width;
 
-                        if (width > pivot._viewportWidth && !(pivot._headersState instanceof headersStates.overflowState)) {
+                        if (width > pivot._headerItemsWidth && !(pivot._headersState instanceof headersStates.overflowState)) {
                             pivot._headersState.exit();
                             pivot._headersState = new headersStates.overflowState(pivot);
-                        } else if (width <= pivot._viewportWidth && !(pivot._headersState instanceof headersStates.staticState)) {
+                        } else if (width <= pivot._headerItemsWidth && !(pivot._headersState instanceof headersStates.staticState)) {
                             pivot._headersState.exit();
                             pivot._headersState = new headersStates.staticState(pivot);
                         }
@@ -228,7 +228,7 @@ define([
                         var end = 0;
                         if (pivot._rtl) {
                             start = selectedHeader.offsetLeft + selectedHeader.offsetWidth + headersStates.common.headerHorizontalMargin;
-                            end = pivot._viewportWidth - headersStates.common.getCumulativeHeaderWidth(pivot, pivot.selectedIndex) - headersStates.common.headersContainerLeadingMargin;
+                            end = pivot._headerItemsWidth - headersStates.common.getCumulativeHeaderWidth(pivot, pivot.selectedIndex) - headersStates.common.headersContainerLeadingMargin;
                             end += parseFloat(pivot._headersContainerElement.style.marginLeft);
                         } else {
                             start = selectedHeader.offsetLeft;
@@ -345,7 +345,7 @@ define([
                         var start = 0;
                         var end = 0;
                         if (pivot._rtl) {
-                            start = pivot._viewportWidth - headersStates.common.headersContainerLeadingMargin;
+                            start = pivot._headerItemsWidth - headersStates.common.headersContainerLeadingMargin;
                             end = selectedHeader.offsetLeft;
                             end += headersStates.common.headerHorizontalMargin;
                             end += selectedHeader.offsetWidth;
@@ -407,7 +407,7 @@ define([
                             // When going backwards, we render 2 additional headers, the first one as usual, and the second one for
                             // fading out the previous last header.
                             var numberOfHeadersToRender = pivot._items.length + (goPrevious ? 2 : 1);
-                            var maxHeaderWidth = pivot._viewportWidth * 0.8;
+                            var maxHeaderWidth = pivot._headerItemsWidth * 0.8;
                             var indexToRender = pivot.selectedIndex - 1;
 
                             if (pivot._viewportElement.style.overflow) {
@@ -651,11 +651,17 @@ define([
                 _ElementUtilities.addClass(this._headerAreaElement, Pivot._ClassName.pivotHeaderArea);
                 this._element.appendChild(this._headerAreaElement);
 
+                // Header Items
+                this._headerItemsElement = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerItemsElement, Pivot._ClassName.pivotHeaderItems);
+                this._headerAreaElement.appendChild(this._headerItemsElement);
+                this._headerItemsElWidth = null;
+
                 // Headers Container
                 this._headersContainerElement = _Global.document.createElement("DIV");
                 _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
-                this._headerAreaElement.appendChild(this._headersContainerElement);
+                this._headerItemsElement.appendChild(this._headersContainerElement);
                 this._element.addEventListener('click', this._elementClickedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerdown", this._elementPointerDownHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerup", this._elementPointerUpHandler.bind(this));
@@ -663,6 +669,16 @@ define([
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                 this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
+
+                // Header Custom Content
+                this._headerCustomContentLeft = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContent);
+                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContentLeft);
+                this._headerAreaElement.insertBefore(this._headerCustomContentLeft, this._headerAreaElement.children[0]);
+                this._headerCustomContentRight = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContent);
+                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContentRight);
+                this._headerAreaElement.appendChild(this._headerCustomContentRight);
 
                 // Viewport
                 this._viewportElement = _Global.document.createElement("DIV");
@@ -908,6 +924,15 @@ define([
                 _rtl: {
                     get: function () {
                         return this._cachedRTL;
+                    }
+                },
+
+                _headerItemsWidth: {
+                    get: function () {
+                        if (!this._headerItemsElWidth) {
+                            this._headerItemsElWidth = parseFloat(_Global.getComputedStyle(this._headerItemsElement).width);
+                        }
+                        return this._headerItemsElWidth || Pivot._invalidViewportWidth;
                     }
                 },
 
