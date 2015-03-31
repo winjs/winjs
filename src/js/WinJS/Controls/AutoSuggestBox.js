@@ -227,6 +227,7 @@ define([
                         return this._inputElement.value;
                     },
                     set: function (value) {
+                        this._inputElement.value = ""; // This finalizes the IME composition
                         this._inputElement.value = value;
                     }
                 },
@@ -460,10 +461,16 @@ define([
                         return;
                     }
 
-                    // Shift the flyout down
+                    // Shift the flyout down or to the left depending on IME aspect ratio
+                    // When width > height, then we have a constant height horizontal IME,
+                    // otherwise we have a constant width vertical IME.
                     var rect = context.getCandidateWindowClientRect();
                     var animation = Animations.createRepositionAnimation(this._flyoutElement);
-                    this._flyoutElement.style.marginTop = (rect.bottom - rect.top + 4) + "px";
+                    if (rect.width > rect.height) {
+                        this._flyoutElement.style.marginTop = (rect.bottom - rect.top + 4) + "px";
+                    } else {
+                        this._flyoutElement.style.marginLeft = rect.width + "px";
+                    }
                     animation.execute();
                 },
 
@@ -762,6 +769,7 @@ define([
                         this._reflowImeOnPointerRelease = false;
                         var animation = Animations.createRepositionAnimation(this._flyoutElement);
                         this._flyoutElement.style.marginTop = "";
+                        this._flyoutElement.style.marginLeft = "";
                         animation.execute();
                     }
                 },
@@ -772,6 +780,7 @@ define([
                         this._element.classList.remove(ClassNames.asbInputFocus);
                         this._hideFlyout();
                     }
+                    this.queryText = this._prevQueryText; // Finalize IME composition
                     this._isProcessingDownKey = false;
                     this._isProcessingUpKey = false;
                     this._isProcessingTabKey = false;
@@ -986,6 +995,7 @@ define([
                     if (!this._isFlyoutPointerDown) {
                         var animation = Animations.createRepositionAnimation(this._flyoutElement);
                         this._flyoutElement.style.marginTop = "";
+                        this._flyoutElement.style.marginLeft = "";
                         animation.execute();
                     } else {
                         this._reflowImeOnPointerRelease = true;
