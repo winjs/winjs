@@ -107,6 +107,14 @@ declare module WinJS {
         var _getLowestTabIndexInList;
         var _MSPointerEvent;
         var _supportsSnapPoints: boolean;
+
+        function _convertToPrecisePixels(value: string): number;
+        function _getPreciseTotalHeight(element: HTMLElement): number;
+        function _getPreciseTotalWidth(element: HTMLElement): number;
+        function _getPreciseContentHeight(element: HTMLElement): number;
+        function _getPreciseContentWidth(element: HTMLElement): number;
+        function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number; };
+
     }
 
     module Resources {

@@ -271,8 +271,25 @@ define([
             return Math.round(parseFloat(value)) || 0;
         }
     }
+
     function getDimension(element, property) {
         return convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
+    }
+
+    function _convertToPrecisePixels(value) {
+        return parseFloat(value) || 0;
+    }
+    function _getPreciseDimension(element, property) {
+        return _convertToPrecisePixels(_Global.getComputedStyle(element, null)[property]);
+    }
+    function _getPreciseMargins(element) {
+        var style = _Global.getComputedStyle(element);
+        return {
+            top: _convertToPrecisePixels(style.marginTop),
+            right: _convertToPrecisePixels(style.marginRight),
+            bottom: _convertToPrecisePixels(style.marginBottom),
+            left: _convertToPrecisePixels(style.marginLeft),
+        };
     }
 
     var _MSGestureEvent = _Global.MSGestureEvent || {
@@ -1986,6 +2003,11 @@ define([
                 padding = getDimension(element, "paddingLeft") + getDimension(element, "paddingRight");
             return element.offsetWidth - border - padding;
         },
+        _getPreciseContentWidth: function (element) {
+            var border = _getPreciseDimension(element, "borderLeftWidth") + _getPreciseDimension(element, "borderRightWidth"),
+                padding = _getPreciseDimension(element, "paddingLeft") + _getPreciseDimension(element, "paddingRight");
+            return element.offsetWidth - border - padding;
+        },
 
         getTotalWidth: function (element) {
             /// <signature helpKeyword="WinJS.Utilities.getTotalWidth">
@@ -2000,6 +2022,10 @@ define([
             /// </returns>
             /// </signature>
             var margin = getDimension(element, "marginLeft") + getDimension(element, "marginRight");
+            return element.offsetWidth + margin;
+        },
+        _getPreciseTotalWidth: function (element) {
+            var margin = _getPreciseDimension(element, "marginLeft") + _getPreciseDimension(element, "marginRight");
             return element.offsetWidth + margin;
         },
 
@@ -2019,6 +2045,11 @@ define([
                 padding = getDimension(element, "paddingTop") + getDimension(element, "paddingBottom");
             return element.offsetHeight - border - padding;
         },
+        _getPreciseContentHeight: function (element) {
+            var border = _getPreciseDimension(element, "borderTopWidth") + _getPreciseDimension(element, "borderBottomWidth"),
+                padding = _getPreciseDimension(element, "paddingTop") + _getPreciseDimension(element, "paddingBottom");
+            return element.offsetHeight - border - padding;
+        },
 
         getTotalHeight: function (element) {
             /// <signature helpKeyword="WinJS.Utilities.getTotalHeight">
@@ -2033,6 +2064,10 @@ define([
             /// </returns>
             /// </signature>
             var margin = getDimension(element, "marginTop") + getDimension(element, "marginBottom");
+            return element.offsetHeight + margin;
+        },
+        _getPreciseTotalHeight: function (element) {
+            var margin = _getPreciseDimension(element, "marginTop") + _getPreciseDimension(element, "marginBottom");
             return element.offsetHeight + margin;
         },
 
@@ -2083,6 +2118,9 @@ define([
         },
 
         convertToPixels: convertToPixels,
+        _convertToPrecisePixels: _convertToPrecisePixels,
+        _getPreciseMargins: _getPreciseMargins,
+
 
         eventWithinElement: function (element, event) {
             /// <signature helpKeyword="WinJS.Utilities.eventWithinElement">

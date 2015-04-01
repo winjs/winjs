@@ -84,13 +84,13 @@ module Helper._CommandingSurface {
     function verifyOpened_actionArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
 
         var commandElements = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea),
-            commandingSurfaceTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface.element),
-            actionAreaTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.actionArea),
-            actionAreaContentBoxHeight = WinJS.Utilities.getContentHeight(commandingSurface._dom.actionArea),
-            overflowButtonTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowButton);
+            commandingSurfaceTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface.element),
+            actionAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.actionArea),
+            actionAreaContentBoxHeight = WinJS.Utilities._getPreciseContentHeight(commandingSurface._dom.actionArea),
+            overflowButtonTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowButton);
 
         var heightOfTallestChildElement: number = Array.prototype.reduce.call(commandingSurface._dom.actionArea.children, function (tallest, element) {
-            return Math.max(tallest, WinJS.Utilities.getTotalHeight(element));
+            return Math.max(tallest, WinJS.Utilities._getPreciseTotalHeight(element));
         }, 0);
 
         LiveUnit.Assert.areEqual(actionAreaTotalHeight, commandingSurfaceTotalHeight, "Height of CommandingSurface should size to its actionarea.");
@@ -116,7 +116,7 @@ module Helper._CommandingSurface {
     function verifyOpened_overflowArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
         LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowArea).display);
 
-        var overflowAreaTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea);
+        var overflowAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea);
         LiveUnit.Assert.isTrue(0 < overflowAreaTotalHeight);
     };
 
@@ -133,10 +133,10 @@ module Helper._CommandingSurface {
         var closedDisplayMode = commandingSurface.closedDisplayMode;
 
         var commandElements = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea),
-            commandingSurfaceTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface.element),
-            actionAreaTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.actionArea),
-            actionAreaContentBoxHeight = WinJS.Utilities.getContentHeight(commandingSurface._dom.actionArea),
-            overflowButtonTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowButton);
+            commandingSurfaceTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface.element),
+            actionAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.actionArea),
+            actionAreaContentBoxHeight = WinJS.Utilities._getPreciseContentHeight(commandingSurface._dom.actionArea),
+            overflowButtonTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowButton);
 
         switch (closedDisplayMode) {
             case _CommandingSurface.ClosedDisplayMode.none:
@@ -191,7 +191,7 @@ module Helper._CommandingSurface {
     }
 
     function verifyClosed_oveflowArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
-        var overflowAreaTotalHeight = WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea);
+        var overflowAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea);
         LiveUnit.Assert.areEqual(0, overflowAreaTotalHeight);
     };
 };

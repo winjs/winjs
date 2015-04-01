@@ -7,6 +7,7 @@
 /// <reference path="../../typings/typings.d.ts" />
 /// <reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 /// <reference path="../TestLib/winjs.dev.d.ts" />
+// <reference path="../TestData/AppBar.less.css" />
 
 module CorsicaTests {
     var AppBar = <typeof WinJS.UI.PrivateAppBar> WinJS.UI.AppBar;
@@ -78,12 +79,17 @@ module CorsicaTests {
             newNode.id = "host";
             document.body.appendChild(newNode);
             this._element = newNode;
+            WinJS.Utilities.addClass(this._element, "file-appbar-css");
         }
 
         tearDown() {
             if (this._element) {
-                WinJS.Utilities.disposeSubTree(this._element);
-                document.body.removeChild(this._element);
+                if (this._element.winControl) {
+                    this._element.winControl.dispose();
+                }
+                if (this._element.parentElement) {
+                    this._element.parentElement.removeChild(this._element);
+                }
                 this._element = null;
             }
         }
@@ -929,7 +935,7 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container when there are no commands that overflow");
+            LiveUnit.Assert.areEqual(0, WinJS.Utilities._getPreciseTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container when there are no commands that overflow");
         }
 
         xtestOverflowAreaContainerSize() { // TODO Finish redline changes and then reimplement
@@ -958,8 +964,8 @@ module CorsicaTests {
             appBar.forceLayout();
 
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length, "There should only be 2 commands in the overflowarea");
-            LiveUnit.Assert.areEqual(2 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
-            LiveUnit.Assert.areEqual(parseInt(this._element.style.width), WinJS.Utilities.getTotalWidth(appBar._commandingSurface._dom.overflowArea), "Invalid width for the overflowarea container");
+            LiveUnit.Assert.areEqual(2 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(parseInt(this._element.style.width), WinJS.Utilities._getPreciseTotalWidth(appBar._commandingSurface._dom.overflowArea), "Invalid width for the overflowarea container");
             LiveUnit.Assert.areEqual(appBar.element, appBar._commandingSurface._dom.overflowArea.parentNode, "Invalid parent for the overflowarea container");
             LiveUnit.Assert.areEqual(appBar.element, appBar._commandingSurface._dom.actionArea.parentNode, "Invalid parent for the actionarea container");
         }
@@ -982,7 +988,7 @@ module CorsicaTests {
                 opened: true
             });
 
-            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
             LiveUnit.Assert.areEqual(9, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length, "There should be 9 commands in the overflowarea");
         }
 
@@ -1010,7 +1016,7 @@ module CorsicaTests {
                 opened: true
             });
 
-            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(appBar._commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
         }
 
         xtestKeyboarding_Opened(complete) { // TODO reimplement when new keyboarding model is decided
@@ -1344,37 +1350,6 @@ module CorsicaTests {
             });
         }
 
-        testOpenedPropertyConstructorOptions() {
-            var appBar = new AppBar();
-            LiveUnit.Assert.areEqual(_Constants.defaultOpened, appBar.opened, "opened property has incorrect default value");
-            appBar.dispose();
-
-            [true, false].forEach(function (initiallyOpen) {
-                appBar = new AppBar(null, { opened: initiallyOpen });
-                LiveUnit.Assert.areEqual(initiallyOpen, appBar.opened, "opened property does not match the value passed to the constructor.");
-                appBar.dispose();
-            })
-        }
-
-        testTogglingOpenedProperty() {
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
-                new Command(null, { type: _Constants.typeSeparator }),
-                new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
-            ]);
-            var appBar = new AppBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
-            Helper.AppBar.verifyRenderedClosed(appBar);
-
-            appBar.opened = true;
-            LiveUnit.Assert.isTrue(appBar.opened, "opened property should be writeable.");
-            Helper.AppBar.verifyRenderedOpened(appBar);
-
-            appBar.opened = false;
-            LiveUnit.Assert.isFalse(appBar.opened, "opened property should be writeable.");
-            Helper.AppBar.verifyRenderedClosed(appBar);
-        }
-
         testPlacementConstructorOptions() {
             var appBar = new AppBar();
             LiveUnit.Assert.areEqual(_Constants.defaultPlacement, appBar.placement, "'placement' property has incorrect default value.");
@@ -1443,9 +1418,12 @@ module CorsicaTests {
             appBar.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when opening again.
+            var originalOpenedRect = appBar.element.getBoundingClientRect();
             appBar.open();
             LiveUnit.Assert.isTrue(appBar.opened)
             Helper.AppBar.verifyRenderedOpened(appBar);
+            Helper.Assert.areBoundingClientRectsEqual(originalOpenedRect, appBar.element.getBoundingClientRect(),
+                "opening an opened AppBar should not affect its bounding client rect", 0);
         }
 
         testClose() {
@@ -1480,8 +1458,42 @@ module CorsicaTests {
             appBar.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when closing again.
+            var originalClosedRect = appBar.element.getBoundingClientRect();
             appBar.close();
             LiveUnit.Assert.isFalse(appBar.opened)
+            Helper.AppBar.verifyRenderedClosed(appBar);
+            Helper.Assert.areBoundingClientRectsEqual(originalClosedRect, appBar.element.getBoundingClientRect(),
+                "closing a closed AppBar should not affect its bounding client rect", 0);
+        }
+
+        testOpenedPropertyConstructorOptions() {
+            var appBar = new AppBar();
+            LiveUnit.Assert.areEqual(_Constants.defaultOpened, appBar.opened, "opened property has incorrect default value");
+            appBar.dispose();
+
+            [true, false].forEach(function (initiallyOpen) {
+                appBar = new AppBar(null, { opened: initiallyOpen });
+                LiveUnit.Assert.areEqual(initiallyOpen, appBar.opened, "opened property does not match the value passed to the constructor.");
+                appBar.dispose();
+            })
+        }
+
+        testTogglingOpenedProperty() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
+                new Command(null, { type: _Constants.typeSeparator }),
+                new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+            ]);
+            var appBar = new AppBar(this._element, { data: data, opened: false });
+            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.verifyRenderedClosed(appBar);
+
+            appBar.opened = true;
+            LiveUnit.Assert.isTrue(appBar.opened, "opened property should be writeable.");
+            Helper.AppBar.verifyRenderedOpened(appBar);
+
+            appBar.opened = false;
+            LiveUnit.Assert.isFalse(appBar.opened, "opened property should be writeable.");
             Helper.AppBar.verifyRenderedClosed(appBar);
         }
 

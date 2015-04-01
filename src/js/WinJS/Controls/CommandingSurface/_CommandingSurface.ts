@@ -591,7 +591,7 @@ export class _CommandingSurface {
 
     private _resizeHandler() {
         if (this._dom.root.offsetWidth) {
-            var currentActionAreaWidth = _ElementUtilities.getContentWidth(this._dom.actionArea);
+            var currentActionAreaWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea);
             if (this._cachedMeasurements && this._cachedMeasurements.actionAreaContentBoxWidth !== currentActionAreaWidth) {
                 this._cachedMeasurements.actionAreaContentBoxWidth = currentActionAreaWidth
                 this._layoutDirty();
@@ -835,8 +835,8 @@ export class _CommandingSurface {
         this._writeProfilerMark("_measure,info");
         var canMeasure = (_Global.document.body.contains(this._dom.root) && this._dom.actionArea.offsetWidth > 0);
         if (canMeasure) {
-            var overflowButtonWidth = _ElementUtilities.getTotalWidth(this._dom.overflowButton),
-                actionAreaContentBoxWidth = _ElementUtilities.getContentWidth(this._dom.actionArea),
+            var overflowButtonWidth = _ElementUtilities._getPreciseTotalWidth(this._dom.overflowButton),
+                actionAreaContentBoxWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea),
                 separatorWidth = 0,
                 standardCommandWidth = 0,
                 contentCommandWidths: { [uniqueID: string]: number; } = {};
@@ -849,16 +849,16 @@ export class _CommandingSurface {
 
                 if (command.type === _Constants.typeContent) {
                     // Measure each 'content' command type that we find
-                    contentCommandWidths[this._commandUniqueId(command)] = _ElementUtilities.getTotalWidth(command.element);
+                    contentCommandWidths[this._commandUniqueId(command)] = _ElementUtilities._getPreciseTotalWidth(command.element);
                 } else if (command.type === _Constants.typeSeparator) {
                     // Measure the first 'separator' command type we find.
                     if (!separatorWidth) {
-                        separatorWidth = _ElementUtilities.getTotalWidth(command.element);
+                        separatorWidth = _ElementUtilities._getPreciseTotalWidth(command.element);
                     }
                 } else {
                     // Button, toggle, 'flyout' command types have the same width. Measure the first one we find.
                     if (!standardCommandWidth) {
-                        standardCommandWidth = _ElementUtilities.getTotalWidth(command.element);
+                        standardCommandWidth = _ElementUtilities._getPreciseTotalWidth(command.element);
                     }
                 }
 

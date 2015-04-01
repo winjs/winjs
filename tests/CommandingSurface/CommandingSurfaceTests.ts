@@ -77,8 +77,12 @@ module CorsicaTests {
 
         tearDown() {
             if (this._element) {
-                WinJS.Utilities.disposeSubTree(this._element);
-                document.body.removeChild(this._element);
+                if (this._element.winControl) {
+                    this._element.winControl.dispose();
+                }
+                if (this._element.parentElement) {
+                    this._element.parentElement.removeChild(this._element);
+                }
                 this._element = null;
             }
         }
@@ -926,7 +930,7 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(0, WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container when there are no commands that overflow");
+            LiveUnit.Assert.areEqual(0, WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container when there are no commands that overflow");
         }
 
         xtestOverflowAreaContainerSize() {
@@ -955,8 +959,8 @@ module CorsicaTests {
             commandingSurface.forceLayout();
 
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "There should only be 2 commands in the overflowarea");
-            LiveUnit.Assert.areEqual(2 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
-            LiveUnit.Assert.areEqual(parseInt(this._element.style.width), WinJS.Utilities.getTotalWidth(commandingSurface._dom.overflowArea), "Invalid width for the overflowarea container");
+            LiveUnit.Assert.areEqual(2 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(parseInt(this._element.style.width), WinJS.Utilities._getPreciseTotalWidth(commandingSurface._dom.overflowArea), "Invalid width for the overflowarea container");
             LiveUnit.Assert.areEqual(commandingSurface.element, commandingSurface._dom.overflowArea.parentNode, "Invalid parent for the overflowarea container");
             LiveUnit.Assert.areEqual(commandingSurface.element, commandingSurface._dom.actionArea.parentNode, "Invalid parent for the actionarea container");
         }
@@ -979,7 +983,7 @@ module CorsicaTests {
                 opened: true,
             });
 
-            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
             LiveUnit.Assert.areEqual(9, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "There should be 9 commands in the overflowarea");
         }
 
@@ -1007,7 +1011,7 @@ module CorsicaTests {
                 opened: true,
             });
 
-            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities.getTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
+            LiveUnit.Assert.areEqual(4.5 * _Constants.overflowCommandHeight, WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea), "Invalid height for the overflowarea container");
         }
 
         testKeyboarding_Opened(complete) {
@@ -1341,37 +1345,6 @@ module CorsicaTests {
             });
         }
 
-        testOpenedPropertyConstructorOptions() {
-            var commandingSurface = new _CommandingSurface();
-            LiveUnit.Assert.areEqual(_Constants.defaultOpened, commandingSurface.opened, "opened property has incorrect default value");
-            commandingSurface.dispose();
-
-            [true, false].forEach(function (initiallyOpen) {
-                commandingSurface = new _CommandingSurface(null, { opened: initiallyOpen });
-                LiveUnit.Assert.areEqual(initiallyOpen, commandingSurface.opened, "opened property does not match the value passed to the constructor.");
-                commandingSurface.dispose();
-            })
-        }
-
-        testTogglingOpenedProperty() {
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
-                new Command(null, { type: _Constants.typeSeparator }),
-                new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
-            ]);
-            var commandingSurface = new _CommandingSurface(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
-            Helper._CommandingSurface.verifyRenderedClosed(commandingSurface);
-
-            commandingSurface.opened = true;
-            LiveUnit.Assert.isTrue(commandingSurface.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
-
-            commandingSurface.opened = false;
-            LiveUnit.Assert.isFalse(commandingSurface.opened, "opened property should be writeable.");
-            Helper._CommandingSurface.verifyRenderedClosed(commandingSurface);
-        }
-
         testOpen() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
@@ -1404,9 +1377,12 @@ module CorsicaTests {
             commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when opening again.
+            var originalOpenedRect = commandingSurface.element.getBoundingClientRect();
             commandingSurface.open();
             LiveUnit.Assert.isTrue(commandingSurface.opened)
             Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
+            Helper.Assert.areBoundingClientRectsEqual(originalOpenedRect, commandingSurface.element.getBoundingClientRect(),
+                "opening an opened CommandingSurface should not affect its bounding client rect", 0);
         }
 
         testClose() {
@@ -1441,8 +1417,42 @@ module CorsicaTests {
             commandingSurface.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
             // Verify nothing changes when closing again.
+            var originalClosedRect = commandingSurface.element.getBoundingClientRect();
             commandingSurface.close();
             LiveUnit.Assert.isFalse(commandingSurface.opened)
+            Helper._CommandingSurface.verifyRenderedClosed(commandingSurface);
+            Helper.Assert.areBoundingClientRectsEqual(originalClosedRect, commandingSurface.element.getBoundingClientRect(),
+                "closing a closed CommandingSurface should not affect its bounding client rect", 0);
+        }
+
+        testOpenedPropertyConstructorOptions() {
+            var commandingSurface = new _CommandingSurface();
+            LiveUnit.Assert.areEqual(_Constants.defaultOpened, commandingSurface.opened, "opened property has incorrect default value");
+            commandingSurface.dispose();
+
+            [true, false].forEach(function (initiallyOpen) {
+                commandingSurface = new _CommandingSurface(null, { opened: initiallyOpen });
+                LiveUnit.Assert.areEqual(initiallyOpen, commandingSurface.opened, "opened property does not match the value passed to the constructor.");
+                commandingSurface.dispose();
+            })
+        }
+
+        testTogglingOpenedProperty() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
+                new Command(null, { type: _Constants.typeSeparator }),
+                new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+            ]);
+            var commandingSurface = new _CommandingSurface(this._element, { data: data, opened: false });
+            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+            Helper._CommandingSurface.verifyRenderedClosed(commandingSurface);
+
+            commandingSurface.opened = true;
+            LiveUnit.Assert.isTrue(commandingSurface.opened, "opened property should be writeable.");
+            Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
+
+            commandingSurface.opened = false;
+            LiveUnit.Assert.isFalse(commandingSurface.opened, "opened property should be writeable.");
             Helper._CommandingSurface.verifyRenderedClosed(commandingSurface);
         }
 

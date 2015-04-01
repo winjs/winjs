@@ -200,9 +200,9 @@ export class ToolBar {
         _ElementUtilities._inDom(this.element).then(() => {
             return this._commandingSurface.initialized;
         }).then(() => {
-            stateMachine.exitInit();
-            this._writeProfilerMark("constructor,StopTM");
-        });
+                stateMachine.exitInit();
+                this._writeProfilerMark("constructor,StopTM");
+            });
     }
 
     /// <field type="Function" locid="WinJS.UI.ToolBar.onbeforeopen" helpKeyword="WinJS.UI.ToolBar.onbeforeopen">
@@ -258,9 +258,6 @@ export class ToolBar {
         this._synchronousClose();
 
         _Dispose.disposeSubTree(this.element);
-        //TODO: Does the placeHolder element need a dispose method on it as well, so that will be called if its parent subtree is disposed?
-        // If the placeholder is in the DOM at all, it means the toolbar is temporarily open and absolutely positioned in the docuent.body.
-        // Also, can we accomplish this just by hanging this._winControl off of the placeHolder element as well?
     }
 
     forceLayout() {
@@ -304,13 +301,21 @@ export class ToolBar {
         }
 
         // Create element for commandingSurface and reparent any declarative Commands.
-        // commandingSurface will parse child elements as AppBarCommands.
+        // The CommandingSurface constructor will parse child elements as AppBarCommands.
         var commandingSurfaceEl = document.createElement("DIV");
         _ElementUtilities._reparentChildren(root, commandingSurfaceEl);
         root.appendChild(commandingSurfaceEl);
 
+        // While the ToolBar is open, it will place itself in the <body> so it can become a light dismissible
+        // overlay. It leaves the placeHolder element behind as stand in at the ToolBar's original DOM location
+        // to avoid reflowing surrounding app content and create the illusion that the ToolBar hasn't moved along
+        // the x or y planes.
         var placeHolder = _Global.document.createElement("DIV");
         _ElementUtilities.addClass(placeHolder, _Constants.ClassNames.placeHolderCssClass);
+        // If the ToolBar's original HTML parent node is disposed while the ToolBar is open and repositioned as 
+        // a temporary child of the <body>, make sure that calling dispose on the placeHolder element will trigger 
+        // dispose on the ToolBar as well.
+        _Dispose.markDisposable(placeHolder, this.dispose.bind(this));
 
         this._dom = {
             root: root,
@@ -363,64 +368,63 @@ export class ToolBar {
     private _updateDomImpl_renderOpened(): void {
 
         // Measure closed state.
-        var closedCommandingSurfaceRect = this._commandingSurface.getBoundingRects().commandingSurface;
         this._updateDomImpl_renderedState.prevInlineWidth = this._dom.root.style.width;
+        var closedBorderBox = this._dom.root.getBoundingClientRect();
+        var closedContentWidth = _ElementUtilities._getPreciseContentWidth(this._dom.root);
+        var closedContentHeight = _ElementUtilities._getPreciseContentHeight(this._dom.root);
+        var closedStyle = getComputedStyle(this._dom.root);
+        var closedPaddingTop = _ElementUtilities._convertToPrecisePixels(closedStyle.paddingTop);
+        var closedBorderTop = _ElementUtilities._convertToPrecisePixels(closedStyle.borderTopWidth);
+        var closedMargins = _ElementUtilities._getPreciseMargins(this._dom.root);
+        var closedContentBoxTop = closedBorderBox.top + closedBorderTop + closedPaddingTop;
+        var closedContentBoxBottom = closedContentBoxTop + closedContentHeight;
 
-        // Get replacement element
+        // Size our placeHolder. Set height and width to match borderbox of the closed ToolBar.
+        // Copy ToolBar margins to the placeholder.
         var placeHolder = this._dom.placeHolder;
-        placeHolder.style.width = closedCommandingSurfaceRect.width + "px";
-        placeHolder.style.height = closedCommandingSurfaceRect.height + "px";
+        var placeHolderStyle = placeHolder.style;
+        placeHolderStyle.width = closedBorderBox.width + "px";
+        placeHolderStyle.height = closedBorderBox.height + "px";
+        placeHolderStyle.marginTop = closedMargins.top + "px";
+        placeHolderStyle.marginRight = closedMargins.right + "px";
+        placeHolderStyle.marginBottom = closedMargins.bottom + "px";
+        placeHolderStyle.marginLeft = closedMargins.left + "px";
 
-        // Move ToolBar element to the body and leave placeHolder element in our place to avoid reflowing surrounding app content.
+        // Move ToolBar element to the body in preparation of becoming a light dismissible. Leave an equal sized placeHolder element 
+        // at our original DOM location to avoid reflowing surrounding app content.
         this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
         _Global.document.body.appendChild(this._dom.root);
+
+        // Position the ToolBar to completely cover the same region as the placeholder element.
+        this._dom.root.style.width = closedContentWidth + "px";
+        this._dom.root.style.left = closedBorderBox.left - closedMargins.left + "px";
+
+        // Determine which direction to expand the CommandingSurface elements when opened. The overflow area will be rendered at the corresponding edge of 
+        // the ToolBar's content box, so we choose the direction that offers the most space between that edge and the corresponding edge of the viewport. 
+        // This is to reduce the chance that the overflow area might clip through the edge of the viewport.
+        var topOfViewport = 0;
+        var bottomOfViewport = _Global.innerHeight;
+        var distanceFromTop = closedContentBoxTop - topOfViewport;
+        var distanceFromBottom = bottomOfViewport - closedContentBoxBottom;
+
+        if (distanceFromTop > distanceFromBottom) {
+            // CommandingSurface is going to expand updwards.
+            this._commandingSurface.overflowDirection = _Constants.OverflowDirection.top;
+            // Position the bottom edge of the ToolBar marginbox over the bottom edge of the placeholder marginbox.
+            this._dom.root.style.bottom = (bottomOfViewport - closedBorderBox.bottom) - closedMargins.bottom + "px";
+        } else {
+            // CommandingSurface is going to expand downwards.
+            this._commandingSurface.overflowDirection = _Constants.OverflowDirection.bottom;
+            // Position the top edge of the ToolBar marginbox over the top edge of the placeholder marginbox.
+            this._dom.root.style.top = (topOfViewport + closedBorderBox.top) - closedMargins.top + "px";
+        }
 
         // Render opened state
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
-        this._dom.root.style.width = closedCommandingSurfaceRect.width + "px";
-        this._dom.root.style.left = closedCommandingSurfaceRect.left + "px";
-
         this._commandingSurface.synchronousOpen();
-
-        // Measure opened state
-        var openedRects = this._commandingSurface.getBoundingRects();
-
-        //
-        // Determine _commandingSurface overflowDirection
-        //
-        var topOfViewport = 0,
-            bottomOfViewport = topOfViewport + _Global.innerHeight,
-            tolerance = 1;
-
-        var alignTop = () => {
-            this._commandingSurface.overflowDirection = "bottom"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
-            this._dom.root.style.top = closedCommandingSurfaceRect.top + "px";
-        }
-        var alignBottom = () => {
-            this._commandingSurface.overflowDirection = "top"; // TODO: Is it safe to use the static commandingSurface "OverflowDirection" enum for this value? (lazy loading... et al)
-            this._dom.root.style.bottom = (bottomOfViewport - closedCommandingSurfaceRect.bottom) + "px";
-        }
-        function fitsBelow(): boolean {
-            // If we orient the commandingSurface from top to bottom, would the bottom of the overflow area fit above the bottom edge of the window?
-            var bottomOfOverFlowArea = closedCommandingSurfaceRect.top + openedRects.commandingSurface.height + openedRects.overflowArea.height;
-            return bottomOfOverFlowArea < bottomOfViewport + tolerance;
-        }
-        function fitsAbove(): boolean {
-            // If we orient the commandingSurface from bottom to top, would the top of the overflow area fit below the top edge of the window?
-            var topOfOverFlowArea = closedCommandingSurfaceRect.bottom - openedRects.commandingSurface.height - openedRects.overflowArea.height;
-            return topOfOverFlowArea > topOfViewport - tolerance;
-        }
-
-        if (fitsBelow()) {
-            alignTop();
-        } else if (fitsAbove()) {
-            alignBottom();
-        } else {
-            // TODO, orient ourselves top to bottom and shrink the height of the overflowarea to make us fit within the available space.
-            alignTop();
-        }
     }
+
     private _updateDomImpl_renderClosed(): void {
 
         // Restore our placement in the DOM

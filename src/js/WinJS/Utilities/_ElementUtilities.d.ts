@@ -886,3 +886,9 @@ export declare function _trySetActive(elem: HTMLElement, scroller?: HTMLElement)
 export declare function _focusFirstFocusableElement(rootEl: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _setPointerCapture(element: HTMLElement, pointerId: number): void;
 export declare function _releasePointerCapture(element: HTMLElement, pointerId: number): void;
+export declare function _convertToPrecisePixels(value: string): number;
+export declare function _getPreciseTotalHeight(element: HTMLElement): number;
+export declare function _getPreciseTotalWidth(element: HTMLElement): number;
+export declare function _getPreciseContentHeight(element: HTMLElement): number;
+export declare function _getPreciseContentWidth(element: HTMLElement): number;
+export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number;};

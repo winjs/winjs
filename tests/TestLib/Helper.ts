@@ -1311,6 +1311,15 @@ module Helper {
                 ", actual = " + actualValue + ", tolerance = " + tolerance + ")");
         }
 
+        export function areBoundingClientRectsEqual(expectedBoundingRect, actualBoundingRect, message = "", tolerance = 0.1) {
+            for (var key in expectedBoundingRect) {
+                var expectedValue = expectedBoundingRect[key],
+                    actualValue = actualBoundingRect[key],
+                    msg = message + " >> BoundingClientRect. " + key + ":";
+                Helper.Assert.areFloatsEqual(expectedValue, actualValue, msg, tolerance);
+            }
+        }
+
         // Asserts that each key of *object* is a member of *validKeys*.
         export function areKeysValid(object, validKeys) {
             Object.keys(object).forEach(function (key) {

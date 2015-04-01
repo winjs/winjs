@@ -39,6 +39,8 @@ export var overflowCommandHeight = 44;
 export var overflowSeparatorHeight = 12;
 
 export var controlMinWidth = actionAreaOverflowButtonWidth;
+export var overflowAreaMaxWidth = 480;
+
 export var heightOfMinimal = 24;
 export var heightOfCompact = 48;
 

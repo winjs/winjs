@@ -32,6 +32,12 @@ export var EventNames = {
     afterClose: "afterclose"
 };
 
+export var OverflowDirection = {
+    top: "top",
+    bottom: "bottom",
+};
+
+export var overflowAreaMaxWidth: number = _CommandingSurfaceConstants.overflowAreaMaxWidth;
 export var controlMinWidth: number = _CommandingSurfaceConstants.controlMinWidth;
 
 export var defaultClosedDisplayMode = "compact";
