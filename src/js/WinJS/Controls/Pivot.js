@@ -741,7 +741,6 @@ define([
                         return this._headerCustomContentLeft.firstElementChild;
                     },
                     set: function (value) {
-                        _Dispose.disposeSubTree(this._headerCustomContentLeft);
                         _ElementUtilities.empty(this._headerCustomContentLeft);
                         this._headerCustomContentLeft.appendChild(value);
                         this.forceLayout();
@@ -757,7 +756,6 @@ define([
                         return this._headerCustomContentRight.firstElementChild;
                     },
                     set: function (value) {
-                        _Dispose.disposeSubTree(this._headerCustomContentRight);
                         _ElementUtilities.empty(this._headerCustomContentRight);
                         this._headerCustomContentRight.appendChild(value);
                         this.forceLayout();

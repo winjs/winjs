@@ -567,6 +567,7 @@ declare module WinJS {
             _navMode;
             _currentScrollTargetLocation;
             _viewportWidth;
+            _headerItemsWidth: number;
 
             static _ClassName;
             static _EventName;
