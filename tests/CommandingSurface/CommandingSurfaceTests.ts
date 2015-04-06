@@ -80,6 +80,7 @@ module CorsicaTests {
                 if (this._element.winControl) {
                     this._element.winControl.dispose();
                 }
+                WinJS.Utilities.disposeSubTree(this._element);
                 if (this._element.parentElement) {
                     this._element.parentElement.removeChild(this._element);
                 }

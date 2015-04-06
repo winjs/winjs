@@ -18,6 +18,7 @@ import _Flyout = require("../../Controls/Flyout");
 import _Global = require("../../Core/_Global");
 import _Hoverable = require("../../Utilities/_Hoverable");
 import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
+import _LightDismissService = require('../../_LightDismissService');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
@@ -82,6 +83,7 @@ export class ToolBar {
     private _disposed: boolean;
     private _commandingSurface: _ICommandingSurface._CommandingSurface;
     private _isOpenedMode: boolean;
+    private _dismissable: _LightDismissService.ILightDismissable;
 
     private _dom: {
         root: HTMLElement;
@@ -190,6 +192,13 @@ export class ToolBar {
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-overflowbutton"), _Constants.ClassNames.overflowButtonCssClass);
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-ellipsis"), _Constants.ClassNames.ellipsisCssClass);
         this._isOpenedMode = _Constants.defaultOpened;
+        this._dismissable = new _LightDismissService.LightDismissableElement({
+            element: this._dom.root,
+            tabIndex: this._dom.root.hasAttribute("tabIndex") ? this._dom.root.tabIndex : -1,
+            onLightDismiss: () => {
+                this.close();
+            }
+        });
 
         // Initialize public properties.
         this.closedDisplayMode = _Constants.defaultClosedDisplayMode;
@@ -251,6 +260,7 @@ export class ToolBar {
         }
 
         this._disposed = true;
+        _LightDismissService.hidden(this._dismissable);
         // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine and synchronously complete any animations that might have been running.
         this._commandingSurface.dispose();
         // If page navigation is happening, we don't want to ToolBar left behind in the body.
@@ -281,10 +291,6 @@ export class ToolBar {
         root["winControl"] = this;
 
         this._id = root.id || _ElementUtilities._uniqueID(root);
-
-        if (!root.hasAttribute("tabIndex")) {
-            root.tabIndex = -1;
-        }
 
         _ElementUtilities.addClass(root, _Constants.ClassNames.controlCssClass);
         _ElementUtilities.addClass(root, _Constants.ClassNames.disposableCssClass);
@@ -392,8 +398,10 @@ export class ToolBar {
 
         // Move ToolBar element to the body in preparation of becoming a light dismissible. Leave an equal sized placeHolder element 
         // at our original DOM location to avoid reflowing surrounding app content.
-        this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
-        _Global.document.body.appendChild(this._dom.root);
+        _ElementUtilities._maintainFocus(() => {
+            this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
+            _Global.document.body.appendChild(this._dom.root);
+        });
 
         // Position the ToolBar to completely cover the same region as the placeholder element.
         this._dom.root.style.width = closedContentWidth + "px";
@@ -423,15 +431,18 @@ export class ToolBar {
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
         this._commandingSurface.synchronousOpen();
+        _LightDismissService.shown(this._dismissable); // Call at the start of the open animation
     }
 
     private _updateDomImpl_renderClosed(): void {
 
         // Restore our placement in the DOM
         if (this._dom.placeHolder.parentElement) {
-            var placeHolder = this._dom.placeHolder;
-            placeHolder.parentElement.insertBefore(this._dom.root, placeHolder);
-            placeHolder.parentElement.removeChild(placeHolder);
+            _ElementUtilities._maintainFocus(() => {
+                var placeHolder = this._dom.placeHolder;
+                placeHolder.parentElement.insertBefore(this._dom.root, placeHolder);
+                placeHolder.parentElement.removeChild(placeHolder);
+            });
         }
 
         // Render Closed
@@ -443,6 +454,7 @@ export class ToolBar {
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.closedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.openedClass);
         this._commandingSurface.synchronousClose();
+        _LightDismissService.hidden(this._dismissable); // Call after the close animation
     }
 }
 

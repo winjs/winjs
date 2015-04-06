@@ -12,6 +12,7 @@
 module CorsicaTests {
     var ToolBar = <typeof WinJS.UI.PrivateToolBar> WinJS.UI.ToolBar;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
+    var _LightDismissService = <typeof WinJS.UI._LightDismissService>Helper.require("WinJS/_LightDismissService");
     var Util = WinJS.Utilities;
     var _Constants;
 
@@ -87,6 +88,7 @@ module CorsicaTests {
                 if (this._element.winControl) {
                     this._element.winControl.dispose();
                 }
+                WinJS.Utilities.disposeSubTree(this._element);
                 if (this._element.parentElement) {
                     this._element.parentElement.removeChild(this._element);
                 }
@@ -1785,6 +1787,54 @@ module CorsicaTests {
             var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(toolBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
+        }
+        
+        private _testLightDismissWithTrigger(dismissToolBar) {
+            var button = document.createElement("button");
+            button.textContent = "Initially Focused";
+            var element = document.createElement("div");
+            
+            this._element.appendChild(button);
+            this._element.appendChild(element);
+            
+            var toolBar = new ToolBar(element, {
+                data: new WinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, icon: 'add', label: "add" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'remove', label: "remove" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'accept', label: "accept" }),
+                    new Command(null, { type: _Constants.typeSeparator }),
+                    new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+                ])
+            });
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
+            
+            return Helper.focus(button).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement, "Button should have focus initially");
+                
+                return Helper.waitForFocusWithin(toolBar.element, () => { toolBar.open(); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(toolBar.data.getAt(0).element, document.activeElement,
+                    "ToolBar's leftmost primary command should have focus after opening");
+                LiveUnit.Assert.isTrue(_LightDismissService.isTopmost(toolBar._dismissable),
+                    "ToolBar should be the topmost light dismissable");
+                
+                return Helper.waitForFocus(button, () => { dismissToolBar(toolBar); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement,
+                    "Focus should have been restored to the button");
+                LiveUnit.Assert.isFalse(_LightDismissService.isShown(toolBar._dismissable),
+                    "ToolBar should not be in the light dismissable stack");
+            });
+        }
+        
+        testLightDismissWithClose(complete) {
+            this._testLightDismissWithTrigger((toolBar) => { toolBar.close(); }).then(complete);
+        }
+        testLightDismissWithDispose(complete) {
+            this._testLightDismissWithTrigger((toolBar) => { toolBar.dispose(); }).then(complete);
+        }
+        testLightDismissWithTap(complete) {
+            this._testLightDismissWithTrigger((toolBar) => {  _LightDismissService._clickEaterTapped(); }).then(complete);
         }
     }
 }

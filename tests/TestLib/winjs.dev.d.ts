@@ -135,6 +135,32 @@ declare module WinJS {
         var _CallExpression;
         var _IdentifierExpression;
         var _GroupFocusCache;
+        
+        module _LightDismissService {
+            interface ILightDismissInfo {
+                reason: string;
+                active: boolean;
+                stopPropagation(): void;
+                preventDefault(): void;
+            }
+            
+            interface ILightDismissable {
+                setZIndex(zIndex: string): void;
+                containsElement(element: HTMLElement): boolean;
+                requiresClickEater(): boolean;
+                onActivate(): void;
+                onFocus(element: HTMLElement): void;
+                onHide(): void;
+                onShouldLightDismiss(info: ILightDismissInfo): boolean;
+                onLightDismiss(info: ILightDismissInfo): void;
+            }
+            
+            function shown(client: ILightDismissable): void;
+            function hidden(client: ILightDismissable): void;
+            function isShown(client: ILightDismissable): boolean;
+            function isTopmost(client: ILightDismissable): boolean;
+            function _clickEaterTapped(): void;
+        }
 
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
@@ -428,6 +454,7 @@ declare module WinJS {
             _updateDomImpl_renderedState: {
                 adjustedOffsets: { top: string; bottom: string; }; 
             }
+            _dismissable: _LightDismissService.ILightDismissable;
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {
@@ -438,6 +465,7 @@ declare module WinJS {
                 placeHolder: HTMLElement;
             };
             _commandingSurface: WinJS.UI.PrivateCommandingSurface;
+            _dismissable: _LightDismissService.ILightDismissable;
         }
 
         class PrivateCommand extends WinJS.UI.AppBarCommand {

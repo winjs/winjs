@@ -12,6 +12,7 @@
 module CorsicaTests {
     var AppBar = <typeof WinJS.UI.PrivateAppBar> WinJS.UI.AppBar;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
+    var _LightDismissService = <typeof WinJS.UI._LightDismissService>Helper.require("WinJS/_LightDismissService");
     var Util = WinJS.Utilities;
     var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
 
@@ -83,6 +84,7 @@ module CorsicaTests {
                 if (this._element.winControl) {
                     this._element.winControl.dispose();
                 }
+                WinJS.Utilities.disposeSubTree(this._element);
                 if (this._element.parentElement) {
                     this._element.parentElement.removeChild(this._element);
                 }
@@ -1644,6 +1646,54 @@ module CorsicaTests {
 
                 complete();
             });
+        }
+        
+        private _testLightDismissWithTrigger(dismissAppBar) {
+            var button = document.createElement("button");
+            button.textContent = "Initially Focused";
+            var element = document.createElement("div");
+            
+            this._element.appendChild(button);
+            this._element.appendChild(element);
+            
+            var appBar = new AppBar(element, {
+                data: new WinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, icon: 'add', label: "add" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'remove', label: "remove" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'accept', label: "accept" }),
+                    new Command(null, { type: _Constants.typeSeparator }),
+                    new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+                ])
+            });
+            Helper.AppBar.useSynchronousAnimations(appBar);
+            
+            return Helper.focus(button).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement, "Button should have focus initially");
+                
+                return Helper.waitForFocusWithin(appBar.element, () => { appBar.open(); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(appBar.data.getAt(0).element, document.activeElement,
+                    "AppBar's leftmost primary command should have focus after opening");
+                LiveUnit.Assert.isTrue(_LightDismissService.isTopmost(appBar._dismissable),
+                    "AppBar should be the topmost light dismissable");
+                
+                return Helper.waitForFocus(button, () => { dismissAppBar(appBar); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement,
+                    "Focus should have been restored to the button");
+                LiveUnit.Assert.isFalse(_LightDismissService.isShown(appBar._dismissable),
+                    "AppBar should not be in the light dismissable stack");
+            });
+        }
+        
+        testLightDismissWithClose(complete) {
+            this._testLightDismissWithTrigger((appBar) => { appBar.close(); }).then(complete);
+        }
+        testLightDismissWithDispose(complete) {
+            this._testLightDismissWithTrigger((appBar) => { appBar.dispose(); }).then(complete);
+        }
+        testLightDismissWithTap(complete) {
+            this._testLightDismissWithTrigger((appBar) => {  _LightDismissService._clickEaterTapped(); }).then(complete);
         }
     }
 }

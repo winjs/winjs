@@ -1214,7 +1214,7 @@ define([
                 if (_Global.HTMLElement && _Global.HTMLElement.prototype.setActive) {
                     element.setActive();
                 } else {
-                    // We are aware the unlike setActive(), focus() will scroll to the element that gets focus. However, this is
+                    // We are aware that, unlike setActive(), focus() will scroll to the element that gets focus. However, this is
                     // our current cross-browser solution until there is an equivalent for setActive() in other browsers.
                     //
                     // This _setActive polyfill does have limited support for preventing scrolling: via the scroller parameter, it
@@ -2338,6 +2338,16 @@ define([
                 destinationParent.appendChild(child);
                 child = sibling;
             }
+        },
+
+        // Ensures that the same element has focus before and after *callback* is
+        // called. Useful if moving focus is an unintentional side effect of *callback*.
+        // For example, this could happen if *callback* removes and reinserts elements
+        // to the DOM.
+        _maintainFocus: function ElementUtilities_maintainFocus(callback) {
+            var focusedElement = _Global.document.activeElement;
+            callback();
+            exports._trySetActive(focusedElement);
         },
 
         _trySetActive: function Utilities_trySetActive(elem, scroller) {

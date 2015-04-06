@@ -886,6 +886,7 @@ export declare function _addEventListener(element: HTMLElement, type: string, li
 export declare function _addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _removeEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _removeEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): void;
+export declare function _maintainFocus(callback: Function): void;
 export declare function _tryFocus(elem: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _trySetActive(elem: HTMLElement, scroller?: HTMLElement): boolean;
 export declare function _focusFirstFocusableElement(rootEl: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
