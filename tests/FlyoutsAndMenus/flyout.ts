@@ -8,6 +8,7 @@ module CorsicaTests {
     "use strict";
 
     var Key = WinJS.Utilities.Key,
+        _LightDismissService = Helper.require("WinJS/_LightDismissService"),
         _element;
 
     var expectedDistanceFromAnchor = 5,
@@ -32,11 +33,6 @@ module CorsicaTests {
             });
             OverlayHelpers.disposeAndRemove(_element);
             _element = null;
-
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
 
         // Test flyout Instantiation
@@ -244,25 +240,19 @@ module CorsicaTests {
         }
 
     testDisposeRemovesFlyoutClickEatingDiv = function (complete) {
-            WinJS.UI._Overlay._clickEatingAppBarDiv = null;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = null;
-
             var flyout = new WinJS.UI.Flyout();
             document.body.appendChild(flyout.element);
             flyout.show(document.body);
 
-            // ClickEater add/remove are high priority scheduler jobs, so we schedule an idle priority asserts
             flyout.addEventListener("aftershow", function () {
-                var clickEater = <HTMLElement>document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass);
+                var clickEater = <HTMLElement>document.querySelector("." + _LightDismissService._ClassNames._clickEater);
                 LiveUnit.Assert.isTrue(clickEater);
                 LiveUnit.Assert.areNotEqual("none", clickEater.style.display);
 
                 flyout.dispose();
 
-                WinJS.Utilities.Scheduler.schedule(function () {
-                    LiveUnit.Assert.areEqual("none", clickEater.style.display);
-                    complete();
-                }, WinJS.Utilities.Scheduler.Priority.idle);
+                LiveUnit.Assert.isNull(document.querySelector("." + _LightDismissService._ClassNames._clickEater));
+                complete();
             });
         };
 
@@ -464,39 +454,23 @@ module CorsicaTests {
         };
 
         testBackClickEventTriggersLightDismiss = function (complete) {
-            // Verifies that a shown Flyout will handle the WinJS.Application.backclick event and light dismiss itself.
+            // Verifies that a shown Flyout will  light dismiss due to backclick.
 
             // Simulate
             function simulateBackClick() {
-                backClickEvent = OverlayHelpers.createBackClickEvent();
-                LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
-
-                WinJS.Application.addEventListener("verification", verify, true);
-                WinJS.Application.queueEvent({ type: 'verification' });
-            };
-
-            // Verify
-            function verify() {
-                LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "Flyout should have handled the 'backclick' event");
+                var handled = _LightDismissService._onBackClick();
+                LiveUnit.Assert.isTrue(handled, "Flyout should have handled the 'backclick' event");
                 LiveUnit.Assert.isTrue(flyout.hidden, "Flyout should be hidden after light dismiss");
                 cleanup();
             };
 
             // Cleanup
             function cleanup() {
-                WinJS.Application.removeEventListener("verification", verify, true);
-                WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object.
-                // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
-                WinJS.UI._Overlay._globalEventListeners.reset();
+                flyout.dispose();
                 complete();
             }
 
             // Setup
-            WinJS.Application.start();
-            var backClickEvent;
-
             var flyout = new WinJS.UI.Flyout(_element);
             flyout.addEventListener("aftershow", simulateBackClick, false);
             flyout.show(document.body);
@@ -520,16 +494,16 @@ module CorsicaTests {
             });
         };
 
-        testShowAndHideMovesFocusWithoutWaitingForAnimationToComplete = function (complete) {
-            // Verifies Flyout.show and Flyout.hide moves focus synchronously after beginning the animation.
+        testShowMovesFocusSyncAndHideMovesFocusAsync = function (complete) {
+            // Verifies Flyout.show moves focus at the beginning of the animation
+            // and Flyout.hide moves focus at the end of the animation.
             var button = document.createElement("button");
             document.body.appendChild(button);
 
             var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
 
             var msg = "",
-                test1Ran = false,
-                test2Ran = false;
+                test1Ran = false;
 
             button.focus();
             LiveUnit.Assert.areEqual(document.activeElement, button, "TEST ERROR: button should have focus");
@@ -543,26 +517,21 @@ module CorsicaTests {
             };
             flyout.addEventListener("beforeshow", beforeShow, false);
 
-            function beforeHide() {
-                flyout.removeEventListener("beforehide", beforeHide, false);
-                WinJS.Promise.timeout(0).then(() => {
-                    LiveUnit.Assert.areEqual(document.activeElement, button, msg);
-                    test2Ran = true;
-                });
+            function afterHide() {
+                flyout.removeEventListener("afterhide", afterHide, false);
+                LiveUnit.Assert.areEqual(document.activeElement, button, msg);
+                complete();
             }
-            flyout.addEventListener("beforehide", beforeHide, false);
+            flyout.addEventListener("afterhide", afterHide, false);
 
             msg = "Flyout.show should take focus synchronously after the 'beforeshow' event";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             OverlayHelpers.show(flyout).then(() => {
                 LiveUnit.Assert.isTrue(test1Ran, "TEST ERROR: Test 1 did not run.");
 
-                msg = "Flyout.show should take focus synchronously after the 'beforeshow' event";
+                msg = "Flyout.hide should move focus before the 'afterhide' event";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(flyout);
-            }).then(() => {
-                LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
-                complete();
             });
         }
     }

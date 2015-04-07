@@ -146,8 +146,8 @@ declare module WinJS {
             
             interface ILightDismissable {
                 setZIndex(zIndex: string): void;
+                getZIndexCount(): number;
                 containsElement(element: HTMLElement): boolean;
-                requiresClickEater(): boolean;
                 onActivate(): void;
                 onFocus(element: HTMLElement): void;
                 onHide(): void;
