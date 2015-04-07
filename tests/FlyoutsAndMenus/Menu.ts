@@ -8,6 +8,7 @@ module CorsicaTests {
     "use strict";
 
     var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants"),
+        _LightDismissService = Helper.require("WinJS/_LightDismissService"),
         Key = WinJS.Utilities.Key,
         MenuCommand = <typeof WinJS.UI.PrivateMenuCommand> WinJS.UI.MenuCommand,
         Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,
@@ -23,11 +24,6 @@ module CorsicaTests {
 
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
-
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
 
         // Test Menu Instantiation
@@ -227,41 +223,23 @@ module CorsicaTests {
         }
 
         testBackClickEventTriggersLightDismiss = function (complete) {
-            // Verifies that a shown Menu will handle the WinJS.Application.backclick event and light dismiss itself.
+            // Verifies that a shown Menu will light dismiss due to backclick.
 
             // Simulate
             function simulateBackClick() {
-                backClickEvent = OverlayHelpers.createBackClickEvent();
-                LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
-
-                WinJS.Application.addEventListener("verification", verify, true);
-                WinJS.Application.queueEvent({ type: 'verification' });
-            };
-
-            // Verify
-            function verify() {
-                LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "Menu should have handled the 'backclick' event");
+                var handled = _LightDismissService._onBackClick();
+                LiveUnit.Assert.isTrue(handled, "Menu should have handled the 'backclick' event");
                 LiveUnit.Assert.isTrue(menu.hidden, "Menu should be hidden after light dismiss");
                 cleanup();
             };
 
             // Cleanup
             function cleanup() {
-                WinJS.Application.removeEventListener("verification", verify, true);
-                WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object.
-                // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
-                WinJS.UI._Overlay._globalEventListeners.reset();
-
                 OverlayHelpers.disposeAndRemove(menuElement);
                 complete();
             }
 
             // Setup
-            WinJS.Application.start();
-            var backClickEvent;
-
             var menuElement = document.createElement("div");
             document.body.appendChild(menuElement);
             var menu = new Menu(menuElement);
@@ -292,8 +270,9 @@ module CorsicaTests {
             });
         };
 
-        testShowAndHideMovesFocusWithoutWaitingForAnimationToComplete = function (complete) {
-            // Verifies Menu.show and Menu.hide moves focus synchronously after beginning the animation.
+        testShowMovesFocusSyncAndHideMovesFocusAsync = function (complete) {
+            // Verifies Menu.show moves focus at the beginning of the animation
+            // and Menu.hide moves focus at the end of the animation.
             var button = document.createElement("button");
             document.body.appendChild(button);
 
@@ -302,9 +281,7 @@ module CorsicaTests {
             var menu = new Menu(menuElement, { anchor: document.body });
 
             var msg = "",
-                test1Ran = false,
-                test2Ran = false;
-
+                test1Ran = false;
 
             button.focus();
             LiveUnit.Assert.areEqual(document.activeElement, button, "TEST ERROR: button should have focus");
@@ -318,29 +295,24 @@ module CorsicaTests {
             };
             menu.addEventListener("beforeshow", beforeShow, false);
 
-            function beforeHide() {
-                menu.removeEventListener("beforehide", beforeHide, false);
+            function afterHide() {
+                menu.removeEventListener("afterhide", afterHide, false);
                 WinJS.Promise.timeout(0).then(() => {
                     LiveUnit.Assert.areEqual(document.activeElement, button, msg);
-                    test2Ran = true;
+                    complete();
                 });
             }
-            menu.addEventListener("beforehide", beforeHide, false);
+            menu.addEventListener("afterhide", afterHide, false);
 
             msg = "Menu.show should take focus synchronously after the 'beforeshow' event";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             OverlayHelpers.show(menu).then(() => {
                 LiveUnit.Assert.isTrue(test1Ran, "TEST ERROR: Test 1 did not run.");
 
-                msg = "Menu.show should take focus synchronously after the 'beforeshow' event";
+                msg = "Menu.hide should move focus before the 'afterhide' event";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(menu);
-            }).then(() => {
-                    LiveUnit.Assert.isTrue(test2Ran, "TEST ERROR: Test 2 did not run.");
-
-                    OverlayHelpers.disposeAndRemove(menuElement);
-                    complete();
-                });
+            });
         }
 
         testMenuLaysOutCommandsCorrectly = function (complete) {
