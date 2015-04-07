@@ -1423,7 +1423,6 @@ define([
                 _showAppBars: function _Overlay_showAppBars(bars, keyboardInvoked) {
                     var allBarsAnimationPromises = bars.map(function (bar) {
                         bar._keyboardInvoked = keyboardInvoked;
-                        bar._doNotFocus = false;
                         bar._show();
                         return bar._animationPromise;
                     });

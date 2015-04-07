@@ -170,104 +170,6 @@ define([
                 return _LegacyAppBars;
             }
 
-            // Sets focus to the last _LegacyAppBar in the provided appBars array with given placement.
-            // Returns true if focus was set.  False otherwise.
-            function _setFocusToPreviousAppBarHelper(startIndex, appBarPlacement, appBars) {
-                var appBar;
-                for (var i = startIndex; i >= 0; i--) {
-                    appBar = appBars[i].winControl;
-                    if (appBar
-                     && appBar.placement === appBarPlacement
-                     && appBar.opened
-                     && appBar._focusOnLastFocusableElement
-                     && appBar._focusOnLastFocusableElement()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            // Sets focus to the last tab stop of the previous _LegacyAppBar
-            // _LegacyAppBar tabbing order:
-            //    1) Bottom _LegacyAppBars
-            //    2) Top _LegacyAppBars
-            // DOM order is respected, because an _LegacyAppBar should not have a defined tabIndex
-            function _setFocusToPreviousAppBar() {
-                /*jshint validthis: true */
-                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                if (!appBars.length) {
-                    return;
-                }
-
-                var thisAppBarIndex = 0;
-                for (var i = 0; i < appBars.length; i++) {
-                    if (appBars[i] === this.parentElement) {
-                        thisAppBarIndex = i;
-                        break;
-                    }
-                }
-
-                var appBarControl = this.parentElement.winControl;
-                if (appBarControl.placement === _Constants.appBarPlacementBottom) {
-                    // Bottom appBar: Focus order: (1)previous bottom appBars (2)top appBars (3)bottom appBars
-                    if (thisAppBarIndex && _setFocusToPreviousAppBarHelper(thisAppBarIndex - 1, _Constants.appBarPlacementBottom, appBars)) { return; }
-                    if (_setFocusToPreviousAppBarHelper(appBars.length - 1, _Constants.appBarPlacementTop, appBars)) { return; }
-                    if (_setFocusToPreviousAppBarHelper(appBars.length - 1, _Constants.appBarPlacementBottom, appBars)) { return; }
-                } else if (appBarControl.placement === _Constants.appBarPlacementTop) {
-                    // Top appBar: Focus order: (1)previous top appBars (2)bottom appBars (3)top appBars
-                    if (thisAppBarIndex && _setFocusToPreviousAppBarHelper(thisAppBarIndex - 1, _Constants.appBarPlacementTop, appBars)) { return; }
-                    if (_setFocusToPreviousAppBarHelper(appBars.length - 1, _Constants.appBarPlacementBottom, appBars)) { return; }
-                    if (_setFocusToPreviousAppBarHelper(appBars.length - 1, _Constants.appBarPlacementTop, appBars)) { return; }
-                }
-            }
-
-            // Sets focus to the first _LegacyAppBar in the provided appBars array with given placement.
-            // Returns true if focus was set.  False otherwise.
-            function _setFocusToNextAppBarHelper(startIndex, appBarPlacement, appBars) {
-                var appBar;
-                for (var i = startIndex; i < appBars.length; i++) {
-                    appBar = appBars[i].winControl;
-                    if (appBar
-                     && appBar.placement === appBarPlacement
-                     && appBar.opened
-                     && appBar._focusOnFirstFocusableElement
-                     && appBar._focusOnFirstFocusableElement()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            // Sets focus to the first tab stop of the next _LegacyAppBar
-            // _LegacyAppBar tabbing order:
-            //    1) Bottom _LegacyAppBars
-            //    2) Top _LegacyAppBars
-            // DOM order is respected, because an _LegacyAppBar should not have a defined tabIndex
-            function _setFocusToNextAppBar() {
-                /*jshint validthis: true */
-                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-
-                var thisAppBarIndex = 0;
-                for (var i = 0; i < appBars.length; i++) {
-                    if (appBars[i] === this.parentElement) {
-                        thisAppBarIndex = i;
-                        break;
-                    }
-                }
-
-                if (this.parentElement.winControl.placement === _Constants.appBarPlacementBottom) {
-                    // Bottom appBar: Focus order: (1)next bottom appBars (2)top appBars (3)bottom appBars
-                    if (_setFocusToNextAppBarHelper(thisAppBarIndex + 1, _Constants.appBarPlacementBottom, appBars)) { return; }
-                    if (_setFocusToNextAppBarHelper(0, _Constants.appBarPlacementTop, appBars)) { return; }
-                    if (_setFocusToNextAppBarHelper(0, _Constants.appBarPlacementBottom, appBars)) { return; }
-                } else if (this.parentElement.winControl.placement === _Constants.appBarPlacementTop) {
-                    // Top appBar: Focus order: (1)next top appBars (2)bottom appBars (3)top appBars
-                    if (_setFocusToNextAppBarHelper(thisAppBarIndex + 1, _Constants.appBarPlacementTop, appBars)) { return; }
-                    if (_setFocusToNextAppBarHelper(0, _Constants.appBarPlacementBottom, appBars)) { return; }
-                    if (_setFocusToNextAppBarHelper(0, _Constants.appBarPlacementTop, appBars)) { return; }
-                }
-            }
-
             // Updates the firstDiv & finalDiv of all shown _LegacyAppBars
             function _updateAllAppBarsFirstAndFinalDiv() {
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -741,7 +643,6 @@ define([
                     // Just wrap the private one, turning off keyboard invoked flag
                     this._writeProfilerMark("show,StartTM");
                     this._keyboardInvoked = false;
-                    this._doNotFocus = !!this.sticky;
                     this._show();
                 },
 
@@ -758,28 +659,18 @@ define([
                     this._changeVisiblePosition(toPosition, showing);
 
                     if (showing) {
-                        // Configure shown state for lightdismiss & sticky appbars.
-                        if (!this.sticky) {
-                            // Need click-eating div to be visible ASAP.
-                            _Overlay._Overlay._showClickEatingDivAppBar();
-                        }
+                        // Need click-eating div to be visible ASAP.
+                        _Overlay._Overlay._showClickEatingDivAppBar();
 
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
-                        if (!this.sticky && _isThereVisibleNonStickyBar()) {
-                            _updateAllAppBarsFirstAndFinalDiv();
-                        } else {
-                            this._updateFirstAndFinalDiv();
+                        this._updateFirstAndFinalDiv();
+                        
+                        // Store what had focus if nothing currently is stored
+                        if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
+                            _storePreviousFocus(_Global.document.activeElement);
                         }
 
-                        // Check if we should steal focus
-                        if (!this._doNotFocus && this._shouldStealFocus()) {
-                            // Store what had focus if nothing currently is stored
-                            if (!_Overlay._Overlay._ElementWithFocusPreviousToAppBar) {
-                                _storePreviousFocus(_Global.document.activeElement);
-                            }
-
-                            this._layoutImpl.setFocusOnShow();
-                        }
+                        this._layoutImpl.setFocusOnShow();
                     }
                 },
 
@@ -870,15 +761,8 @@ define([
                             }
                         }
 
-                        // If we are hiding the last lightDismiss _LegacyAppBar,
-                        //   then we need to update the tabStops of the other _LegacyAppBars
-                        if (!this.sticky && !_isThereVisibleNonStickyBar()) {
-                            _updateAllAppBarsFirstAndFinalDiv();
-                        }
-
                         // Reset these values
                         this._keyboardInvoked = false;
-                        this._doNotFocus = false;
                     }
                 },
 
@@ -1204,57 +1088,6 @@ define([
                     }
                 },
 
-                _isABottomAppBarInTheProcessOfShowing: function _LegacyAppBar_isABottomAppBarInTheProcessOfShowing() {
-                    var appbars = _Global.document.querySelectorAll("." + _Constants.appBarClass + "." + _Constants.bottomClass);
-                    for (var i = 0; i < appbars.length; i++) {
-                        if (appbars[i].winAnimating === displayModeVisiblePositions.shown) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                },
-
-                // Returns true if
-                //   1) This is a bottom appbar
-                //   2) No appbar has focus and a bottom appbar is not in the process of showing
-                //   3) What currently has focus is neither a bottom appbar nor a top appbar
-                //      AND a bottom appbar is not in the process of showing.
-                // Otherwise Returns false
-                _shouldStealFocus: function _LegacyAppBar_shouldStealFocus() {
-                    var activeElementAppBar = _Overlay._Overlay._isAppBarOrChild(_Global.document.activeElement);
-                    if (this._element === activeElementAppBar) {
-                        // This appbar already has focus and we don't want to move focus
-                        // from where it currently is in this appbar.
-                        return false;
-                    }
-                    if (this._placement === _Constants.appBarPlacementBottom) {
-                        // This is a bottom appbar
-                        return true;
-                    }
-
-                    var isBottomAppBarShowing = this._isABottomAppBarInTheProcessOfShowing();
-                    if (!activeElementAppBar) {
-                        // Currently no appbar has focus.
-                        // Return true if a bottom appbar is not in the process of showing.
-                        return !isBottomAppBarShowing;
-                    }
-                    if (!activeElementAppBar.winControl) {
-                        // This should not happen, but if it does we want to make sure
-                        // that an _LegacyAppBar ends up with focus.
-                        return true;
-                    }
-                    if ((activeElementAppBar.winControl._placement !== _Constants.appBarPlacementBottom)
-                     && (activeElementAppBar.winControl._placement !== _Constants.appBarPlacementTop)
-                     && !isBottomAppBarShowing) {
-                        // What currently has focus is neither a bottom appbar nor a top appbar
-                        // -and-
-                        // a bottom appbar is not in the process of showing.
-                        return true;
-                    }
-                    return false;
-                },
-
                 // Set focus to the passed in _LegacyAppBar
                 _setFocusToAppBar: function _LegacyAppBar_setFocusToAppBar(useSetActive, scroller) {
                     if (!this._focusOnFirstFocusableElement(useSetActive, scroller)) {
@@ -1485,15 +1318,14 @@ define([
                     // Create and add the firstDiv & finalDiv if they don't already exist
                     if (!appBarFirstDiv) {
                         // Add a firstDiv that will be the first child of the appBar.
-                        // On focus set focus to the previous appBar.
-                        // The div should only be focusable if there are shown non-sticky _LegacyAppBars.
+                        // On focus set focus to the last element of the AppBar.
                         appBarFirstDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFirstDiv.style.display = "inline";
                         appBarFirstDiv.className = _Constants.firstDivClass;
                         appBarFirstDiv.tabIndex = -1;
                         appBarFirstDiv.setAttribute("aria-hidden", "true");
-                        _ElementUtilities._addEventListener(appBarFirstDiv, "focusin", _setFocusToPreviousAppBar, false);
+                        _ElementUtilities._addEventListener(appBarFirstDiv, "focusin", this._focusOnLastFocusableElementOrThis.bind(this), false);
                         // add to beginning
                         if (this._element.children[0]) {
                             this._element.insertBefore(appBarFirstDiv, this._element.children[0]);
@@ -1503,15 +1335,14 @@ define([
                     }
                     if (!appBarFinalDiv) {
                         // Add a finalDiv that will be the last child of the appBar.
-                        // On focus set focus to the next appBar.
-                        // The div should only be focusable if there are shown non-sticky _LegacyAppBars.
+                        // On focus set focus to the first element of the AppBar.
                         appBarFinalDiv = _Global.document.createElement("div");
                         // display: inline is needed so that the div doesn't take up space and cause the page to scroll on focus
                         appBarFinalDiv.style.display = "inline";
                         appBarFinalDiv.className = _Constants.finalDivClass;
                         appBarFinalDiv.tabIndex = -1;
                         appBarFinalDiv.setAttribute("aria-hidden", "true");
-                        _ElementUtilities._addEventListener(appBarFinalDiv, "focusin", _setFocusToNextAppBar, false);
+                        _ElementUtilities._addEventListener(appBarFinalDiv, "focusin", this._focusOnFirstFocusableElementOrThis.bind(this), false);
                         this._element.appendChild(appBarFinalDiv);
                     }
 
@@ -1525,21 +1356,11 @@ define([
                     this._invokeButton.tabIndex = highestTabIndex;
 
                     // Update the tabIndex of the firstDiv & finalDiv
-                    if (_isThereVisibleNonStickyBar()) {
-
-                        if (appBarFirstDiv) {
-                            appBarFirstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(elms);
-                        }
-                        if (appBarFinalDiv) {
-                            appBarFinalDiv.tabIndex = highestTabIndex;
-                        }
-                    } else {
-                        if (appBarFirstDiv) {
-                            appBarFirstDiv.tabIndex = -1;
-                        }
-                        if (appBarFinalDiv) {
-                            appBarFinalDiv.tabIndex = -1;
-                        }
+                    if (appBarFirstDiv) {
+                        appBarFirstDiv.tabIndex = _ElementUtilities._getLowestTabIndexInList(elms);
+                    }
+                    if (appBarFinalDiv) {
+                        appBarFinalDiv.tabIndex = highestTabIndex;
                     }
                 },
 
