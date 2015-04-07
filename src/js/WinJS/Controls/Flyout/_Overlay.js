@@ -515,6 +515,9 @@ define([
                         this._queuedToShow = [];
                         this._queuedToHide = [];
                     }
+                    
+                    // Do our derived classes hide stuff
+                    this._endHide();
 
                     // We're hidden now
                     if (this._doNext === "hide") {
@@ -530,6 +533,10 @@ define([
                     // the afterHide event in case it triggers a show() and they
                     // have something to do in beforeShow that requires afterHide first.
                     Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._Overlay._checkDoNext");
+                },
+                
+                _endHide: function _Overlay_endHide() {
+                    // Nothing by default
                 },
 
                 _checkDoNext: function _Overlay_checkDoNext() {

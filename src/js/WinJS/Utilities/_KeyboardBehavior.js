@@ -13,30 +13,56 @@ define([
     if (!_Global.document) {
         return;
     }
+    
+    var InputTypes = {
+        touch: "touch",
+        pen: "pen",
+        mouse: "mouse",
+        keyboard: "keyboard"
+    };
+    var _lastInputType = InputTypes.mouse;
+    
+    // Keys should be the same as the values for a PointerEvent's pointerType.
+    var pointerTypeToInputType = {
+        // IE 10 uses numbers for its pointerType
+        2: InputTypes.touch,
+        3: InputTypes.pen,
+        4: InputTypes.mouse,
+        
+        // Others use strings for their pointerTypes
+        touch: InputTypes.touch,
+        pen: InputTypes.pen,
+        mouse: InputTypes.mouse
+    };
 
-    var _keyboardSeenLast = false;
-
-    _ElementUtilities._addEventListener(_Global, "pointerdown", function () {
-        if (_keyboardSeenLast) {
-            _keyboardSeenLast = false;
-        }
+    _ElementUtilities._addEventListener(_Global, "pointerdown", function (eventObject) {
+        _lastInputType = pointerTypeToInputType[eventObject.pointerType] || InputTypes.mouse;
     }, true);
 
     _Global.addEventListener("keydown", function () {
-        if (!_keyboardSeenLast) {
-            _keyboardSeenLast = true;
-        }
+        _lastInputType = InputTypes.keyboard;
     }, true);
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _keyboardSeenLast: {
             get: function _keyboardSeenLast_get() {
-                return _keyboardSeenLast;
+                return _lastInputType === InputTypes.keyboard;
             },
             set: function _keyboardSeenLast_set(value) {
-                _keyboardSeenLast = value;
+                _lastInputType = (value ? InputTypes.keyboard : InputTypes.mouse);
             }
         },
+        _lastInputType: {
+            get: function _lastInputType_get() {
+                return _lastInputType;
+            },
+            set: function _lastInputType_set(value) {
+                if (InputTypes[value]) {
+                    _lastInputType = value;
+                }
+            }
+        },
+        _InputTypes: InputTypes,
         _WinKeyboard: function (element) {
             // Win Keyboard behavior is a solution that would be similar to -ms-keyboard-focus.
             // It monitors the last input (keyboard/mouse) and adds/removes a win-keyboard class

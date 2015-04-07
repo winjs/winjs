@@ -666,6 +666,13 @@ declare module WinJS {
         var _RIGHT_MSPOINTER_BUTTON;
         var _selectedClass;
         var _keyboardSeenLast;
+        var _lastInputType;
+        var _InputTypes: {
+            mouse: string;
+            keyboard: string;
+            touch: string;
+            pen: string;
+        };
         var _itemFocusOutlineClass;
         var _itemBoxClass;
         var _itemClass;

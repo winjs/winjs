@@ -63,6 +63,8 @@ define([
         menuClass: "win-menu",
         menuContainsToggleCommandClass: "win-menu-containstogglecommand",
         menuContainsFlyoutCommandClass: "win-menu-containsflyoutcommand",
+        menuMouseSpacingClass: "win-menu-mousespacing",
+        menuTouchSpacingClass: "win-menu-touchspacing",
         menuCommandHoverDelay: 400,
 
         // Other class names
