@@ -82,7 +82,6 @@ module Helper.AppBar {
                 LiveUnit.Assert.fail("TEST ERROR: Encountered unknown Placement enum value: " + placement);
                 break;
         }
-
     }
 
     export function useSynchronousAnimations(appBar: WinJS.UI.PrivateAppBar) {

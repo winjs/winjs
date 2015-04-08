@@ -422,6 +422,12 @@ declare module WinJS {
                 commandingSurfaceEl: HTMLElement;
             };
             _commandingSurface: WinJS.UI.PrivateCommandingSurface;
+            _shouldAdjustForShowingKeyboard: () => boolean;
+            _handleShowingKeyboard: () => Promise<any>;
+            _handleHidingKeyboard: () => void;
+            _updateDomImpl_renderedState: {
+                adjustedOffsets: { top: string; bottom: string; }; 
+            }
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {

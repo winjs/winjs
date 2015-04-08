@@ -872,6 +872,11 @@ export declare module _resizeNotifier {
     export function unsubscribe(element: HTMLElement, handler: (ev: any) => any): void;
 }
 
+export declare module _inputPaneListener {
+    export function addEventListener(element: HTMLElement, event: string,  handler: (ev: any) => any): void;
+    export function removeEventListener(element: HTMLElement, event: string, handler: (ev: any) => any): void;
+}
+
 
 export declare function _addInsertedNotifier(element: HTMLElement): void;
 export declare function _inDom(element: HTMLElement): Promise<any>;

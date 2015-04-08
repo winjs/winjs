@@ -13,17 +13,13 @@ module CorsicaTests {
     var AppBar = <typeof WinJS.UI.PrivateAppBar> WinJS.UI.AppBar;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
     var Util = WinJS.Utilities;
-    var _Constants;
-
-    WinJS.Utilities._require(["WinJS/Controls/AppBar/_Constants"], function (constants) {
-        _Constants = constants;
-    })
+    var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
 
     // Taking the registration mechanism as a parameter allows us to use this code to test both
     // DOM level 0 (e.g. onbeforeopen) and DOM level 2 (e.g. addEventListener) events.
     function testEvents(testElement, registerForEvent: (appBar: WinJS.UI.PrivateAppBar, eventName: string, handler: Function) => void) {
         var appBar = new AppBar(testElement);
-        Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+        Helper.AppBar.useSynchronousAnimations(appBar);
 
         var counter = 0;
         registerForEvent(appBar, _Constants.EventNames.beforeOpen, () => {
@@ -130,7 +126,7 @@ module CorsicaTests {
             LiveUnit.Assert.isNotNull(appBar.element, "An element should be created when one is not passed to the constructor");
         }
 
-        testDataProperty() { 
+        testDataProperty() {
             // Verify default (empty)
             var appBar = new AppBar(this._element);
             LiveUnit.Assert.areEqual(0, appBar.data.length, "Empty AppBar should have length 0");
@@ -150,7 +146,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "opt 2" })
             ]);
 
-            var appBar = new AppBar(this._element, {data: data});
+            var appBar = new AppBar(this._element, { data: data });
 
             // set data to invalid value
             var property = "data";
@@ -190,7 +186,7 @@ module CorsicaTests {
 
         testDispose() {
             var appBar = new AppBar(this._element);
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
             appBar.open();
 
             var msg = "Shouldn't have fired due to control being disposed";
@@ -1356,7 +1352,7 @@ module CorsicaTests {
             appBar.dispose();
 
             Object.keys(AppBar.Placement).forEach(function (placement) {
-                appBar = new AppBar(null, { placement: placement});
+                appBar = new AppBar(null, { placement: placement });
                 LiveUnit.Assert.areEqual(placement, appBar.placement, "placement does not match the value passed to the constructor.");
                 appBar.dispose();
             })
@@ -1393,7 +1389,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var appBar = new AppBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             appBar.open();
             LiveUnit.Assert.isTrue(appBar.opened)
@@ -1409,7 +1405,7 @@ module CorsicaTests {
 
             // Initialize opened.
             var appBar = new AppBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             var msg = "Opening an already opened AppBar should not fire events";
             appBar.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
@@ -1449,7 +1445,7 @@ module CorsicaTests {
 
             // Initialize closed.
             var appBar = new AppBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             var msg = "Closing an already closed AppBar should not fire events";
             appBar.onbeforeopen = failEventHandler(_Constants.EventNames.beforeOpen, msg);
@@ -1485,7 +1481,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var appBar = new AppBar(this._element, { data: data, opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
             Helper.AppBar.verifyRenderedClosed(appBar);
 
             appBar.opened = true;
@@ -1504,7 +1500,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
             var appBar = new AppBar(this._element, { data: data, opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             appBar._commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isFalse(appBar.opened)
@@ -1529,7 +1525,7 @@ module CorsicaTests {
 
         testBeforeOpenIsCancelable() {
             var appBar = new AppBar(this._element, { opened: false });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             appBar.onbeforeopen = function (eventObject) {
                 eventObject.preventDefault();
@@ -1547,7 +1543,7 @@ module CorsicaTests {
 
         testBeforeCloseIsCancelable() {
             var appBar = new AppBar(this._element, { opened: true });
-            Helper._CommandingSurface.useSynchronousAnimations(appBar._commandingSurface);
+            Helper.AppBar.useSynchronousAnimations(appBar);
 
             appBar.onbeforeclose = function (eventObject) {
                 eventObject.preventDefault();
@@ -1590,6 +1586,64 @@ module CorsicaTests {
             var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
+        }
+
+        testPositionOffsetsAreCalculateAtConstructionTime() {
+
+            var badOffset = "-1px";
+
+            // Verify that the AppBar sets its element's inline style offsets during construction. This is to support scenarios where an AppBar
+            // is constructed while the IHM is already showing.
+            this._element.style.top = badOffset;
+            this._element.style.bottom = badOffset;
+            var appBar = new AppBar(this._element);
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.top, "AppBar style.top should be set during construction.");
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.bottom, "AppBar style.bottom should be set during construction.");
+        }
+
+        testPositionOffsetsAreUpdatedCorrectly(complete) {
+            // AppBar needs to be aware of the IHM when positioning itself to the top or bottom of the visible document.
+            // Verify scenarios that should update the AppBar element offsets.
+            var badOffset = "-1px";
+            var appBar = new AppBar(this._element, { placement: AppBar.Placement.bottom });
+
+            function resetOffsets() {
+                appBar.element.style.top = badOffset;
+                appBar.element.style.bottom = badOffset;
+                appBar._updateDomImpl_renderedState.adjustedOffsets = { top: badOffset, bottom: badOffset };
+            }
+
+            // Verify that updating AppBar's placement property will update the inline style offsets. Particularly important in scenarios
+            // Where placement is set while the IHM is already shown. AppBar's changing to top will have to clear IHM offsets and AppBars 
+            // changing to bottom will have to add them.
+            resetOffsets();
+            appBar.placement = AppBar.Placement.top;
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.top, "Setting placement property should update AppBar style.top");
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.bottom, "Setting placement property should update AppBar style.bottom");
+            resetOffsets();
+            appBar.placement = AppBar.Placement.bottom;
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.top, "Setting placement should update AppBar style.top");
+            LiveUnit.Assert.areNotEqual(badOffset, this._element.style.bottom, "Setting placement should update AppBar style.bottom");
+
+            // Call the AppBar's IHM "showing" event handler to verify that AppBar offsets are updated in response to the IHM showing.
+            LiveUnit.Assert.areEqual(AppBar.Placement.bottom, appBar.placement, "TEST ERROR: scenario requires AppBar with placement 'bottom'");
+            var origFunc = AppBar.prototype._shouldAdjustForShowingKeyboard;
+            AppBar.prototype._shouldAdjustForShowingKeyboard = () => { return true; };
+            resetOffsets();
+            appBar._handleShowingKeyboard().then(() => {
+                LiveUnit.Assert.areNotEqual(badOffset, this._element.style.top, "AppBar should update style.top after IHM has finished showing");
+                LiveUnit.Assert.areNotEqual(badOffset, this._element.style.bottom, "AppBar should update style.bottom after IHM has finished showing");
+                AppBar.prototype._shouldAdjustForShowingKeyboard = origFunc;
+
+                // Call the AppBar's IHM "hiding" event handler to verify that the bottom AppBar offsets are updated in response to the IHM hiding.
+                LiveUnit.Assert.areEqual(AppBar.Placement.bottom, appBar.placement, "TEST ERROR: scenario requires AppBar with placement 'bottom'");
+                resetOffsets();
+                appBar._handleHidingKeyboard();
+                LiveUnit.Assert.areNotEqual(badOffset, this._element.style.top, "AppBar should update style.top when the IHM starts to hide");
+                LiveUnit.Assert.areNotEqual(badOffset, this._element.style.bottom, "AppBar should update style.bottom when the IHM starts to hide");
+
+                complete();
+            });
         }
     }
 }

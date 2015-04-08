@@ -18,6 +18,7 @@ import _Flyout = require("../../Controls/Flyout");
 import _Global = require("../../Core/_Global");
 import _Hoverable = require("../../Utilities/_Hoverable");
 import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
+import _KeyboardInfo = require('../../Utilities/_KeyboardInfo');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
@@ -25,12 +26,15 @@ import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
 import _OpenCloseMachine = require('../../Utilities/_OpenCloseMachine');
 import _Signal = require('../../_Signal');
+import _WinRT = require('../../Core/_WinRT');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/styles-appbar"]);
 require(["require-style!less/colors-appbar"]);
 
 "use strict";
+
+var keyboardInfo = _KeyboardInfo._KeyboardInfo;
 
 var strings = {
     get ariaLabel() { return _Resources._getWinJSString("ui/appBarAriaLabel").value; },
@@ -106,6 +110,9 @@ export class AppBar {
     private _disposed: boolean;
     private _commandingSurface: _ICommandingSurface._CommandingSurface;
     private _isOpenedMode: boolean;
+    private _adjustedOffsets: { top: string; bottom: string };
+    private _handleShowingKeyboardBound: (ev: any) => Promise<any>;
+    private _handleHidingKeyboardBound: (ev: any) => any;
 
     private _dom: {
         root: HTMLElement;
@@ -171,6 +178,9 @@ export class AppBar {
                     this._commandingSurface.overflowDirection = "top";
                     break;
             }
+
+            this._adjustedOffsets = this._computeAdjustedOffsets();
+
             this._commandingSurface.deferredDomUpate();
         }
     }
@@ -212,7 +222,6 @@ export class AppBar {
         var stateMachine = new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this.element,
             onOpen: () => {
-
                 this._synchronousOpen();
 
                 // Animate
@@ -232,6 +241,13 @@ export class AppBar {
                 this._updateDomImpl();
             }
         });
+
+        // Events
+        this._handleShowingKeyboardBound = this._handleShowingKeyboard.bind(this);
+        this._handleHidingKeyboardBound = this._handleHidingKeyboard.bind(this);
+        _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._handleShowingKeyboardBound);
+        _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._handleHidingKeyboardBound);
+
         // Initialize private state.
         this._disposed = false;
         this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
@@ -302,8 +318,12 @@ export class AppBar {
         }
 
         this._disposed = true;
-        // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine and synchronously complete any animations that might have been running.
+        // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine
+        // and synchronously complete any animations that might have been running.
         this._commandingSurface.dispose();
+
+        _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._handleShowingKeyboardBound);
+        _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._handleHidingKeyboardBound);
 
         _Dispose.disposeSubTree(this.element);
     }
@@ -360,6 +380,59 @@ export class AppBar {
         };
     }
 
+    private _handleShowingKeyboard(event: { detail: { originalEvent: _WinRT.Windows.UI.ViewManagement.InputPaneVisibilityEventArgs } }): Promise<any> {
+        // If the IHM resized the window, we can rely on -ms-device-fixed positioning to remain visible.
+        // If the IHM does not resize the window we will need to adjust our offsets to avoid being occluded
+        // The IHM does not cause a window resize to happen right away, set a timeout to check if the viewport
+        // has been resized after enough time has passed for both the IHM animation, and scroll-into-view, to
+        // complete.
+
+        // If focus is in the AppBar, tell the platform we will move ourselves.
+        if (this._dom.root.contains(<HTMLElement>_Global.document.activeElement)) {
+            var inputPaneEvent = event.detail.originalEvent;
+            inputPaneEvent.ensuredFocusedElementInView = true;
+        }
+
+        var duration = keyboardInfo._animationShowLength + keyboardInfo._scrollTimeout;
+        // Returns a promise for unit tests to verify the correct behavior after the timeout.
+        return Promise.timeout(duration).then(
+            () => {
+                if (this._shouldAdjustForShowingKeyboard() && !this._disposed) {
+                    this._adjustedOffsets = this._computeAdjustedOffsets();
+                    this._commandingSurface.deferredDomUpate();
+                }
+            });
+    }
+
+    private _shouldAdjustForShowingKeyboard(): boolean {
+        // Overwriteable for unit tests
+
+        // Determines if an AppBar needs to adjust its position to move in response to a shown IHM, or if it can
+        // just ride the bottom of the visual viewport to remain visible. The latter requires that the IHM has
+        // caused the viewport to resize.
+        return keyboardInfo._visible && !keyboardInfo._isResized;
+    }
+
+    private _handleHidingKeyboard() {
+        // Make sure AppBar has the correct offsets since it could have been displaced by the IHM.
+        this._adjustedOffsets = this._computeAdjustedOffsets();
+        this._commandingSurface.deferredDomUpate();
+    }
+
+    private _computeAdjustedOffsets() {
+        // Position the AppBar element relative to the top or bottom edge of the visible
+        // document.
+        var offsets = { top: "", bottom: "" };
+
+        if (this._placement === Placement.bottom) {
+            // If the IHM is open, the bottom of the visual viewport may or may not be occluded
+            offsets.bottom = keyboardInfo._visibleDocBottomOffset + "px";
+        } else if (this._placement === Placement.top) {
+            offsets.top = keyboardInfo._visibleDocTop + "px";
+        }
+        return offsets;
+    }
+
     private _synchronousOpen(): void {
         this._isOpenedMode = true;
         this._updateDomImpl();
@@ -379,6 +452,7 @@ export class AppBar {
         isOpenedMode: <boolean>undefined,
         placement: <string>undefined,
         closedDisplayMode: <string>undefined,
+        adjustedOffsets: { top: <string>undefined, bottom: <string>undefined },
     };
     private _updateDomImpl(): void {
         var rendered = this._updateDomImpl_renderedState;
@@ -402,6 +476,15 @@ export class AppBar {
             removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
             addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
             rendered.closedDisplayMode = this.closedDisplayMode;
+        }
+
+        if (rendered.adjustedOffsets.top !== this._adjustedOffsets.top) {
+            this._dom.root.style.top = this._adjustedOffsets.top;
+            rendered.adjustedOffsets.top = this._adjustedOffsets.top;
+        }
+        if (rendered.adjustedOffsets.bottom !== this._adjustedOffsets.bottom) {
+            this._dom.root.style.bottom = this._adjustedOffsets.bottom;
+            rendered.adjustedOffsets.bottom = this._adjustedOffsets.bottom;
         }
 
         this._commandingSurface.updateDomImpl();
