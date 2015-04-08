@@ -115,9 +115,6 @@ define([
                 // Handle "esc" & "tab" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown, true);
 
-                // Make a click eating div
-                _Overlay._Overlay._createClickEatingDivAppBar();
-
                 // Start settings hidden
                 this._element.style.visibilty = "hidden";
                 this._element.style.display = "none";
@@ -142,13 +139,6 @@ define([
                 if (label === null || label === "" || label === undefined) {
                     this._element.setAttribute("aria-label", strings.ariaLabel);
                 }
-
-                // Need to hide ourselves if we lose focus
-                var that = this;
-                _ElementUtilities._addEventListener(this._element, "focusout", function (e) { _Overlay._Overlay._hideIfLostFocus(that, e); }, false);
-
-                // Make sure additional _Overlay event handlers are hooked up.
-                this._handleOverlayEventsForFlyoutOrSettingsFlyout();
 
                 // Make sure animations are hooked up
                 this._currentAnimateIn = this._animateSlideIn;
@@ -269,9 +259,6 @@ define([
                 _show: function SettingsFlyout_show() {
                     // We call our base "_baseShow" because SettingsFlyout overrides show
                     this._baseShow();
-                    // Need click-eating div to be visible,
-                    // (even if now hiding, we'll show and need click eater)
-                    _Overlay._Overlay._showClickEatingDivAppBar();
                 },
 
                 _endShow: function SettingsFlyout_endShow() {
@@ -336,8 +323,6 @@ define([
 
                 _hide: function SettingsFlyout_hide() {
                     if (this._baseHide()) {
-                        // Need click-eating div to be hidden
-                        _Overlay._Overlay._hideClickEatingDivAppBar();
                     }
                 },
 
@@ -415,11 +400,7 @@ define([
                 },
 
                 _handleKeyDown: function SettingsFlyout_handleKeyDown(event) {
-                    if (event.keyCode === Key.escape) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.winControl._dismiss();
-                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
+                    if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                            && (this.children[0] === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();

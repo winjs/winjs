@@ -115,7 +115,6 @@ define([
                     // Empties the _cascadingStack and hides all flyouts.
                     var headFlyout = this.getAt(0);
                     if (headFlyout) {
-                        headFlyout._keyboardInvoked = keyboardInvoked;
                         this.collapseFlyout(headFlyout);
                     }
                 },
@@ -178,8 +177,6 @@ define([
                         var index = this.indexOfElement(target);
                         if (index >= 1) {
                             var subFlyout = this.getAt(index);
-                            // Show a focus rect where focus is restored.
-                            subFlyout._keyboardInvoked = true;
                             this.collapseFlyout(subFlyout);
                             // Prevent document scrolling
                             event.preventDefault();
@@ -240,9 +237,6 @@ define([
                     // Call the base overlay constructor helper
                     this._baseOverlayConstructor(element, options);
 
-                    // Make a click eating div
-                    _Overlay._Overlay._createClickEatingDivFlyout();
-
                     // Start flyouts hidden
                     this._element.style.visibilty = "hidden";
                     this._element.style.display = "none";
@@ -270,9 +264,6 @@ define([
 
                     _ElementUtilities._addEventListener(this.element, "focusin", this._handleFocusIn.bind(this), false);
                     _ElementUtilities._addEventListener(this.element, "focusout", this._handleFocusOut.bind(this), false);
-
-                    // Make sure additional _Overlay event handlers are hooked up
-                    this._handleOverlayEventsForFlyoutOrSettingsFlyout();
                 },
 
                 /// <field type="String" locid="WinJS.UI.Flyout.anchor" helpKeyword="WinJS.UI.Flyout.anchor">
@@ -403,7 +394,6 @@ define([
                     /// </signature>
                     // Just wrap the private one, turning off keyboard invoked flag
                     this._writeProfilerMark("hide,StartTM"); // The corresponding "stop" profiler mark is handled in _Overlay._baseEndHide().
-                    this._keyboardInvoked = false;
                     this._hide();
                 },
 
@@ -414,52 +404,7 @@ define([
                     Flyout._cascadeManager.collapseFlyout(this);
 
                     if (this._baseHide()) {
-                        // Return focus if this or the flyout CED has focus
-                        var active = _Global.document.activeElement;
-                        if (this._previousFocus
-                           && active
-                           && (this._element.contains(active)
-                               || _ElementUtilities.hasClass(active, _Overlay._Overlay._clickEatingFlyoutClass))
-                           && this._previousFocus.focus !== undefined) {
-
-                            // _isAppBarOrChild may return a CED or sentinal
-                            var appBar = _Overlay._Overlay._isAppBarOrChild(this._previousFocus);
-                            if (!appBar || (appBar.winControl && appBar.winControl.opened && !appBar.winAnimating)) {
-                                // Don't move focus back to a appBar that is hidden
-                                // We cannot rely on element.style.visibility because it will be visible while animating
-                                var role = this._previousFocus.getAttribute("role");
-                                var fHideRole = _Overlay._Overlay._keyboardInfo._visible && !this._keyboardWasUp;
-                                if (fHideRole) {
-                                    // Convince IHM to dismiss because it only came up after the flyout was up.
-                                    // Change aria role and back to get IHM to dismiss.
-                                    this._previousFocus.setAttribute("role", "");
-                                }
-
-                                if (this._keyboardInvoked) {
-                                    this._previousFocus.focus();
-                                } else {
-                                    _Overlay._Overlay._trySetActive(this._previousFocus);
-                                }
-                                active = _Global.document.activeElement;
-
-                                if (fHideRole) {
-                                    // Restore the role so that css is applied correctly
-                                    var previousFocus = this._previousFocus;
-                                    if (previousFocus) {
-                                        _BaseUtils._yieldForDomModification(function () {
-                                            previousFocus.setAttribute("role", role);
-                                        });
-                                    }
-                                }
-                            }
-                        }
-
-                        this._previousFocus = null;
-
-                        // Need click-eating div to be hidden if there are no other visible flyouts
-                        if (!this._isThereVisibleFlyout()) {
-                            _Overlay._Overlay._hideClickEatingDivFlyout();
-                        }
+                        // ADCOM: Restore focus?
                     }
                 },
 
@@ -501,11 +446,6 @@ define([
                         // Remember current values
                         this._currentPlacement = placement;
                         this._currentAlignment = alignment;
-                    }
-
-                    // Need click-eating div to be visible, no matter what
-                    if (!this._sticky) {
-                        _Overlay._Overlay._showClickEatingDivFlyout();
                     }
 
                     // If we're animating (eg baseShow is going to fail), or the cascadeManager is in the middle of a updating the cascade,
@@ -559,7 +499,7 @@ define([
                             // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
                             // collapse. Ensures that focus has already been restored to the correct element by the
                             // previous branch before we try to record it here.
-                            this._previousFocus = _Global.document.activeElement;
+                            // ADCOM: Restore focus?
 
                             if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
                                 // Put focus on the first child in the Flyout
@@ -573,10 +513,6 @@ define([
                 },
 
                 _endShow: function Flyout_endShow() {
-                    // Remember if the IHM was up since we may need to hide it when the flyout hides.
-                    // This check needs to happen after we've hidden any other visible flyouts from
-                    // the cascasde as a result of showing this flyout.
-                    this._keyboardWasUp = _Overlay._Overlay._keyboardInfo._visible;
                 },
 
                 _isLightDismissible: function Flyout_isLightDismissible() {
@@ -1033,34 +969,11 @@ define([
                     }
                 },
 
-                // Returns true if there is a flyout in the DOM that is not hidden
-                _isThereVisibleFlyout: function Flyout_isThereVisibleFlyout() {
-                    var flyouts = _Global.document.querySelectorAll("." + _Constants.flyoutClass);
-                    for (var i = 0; i < flyouts.length; i++) {
-                        var flyoutControl = flyouts[i].winControl;
-                        if (flyoutControl && !flyoutControl.hidden) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                },
-
                 _handleKeyDown: function Flyout_handleKeyDown(event) {
-                    // Escape closes flyouts but if the user has a text box with an IME candidate
-                    // window open, we want to skip the ESC key event since it is handled by the IME.
-                    // When the IME handles a key it sets event.keyCode === Key.IME for an easy check.
-                    if (event.keyCode === Key.escape && event.keyCode !== Key.IME) {
-                        // Show a focus rect on what we move focus to
-                        event.preventDefault();
-                        event.stopPropagation();
-                        this.winControl._keyboardInvoked = true;
-                        this.winControl._hide();
-                    } else if ((event.keyCode === Key.space || event.keyCode === Key.enter)
+                    if ((event.keyCode === Key.space || event.keyCode === Key.enter)
                          && (this === _Global.document.activeElement)) {
                         event.preventDefault();
                         event.stopPropagation();
-                        this.winControl._keyboardInvoked = true;
                         this.winControl.hide();
                     } else if (event.shiftKey && event.keyCode === Key.tab
                           && this === _Global.document.activeElement

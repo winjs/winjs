@@ -80,8 +80,6 @@ define([
 
         narrowClass: "win-narrow",
         wideClass: "win-wide",
-        _clickEatingAppBarClass: "win-appbarclickeater",
-        _clickEatingFlyoutClass: "win-flyoutmenuclickeater",
         _visualViewportClass: "win-visualviewport-space",
 
         // Event names
