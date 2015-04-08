@@ -33,7 +33,6 @@ define([
         /// <summary locid="WinJS.UI.Pivot">
         /// Tab control which displays a item of content.
         /// </summary>
-        /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
         /// </field>
         /// <icon src="ui_winjs.ui.pivot.12x12.png" width="12" height="12" />
         /// <icon src="ui_winjs.ui.pivot.16x16.png" width="16" height="16" />
@@ -689,7 +688,7 @@ define([
                 this._resizeHandlerBound = this._resizeHandler.bind(this);
                 this.element.addEventListener("mselementresize", this._resizeHandlerBound);
                 _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
-                this._viewportWidth = null;
+                this._viewportElWidth = null;
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                 this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
@@ -724,7 +723,6 @@ define([
             }, {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.element" helpKeyword="WinJS.UI.Pivot.element">
                 /// Gets the DOM element that hosts the Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 element: {
                     get: function () {
@@ -734,7 +732,6 @@ define([
 
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentLeft" helpKeyword="WinJS.UI.Pivot.customHeaderContentLeft">
                 /// Gets or sets the left custom header content.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 customHeaderContentLeft: {
                     get: function () {
@@ -749,7 +746,6 @@ define([
 
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentRight" helpKeyword="WinJS.UI.Pivot.customHeaderContentRight">
                 /// Gets or sets the right custom header content.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 customHeaderContentRight: {
                     get: function () {
@@ -765,7 +761,6 @@ define([
 
                 /// <field type="Boolean" locid="WinJS.UI.Pivot.locked" helpKeyword="WinJS.UI.Pivot.locked">
                 /// Gets or sets a value that specifies whether the Pivot is locked to the current item.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 locked: {
                     get: function () {
@@ -781,7 +776,6 @@ define([
 
                 /// <field type="WinJS.Binding.List" locid="WinJS.UI.Pivot.items" helpKeyword="WinJS.UI.Pivot.items">
                 /// Gets or sets the WinJS.Binding.List of PivotItem objects that belong to this Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 items: {
                     get: function () {
@@ -802,7 +796,6 @@ define([
 
                 /// <field type="String" locid="WinJS.UI.Pivot.title" helpKeyword="WinJS.UI.Pivot.title">
                 /// Gets or sets the title of the Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 title: {
                     get: function () {
@@ -821,7 +814,6 @@ define([
 
                 /// <field type="Number" integer="true" locid="WinJS.UI.Pivot.selectedIndex" helpKeyword="WinJS.UI.Pivot.selectedIndex">
                 /// Gets or sets the index of the item in view. This property is useful for restoring a previous view when your app launches or resumes.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 selectedIndex: {
                     get: function () {
@@ -849,7 +841,6 @@ define([
 
                 /// <field type="WinJS.UI.PivotItem" locid="WinJS.UI.Pivot.selectedItem" helpKeyword="WinJS.UI.Pivot.selectedItem">
                 /// Gets or sets the item in view. This property is useful for restoring a previous view when your app launches or resumes.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 selectedItem: {
                     get: function () {
@@ -868,7 +859,6 @@ define([
                     /// <summary locid="WinJS.UI.Pivot.dispose">
                     /// Disposes this control.
                     /// </summary>
-                    /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
                     if (this._disposed) {
                         return;
@@ -892,7 +882,6 @@ define([
                     /// Forces the control to relayout its content. This function is expected to be called
                     /// when the pivot element is manually resized.
                     /// </summary>
-                    /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
                     if (this._disposed) {
                         return;
@@ -902,19 +891,16 @@ define([
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onselectionchanged" helpKeyword="WinJS.UI.Pivot.onselectionchanged">
                 /// Raised when the user changes to a different item.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 onselectionchanged: createEvent(eventNames.selectionChanged),
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onitemanimationstart" helpKeyword="WinJS.UI.Pivot.onitemanimationstart">
                 /// Raised when the item's animation starts.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </field>
                 onitemanimationstart: createEvent(eventNames.itemAnimationStart),
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onitemanimationend" helpKeyword="WinJS.UI.Pivot.onitemanimationend">
                 /// Raised when the item's animation ends.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </field>
                 onitemanimationend: createEvent(eventNames.itemAnimationEnd),
 
@@ -965,9 +951,6 @@ define([
                         }
                         return this._headerItemsElWidth || Pivot._invalidViewportWidth;
                     },
-                    set: function (value) {
-                        this._headerItemsElWidth = value;
-                    }
                 },
 
                 _viewportWidth: {
@@ -980,9 +963,10 @@ define([
                         }
                         return this._viewportElWidth || Pivot._invalidViewportWidth;
                     },
-                    set: function (value) {
-                        this._viewportElWidth = value;
-                    }
+                },
+
+                _invalidateMeasures: function pivot_invalidateMeasures() {
+                    this._viewportElWidth = this._headerItemsElWidth = null;
                 },
 
                 // Lifecycle
@@ -1075,8 +1059,7 @@ define([
                     var oldHeaderItemsWidth = this._headerItemsWidth;
                     // Invalidate the viewportWidth and header items width, note that _viewportWidth and _headerItemsWidth are
                     // private properties that remeasure their values on access when their current value is null
-                    this._viewportWidth = null;
-                    this._headerItemsWidth = null;
+                    this._invalidateMeasures();
                     if (oldViewportWidth !== this._viewportWidth || oldHeaderItemsWidth !== this._headerItemsWidth) {
                         _Log.log && _Log.log('_resizeHandler from:' + oldViewportWidth + " to: " + this._viewportWidth);
 
