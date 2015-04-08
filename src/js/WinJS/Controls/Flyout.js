@@ -150,12 +150,6 @@ define([
                         this.collapseFlyout(subFlyout);
                     }
                 },
-                handleFocusOutOfCascade: function _CascadeManager_handleFocusOutOfCascade(event) {
-                    // Hide the entire cascade if focus has moved somewhere outside of it
-                    if (this.indexOfElement(event.relatedTarget) < 0) {
-                        this.collapseAll();
-                    }
-                },
                 // Compute the input type that is associated with the cascading stack on demand. Allows
                 // each Flyout in the cascade to adjust its sizing based on the current input type
                 // and to do it in a way that is consistent with the rest of the Flyouts in the cascade.
@@ -263,7 +257,6 @@ define([
                     this._currentAnimateOut = this._flyoutAnimateOut;
 
                     _ElementUtilities._addEventListener(this.element, "focusin", this._handleFocusIn.bind(this), false);
-                    _ElementUtilities._addEventListener(this.element, "focusout", this._handleFocusOut.bind(this), false);
                 },
 
                 /// <field type="String" locid="WinJS.UI.Flyout.anchor" helpKeyword="WinJS.UI.Flyout.anchor">
@@ -987,14 +980,6 @@ define([
                     // Else focus is only moving between elements in the flyout.
                     // Doesn't need to be handled by cascadeManager.
                 },
-                _handleFocusOut: function Flyout_handleFocusOut(event) {
-                    if (!this.element.contains(event.relatedTarget)) {
-                        Flyout._cascadeManager.handleFocusOutOfCascade(event);
-                    }
-                    // Else focus is only moving between elements in the flyout.
-                    // Doesn't need to be handled by cascadeManager.
-                },
-
 
                 // Create and add a new first div as the first child
                 _addFirstDiv: function Flyout_addFirstDiv() {

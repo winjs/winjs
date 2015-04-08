@@ -48,8 +48,6 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         _LegacyAppBar: _Base.Namespace._lazy(function () {
-            var Key = _ElementUtilities.Key;
-
             var EVENTS = {
                 beforeOpen: "beforeopen",
                 afterOpen: "afteropen",
@@ -100,20 +98,6 @@ define([
                         if (appbar && !element.disabled) {
                             appbar._manipulationChanged(event);
                         }
-                    }
-                }
-            }
-
-            // Updates the firstDiv & finalDiv of all shown _LegacyAppBars
-            function _updateAllAppBarsFirstAndFinalDiv() {
-                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                var appBar;
-                for (var i = 0; i < appBars.length; i++) {
-                    appBar = appBars[i].winControl;
-                    if (appBar
-                     && appBar.opened
-                     && appBar._updateFirstAndFinalDiv) {
-                        appBar._updateFirstAndFinalDiv();
                     }
                 }
             }
