@@ -89,43 +89,6 @@ define([
 
             // Hook into event
             var globalEventsInitialized = false;
-            var edgyHappening = null;
-
-            // Handler for the edgy starting/completed/cancelled events
-            function _completedEdgy(e) {
-                // If we had a right click on a flyout, ignore it.
-                if (_Overlay._Overlay._containsRightMouseClick &&
-                    e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.mouse) {
-                    return;
-                }
-                if (edgyHappening) {
-                    // Edgy was happening, just skip it
-                    edgyHappening = null;
-                } else {
-                    // Edgy wasn't happening, so toggle
-                    var keyboardInvoked = e.kind === _WinRT.Windows.UI.Input.EdgeGestureKind.keyboard;
-                    _LegacyAppBar._toggleAllAppBarsState(keyboardInvoked);
-                }
-            }
-
-            function _startingEdgy() {
-                if (!edgyHappening) {
-                    // Edgy wasn't happening, so toggle & start it
-                    edgyHappening = _LegacyAppBar._toggleAllAppBarsState(false);
-                }
-            }
-
-            function _canceledEdgy() {
-                // Shouldn't get here unless edgy was happening.
-                // Undo whatever we were doing.
-                var bars = _getDynamicBarsForEdgy();
-                if (edgyHappening === "showing") {
-                    _Overlay._Overlay._hideAppBars(bars, false);
-                } else if (edgyHappening === "hiding") {
-                    _Overlay._Overlay._showAppBars(bars, false);
-                }
-                edgyHappening = null;
-            }
 
             function _allManipulationChanged(event) {
                 var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -141,35 +104,6 @@ define([
                 }
             }
 
-            // Get all the non-sticky bars and return them.
-            // Returns array of _LegacyAppBar objects.
-            // The array also has _hidden and/or _shown set if ANY are hidden or shown.
-            function _getDynamicBarsForEdgy() {
-                var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                var len = elements.length;
-                var _LegacyAppBars = [];
-                _LegacyAppBars._shown = false;
-                _LegacyAppBars._hidden = false;
-                for (var i = 0; i < len; i++) {
-                    var element = elements[i];
-                    if (element.disabled) {
-                        // Skip disabled _LegacyAppBars
-                        continue;
-                    }
-                    var _LegacyAppBar = element.winControl;
-                    if (_LegacyAppBar) {
-                        _LegacyAppBars.push(_LegacyAppBar);
-                        if (_ElementUtilities.hasClass(_LegacyAppBar._element, _Constants.hiddenClass) || _ElementUtilities.hasClass(_LegacyAppBar._element, _Constants.hidingClass)) {
-                            _LegacyAppBars._hidden = true;
-                        } else {
-                            _LegacyAppBars._shown = true;
-                        }
-                    }
-                }
-
-                return _LegacyAppBars;
-            }
-
             // Updates the firstDiv & finalDiv of all shown _LegacyAppBars
             function _updateAllAppBarsFirstAndFinalDiv() {
                 var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
@@ -182,19 +116,6 @@ define([
                         appBar._updateFirstAndFinalDiv();
                     }
                 }
-            }
-
-            // Returns true if a visible non-sticky (light dismiss) _LegacyAppBar is found in the document
-            function _isThereVisibleNonStickyBar() {
-                var appBars = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                for (var i = 0; i < appBars.length; i++) {
-                    var appBarControl = appBars[i].winControl;
-                    if (appBarControl && !appBarControl.sticky &&
-                        (appBarControl.opened || appBarControl._element.winAnimating === displayModeVisiblePositions.shown)) {
-                        return true;
-                    }
-                }
-                return false;
             }
 
             var strings = {
@@ -298,12 +219,6 @@ define([
 
                 // Attach global event handlers
                 if (!globalEventsInitialized) {
-                    // We'll trigger on invoking.  Could also have invoked or canceled
-                    // Eventually we may want click up on invoking and drop back on invoked.
-                    Application.addEventListener("edgystarting", _startingEdgy);
-                    Application.addEventListener("edgycompleted", _completedEdgy);
-                    Application.addEventListener("edgycanceled", _canceledEdgy);
-
                     // Need to know if the IHM is done scrolling
                     _Global.document.addEventListener("MSManipulationStateChanged", _allManipulationChanged, false);
 
@@ -669,11 +584,6 @@ define([
                 _disposeChildren: function _LegacyAppBar_disposeChildren() {
                     // Be purposeful about what we dispose.
                     this._layoutImpl.disposeChildren();
-                },
-
-                _isLightDismissible: function _LegacyAppBar_isLightDismissible() {
-                    // An _LegacyAppBar is considered light dismissible if there is at least one visible non sticky _LegacyAppBar.
-                    return _Overlay._Overlay.prototype._isLightDismissible.call(this) || _isThereVisibleNonStickyBar();
                 },
 
                 _handleKeyDown: function _LegacyAppBar_handleKeyDown(event) {
@@ -1250,35 +1160,6 @@ define([
             }, {
                 // Statics
                 _Events: EVENTS,
-
-                _appBarsSynchronizationPromise: Promise.as(),
-
-                // Callback for _LegacyAppBar invokeButton and Edgy Event Command
-                _toggleAllAppBarsState: function (keyboardInvoked, sourceAppBar) {
-                    var bars = _getDynamicBarsForEdgy();
-
-                    var hiding;
-                    if (sourceAppBar) {
-                        // If the sourceAppBar is shown, hide all _LegacyAppBars, else show all _LegacyAppBars.
-                        hiding = _ElementUtilities.hasClass(sourceAppBar._element, _Constants.showingClass) || _ElementUtilities.hasClass(sourceAppBar._element, _Constants.shownClass);
-                    } else {
-                        // EDGY event behavior. No sourceAppBar specified.
-                        // If every _LegacyAppBar is shown, hide them. Otherwise show them all.
-                        hiding = bars._shown && !bars._hidden;
-                    }
-
-                    if (hiding) {
-                        _LegacyAppBar._appBarsSynchronizationPromise = _LegacyAppBar._appBarsSynchronizationPromise.then(function () {
-                            return _Overlay._Overlay._hideAppBars(bars, keyboardInvoked);
-                        });
-                        return "hiding";
-                    } else {
-                        _LegacyAppBar._appBarsSynchronizationPromise = _LegacyAppBar._appBarsSynchronizationPromise.then(function () {
-                            return _Overlay._Overlay._showAppBars(bars, keyboardInvoked);
-                        });
-                        return "showing";
-                    }
-                },
             });
 
             return _LegacyAppBar;

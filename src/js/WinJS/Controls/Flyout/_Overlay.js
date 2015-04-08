@@ -55,8 +55,6 @@ define([
                 this._inputPaneShowing = this._inputPaneShowing.bind(this);
                 this._inputPaneHiding = this._inputPaneHiding.bind(this);
                 this._documentScroll = this._documentScroll.bind(this);
-                this._edgyStarting = this._edgyStarting.bind(this);
-                this._edgyCompleted = this._edgyCompleted.bind(this);
                 this._windowResized = this._windowResized.bind(this);
             }, {
                 initialize: function _GlobalListener_initialize() {
@@ -82,16 +80,6 @@ define([
                     _allOverlaysCallback(event, "_checkScrollPosition");
                     _WriteProfilerMark(_GlobalListener.profilerString + "_checkScrollPosition,StopTM");
                 },
-                _edgyStarting: function _GlobalListener_edgyStarting(event) {
-                    _Overlay._lightDismissAllFlyouts();
-                },
-                _edgyCompleted: function _GlobalListener_edgyCompleted(event) {
-                    // Right mouse clicks in WWA will trigger the edgy "completed" event.
-                    // Flyouts and SettingsFlyouts should not light dismiss if they are the target of that right click.
-                    if (!_Overlay._containsRightMouseClick) {
-                        _Overlay._lightDismissAllFlyouts();
-                    }
-                },
                 _windowResized: function _GlobalListener_windowResized(event) {
                     _WriteProfilerMark(_GlobalListener.profilerString + "_baseResize,StartTM");
                     _allOverlaysCallback(event, "_baseResize");
@@ -106,10 +94,6 @@ define([
                         } else if (newState === _GlobalListener.states.off) {
                             listenerOperation = "removeEventListener";
                         }
-
-                        // Catch edgy events too
-                        Application[listenerOperation]("edgystarting", this._edgyStarting);
-                        Application[listenerOperation]("edgycompleted", this._edgyCompleted);
 
                         if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                             // React to Soft Keyboard events
@@ -902,16 +886,6 @@ define([
                     this._resize(event);
                 },
 
-                _isLightDismissible: function _Overlay_isLightDismissible() {
-                    return (!this._sticky && !this.hidden);
-                },
-
-                _lightDismiss: function _Overlay_lightDismiss(keyboardInvoked) {
-                    if (this._isLightDismissible()) {
-                        _Overlay._lightDismissOverlays(keyboardInvoked);
-                    }
-                },
-
                 _hideOrDismiss: function _Overlay_hideOrDismiss() {
                     var element = this._element;
                     if (element && _ElementUtilities.hasClass(element, _Constants.settingsFlyoutClass)) {
@@ -1041,57 +1015,6 @@ define([
             },
             {
                 // Statics
-
-                _lightDismissFlyouts: function _Overlay_lightDismissFlyouts() {
-                    var elements = _Global.document.body.querySelectorAll("." + _Constants.flyoutClass);
-                    var len = elements.length;
-                    for (var i = 0; i < len; i++) {
-                        var flyout = elements[i].winControl;
-                        if (flyout && flyout._isLightDismissible()) {
-                            flyout._lightDismiss();
-                            break;
-                        }
-                    }
-                },
-
-                _lightDismissSettingsFlyouts: function _Overlay_lightDismissSettingsFlyouts() {
-                    var elements = _Global.document.body.querySelectorAll("." + _Constants.settingsFlyoutClass);
-                    var len = elements.length;
-                    for (var i = 0; i < len; i++) {
-                        var element = elements[i];
-                        if (element.style.visibility !== "hidden") {
-                            var settingsFlyout = element.winControl;
-                            if (settingsFlyout && (!settingsFlyout._sticky)) {
-                                settingsFlyout._hideOrDismiss();
-                            }
-                        }
-                    }
-                },
-
-                _lightDismissAllFlyouts: function _Overlay_lightDismissAllFlyouts() {
-                    _Overlay._lightDismissFlyouts();
-                    _Overlay._lightDismissSettingsFlyouts();
-                },
-
-                _lightDismissOverlays: function _Overlay_lightDismissOverlays(keyBoardInvoked) {
-                    // Light Dismiss All _Overlays
-                    _Overlay._lightDismissAppBars(keyBoardInvoked);
-                    _Overlay._lightDismissAllFlyouts();
-                },
-
-                _lightDismissAppBars: function _Overlay_lightDismissAppBars(keyboardInvoked) {
-                    var elements = _Global.document.querySelectorAll("." + _Constants.appBarClass);
-                    var len = elements.length;
-                    var appBars = [];
-                    for (var i = 0; i < len; i++) {
-                        var appBar = elements[i].winControl;
-                        if (appBar && !appBar.sticky && appBar.opened) {
-                            appBars.push(appBar);
-                        }
-                    }
-
-                    _Overlay._hideAppBars(appBars, keyboardInvoked);
-                },
 
                 _isFlyoutVisible: function () {
                     var flyouts = _Global.document.querySelectorAll("." + _Constants.flyoutClass);

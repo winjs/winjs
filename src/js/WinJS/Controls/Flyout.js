@@ -515,10 +515,6 @@ define([
                 _endShow: function Flyout_endShow() {
                 },
 
-                _isLightDismissible: function Flyout_isLightDismissible() {
-                    return (!this.hidden);
-                },
-
                 _lightDismiss: function Flyout_lightDismiss() {
                     Flyout._cascadeManager.collapseAll();
                 },
