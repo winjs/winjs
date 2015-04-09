@@ -12,13 +12,14 @@ define([
     '../Animations',
     '../Pages',
     '../Promise',
+    '../_LightDismissService',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_ElementListUtilities',
     '../Utilities/_Hoverable',
     './_LegacyAppBar/_Constants',
     './Flyout/_Overlay'
-    ], function settingsFlyoutInit(_Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _Constants, _Overlay) {
+    ], function settingsFlyoutInit(_Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Pages, Promise, _LightDismissService, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -121,6 +122,27 @@ define([
 
                 // Attach our css class
                 _ElementUtilities.addClass(this._element, _Constants.settingsFlyoutClass);
+                
+                var that = this;
+                this._dismissable = new _LightDismissService.LightDismissableElement({
+                    element: this._element,
+                    tabIndex: this._element.hasAttribute("tabIndex") ? this._element.tabIndex : -1,
+                    onLightDismiss: function () {
+                        that.hide();
+                    },
+                    onActivateDefaultFocus: function (useSetActive) {
+                        var firstDiv = that.element.querySelector("." + _Constants.firstDivClass);
+                        if (firstDiv) {
+                            if (!firstDiv.msSettingsFlyoutFocusOut) {
+                                _ElementUtilities._addEventListener(firstDiv, "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
+                                firstDiv.msSettingsFlyoutFocusOut = true;
+                            }
+                            
+                            settingsPageIsFocusedOnce = 0;
+                            _ElementUtilities._tryFocus(firstDiv, useSetActive);
+                        }
+                    },
+                });
 
                 // apply the light theme styling to the win-content elements inside the SettingsFlyout
                 _ElementListUtilities.query("div.win-content", this._element).
@@ -252,50 +274,46 @@ define([
                 },
 
                 _dispose: function SettingsFlyout_dispose() {
+                    _LightDismissService.hidden(this._dismissable);
                     _Dispose.disposeSubTree(this.element);
                     this._dismiss();
                 },
 
                 _show: function SettingsFlyout_show() {
                     // We call our base "_baseShow" because SettingsFlyout overrides show
-                    this._baseShow();
-                },
-
-                _endShow: function SettingsFlyout_endShow() {
-                    // Clean up after showing
-                    this._initAfterAnimation();
+                    if (this._baseShow()) {
+                        // Verify that the firstDiv and finalDiv are in the correct location.
+                        // Move them to the correct location or add them if they are not.
+                        if (!_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
+                            var firstDiv = this.element.querySelectorAll("." + _Constants.firstDivClass);
+                            if (firstDiv && firstDiv.length > 0) {
+                                firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
+                            }
+    
+                            this._addFirstDiv();
+                        }
+    
+                        if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
+                            var finalDiv = this.element.querySelectorAll("." + _Constants.finalDivClass);
+                            if (finalDiv && finalDiv.length > 0) {
+                                finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
+                            }
+    
+                            this._addFinalDiv();
+                        }
+                        
+                        this._setBackButtonsAriaLabel();
+                        
+                        _LightDismissService.shown(this._dismissable);
+                    }
                 },
 
                 _initAfterAnimation: function SettingsFlyout_initAfterAnimation() {
                     settingsPageIsFocusedOnce = 0;
 
-                    // Verify that the firstDiv and finalDiv are in the correct location.
-                    // Move them to the correct location or add them if they are not.
-                    if (!_ElementUtilities.hasClass(this.element.children[0], _Constants.firstDivClass)) {
-                        var firstDiv = this.element.querySelectorAll(".win-first");
-                        if (firstDiv && firstDiv.length > 0) {
-                            firstDiv.item(0).parentNode.removeChild(firstDiv.item(0));
-                        }
+                    
 
-                        this._addFirstDiv();
-                    }
-
-                    // Set focus to the firstDiv
-                    if (this.element.children[0]) {
-                        _ElementUtilities._addEventListener(this.element.children[0], "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
-                        this.element.children[0].focus();
-                    }
-
-                    if (!_ElementUtilities.hasClass(this.element.children[this.element.children.length - 1], _Constants.finalDivClass)) {
-                        var finalDiv = this.element.querySelectorAll(".win-final");
-                        if (finalDiv && finalDiv.length > 0) {
-                            finalDiv.item(0).parentNode.removeChild(finalDiv.item(0));
-                        }
-
-                        this._addFinalDiv();
-                    }
-
-                    this._setBackButtonsAriaLabel();
+                    
                 },
 
                 _setBackButtonsAriaLabel: function SettingsFlyout_setBackButtonsAriaLabel() {
@@ -324,6 +342,10 @@ define([
                 _hide: function SettingsFlyout_hide() {
                     if (this._baseHide()) {
                     }
+                },
+                
+                _endHide: function SettingsFlyout_endHide() {
+                    _LightDismissService.hidden(this._dismissable);
                 },
 
                 // SettingsFlyout animations

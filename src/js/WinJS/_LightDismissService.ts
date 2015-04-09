@@ -142,6 +142,7 @@ export interface ILightDismissableElementArgs {
     containsElement?(element: HTMLElement): boolean;
     requiresClickEater?(): boolean;
     onActivate?(): void;
+    onActivateDefaultFocus?(useSetActive: boolean): void;
     onFocus?(element: HTMLElement): void;
     onHide?(): void;
     onShouldLightDismiss?(info: ILightDismissInfo): boolean;
@@ -166,6 +167,7 @@ export class LightDismissableElement implements ILightDismissable {
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
         if (args.onActivate) { this.onActivate = args.onActivate; }
+        if (args.onActivateDefaultFocus) { this.onActivateDefaultFocus = args.onActivateDefaultFocus; }
         this._customOnFocus = args.onFocus;
         this._customOnHide = args.onHide;
         if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
@@ -190,9 +192,13 @@ export class LightDismissableElement implements ILightDismissable {
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
 
             (this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocus(this._ldeCurrentFocus, useSetActive)) ||
-                _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
-                _ElementUtilities._tryFocus(this.element, useSetActive);
+                this.onActivateDefaultFocus(useSetActive);
         }
+    }
+    // ADCOM: Pick a better name
+    onActivateDefaultFocus(useSetActive: boolean): void {
+        _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
+            _ElementUtilities._tryFocus(this.element, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
