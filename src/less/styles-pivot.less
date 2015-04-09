@@ -64,8 +64,23 @@
         display: none;
     }
 
+    .win-pivot-header-area {
+        #flex > .flex(none);
+        #flex > .display-flex();
+        #flex > .flex-direction(row);
+    }
+
+    .win-pivot-header-customcontent {
+        #flex > .flex(none);
+        margin-top: 13px;
+    }
+
+    .win-pivot-header-items {
+        #flex > .flex(1, 1, 0%);
+        overflow-x: hidden;
+    }
+
     .win-pivot-headers {
-        #flex > .flex(@shrink: 0);
         white-space: nowrap;
         position: relative;
         overflow-y: visible;
@@ -85,7 +100,7 @@
         border: 0;
         padding: 0;
         outline: 0;
-        margin: 13px 12px 15px 12px;
+        margin: 13px 12px 0px 12px;
     }
 
     button.win-pivot-header,
@@ -94,7 +109,7 @@
         border: 0;
         padding: 0;
         letter-spacing: 0px;
-        margin: 13px 12px 15px 12px;
+        margin: 13px 12px 0px 12px;
         min-height: 0;
         min-width: 0;
     }
@@ -156,7 +171,7 @@ html.win-hoverable .win-pivot {
         border: 0;
         padding: 0;
         letter-spacing: 0px;
-        margin: 13px 12px 15px 12px;
+        margin: 13px 12px 0px 12px;
         min-height: 0;
         min-width: 0;
     }
