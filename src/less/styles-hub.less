@@ -35,17 +35,15 @@
 }
 .win-hub-vertical .win-hub-surface {
     width: 100%;
-    padding: 15px 0;
+    padding: 0px 12px 8px 12px;
 }
 .win-hub-horizontal .win-hub-surface {
     height: 100%;
-    padding: 0 80px;
+    padding: 0px 0px 0px 12px;
 }
-
-
 .win-hub-section {
     display: inline-block;
-    padding: 0 40px;
+    padding: 0px 24px 0px 0px;
     vertical-align: top;
     white-space: normal;
 }
@@ -55,28 +53,21 @@
     }
 
     .win-hub-section-header {
-        margin-top: 129px;
+        margin-top: 44px;
     }
 }
 .win-hub-vertical {
     .win-hub-section {
-        width: ~"calc(100% - 80px)";
-        padding: 14px 40px;
+        width: ~"calc(100% - 24px)";
     }
 
     .win-hub-section-header {
-        margin-top: 1px;
+        margin-top: 16px;
     }
 }
 .win-hub-section-header {
-    margin: 4px 0;
-    font-size: 20px;
-    text-align: left;
-    height: 51px;
-
-    .RTL({
-        text-align: right;
-    });
+    margin: 4px 0px 9px 0px;
+    height: 28px;
 }
 
 // Override default button styles
@@ -84,17 +75,13 @@
 button.win-hub-section-header-tabstop,
 html.win-hoverable button.win-hub-section-header-tabstop:hover,
 button.win-hub-section-header-tabstop:hover:active {
+    width: 100%;
     background-color: transparent;
     border: 0;
-    padding: 0 3px 0 0;
     min-height: 0;
     min-width: 0;
-    max-width: ~"calc(100% - 3px)";
-    font-size: 20px;
-
-    .RTL({
-        padding: 0 0 0 3px;
-    });
+    max-width: 100%;
+    padding: 0;
 }
 button.win-hub-section-header-tabstop:focus {
     outline: none;
@@ -109,11 +96,27 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
 .win-hub-section-header-wrapper {
     #flex > .display-inline-flex();
     #flex > .flex-direction(row);
+    #flex > .align-items(stretch);
     width: 100%;
     outline: none;
 }
 .win-hub-section-header-content {
+    .win-type-subtitle();
     #flex > .flex(@grow: 1);
+    text-align: left;
+    vertical-align: bottom;
+    padding-top: 1px;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+    line-height: 1.5;
+
+    .RTL({
+        text-align: right;
+    });
+}
+.win-semanticzoom-zoomedoutview .win-hub-section-header-interactive .win-hub-section-header-content {
+    color: @accentColor;
 }
 .win-hub-section-header-chevron {
     display: none;
@@ -121,33 +124,22 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
 .win-hub-section-header-interactive .win-hub-section-header-chevron {
     #flex > .flex(@shrink: 0);
     display: inline-block;
-    margin-left: 7px;
-    font-size: 20px;
-    padding-top: 14px;
+    margin-left: 24px;
+    line-height: 1.5;
+    padding-top: 7px;
+    color: @accentColor;
+    text-align: right;
+    vertical-align: bottom;
 
     .RTL({
+        text-align: left;
         margin-left: 0;
-        margin-right: 7px;
+        margin-right: 24px;
     });
-}
-.win-hub-section-header-chevron::before {
-    font-family: "Segoe MDL2 Assets", "Symbols";
-    content: "\E26B";
-}
-.win-hub-section-header-chevron {
-    .RTL({
-        font-family: "Segoe MDL2 Assets", "Symbols";
-        content: "\E26C";
-    });
-}
-.win-hub-section-content {
 }
 .win-hub-horizontal .win-hub-section-content {
-    // We want 44px of 'padding' between the bottom of section content and
-    // the bottom of the hub surface. 228px represents the 129px of margin
-    // above section header + 4px below + 51px of height of section header
-    // + the 44px.
-    height: ~"calc(100% - 228px)";
+    // 81px represents the 44px of margin above section header + 9px below + 28px of height of section header
+    height: ~"calc(100% - 81px)";
 }
 .win-hub-vertical .win-hub-section-content {
     width: 100%;
