@@ -363,11 +363,7 @@ define([
 
                 _setupSSM: function asb_setupSSM() {
                     // Get the search suggestion provider if it is available
-                    if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                        this._suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
-                    } else {
-                        this._suggestionManager = new _SuggestionManagerShim._SearchSuggestionManagerShim();
-                    }
+                    this._suggestionManager = new _SuggestionManagerShim._SearchSuggestionManagerShim();
                     this._suggestions = this._suggestionManager.suggestions;
 
                     this._suggestions.addEventListener("vectorchanged", this._suggestionsChangedHandler);
