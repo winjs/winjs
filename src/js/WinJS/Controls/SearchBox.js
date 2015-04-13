@@ -99,14 +99,28 @@ define([
                 this._requestingFocusOnKeyboardInputHandlerBind = this._requestingFocusOnKeyboardInputHandler.bind(this);
 
                 // Elements
-                this._buttonElement = null;
+                this._buttonElement = _Global.document.createElement("div");
 
                 // Variables
                 this._focusOnKeyboardInput = false;
 
+                // Calling the super constructor - since the super constructor processes the options,
+                // any property setter at this point must be functional.
                 AutoSuggestBox.AutoSuggestBox.call(this, element, options);
 
-                this._setupSearchBoxDOM();
+                // Add SearchBox classes to DOM elements
+                this.element.classList.add(ClassName.searchBox);
+                this._flyoutElement.classList.add(ClassName.searchBoxFlyout);
+
+                this._inputElement.classList.add(ClassName.searchBoxInput);
+                this._inputElement.addEventListener("blur", this._searchboxInputBlurHandler.bind(this));
+                this._inputElement.addEventListener("focus", this._searchboxInputFocusHandler.bind(this));
+
+                this._buttonElement.tabIndex = -1;
+                this._buttonElement.classList.add(ClassName.searchBoxButton);
+                this._buttonElement.addEventListener("click", this._buttonClickHandler.bind(this));
+                _ElementUtilities._addEventListener(this._buttonElement, "pointerdown", this._buttonPointerDownHandler.bind(this));
+                this.element.appendChild(this._buttonElement);
             }, {
                 /// <field type='String' locid="WinJS.UI.SearchBox.focusOnKeyboardInput" helpKeyword="WinJS.UI.SearchBox.focusOnKeyboardInput">
                 /// Enable automatically focusing the search box when the user types into the app window (off by default) While this is enabled,
@@ -149,23 +163,7 @@ define([
                     }
                 },
 
-                // Private methods
-                _setupSearchBoxDOM: function SearchBox_setupSearchBoxDOM() {
-                    this.element.classList.add(ClassName.searchBox);
-                    this._flyoutElement.classList.add(ClassName.searchBoxFlyout);
-
-                    this._inputElement.classList.add(ClassName.searchBoxInput);
-                    this._inputElement.addEventListener("blur", this._searchboxInputBlurHandler.bind(this));
-                    this._inputElement.addEventListener("focus", this._searchboxInputFocusHandler.bind(this));
-
-                    this._buttonElement = _Global.document.createElement("div");
-                    this._buttonElement.tabIndex = -1;
-                    this._buttonElement.classList.add(ClassName.searchBoxButton);
-                    this._buttonElement.addEventListener("click", this._buttonClickHandler.bind(this));
-                    _ElementUtilities._addEventListener(this._buttonElement, "pointerdown", this._buttonPointerDownHandler.bind(this));
-                    this.element.appendChild(this._buttonElement);
-                },
-
+                // Private methods 
                 _disableControl: function SearchBox_disableControl() {
                     AutoSuggestBox.AutoSuggestBox.prototype._disableControl.call(this);
                     this._buttonElement.disabled = true;
