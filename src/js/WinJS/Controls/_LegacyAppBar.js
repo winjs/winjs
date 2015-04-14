@@ -14,6 +14,7 @@ define([
     '../Animations',
     '../Promise',
     '../Scheduler',
+    '../_LightDismissService',
     '../Utilities/_Control',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
@@ -25,7 +26,7 @@ define([
     './AppBar/_Icon',
     './Flyout/_Overlay',
     '../Application'
-], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
+], function appBarInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Promise, Scheduler, _LightDismissService, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Layouts, _Command, _Icon, _Overlay, Application) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -137,6 +138,20 @@ define([
 
                 // Attach our css class.
                 _ElementUtilities.addClass(this._element, _Constants.appBarClass);
+                
+                var that = this;
+                this._dismissable = new _LightDismissService.LightDismissableElement({
+                    element: this._element,
+                    tabIndex: this._element.hasAttribute("tabIndex") ? this._element.tabIndex : -1,
+                    onLightDismiss: function () {
+                        that.close();
+                    },
+                    onActivate: function (useSetActive) {
+                        if (!that._dismissable.restoreFocus()) {
+                            that._layoutImpl.setFocusOnShow();
+                        }
+                    },
+                });
 
                 // Make sure we have an ARIA role
                 var role = this._element.getAttribute("role");
@@ -163,7 +178,6 @@ define([
                 this._invokeButton.innerHTML = "<span class='" + _Constants.ellipsisClass + "'></span>";
                 _ElementUtilities.addClass(this._invokeButton, _Constants.invokeButtonClass);
                 this._element.appendChild(this._invokeButton);
-                var that = this;
                 this._invokeButton.addEventListener("click", function () {
                     if (that.opened) {
                         that._hide();
@@ -526,8 +540,7 @@ define([
                         // Clean up tabbing behavior by making sure first and final divs are correct after showing.
                         this._updateFirstAndFinalDiv();
                         
-                        // ADCOM: Focus restoration
-                        this._layoutImpl.setFocusOnShow();
+                        _LightDismissService.shown(this._dismissable);
                     }
                 },
 
@@ -553,13 +566,11 @@ define([
                     }
 
                     this._changeVisiblePosition(toPosition, hiding);
-                    if (hiding) {
-                        // ADCOM: Restore focus?
-                    }
                 },
 
                 _dispose: function _LegacyAppBar_dispose() {
                     _Dispose.disposeSubTree(this.element);
+                    _LightDismissService.hidden(this._dismissable);
                     this._layoutImpl.dispose();
                     this.disabled = true;
                     this.close();
@@ -717,7 +728,11 @@ define([
                         if (this._doNext === this._lastPositionVisited) {
                             this._doNext = "";
                         }
-
+                        
+                        if (newState === appbarHiddenState) {
+                            _LightDismissService.hidden(this._dismissable);
+                        }
+                        
                         if (newPosition === displayModeVisiblePositions.hidden) {
                             // Make sure animation is finished.
                             this._element.style.visibility = "hidden";
