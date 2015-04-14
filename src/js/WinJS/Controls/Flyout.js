@@ -12,13 +12,15 @@ define([
     '../Core/_WriteProfilerMark',
     '../Animations',
     '../_Signal',
+    '../_LightDismissService',
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_KeyboardBehavior',
     '../Utilities/_Hoverable',
     '../Utilities/_KeyboardBehavior',
     './_LegacyAppBar/_Constants',
     './Flyout/_Overlay'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _LightDismissService, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -59,6 +61,8 @@ define([
             // Singleton class for managing cascading flyouts
             var _CascadeManager = _Base.Class.define(function _CascadeManager_ctor() {
                 this._cascadingStack = [];
+                this._baseZIndex = 0;
+                this._currentFocus = null;
                 this._handleKeyDownInCascade_bound = this._handleKeyDownInCascade.bind(this);
                 this._inputType = null;
             },
@@ -85,6 +89,12 @@ define([
 
                     flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                     this._cascadingStack.push(flyoutToAdd);
+                    if (!_LightDismissService.isShown(this)) {
+                        _LightDismissService.shown(this);
+                    } else {
+                        flyoutToAdd._dismissable.setZIndex(this._baseZIndex + this.length - 1);
+                        this._activateTopFlyoutIfNeeded();
+                    }
                 },
                 collapseFlyout: function _CascadeManager_collapseFlyout(flyout) {
                     // Removes flyout param and its subflyout descendants from the _cascadingStack.
@@ -98,6 +108,13 @@ define([
                             subFlyout = this._cascadingStack.pop();
                             subFlyout.element.removeEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                             subFlyout._hide(); // We use the reentrancyLock to prevent reentrancy here.
+                            subFlyout._dismissable.onHide();
+                        }
+                        
+                        if (this.length === 0) {
+                            _LightDismissService.hidden(this);
+                        } else {
+                            this._activateTopFlyoutIfNeeded();
                         }
                         
                         if (this._cascadingStack.length === 0) {
@@ -180,6 +197,73 @@ define([
                         this.collapseAll(true);
                     }
                 },
+                _flyoutForElement: function _CascadeManager_flyoutForElement(el) {
+                    var index = this.indexOfElement(el);
+                    return index === -1 ? null : this.getAt(index);
+                },
+                _activateTopFlyoutIfNeeded: function _CascadeManager_activateTopFlyoutIfNeeded() {
+                    var topFlyout = this.getAt(this.length - 1);
+                    if (topFlyout && _LightDismissService.isTopmost(this)) {
+                        // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+                        // Otherwise, use setActive() so no focus visual is drawn.
+                        var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+                        topFlyout._dismissable.onActivate(useSetActive);
+                    }
+                },
+                
+                // ILightDismissable
+                //
+                
+                // ADCOM: Should we pull the light dismiss details out into its own component?
+            
+                setZIndex: function _CascadeManager_setZIndex(zIndex) {
+                    this._baseZIndex = zIndex;
+                    this._cascadingStack.forEach(function (flyout, index) {
+                        flyout._dismissable.setZIndex(this._baseZIndex + index);
+                    }, this);
+                },
+                containsElement: function _CascadeManager_containsElement(element) {
+                    return this._cascadingStack.some(function (flyout) {
+                        return flyout._dismissable.containsElement(element);
+                    });
+                },
+                requiresClickEater: function _CascadeManager_requiresClickEater() {
+                    return true;
+                },
+                onActivate: function _CascadeManager_onActivate(useSetActive) {
+                    // Prefer the Flyout that has focus
+                    var flyout = this._flyoutForElement(_Global.document.activeElement);
+                    
+                    if (!flyout && this.indexOf(this._currentFocus) !== -1) {
+                        // Next try the Flyout that had focus most recently
+                        flyout = this._currentFocus;
+                    }
+                    
+                    if (!flyout) {
+                        // Finally try the Flyout at the top of the stack
+                        flyout = this.getAt(this.length - 1);
+                    }
+                    
+                    this._currentFocus = flyout;
+                    flyout && flyout._dismissable.onActivate(useSetActive);
+                },
+                onFocus: function _CascadeManager_onFocus(element) {
+                    this._currentFocus = this._flyoutForElement(element);
+                    this._currentFocus && this._currentFocus._dismissable.onFocus(element);
+                },
+                onHide: function _CascadeManager_onHide() {
+                    this._currentFocus = null;
+                },
+                onShouldLightDismiss: function _CascadeManager_onShouldLightDismiss(info) {
+                    return _LightDismissService.DismissalPolicies.light(info);
+                },
+                onLightDismiss: function _CascadeManager_onLightDismiss(info) {
+                    if (info.reason === _LightDismissService.LightDismissalReasons.escape) {
+                        this.collapseFlyout(this.getAt(this.length - 1));
+                    } else {
+                        this.collapseAll();
+                    }
+                }
             });
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
@@ -237,6 +321,28 @@ define([
 
                     // Attach our css class
                     _ElementUtilities.addClass(this._element, _Constants.flyoutClass);
+                    
+                    var that = this;
+                    this._dismissable = new _LightDismissService.LightDismissableElement({
+                        element: this._element,
+                        tabIndex: this._element.hasAttribute("tabIndex") ? this._element.tabIndex : -1,
+                        onLightDismiss: function () {
+                            that.hide();
+                        },
+                        onActivate: function (useSetActive) {
+                            if (!that._dismissable.restoreFocus()) {
+                                if (!_ElementUtilities.hasClass(that.element, _Constants.menuClass)) {
+                                    // Put focus on the first child in the Flyout
+                                    that._focusOnFirstFocusableElementOrThis();
+                                } else {
+                                    // Make sure the menu has focus, but don't show a focus rect
+                                    // ADCOM: Won't _trySetActive not be able to give focus to the menu
+                                    //   element due to its tabIndex being -1?
+                                    _Overlay._Overlay._trySetActive(that._element);
+                                }
+                            }
+                        }
+                    });
 
                     // Make sure we have an ARIA role
                     var role = this._element.getAttribute("role");
@@ -396,9 +502,7 @@ define([
                     // Any calls to collapseFlyout through reentrancy should nop.
                     Flyout._cascadeManager.collapseFlyout(this);
 
-                    if (this._baseHide()) {
-                        // ADCOM: Restore focus?
-                    }
+                    this._baseHide()
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {
@@ -494,13 +598,7 @@ define([
                             // previous branch before we try to record it here.
                             // ADCOM: Restore focus?
 
-                            if (!_ElementUtilities.hasClass(this.element, _Constants.menuClass)) {
-                                // Put focus on the first child in the Flyout
-                                this._focusOnFirstFocusableElementOrThis();
-                            } else {
-                                // Make sure the menu has focus, but don't show a focus rect
-                                _Overlay._Overlay._trySetActive(this._element);
-                            }
+
                         }
                     }
                 },

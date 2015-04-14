@@ -28,7 +28,7 @@ var EventNames = {
     edgyCompleted: "edgycompleted",
     edgyCanceled: "edgycanceled"
 };
-var LightDismissalReasons = {
+export var LightDismissalReasons = {
     tap: "tap",
     lostFocus: "lostFocus",
     escape: "escape",
@@ -666,6 +666,7 @@ _Base.Namespace.define("WinJS.UI._LightDismissService", {
     _setDebug: _setDebug,
     LightDismissableElement: LightDismissableElement,
     DismissalPolicies: DismissalPolicies,
+    LightDismissalReasons: LightDismissalReasons,
 
     _service: service
 });
