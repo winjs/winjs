@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title></title>
+    <link rel="stylesheet" href="winjs-clean/css/ui-light.css" />
+    <script src="winjs-clean/js/WinJS.js"></script>
+    <style>
+        body {
+            margin-top: 100px;
+        }
+        button:focus {
+            background-color: orange !important;
+        }
+        .win-click-eater {
+            background-color: steelblue;
+            opacity: 0.5;
+        }
+        .simpleoverlay {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 200px;
+            height: 100px;
+            background-color: green;
+            display: none;
+        }
+        .simpleoverlay-shown {
+            display: block;
+        }
+    </style>
+    <script>
+        // Minimal overlay implementation
+        // What's missing?
+        //   - Does not handle focus restoration (always gives focus to first element)
+        //   - Does not handle tab carouseling
+        /*var SimpleOverlay = new WinJS.Class.define(function (element) {
+            this.element = element || document.createElement("div");
+            this.element.winControl = this;
+            WinJS.Utilities.addClass(this.element, "simpleoverlay");
+        }, {
+            show: function () {
+                WinJS.Utilities.addClass(this.element, "simpleoverlay-shown");
+                WinJS.UI._LightDismissService.shown(this);
+            },
+
+            hide: function () {
+                WinJS.Utilities.removeClass(this.element, "simpleoverlay-shown");
+                WinJS.UI._LightDismissService.hidden(this);
+            }
+        });
+        WinJS.Class.mix(SimpleOverlay, WinJS.UI._LightDismissService.LightDismissableElement, {
+            ld_lightDismiss: function () {
+                this.hide();
+            }
+        });*/
+        
+        function init() {
+            var active = null;
+            setInterval(function () {
+                if (active !== document.activeElement) {
+                    active = document.activeElement;
+                    console.log("focus: " + pp(active));
+                }
+            }, 0);
+
+            WinJS.UI.processAll().then(function () {
+            });
+
+            function pp(e) {
+                return e ? [e.id, e.className, e.tagName].join(":") : "<null>";
+            }
+        }
+
+        function remove(el) {
+            var parent = el.parentNode;
+            parent && parent.removeChild(el);
+        }
+
+        function toggleFocusDebug(e) {
+            var checkBox = document.getElementById("togglefocusbox");
+            WinJS.Utilities[checkBox.checked ? "addClass" : "removeClass"](document.documentElement, "debugFocus");
+        }
+        function toggleAnimations(e) {
+            var checkBox = document.getElementById("toggleanimationsbox");
+            if (checkBox.checked) {
+                WinJS.UI.disableAnimations();
+            } else {
+                WinJS.UI.enableAnimations();
+            }
+        }
+
+        WinJS.Utilities.ready(init);
+    </script>
+</head>
+<body>
+    <button onclick="appBar.winControl.open();">Top</button>
+    <button onclick="appBar2.winControl.open();">Bottom</button>
+    <button onclick="appBar.winControl.open(); appBar2.winControl.open();">Both</button>
+    <br />
+    <button id="myFlyout1Btn" onclick="myFlyout1.winControl.show(myFlyout1Btn);">Flyout</button>
+    <button onclick="helpSettingsFlyout.winControl.show(myFlyout1Btn);">SettingsFlyout</button>
+
+    <div id="appBar" data-win-control="WinJS.UI.NavBar">
+        <div data-win-control="WinJS.UI.NavBarContainer">
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Favorite', icon: 'favorite' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Delete', icon: 'delete' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Music', icon: 'audio' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Edit', icon: 'edit' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Settings', icon: 'settings' }"></div>
+        </div>
+    </div>
+
+    <div id="appBar2" data-win-control="WinJS.UI.NavBar" data-win-options="{ placement: 'bottom' }">
+        <div data-win-control="WinJS.UI.NavBarContainer">
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Favorite', icon: 'favorite' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Delete', icon: 'delete' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Music', icon: 'audio' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Edit', icon: 'edit' }"></div>
+            <div data-win-control="WinJS.UI.NavBarCommand" data-win-options="{ label: 'Settings', icon: 'settings' }"></div>
+        </div>
+    </div>
+
+    <div id="myFlyout2" data-win-control="WinJS.UI.Flyout">
+        Flyout 2
+    </div>
+
+    <div id="myFlyout1" data-win-control="WinJS.UI.Flyout">
+        Hello<br />
+        <button id="myFlyout2Btn" onclick="myFlyout2.winControl.show(myFlyout2Btn);">Flyout (Extend)</button>
+        <button onclick="myFlyout2.winControl.show(myFlyout1Btn);">Flyout (New)</button>
+    </div>
+
+    <div data-win-control="WinJS.UI.SettingsFlyout" id="helpSettingsFlyout" aria-label="Help settings flyout" data-win-options="{settingsCommandId:'help'}"> 
+        <div class="win-ui-dark win-header" style="background-color:#00b2f0">
+           <button type="button" id="backButton" class="win-backbutton"></button> 
+           <div class="win-label">Help</div> 
+        </div> 
+        <div class="win-content "> 
+            <div class="win-settings-section"> 
+                <h3>Settings charm usage guidelines summary</h3> 
+                <ul> 
+                    <li>Settings should be instant commit.</li> 
+                    <li>Allow users to dismiss the settings flyout by tapping outside of it. Don’t use cancel or close buttons.</li> 
+                    <li>Minimize the number of settings by including only settings that users really need.</li> 
+                    <li>Only include settings that are about configuring the app and its behavior. Don’t use the settings flyout for app commands, navigation or very frequently changed settings.</li> 
+                    <li>The layout in this template reflects the recommended layout for settings flyouts.</li> 
+                    <li>For more in-depth usage guidance, refer to the <a href="http://msdn.microsoft.com/en-us/library/windows/apps/hh770544">App settings UX guide</a>.</li> 
+                </ul> 
+            </div> 
+        </div> 
+    </div>
+
+    <input id="togglefocusbox" type="checkbox" onclick="toggleFocusDebug();" /><label style="background-color: goldenrod !important" for="togglefocusbox">Debug Focus</label>
+    <input id="toggleanimationsbox" type="checkbox" onclick="toggleAnimations();" /><label for="toggleanimationsbox">Disable Animations</label>
+
+    <div id="menu1" data-win-control="WinJS.UI.Menu" data-win-options="{}">
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu1_B1', label:'button option', type: 'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu1_T1', label:'toggle option', type:'toggle', selected: true}"></button>
+        <hr data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu1_S1', type: 'separator'}" />
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu1_F1', label:'show menu 2', type:'flyout', flyout:select('#menu2')}"></button>
+    </div>
+
+    <div id="menu2" data-win-control="WinJS.UI.Menu" data-win-options="{}">
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B1', label:'button option1', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T1', label:'toggle option1', type:'toggle', selected: true}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B2', label:'button option2', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T2', label:'toggle option2', type:'toggle', selected: true}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B3', label:'button option3', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T3', label:'toggle option3', type:'toggle', selected: true}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B4', label:'button option4', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T4', label:'toggle option4', type:'toggle', selected: true}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B5', label:'button option5', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T5', label:'toggle option5', type:'toggle', selected: true}"></button>
+        <hr data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_S1', type: 'separator'}" />
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_F1', label:'show menu3', type:'flyout', flyout:select('#menu3')}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_F2', label:'show flyout1', type:'flyout', flyout:select('#flyout1')}"></button>
+        <hr data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_S2', type: 'separator'}" />
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B6', label:'button option6', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T6', label:'toggle option6', type:'toggle', selected: true}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_B7', label:'button option7', type:'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu2_T7', label:'toggle option7', type:'toggle', selected: true}"></button>
+    </div>
+
+    <div id="menu3" data-win-control="WinJS.UI.Menu" data-win-options="{}">
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu3_B1', label:'button option looooooooooooooooongest laaabel', type: 'button'}"></button>
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu3_T1', label:'toggle option longer label', type:'toggle', selected: true}"></button>
+        <hr data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu3_S1', type: 'separator'}" />
+        <button data-win-control="WinJS.UI.MenuCommand" data-win-options="{id:'menu3_F1', label:'disabled flyout command', type:'flyout', disabled: true}"></button>
+    </div>
+
+    <div id="flyout1" data-win-control="WinJS.UI.Flyout" data-win-options="{}" aria-label="">
+        <div id="flyout1_label">This is flyout1. It was invoked after clicking on a menu item.</div><br /><br />
+        <button id="flyout_dismissButton" onclick="document.body.querySelector('#flyout1').winControl.hide()">Close</button><br /><br />
+        <button id="extendCascadeButton" onclick="document.body.querySelector('#flyout2').winControl.show(document.body.querySelector('#extendCascadeButton'))">Extend this cascade with flyout2</button><br /><br />
+        <button id="startNewCascadeButton" onclick="document.body.querySelector('#flyout2').winControl.show(document.body.querySelector('#showMenuButton'))">Start a new cascade with flyout2</button><br /><br />
+    </div>
+
+    <div id="flyout2" data-win-control="WinJS.UI.Flyout" data-win-options="{}" aria-label="">
+        <div id="flyout2_label">This is flyout2 ...</div>
+    </div>
+
+    <button style="position:absolute;top:250px;left:100px;z-index:1;" id="showMenuButton" onclick="menu1.winControl.show(this)" tabindex="1">show menu1</button>
+
+</body>
+</html>
