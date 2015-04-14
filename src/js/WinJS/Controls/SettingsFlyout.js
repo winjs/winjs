@@ -130,16 +130,18 @@ define([
                     onLightDismiss: function () {
                         that.hide();
                     },
-                    onActivateDefaultFocus: function (useSetActive) {
-                        var firstDiv = that.element.querySelector("." + _Constants.firstDivClass);
-                        if (firstDiv) {
-                            if (!firstDiv.msSettingsFlyoutFocusOut) {
-                                _ElementUtilities._addEventListener(firstDiv, "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
-                                firstDiv.msSettingsFlyoutFocusOut = true;
+                    onActivate: function (useSetActive) {
+                        if (!that._dismissable.restoreFocus()) {
+                            var firstDiv = that.element.querySelector("." + _Constants.firstDivClass);
+                            if (firstDiv) {
+                                if (!firstDiv.msSettingsFlyoutFocusOut) {
+                                    _ElementUtilities._addEventListener(firstDiv, "focusout", function () { settingsPageIsFocusedOnce = 1; }, false);
+                                    firstDiv.msSettingsFlyoutFocusOut = true;
+                                }
+                                
+                                settingsPageIsFocusedOnce = 0;
+                                _ElementUtilities._tryFocus(firstDiv, useSetActive);
                             }
-                            
-                            settingsPageIsFocusedOnce = 0;
-                            _ElementUtilities._tryFocus(firstDiv, useSetActive);
                         }
                     },
                 });

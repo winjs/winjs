@@ -98,7 +98,7 @@ export interface ILightDismissable {
     // multiple dismissables above the click eater. For example, if the light dismiss stack
     // consists of the body dismissable and a sticky AppBar then when the body has focus, it is the
     // active dismissable but it isn't the topmost one.
-    onActivate(): void;
+    onActivate(useSetActive: boolean): void;
     // Focus has moved into or within this dismissable (similar to a focusin handler except
     // you don't have to explicitly register for it).
     onFocus(element: HTMLElement): void;
@@ -122,6 +122,22 @@ export interface ILightDismissable {
 // ILightDismissable implementations
 //
 
+function focus(element: HTMLElement, useSetActive: boolean) {
+    var previousActiveElement = _Global.document.activeElement;
+
+    if (element === previousActiveElement) {
+        return true;
+    }
+    
+    if (useSetActive) {
+        _ElementUtilities._setActive(element);
+    } else {
+        element.focus();
+    }
+    
+    return previousActiveElement !== _Global.document.activeElement;
+}
+
 // Keep in sync with ILightDismissable and the LightDismissableElement constructor.
 export interface ILightDismissableElementArgs {
     element: HTMLElement;
@@ -141,8 +157,7 @@ export interface ILightDismissableElementArgs {
     setZIndex?(zIndex: string): void;
     containsElement?(element: HTMLElement): boolean;
     requiresClickEater?(): boolean;
-    onActivate?(): void;
-    onActivateDefaultFocus?(useSetActive: boolean): void;
+    onActivate?(useSetActive: boolean): void;
     onFocus?(element: HTMLElement): void;
     onHide?(): void;
     onShouldLightDismiss?(info: ILightDismissInfo): boolean;
@@ -167,11 +182,27 @@ export class LightDismissableElement implements ILightDismissable {
         if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
         if (args.onActivate) { this.onActivate = args.onActivate; }
-        if (args.onActivateDefaultFocus) { this.onActivateDefaultFocus = args.onActivateDefaultFocus; }
         this._customOnFocus = args.onFocus;
         this._customOnHide = args.onHide;
         if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
     }
+    
+    restoreFocus(): boolean {
+        var activeElement = <HTMLElement>_Global.document.activeElement;
+        if (activeElement && this.containsElement(activeElement)) {
+            this._ldeCurrentFocus = activeElement;
+            return true;
+        } else {
+            // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+            // Otherwise, use setActive() so no focus visual is drawn.
+            var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+
+            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocus(this._ldeCurrentFocus, useSetActive);
+        }
+    }
+    
+    // ILightDismissable
+    //
 
     setZIndex(zIndex: string) {
         this.element.style.zIndex = zIndex;
@@ -182,23 +213,10 @@ export class LightDismissableElement implements ILightDismissable {
     requiresClickEater(): boolean {
         return true;
     }
-    onActivate(): void {
-        var activeElement = <HTMLElement>_Global.document.activeElement;
-        if (activeElement && this.containsElement(activeElement)) {
-            this._ldeCurrentFocus = activeElement;
-        } else {
-            // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
-            // Otherwise, use setActive() so no focus visual is drawn.
-            var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
-
-            (this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocus(this._ldeCurrentFocus, useSetActive)) ||
-                this.onActivateDefaultFocus(useSetActive);
-        }
-    }
-    // ADCOM: Pick a better name
-    onActivateDefaultFocus(useSetActive: boolean): void {
-        _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
-            _ElementUtilities._tryFocus(this.element, useSetActive);
+    onActivate(useSetActive: boolean): void {
+        this.restoreFocus() ||
+            _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
+            focus(this.element, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
@@ -227,11 +245,7 @@ class LightDismissableBody implements ILightDismissable {
     requiresClickEater(): boolean {
         return false;
     }
-    onActivate(): void {
-        // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
-        // Otherwise, use setActive() so no focus visual is drawn.
-        var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
-
+    onActivate(useSetActive: boolean): void {
         (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus, useSetActive)) ||
             _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
             _Global.document.body && _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
@@ -426,7 +440,10 @@ class LightDismissService {
 
         if (this._activeDismissable !== activeDismissable) {
             this._activeDismissable = activeDismissable;
-            this._activeDismissable && this._activeDismissable.onActivate();
+            // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+            // Otherwise, use setActive() so no focus visual is drawn.
+            var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+            this._activeDismissable && this._activeDismissable.onActivate(useSetActive);
         }
     }
 
