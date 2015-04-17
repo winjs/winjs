@@ -456,20 +456,18 @@ define([
                     var inputRect = this._inputElement.getBoundingClientRect();
                     var flyoutTop = inputRect.bottom;
                     var flyoutBottom = inputRect.bottom + flyoutRect.height;
-                    if (((imeRect.top < flyoutTop) || (imeRect.top > flyoutBottom)) &&
-                        ((imeRect.bottom < flyoutTop) || (imeRect.bottom > flyoutBottom))) {
+                    if (imeRect.top > flyoutBottom || imeRect.bottom < flyoutTop) {
                         return;
                     }
 
-                    // Shift the flyout down or to the left depending on IME aspect ratio
-                    // When width > height, then we have a constant height horizontal IME,
-                    // otherwise we have a constant width vertical IME.
-                    var rect = context.getCandidateWindowClientRect();
+                    // Shift the flyout down or to the right depending on IME/ASB width ratio.
+                    // When the IME width is less than 45% of the ASB's width, the flyout gets
+                    // shifted right, otherwise shifted down.
                     var animation = Animations.createRepositionAnimation(this._flyoutElement);
-                    if (rect.width > rect.height) {
-                        this._flyoutElement.style.marginTop = (rect.bottom - rect.top + 4) + "px";
+                    if (imeRect.width < (inputRect.width * 0.45)) {
+                        this._flyoutElement.style.marginLeft = imeRect.width + "px";
                     } else {
-                        this._flyoutElement.style.marginLeft = rect.width + "px";
+                        this._flyoutElement.style.marginTop = (imeRect.bottom - imeRect.top + 4) + "px";
                     }
                     animation.execute();
                 },
