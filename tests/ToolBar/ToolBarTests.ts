@@ -1789,6 +1789,27 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(toolBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
         }
         
+        testGetCommandById() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous" })
+            ]);
+
+            this._element.style.width = "10px";
+            var toolBar = new ToolBar(this._element, {
+                data: data
+            });
+            LiveUnit.Assert.isNull(toolBar.getCommandById("someID"));
+
+            var firstAddedCommand = new Command(null, { type: _Constants.typeButton, label: "B", id: "someID" });
+            data.push(firstAddedCommand);
+            LiveUnit.Assert.areEqual(firstAddedCommand, toolBar.getCommandById("someID"));
+
+            var secondAddedCommand = new Command(null, { type: _Constants.typeButton, label: "C", id: "someID" });
+            data.push(secondAddedCommand);
+
+            LiveUnit.Assert.areEqual(firstAddedCommand, toolBar.getCommandById("someID"));
+        }
+
         private _testLightDismissWithTrigger(dismissToolBar) {
             var button = document.createElement("button");
             button.textContent = "Initially Focused";

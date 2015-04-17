@@ -1647,6 +1647,27 @@ module CorsicaTests {
                 complete();
             });
         }
+
+        testGetCommandById() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous"})
+            ]);
+
+            this._element.style.width = "10px";
+            var appBar = new AppBar(this._element, {
+                data: data
+            });
+            LiveUnit.Assert.isNull(appBar.getCommandById("someID"));
+
+            var firstAddedCommand = new Command(null, { type: _Constants.typeButton, label: "B", id: "someID" });
+            data.push(firstAddedCommand);
+            LiveUnit.Assert.areEqual(firstAddedCommand, appBar.getCommandById("someID"));
+
+            var secondAddedCommand = new Command(null, { type: _Constants.typeButton, label: "C", id: "someID" });
+            data.push(secondAddedCommand);
+
+            LiveUnit.Assert.areEqual(firstAddedCommand, appBar.getCommandById("someID"));
+        }
         
         private _testLightDismissWithTrigger(dismissAppBar) {
             var button = document.createElement("button");

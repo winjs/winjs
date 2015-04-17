@@ -357,6 +357,18 @@ export class _CommandingSurface {
         };
     }
 
+    getCommandById(id: string): _Command.ICommand {
+        if (this._data) {
+            for (var i = 0, len = this._data.length; i < len; i++) {
+                var command = this._data.getAt(i);
+                if (command.id === id) {
+                    return command;
+                }
+            }
+        }
+        return null;
+    }
+
     deferredDomUpate(): void {
         // Notify the machine that an update has been requested.
         this._machine.updateDom();

@@ -347,6 +347,20 @@ export class AppBar {
         this._commandingSurface.forceLayout();
     }
 
+    getCommandById(id: string): _Command.ICommand {
+        /// <signature helpKeyword="WinJS.UI.AppBar.getCommandById">
+        /// <summary locid="WinJS.UI.AppBar.getCommandById">
+        /// Retrieves the command with the specified ID from this AppBar.
+        /// If more than one command is found, this method returns the first command found.
+        /// </summary>
+        /// <param name="id" type="String" locid="WinJS.UI.AppBar.getCommandById_p:id">Id of the command to return.</param>
+        /// <returns type="object" locid="WinJS.UI.AppBar.getCommandById_returnValue">
+        /// The command found, or null if no command is found.
+        /// </returns>
+        /// </signature>
+        return this._commandingSurface.getCommandById(id);
+    }
+
     private _writeProfilerMark(text: string) {
         _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
     }

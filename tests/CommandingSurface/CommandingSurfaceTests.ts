@@ -1664,6 +1664,26 @@ module CorsicaTests {
                 document.documentElement.lang = prevLang;
             });
         }
+
+        testGetCommandById() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous" })
+            ]);
+            this._element.style.width = "10px";
+            var commandingSurface = new _CommandingSurface(this._element, {
+                data: data
+            });
+            LiveUnit.Assert.isNull(commandingSurface.getCommandById("someID"));
+
+            var firstAddedCommand = new Command(null, { type: _Constants.typeButton, label: "B", id: "someID" });
+            data.push(firstAddedCommand);
+            LiveUnit.Assert.areEqual(firstAddedCommand, commandingSurface.getCommandById("someID"));
+
+            var secondAddedCommand = new Command(null, { type: _Constants.typeButton, label: "C", id: "someID" });
+            data.push(secondAddedCommand);
+
+            LiveUnit.Assert.areEqual(firstAddedCommand, commandingSurface.getCommandById("someID"));
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests._CommandingSurfaceTests");

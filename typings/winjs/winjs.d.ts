@@ -3842,7 +3842,7 @@ declare module WinJS.UI {
         /**
          * Returns the Command object identified by id.
          * @param id The element idenitifier (ID) of the command to be returned.
-         * @returns The command identified by id. If multiple commands have the same ID, returns an array of all the commands matching the ID.
+         * @returns The command identified by id. If multiple commands have the same ID, returns the first command found.
         **/
         getCommandById(id: string): ICommand;
 
@@ -7943,6 +7943,13 @@ declare module WinJS.UI {
          * Closes the ToolBar
         **/
         public close(): void;
+
+        /**
+         * Returns the Command object identified by id.
+         * @param id The element idenitifier (ID) of the command to be returned.
+         * @returns The command identified by id. If multiple commands have the same ID, returns the first command found.
+        **/
+        getCommandById(id: string): ICommand;
 
         /**
          * Gets or sets whether the ToolBar is currently opened.

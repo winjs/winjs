@@ -427,6 +427,7 @@ declare module WinJS {
             _primaryCommands: ICommand[];
             _secondaryCommands: ICommand[];
             _getCommandWidth(command: ICommand): number;
+            getCommandById(id: string): ICommand;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
             _playShowAnimation(): Promise<any>;
