@@ -1775,6 +1775,15 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButtonEllipsis, _Constants.ClassNames.ellipsisCssClass), "ToolBar missing ellipsis class");
         }
 
+        testShowingIHMClosesToolBar() {
+            var toolBar = new ToolBar(this._element, { opened: true });
+
+            toolBar._handleShowingKeyboard();
+
+            LiveUnit.Assert.isFalse(toolBar.opened);
+
+        }
+
         testBackgroundColorPercolatesToCommandingSurface() {
             // Verifies that background color changes to the ToolBar are not impeded by the CommandingSurface element.
             var toolBar = new ToolBar(this._element, { opened: true });
@@ -1784,7 +1793,7 @@ module CorsicaTests {
             var toolBarStyle = getComputedStyle(toolBar.element),
                 commandingSurfaceStyle = getComputedStyle(commandingSurface.element);
 
-            var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
+            var msg = "ToolBar's commandingSurface element should match the background color of the ToolBar element";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(toolBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
         }

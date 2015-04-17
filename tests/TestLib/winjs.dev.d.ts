@@ -467,6 +467,7 @@ declare module WinJS {
             };
             _commandingSurface: WinJS.UI.PrivateCommandingSurface;
             _dismissable: _LightDismissService.ILightDismissable;
+            _handleShowingKeyboard: () => void;
         }
 
         class PrivateCommand extends WinJS.UI.AppBarCommand {
