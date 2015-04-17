@@ -9,6 +9,8 @@ import _OptionsParser = require("./ControlProcessor/_OptionsParser");
 
 "use strict";
 
+var Keys = _ElementUtilities.Key;
+
 var AttributeNames = {
     focusOverride: "data-win-xyfocus",
     focusOverrideLegacy: "data-win-focus"
@@ -16,6 +18,7 @@ var AttributeNames = {
 
 var ClassNames = {
     focusable: "win-focusable",
+    xboxPlatform: "win-xbox",
 };
 
 var CrossDomainMessageConstants = {
@@ -103,11 +106,12 @@ export interface IRect {
 /**
  * Gets the mapping object that maps keycodes to XYFocus actions.
 **/
-export var keyCodeMap: { [key: string]: number[] } = {
-    left: [_ElementUtilities.Key.leftArrow],
-    right: [_ElementUtilities.Key.rightArrow],
-    up: [_ElementUtilities.Key.upArrow],
-    down: [_ElementUtilities.Key.downArrow]
+export var keyCodeMap = {
+    left: [Keys.GamepadLeftThumbstickLeft, Keys.GamepadDPadLeft, Keys.NavigationLeft],
+    right: [Keys.GamepadLeftThumbstickRight, Keys.GamepadDPadRight, Keys.NavigationRight],
+    up: [Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp],
+    down: [Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown],
+    accept: [Keys.GamepadA, Keys.NavigationAccept],
 };
 
 /**
@@ -152,23 +156,8 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
     }
 }
 
-export function enableXYFocus() {
-    if (!_xyFocusEnabled) {
-        _Global.document.addEventListener("keydown", _handleKeyEvent);
-        _xyFocusEnabled = true;
-    }
-}
-
-export function disableXYFocus() {
-    if (_xyFocusEnabled) {
-        _Global.document.removeEventListener("keydown", _handleKeyEvent);
-        _xyFocusEnabled = false;
-    }
-}
-
 
 // Privates
-var _xyFocusEnabled = false;
 var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
@@ -364,14 +353,14 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
     // Nested Helpers
     function calculatePercentInShadow(minReferenceCoord: number, maxReferenceCoord: number, minPotentialCoord: number, maxPotentialCoord: number) {
         /// Calculates the percentage of the potential element that is in the shadow of the reference element.
-        if ((minReferenceCoord >= maxPotentialCoord) ||
-            (maxReferenceCoord <= minPotentialCoord)) {
+        if ((minReferenceCoord >= maxPotentialCoord) || (maxReferenceCoord <= minPotentialCoord)) {
+            // Potential is not in the reference's shadow.
             return 0;
         }
 
-        var pixelOverlapWithTheReferenceShadow = Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord);
-        var referenceEdgeLength = maxReferenceCoord - minReferenceCoord;
-        return pixelOverlapWithTheReferenceShadow / referenceEdgeLength;
+        var pixelOverlap = Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord);
+        var shortEdge = Math.min(maxPotentialCoord - minPotentialCoord, maxReferenceCoord - minReferenceCoord);
+        return pixelOverlap / shortEdge;
     }
 
     function calculateScore(direction: string, maxDistance: number, historyRect: IRect, referenceRect: IRect, potentialRect: IRect) {
@@ -561,7 +550,7 @@ function _trySetFocus(element: HTMLElement, keyCode: number) {
 
 function _getIFrameFromWindow(win: Window) {
     var iframes = _Global.document.querySelectorAll("IFRAME");
-    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes,(x: HTMLIFrameElement) => x.contentWindow === win);
+    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
     return found.length ? found[0] : null;
 }
 
@@ -572,19 +561,23 @@ function _handleKeyEvent(e: KeyboardEvent): void {
 
     var keys = Object.keys(keyCodeMap);
     for (var i = 0; i < keys.length; i++) {
-        // Note: key is 'left', 'right', 'up', or 'down'
+        // Note: key is 'left', 'right', 'up', 'down', or 'accept'
         var key = keys[i];
         var keyMappings = keyCodeMap[key];
         if (keyMappings.indexOf(e.keyCode) >= 0) {
-            if (_xyFocus(key, e.keyCode)) {
-                e.preventDefault();
+            if (keyMappings === keyCodeMap.accept) {
+                _Global.document.activeElement && _Global.document.activeElement["click"] && _Global.document.activeElement["click"]();
+            } else {
+                if (_xyFocus(key, e.keyCode)) {
+                    e.preventDefault();
+                }
             }
             return;
         }
     }
 }
 
-_Global.addEventListener("message",(e: MessageEvent): void => {
+_Global.addEventListener("message", (e: MessageEvent): void => {
     if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
         return;
     }
@@ -606,7 +599,6 @@ _Global.addEventListener("message",(e: MessageEvent): void => {
             // The coordinates stored in data.refRect are already in this frame's coordinate system.
             // When we get this message we will force-enable XYFocus to support scenarios where
             // websites running WinJS are put into an IFRAME and the parent frame has XYFocus enabled.
-            enableXYFocus();
             _xyFocus(data.direction, -1, data.referenceRect);
             break;
 
@@ -628,10 +620,12 @@ _Global.addEventListener("message",(e: MessageEvent): void => {
     }
 });
 
-_Global.document.addEventListener("DOMContentLoaded",() => {
+_BaseUtils.ready().then(() => {
     if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
-        enableXYFocus();
+        _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
     }
+
+    _Global.document.addEventListener("keydown", _handleKeyEvent);
 
     // If we are running within an iframe, we send a registration message to the parent window
     if (_Global.top !== _Global.window) {
@@ -656,8 +650,6 @@ var toPublish = {
         }
     },
 
-    enableXYFocus: enableXYFocus,
-    disableXYFocus: disableXYFocus,
     findNextFocusElement: findNextFocusElement,
     keyCodeMap: keyCodeMap,
     moveFocus: moveFocus,

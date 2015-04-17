@@ -8427,9 +8427,6 @@ declare module WinJS.UI.XYFocus {
     export function moveFocus(direction: "right", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "up", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "down", options?: XYFocusOptions): HTMLElement;
-
-    export function enableXYFocus(): void;
-    export function disableXYFocus(): void;
 }
 /**
  * Provides functions to load HTML content programmatically.
@@ -8946,6 +8943,38 @@ declare module WinJS.Utilities {
         **/
         F12,
         /**
+         * The XBox One Remote navigation view button.
+        **/
+        NavigationView,
+        /**
+         * The XBox One Remote navigation menu button.
+        **/
+        NavigationMenu,
+        /**
+         * The XBox One Remote navigation up button.
+        **/
+        NavigationUp,
+        /**
+         * The XBox One Remote navigation down button.
+        **/
+        NavigationDown,
+        /**
+         * The XBox One Remote navigation left button.
+        **/
+        NavigationLeft,
+        /**
+         * The XBox One Remote navigation right button.
+        **/
+        NavigationRight,
+        /**
+         * The XBox One Remote navigation accept button.
+        **/
+        NavigationAccept,
+        /**
+         * The XBox One Remote navigation cancel button.
+        **/
+        NavigationCancel,
+        /**
          * The NUMBER LOCK key.
         **/
         numLock,
@@ -8991,6 +9020,105 @@ declare module WinJS.Utilities {
         graveAccent,
         /**
          * The open bracket key ([).
+        **/
+        /**
+         * The XBox One gamepad A button.
+        **/
+        GamepadA,
+        /**
+         * The XBox One gamepad B button.
+        **/
+        GamepadB,
+        /**
+         * The XBox One gamepad X button.
+        **/
+        GamepadX,
+        /**
+         * The XBox One gamepad Y button.
+        **/
+        GamepadY,
+        /**
+         * The XBox One gamepad right shoulder.
+        **/
+        GamepadRightShoulder,
+        /**
+         * The XBox One gamepad left shoulder.
+        **/
+        GamepadLeftShoulder,
+        /**
+         * The XBox One gamepad left trigger.
+        **/
+        GamepadLeftTrigger,
+        /**
+         * The XBox One gamepad right trigger.
+        **/
+        GamepadRightTrigger,
+        /**
+         * The XBox One gamepad dpad up.
+        **/
+        GamepadDPadUp,
+        /**
+         * The XBox One gamepad dpad down.
+        **/
+        GamepadDPadDown,
+        /**
+         * The XBox One gamepad dpad left.
+        **/
+        GamepadDPadLeft,
+        /**
+         * The XBox One gamepad dpad right.
+        **/
+        GamepadDPadRight,
+        /**
+         * The XBox One gamepad menu button.
+        **/
+        GamepadMenu,
+        /**
+         * The XBox One gamepad view button.
+        **/
+        GamepadView,
+        /**
+         * The XBox One gamepad left thumbstick button.
+        **/
+        GamepadLeftThumbstick,
+        /**
+         * The XBox One gamepad right thumbstick button.
+        **/
+        GamepadRightThumbstick,
+        /**
+         * The XBox One gamepad left thumbstick's up.
+        **/
+        GamepadLeftThumbstickUp,
+        /**
+         * The XBox One gamepad left thumbstick's down.
+        **/
+        GamepadLeftThumbstickDown,
+        /**
+         * The XBox One gamepad left thumbstick's right.
+        **/
+        GamepadLeftThumbstickRight,
+        /**
+         * The XBox One gamepad left thumbstick's left.
+        **/
+        GamepadLeftThumbstickLeft,
+        /**
+         * The XBox One gamepad right thumbstick's up.
+        **/
+        GamepadRightThumbstickUp,
+        /**
+         * The XBox One gamepad right thumbstick's down.
+        **/
+        GamepadRightThumbstickDown,
+        /**
+         * The XBox One gamepad right thumbstick's right.
+        **/
+        GamepadRightThumbstickRight,
+        /**
+         * The XBox One gamepad right thumbstick's left.
+        **/
+        GamepadRightThumbstickLeft,
+        /**
+            * The open bracket key ([).
         **/
         openBracket,
         /**

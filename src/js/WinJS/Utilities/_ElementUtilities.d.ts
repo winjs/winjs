@@ -352,6 +352,38 @@ export declare enum Key {
     **/
     F12,
     /**
+     * The XBox One Remote navigation view button.
+    **/
+    NavigationView,
+    /**
+     * The XBox One Remote navigation menu button.
+    **/
+    NavigationMenu,
+    /**
+     * The XBox One Remote navigation up button.
+    **/
+    NavigationUp,
+    /**
+     * The XBox One Remote navigation down button.
+    **/
+    NavigationDown,
+    /**
+     * The XBox One Remote navigation left button.
+    **/
+    NavigationLeft,
+    /**
+     * The XBox One Remote navigation right button.
+    **/
+    NavigationRight,
+    /**
+     * The XBox One Remote navigation accept button.
+    **/
+    NavigationAccept,
+    /**
+     * The XBox One Remote navigation cancel button.
+    **/
+    NavigationCancel,
+    /**
         * The NUMBER LOCK key.
     **/
     numLock,
@@ -395,6 +427,102 @@ export declare enum Key {
         * The grave accent key (`).
     **/
     graveAccent,
+    /**
+     * The XBox One gamepad A button.
+    **/
+    GamepadA,
+    /**
+     * The XBox One gamepad B button.
+    **/
+    GamepadB,
+    /**
+     * The XBox One gamepad X button.
+    **/
+    GamepadX,
+    /**
+     * The XBox One gamepad Y button.
+    **/
+    GamepadY,
+    /**
+     * The XBox One gamepad right shoulder.
+    **/
+    GamepadRightShoulder,
+    /**
+     * The XBox One gamepad left shoulder.
+    **/
+    GamepadLeftShoulder,
+    /**
+     * The XBox One gamepad left trigger.
+    **/
+    GamepadLeftTrigger,
+    /**
+     * The XBox One gamepad right trigger.
+    **/
+    GamepadRightTrigger,
+    /**
+     * The XBox One gamepad dpad up.
+    **/
+    GamepadDPadUp,
+    /**
+     * The XBox One gamepad dpad down.
+    **/
+    GamepadDPadDown,
+    /**
+     * The XBox One gamepad dpad left.
+    **/
+    GamepadDPadLeft,
+    /**
+     * The XBox One gamepad dpad right.
+    **/
+    GamepadDPadRight,
+    /**
+     * The XBox One gamepad menu button.
+    **/
+    GamepadMenu,
+    /**
+     * The XBox One gamepad view button.
+    **/
+    GamepadView,
+    /**
+     * The XBox One gamepad left thumbstick button.
+    **/
+    GamepadLeftThumbstick,
+    /**
+     * The XBox One gamepad right thumbstick button.
+    **/
+    GamepadRightThumbstick,
+    /**
+     * The XBox One gamepad left thumbstick's up.
+    **/
+    GamepadLeftThumbstickUp,
+    /**
+     * The XBox One gamepad left thumbstick's down.
+    **/
+    GamepadLeftThumbstickDown,
+    /**
+     * The XBox One gamepad left thumbstick's right.
+    **/
+    GamepadLeftThumbstickRight,
+    /**
+     * The XBox One gamepad left thumbstick's left.
+    **/
+    GamepadLeftThumbstickLeft,
+    /**
+     * The XBox One gamepad right thumbstick's up.
+    **/
+    GamepadRightThumbstickUp,
+    /**
+     * The XBox One gamepad right thumbstick's down.
+    **/
+    GamepadRightThumbstickDown,
+    /**
+     * The XBox One gamepad right thumbstick's right.
+    **/
+    GamepadRightThumbstickRight,
+    /**
+     * The XBox One gamepad right thumbstick's left.
+    **/
+    GamepadRightThumbstickLeft,
     /**
         * The open bracket key ([).
     **/
@@ -585,7 +713,7 @@ export declare var QueryCollection: {
     * @param name The name of the class to add.
     * @returns The element.
 **/
-export declare  function addClass<T extends HTMLElement>(e: T, name: string): T;
+export declare function addClass<T extends HTMLElement>(e: T, name: string): T;
 
 /**
     * Gets a collection of elements that are the direct children of the specified element.
@@ -881,7 +1009,7 @@ export declare module _inputPaneListener {
 export declare function _addInsertedNotifier(element: HTMLElement): void;
 export declare function _inDom(element: HTMLElement): Promise<any>;
 export declare function _reparentChildren(originalParent: HTMLElement, destinationParent: HTMLElement): void;
-export declare function _matchesSelector(element:HTMLElement, selectors: string): boolean;
+export declare function _matchesSelector(element: HTMLElement, selectors: string): boolean;
 export declare function _addEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _addEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _removeEventListener(element: HTMLElement, type: string, listener: EventListener, useCapture?: boolean): void;
@@ -897,4 +1025,4 @@ export declare function _getPreciseTotalHeight(element: HTMLElement): number;
 export declare function _getPreciseTotalWidth(element: HTMLElement): number;
 export declare function _getPreciseContentHeight(element: HTMLElement): number;
 export declare function _getPreciseContentWidth(element: HTMLElement): number;
-export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number;};
+export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number; };
