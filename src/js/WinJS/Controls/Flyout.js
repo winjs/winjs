@@ -336,8 +336,6 @@ define([
                                     that._focusOnFirstFocusableElementOrThis();
                                 } else {
                                     // Make sure the menu has focus, but don't show a focus rect
-                                    // ADCOM: Won't _trySetActive not be able to give focus to the menu
-                                    //   element due to its tabIndex being -1?
                                     _Overlay._Overlay._trySetActive(that._element);
                                 }
                             }
@@ -502,7 +500,7 @@ define([
                     // Any calls to collapseFlyout through reentrancy should nop.
                     Flyout._cascadeManager.collapseFlyout(this);
 
-                    this._baseHide()
+                    this._baseHide();
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {
@@ -591,19 +589,8 @@ define([
                             }
 
                             Flyout._cascadeManager.appendFlyout(this);
-
-                            // Store what had focus before showing the Flyout. This must happen after we've appended this
-                            // Flyout to the cascade and subsequently triggered other branches of cascading flyouts to
-                            // collapse. Ensures that focus has already been restored to the correct element by the
-                            // previous branch before we try to record it here.
-                            // ADCOM: Restore focus?
-
-
                         }
                     }
-                },
-
-                _endShow: function Flyout_endShow() {
                 },
 
                 _lightDismiss: function Flyout_lightDismiss() {

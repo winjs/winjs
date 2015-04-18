@@ -197,7 +197,7 @@ export class LightDismissableElement implements ILightDismissable {
             // Otherwise, use setActive() so no focus visual is drawn.
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
 
-            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocus(this._ldeCurrentFocus, useSetActive);
+            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && focus(this._ldeCurrentFocus, useSetActive);
         }
     }
     
@@ -246,9 +246,9 @@ class LightDismissableBody implements ILightDismissable {
         return false;
     }
     onActivate(useSetActive: boolean): void {
-        (this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocus(this.currentFocus, useSetActive)) ||
+        (this.currentFocus && this.containsElement(this.currentFocus) && focus(this.currentFocus, useSetActive)) ||
             _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
-            _Global.document.body && _ElementUtilities._tryFocus(_Global.document.body, useSetActive);
+            _Global.document.body && focus(_Global.document.body, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this.currentFocus = element;

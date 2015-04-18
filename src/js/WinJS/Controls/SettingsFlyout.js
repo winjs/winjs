@@ -310,14 +310,6 @@ define([
                     }
                 },
 
-                _initAfterAnimation: function SettingsFlyout_initAfterAnimation() {
-                    settingsPageIsFocusedOnce = 0;
-
-                    
-
-                    
-                },
-
                 _setBackButtonsAriaLabel: function SettingsFlyout_setBackButtonsAriaLabel() {
                     var backbuttons = this.element.querySelectorAll(".win-backbutton");
                     var label;
@@ -342,8 +334,7 @@ define([
                 },
 
                 _hide: function SettingsFlyout_hide() {
-                    if (this._baseHide()) {
-                    }
+                    this._baseHide()
                 },
                 
                 _endHide: function SettingsFlyout_endHide() {
