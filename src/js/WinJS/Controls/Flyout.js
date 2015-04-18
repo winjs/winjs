@@ -222,6 +222,9 @@ define([
                         flyout._dismissable.setZIndex(this._baseZIndex + index);
                     }, this);
                 },
+                getZIndexCount: function () {
+                    return this._cascadingStack.length;
+                },
                 containsElement: function _CascadeManager_containsElement(element) {
                     return this._cascadingStack.some(function (flyout) {
                         return flyout._dismissable.containsElement(element);

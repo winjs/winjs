@@ -13,7 +13,7 @@ require(["require-style!less/styles-lightdismissservice"]);
 
 "use strict";
 
-var baseZIndex = 900; // Below Ovelays for now
+var baseZIndex = 1000;
 var rightButton = 2;
 
 var Strings = {
@@ -83,21 +83,19 @@ export interface ILightDismissInfo {
 export interface ILightDismissable {
     // This dismissable should be rendered at a z-index of *zIndex*.
     setZIndex(zIndex: string): void;
+    // How many z-indices are required by this dismissable?
+    getZIndexCount(): number;
     // Does the dismissable contain *element*?
     containsElement(element: HTMLElement): boolean;
-    // Does this dismissable require a click eater to be placed behind it? The click eater is placed
-    // immediately behind the dismissable with the lowest zIndex which requires it. If no dismissable
-    // requires the click eater, then it won't be placed into the DOM.
-    requiresClickEater(): boolean;
 
     // Hooks
 
     // The dismissable should take focus if focus isn't already inside of it.
-    // This fires when the dismissable becomes the focused/active dismissable. Note that the active
-    // dismissable isn't necessarily the topmost dismissable. They can be different when there are
-    // multiple dismissables above the click eater. For example, if the light dismiss stack
-    // consists of the body dismissable and a sticky AppBar then when the body has focus, it is the
-    // active dismissable but it isn't the topmost one.
+    // This fires when the dismissable becomes the focused/active/topmost dismissable.
+    // *useSetActive* is a hint to onActivate as to whether or not it should draw a
+    // keyboard focus visual when taking focus. If the last input type was keyboard,
+    // use focus() so a keyboard focus visual is drawn. Otherwise, use setActive() so
+    // no focus visual is drawn.
     onActivate(useSetActive: boolean): void;
     // Focus has moved into or within this dismissable (similar to a focusin handler except
     // you don't have to explicitly register for it).
@@ -122,7 +120,7 @@ export interface ILightDismissable {
 // ILightDismissable implementations
 //
 
-function focus(element: HTMLElement, useSetActive: boolean) {
+function tryFocus(element: HTMLElement, useSetActive: boolean) {
     var previousActiveElement = _Global.document.activeElement;
 
     if (element === previousActiveElement) {
@@ -155,8 +153,8 @@ export interface ILightDismissableElementArgs {
     onLightDismiss(info: ILightDismissInfo): void;
 
     setZIndex?(zIndex: string): void;
+    getZIndexCount?(): number;
     containsElement?(element: HTMLElement): boolean;
-    requiresClickEater?(): boolean;
     onActivate?(useSetActive: boolean): void;
     onFocus?(element: HTMLElement): void;
     onHide?(): void;
@@ -179,8 +177,8 @@ export class LightDismissableElement implements ILightDismissable {
 
         // Allow the caller to override the default implementations of our ILightDismissable methods.
         if (args.setZIndex) { this.setZIndex = args.setZIndex; }
+        if (args.getZIndexCount) { this.getZIndexCount = args.getZIndexCount; }
         if (args.containsElement) { this.containsElement = args.containsElement; }
-        if (args.requiresClickEater) { this.requiresClickEater = args.requiresClickEater; }
         if (args.onActivate) { this.onActivate = args.onActivate; }
         this._customOnFocus = args.onFocus;
         this._customOnHide = args.onHide;
@@ -197,7 +195,7 @@ export class LightDismissableElement implements ILightDismissable {
             // Otherwise, use setActive() so no focus visual is drawn.
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
 
-            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && focus(this._ldeCurrentFocus, useSetActive);
+            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && tryFocus(this._ldeCurrentFocus, useSetActive);
         }
     }
     
@@ -207,16 +205,16 @@ export class LightDismissableElement implements ILightDismissable {
     setZIndex(zIndex: string) {
         this.element.style.zIndex = zIndex;
     }
+    getZIndexCount(): number {
+        return 1;
+    }
     containsElement(element: HTMLElement): boolean {
         return this.element.contains(element);
-    }
-    requiresClickEater(): boolean {
-        return true;
     }
     onActivate(useSetActive: boolean): void {
         this.restoreFocus() ||
             _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
-            focus(this.element, useSetActive);
+            tryFocus(this.element, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
@@ -239,19 +237,19 @@ class LightDismissableBody implements ILightDismissable {
     currentFocus: HTMLElement;
 
     setZIndex(zIndex: string) { }
+    getZIndexCount(): number {
+        return 1;
+    }
     containsElement(element: HTMLElement): boolean {
         return _Global.document.body.contains(element);
     }
-    requiresClickEater(): boolean {
-        return false;
-    }
     onActivate(useSetActive: boolean): void {
-        (this.currentFocus && this.containsElement(this.currentFocus) && focus(this.currentFocus, useSetActive)) ||
+        (this.currentFocus && this.containsElement(this.currentFocus) && tryFocus(this.currentFocus, useSetActive)) ||
             _Global.document.body && _ElementUtilities._focusFirstFocusableElement(_Global.document.body, useSetActive) ||
-            _Global.document.body && focus(_Global.document.body, useSetActive);
+            _Global.document.body && tryFocus(_Global.document.body, useSetActive);
     }
     onFocus(element: HTMLElement): void {
-        this.currentFocus = element;
+         this.currentFocus = element;
     }
     onHide(): void {
         this.currentFocus = null;
@@ -266,48 +264,14 @@ class LightDismissableBody implements ILightDismissable {
 // Light dismiss service
 //
 
-class OrderedCache<T> {
-    // The item that was most recently touched appears at index 0.
-    private _orderedCache: T[] = [];
-
-    touch(item: T) {
-        // Optimization: if *item* is already at index 0, then there's no need to move it to the front of the list.
-        if (this._orderedCache[0] !== item) {
-            this.remove(item);
-            this._orderedCache.unshift(item);
-        }
-    }
-
-    remove(item: T) {
-        var index = this._orderedCache.indexOf(item);
-        if (index !== -1) {
-            this._orderedCache.splice(index, 1);
-        }
-    }
-
-    // Returns the item in *candidates* that was most recently touched.
-    mostRecentlyTouched(candidates: T[]) {
-        for (var i = 0, len = this._orderedCache.length; i < len; i++) {
-            if (candidates.indexOf(this._orderedCache[i]) !== -1) {
-                return this._orderedCache[i];
-            }
-        }
-        return null;
-    }
-}
-
 class LightDismissService {
     private _debug = false; // Disables dismiss due to window blur. Useful during debugging.
     
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[] = [];
-    // The *_activeDismissable* is essentially the dismissable that currently has focus. Note that the
-    // active dismissable isn't necessarily the topmost dismissable. They can be different when
-    // there are multiple dismissables above the click eater. For example, if the light dismiss stack
-    // consists of the body dismissable and a sticky AppBar then when the body has focus, it is the
-    // active dismissable but it isn't the topmost one.
+    // The *_activeDismissable* is the dismissable that currently has focus. It is also
+    // the topmost dismissable.
     private _activeDismissable: ILightDismissable;
-    private _focusCache = new OrderedCache<ILightDismissable>();
     private _notifying = false;
     private _bodyClient = new LightDismissableBody();
 
@@ -352,7 +316,6 @@ class LightDismissService {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
             this._clients.splice(index, 1);
-            this._focusCache.remove(client);
             client.setZIndex("");
             client.onHide();
             this._updateDom();
@@ -374,7 +337,6 @@ class LightDismissService {
 
     // State private to _updateDom. No other method should make use of it.
     private _updateDom_rendered = {
-        clickEaterInDom: false,
         serviceActive: false
     };
     private _updateDom() {
@@ -392,52 +354,32 @@ class LightDismissService {
                 _Global.document.documentElement.addEventListener("keydown", this._onKeyDownBound);
                 _Global.window.addEventListener("resize", this._onWindowResizeBound);
                 this._bodyClient.currentFocus = <HTMLElement>_Global.document.activeElement;
+                _Global.document.body.appendChild(this._clickEaterEl);
             } else {
                 _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.documentElement.removeEventListener("keydown", this._onKeyDownBound);
                 _Global.window.removeEventListener("resize", this._onWindowResizeBound);
+                var parent = this._clickEaterEl.parentNode;
+                parent && parent.removeChild(this._clickEaterEl);
             }
             rendered.serviceActive = serviceActive;
         }
 
-        var clickEaterIndex = -1;
+        var zIndexGap = 0;
+        var lastUsedZIndex = baseZIndex + 1;
         this._clients.forEach(function (c, i) {
-            if (c.requiresClickEater()) {
-                clickEaterIndex = i;
-            }
-            c.setZIndex("" + (baseZIndex + i * 2 + 1));
+            var currentZIndex = lastUsedZIndex + zIndexGap;
+            c.setZIndex("" + currentZIndex);
+            lastUsedZIndex = currentZIndex;
+            // count + 1 so that there's an unused zIndex between each pair of
+            // dismissables that can be used by the click eater.
+            zIndexGap = c.getZIndexCount() + 1;
         });
-        if (clickEaterIndex !== -1) {
-            this._clickEaterEl.style.zIndex = "" + (baseZIndex + clickEaterIndex * 2);
+        if (serviceActive) {
+            this._clickEaterEl.style.zIndex = "" + (lastUsedZIndex - 1);
         }
 
-        var clickEaterInDom = clickEaterIndex !== -1;
-        if (clickEaterInDom !== rendered.clickEaterInDom) {
-            if (clickEaterInDom) {
-                _Global.document.body.appendChild(this._clickEaterEl);
-            } else {
-                var parent = this._clickEaterEl.parentNode;
-                parent && parent.removeChild(this._clickEaterEl);
-            }
-            rendered.clickEaterInDom = clickEaterInDom;
-        }
-
-        // Which dismissable should receive focus? In the easy case, there is only one dismissable above the click eater
-        // so this dismissable should receive focus. However, which one should receive focus if multiple dismissables
-        // are above the click eater? Our answer is the dismissable which is above the click eater which had focus most
-        // recently. Here's an example scenario. Suppose there are 2 dismissables and no click eater: the body and a sticky
-        // AppBar. Then:
-        //   - If a Flyout is launched by clicking a button in the body, then the body should receive focus when the
-        //     Flyout dismisses.
-        //   - If a Flyout is launched by clicking a button in the AppBar, then the AppBar should receive focus when the
-        //     Flyout dismisses.
-        var activeDismissable: ILightDismissable;
-        if (this._clients.length > 0) {
-            var startIndex = clickEaterIndex === -1 ? 0 : clickEaterIndex;
-            var candidates = this._clients.slice(startIndex);
-            activeDismissable = this._focusCache.mostRecentlyTouched(candidates) || candidates[candidates.length - 1];
-        }
-
+        var activeDismissable = this._clients.length > 0 ? this._clients[this._clients.length - 1] : null;
         if (this._activeDismissable !== activeDismissable) {
             this._activeDismissable = activeDismissable;
             // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
@@ -503,7 +445,6 @@ class LightDismissService {
             }
         }
         if (i !== -1) {
-            this._focusCache.touch(this._clients[i]);
             this._clients[i].onFocus(target);
         }
 

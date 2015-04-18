@@ -121,6 +121,7 @@
     <br />
     <button id="myFlyout1Btn" onclick="myFlyout1.winControl.show(myFlyout1Btn);">Flyout</button>
     <button onclick="helpSettingsFlyout.winControl.show(myFlyout1Btn);">SettingsFlyout</button>
+    <button onclick="showOverlay();">Overlay</button>
 
     <div id="appBar" data-win-control="WinJS.UI.NavBar">
         <div data-win-control="WinJS.UI.NavBarContainer">
@@ -150,6 +151,7 @@
         Hello<br />
         <button id="myFlyout2Btn" onclick="myFlyout2.winControl.show(myFlyout2Btn);">Flyout (Extend)</button>
         <button onclick="myFlyout2.winControl.show(myFlyout1Btn);">Flyout (New)</button>
+        <button onclick="showSettingsFlyout(event);">Settings Flyout</button>
     </div>
 
     <div data-win-control="WinJS.UI.SettingsFlyout" id="helpSettingsFlyout" aria-label="Help settings flyout" data-win-options="{settingsCommandId:'help'}"> 
@@ -226,6 +228,7 @@
 
     <div id="simpleOverlayEl" data-win-control="SimpleOverlay">
         Overlay!
+        <button onclick="showSettingsFlyout(this);">SettingsFlyout</button>
     </div>
 
     <button style="position:absolute;top:250px;left:100px;z-index:1;" id="showMenuButton" onclick="menu1.winControl.show(this)" tabindex="1">show menu1</button>

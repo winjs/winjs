@@ -436,6 +436,9 @@ define([
                         return;
                     }
 
+                    // Do our derived classes hide stuff
+                    this._beforeEndHide();
+
                     // Make sure animation is finished.
                     this._element.style.visibility = "hidden";
                     this._element.style.display = "none";
@@ -448,9 +451,6 @@ define([
                         this._queuedToShow = [];
                         this._queuedToHide = [];
                     }
-                    
-                    // Do our derived classes hide stuff
-                    this._endHide();
 
                     // We're hidden now
                     if (this._doNext === "hide") {
@@ -468,7 +468,13 @@ define([
                     Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._Overlay._checkDoNext");
                 },
                 
-                _endHide: function _Overlay_endHide() {
+                // Called after the animation but while the Overlay is still visible. It's
+                // important that this runs while the Overlay is visible because hiding
+                // a DOM element (e.g. visibility="hidden", display="none") while it contains
+                // focus has the side effect of moving focus to the body or null and triggering
+                // focus move events. _beforeEndHide is a good hook for the Overlay to move focus
+                // elsewhere before its DOM element gets hidden.
+                _beforeEndHide: function _Overlay_endHide() {
                     // Nothing by default
                 },
 
