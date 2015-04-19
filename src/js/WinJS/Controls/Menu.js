@@ -275,9 +275,10 @@ define([
                     Flyout.Flyout.prototype._hide.call(this);
                 },
                 
-                _endHide: function Menu_endHide() {
+                _beforeEndHide: function Menu_beforeEndHide() {
                     _ElementUtilities.removeClass(this.element, _Constants.menuMouseSpacingClass);
                     _ElementUtilities.removeClass(this.element, _Constants.menuTouchSpacingClass);
+                    Flyout.Flyout.prototype._beforeEndHide.call(this);
                 },
 
                 _addCommand: function Menu_addCommand(command) {
