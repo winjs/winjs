@@ -19,7 +19,7 @@ var rightButton = 2;
 var Strings = {
     get closeOverlay() { return _Resources._getWinJSString("ui/closeOverlay").value; }
 };
-var ClassNames = {
+export var _ClassNames = {
     _clickEater: "win-clickeater"
 };
 var EventNames = {
@@ -528,7 +528,7 @@ class LightDismissService {
 
     private _createClickEater(): HTMLElement {
        var clickEater = _Global.document.createElement("section");
-        clickEater.className = ClassNames._clickEater;
+        clickEater.className = _ClassNames._clickEater;
         _ElementUtilities._addEventListener(clickEater, "pointerdown", this._onClickEaterPointerDown.bind(this), true);
         clickEater.addEventListener("click", this._onClickEaterClick.bind(this), true);
         // Tell Aria that it's clickable
@@ -621,6 +621,7 @@ _Base.Namespace.define("WinJS.UI._LightDismissService", {
     LightDismissableElement: LightDismissableElement,
     DismissalPolicies: DismissalPolicies,
     LightDismissalReasons: LightDismissalReasons,
+    _ClassNames: _ClassNames,
 
     _service: service
 });

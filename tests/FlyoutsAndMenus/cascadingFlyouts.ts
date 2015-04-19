@@ -146,10 +146,6 @@ module CorsicaTests {
             });
 
             OverlayHelpers.disposeAndRemove(_defaultAnchor);
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
 
         //
@@ -234,7 +230,7 @@ module CorsicaTests {
                 // Hide Flyout at the end of the cascade
                 index = flyoutChain.length - 1;
                 flyout = flyoutChain[index];
-                expectedFocusTarget = flyout._previousFocus,
+                expectedFocusTarget = flyoutChain[index - 1].element,
                 expectedCascadeAfterHiding = flyoutChain.slice(0, index);
                 return this.hideFlyout(flyout);
 
@@ -244,8 +240,8 @@ module CorsicaTests {
 
                     // Hide Flyout in the middle of the cascade
                     index = Math.floor(flyoutChain.length / 2)
-                flyout = flyoutChain[index];
-                    expectedFocusTarget = flyout._previousFocus;
+                    flyout = flyoutChain[index];
+                    expectedFocusTarget = flyoutChain[index - 1].element;
                     expectedCascadeAfterHiding = flyoutChain.slice(0, index);
                     return this.hideFlyout(flyout);
 
