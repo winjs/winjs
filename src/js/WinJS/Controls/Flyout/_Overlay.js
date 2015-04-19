@@ -474,7 +474,7 @@ define([
                 // focus has the side effect of moving focus to the body or null and triggering
                 // focus move events. _beforeEndHide is a good hook for the Overlay to move focus
                 // elsewhere before its DOM element gets hidden.
-                _beforeEndHide: function _Overlay_endHide() {
+                _beforeEndHide: function _Overlay_beforeEndHide() {
                     // Nothing by default
                 },
 

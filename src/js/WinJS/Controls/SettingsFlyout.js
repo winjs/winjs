@@ -337,7 +337,7 @@ define([
                     this._baseHide()
                 },
                 
-                _beforeEndHide: function SettingsFlyout_endHide() {
+                _beforeEndHide: function SettingsFlyout_beforeEndHide() {
                     _LightDismissService.hidden(this._dismissable);
                 },
 

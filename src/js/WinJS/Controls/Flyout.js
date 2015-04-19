@@ -58,11 +58,143 @@ define([
 
             var createEvent = _Events._createEventProperty;
 
+            var _LightDismissableLayer = _Base.Class.define(function _LightDismissableLayer_ctor(onLightDismiss) {
+                this._onLightDismiss = onLightDismiss;
+                this._currentlyFocusedClient = null;
+                this._clients = [];
+            }, {
+                shown: function _LightDismissableLayer_shown(client) {
+                    client._focusable = true;
+                    var index = this._clients.indexOf(client);
+                    if (index === -1) {
+                        this._clients.push(client);
+                        if (!_LightDismissService.isShown(this)) {
+                            _LightDismissService.shown(this);
+                        } else {
+                            _LightDismissService.updated(this);
+                            this._activateTopFocusableClientIfNeeded();
+                        }
+                    }
+                },
+
+                hiding: function _LightDismissableLayer_hiding(client) {
+                    var index = this._clients.indexOf(client);
+                    if (index !== -1) {
+                        this._clients[index]._focusable = false;
+                        this._activateTopFocusableClientIfNeeded();
+                    }
+                },
+
+                hidden: function _LightDismissableLayer_hidden(client) {
+                    var index = this._clients.indexOf(client);
+                    if (index !== -1) {
+                        this._clients.splice(index, 1);
+                        client.setZIndex("");
+                        client.onHide();
+                        if (this._clients.length === 0) {
+                            _LightDismissService.hidden(this);
+                        } else {
+                            _LightDismissService.updated(this);
+                            this._activateTopFocusableClientIfNeeded();
+                        }
+                    }
+                },
+
+                _clientForElement: function _LightDismissableLayer_clientForElement(element) {
+                    for (var i = this._clients.length - 1; i >= 0; i--) {
+                        if (this._clients[i].containsElement(element)) {
+                            return this._clients[i];
+                        }
+                    }
+                    return null;
+                },
+
+                _focusableClientForElement: function _LightDismissableLayer__focusableClientForElement(element) {
+                    for (var i = this._clients.length - 1; i >= 0; i--) {
+                        if (this._clients[i]._focusable && this._clients[i].containsElement(element)) {
+                            return this._clients[i];
+                        }
+                    }
+                    return null;
+                },
+
+                _getTopmostFocusableClient: function () {
+                    for (var i = this._clients.length - 1; i >= 0; i--) {
+                        var client = this._clients[i];
+                        if (client && client._focusable) {
+                            return client;
+                        }
+                    }
+                    return null;
+                },
+
+                _activateTopFocusableClientIfNeeded: function _LightDismissableLayer_activateTopFocusableClientIfNeeded() {
+                    var topClient = this._getTopmostFocusableClient();
+                    if (topClient && _LightDismissService.isTopmost(this)) {
+                        // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
+                        // Otherwise, use setActive() so no focus visual is drawn.
+                        var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
+                        topClient.onActivate(useSetActive);
+                    }
+                },
+
+                // ILightDismissable
+                //
+
+                setZIndex: function _LightDismissableLayer_setZIndex(zIndex) {
+                    this._clients.forEach(function (client, index) {
+                        client.setZIndex(zIndex + index);
+                    }, this);
+                },
+                getZIndexCount: function () {
+                    return this._clients.length;
+                },
+                containsElement: function _LightDismissableLayer_containsElement(element) {
+                    return !!this._clientForElement(element);
+                },
+                onActivate: function _LightDismissableLayer_onActivate(useSetActive) {
+                    // Prefer the client that has focus
+                    var client = this._focusableClientForElement(_Global.document.activeElement);
+
+                    if (!client && this._clients.indexOf(this._currentlyFocusedClient) !== -1 && this._currentlyFocusedClient._focusable) {
+                        // Next try the client that had focus most recently
+                        client = this._currentlyFocusedClient;
+                    }
+
+                    if (!client) {
+                        // Finally try the client at the top of the stack
+                        client = this._getTopmostFocusableClient();
+                    }
+
+                    this._currentlyFocusedClient = client;
+                    client && client.onActivate(useSetActive);
+                },
+                onFocus: function _LightDismissableLayer_onFocus(element) {
+                    this._currentlyFocusedClient = this._clientForElement(element);
+                    this._currentlyFocusedClient && this._currentlyFocusedClient.onFocus(element);
+                },
+                onHide: function _LightDismissableLayer_onHide() {
+                    this._currentlyFocusedClient = null;
+                },
+                onShouldLightDismiss: function _LightDismissableLayer_onShouldLightDismiss(info) {
+                    return _LightDismissService.DismissalPolicies.light(info);
+                },
+                onLightDismiss: function _LightDismissableLayer_onLightDismiss(info) {
+                    this._onLightDismiss(info);
+                }
+            });
+
             // Singleton class for managing cascading flyouts
             var _CascadeManager = _Base.Class.define(function _CascadeManager_ctor() {
+                var that = this;
+                this._dismissableLayer = new _LightDismissableLayer(function _CascadeManager_onLightDismiss(info) {
+                    if (info.reason === _LightDismissService.LightDismissalReasons.escape) {
+                        that.collapseFlyout(that.getAt(that.length - 1));
+                    } else {
+                        that.collapseAll();
+                    }
+                });
                 this._cascadingStack = [];
-                this._baseZIndex = 0;
-                this._currentFocus = null;
                 this._handleKeyDownInCascade_bound = this._handleKeyDownInCascade.bind(this);
                 this._inputType = null;
             },
@@ -89,12 +221,7 @@ define([
 
                     flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                     this._cascadingStack.push(flyoutToAdd);
-                    if (!_LightDismissService.isShown(this)) {
-                        _LightDismissService.shown(this);
-                    } else {
-                        flyoutToAdd._dismissable.setZIndex(this._baseZIndex + this.length - 1);
-                        this._activateTopFlyoutIfNeeded();
-                    }
+                    this._dismissableLayer.shown(flyoutToAdd._dismissable);
                 },
                 collapseFlyout: function _CascadeManager_collapseFlyout(flyout) {
                     // Removes flyout param and its subflyout descendants from the _cascadingStack.
@@ -108,13 +235,6 @@ define([
                             subFlyout = this._cascadingStack.pop();
                             subFlyout.element.removeEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                             subFlyout._hide(); // We use the reentrancyLock to prevent reentrancy here.
-                            subFlyout._dismissable.onHide();
-                        }
-                        
-                        if (this.length === 0) {
-                            _LightDismissService.hidden(this);
-                        } else {
-                            this._activateTopFlyoutIfNeeded();
                         }
                         
                         if (this._cascadingStack.length === 0) {
@@ -128,7 +248,13 @@ define([
                         signal.complete();
                     }
                 },
-                collapseAll: function _CascadeManager_collapseAll(keyboardInvoked) {
+                hiding: function _CascadeManager_hiding(flyout) {
+                    this._dismissableLayer.hiding(flyout._dismissable);
+                },
+                hidden: function _CascadeManager_hidden(flyout) {
+                    this._dismissableLayer.hidden(flyout._dismissable);
+                },
+                collapseAll: function _CascadeManager_collapseAll() {
                     // Empties the _cascadingStack and hides all flyouts.
                     var headFlyout = this.getAt(0);
                     if (headFlyout) {
@@ -193,77 +319,6 @@ define([
                             event.preventDefault();
                         }
                     } else if (event.keyCode === Key.alt || event.keyCode === Key.F10) {
-                        // Show a focus rect where focus is restored.
-                        this.collapseAll(true);
-                    }
-                },
-                _flyoutForElement: function _CascadeManager_flyoutForElement(el) {
-                    var index = this.indexOfElement(el);
-                    return index === -1 ? null : this.getAt(index);
-                },
-                _activateTopFlyoutIfNeeded: function _CascadeManager_activateTopFlyoutIfNeeded() {
-                    var topFlyout = this.getAt(this.length - 1);
-                    if (topFlyout && _LightDismissService.isTopmost(this)) {
-                        // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
-                        // Otherwise, use setActive() so no focus visual is drawn.
-                        var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
-                        topFlyout._dismissable.onActivate(useSetActive);
-                    }
-                },
-                
-                // ILightDismissable
-                //
-                
-                // ADCOM: Should we pull the light dismiss details out into its own component?
-            
-                setZIndex: function _CascadeManager_setZIndex(zIndex) {
-                    this._baseZIndex = zIndex;
-                    this._cascadingStack.forEach(function (flyout, index) {
-                        flyout._dismissable.setZIndex(this._baseZIndex + index);
-                    }, this);
-                },
-                getZIndexCount: function () {
-                    return this._cascadingStack.length;
-                },
-                containsElement: function _CascadeManager_containsElement(element) {
-                    return this._cascadingStack.some(function (flyout) {
-                        return flyout._dismissable.containsElement(element);
-                    });
-                },
-                requiresClickEater: function _CascadeManager_requiresClickEater() {
-                    return true;
-                },
-                onActivate: function _CascadeManager_onActivate(useSetActive) {
-                    // Prefer the Flyout that has focus
-                    var flyout = this._flyoutForElement(_Global.document.activeElement);
-                    
-                    if (!flyout && this.indexOf(this._currentFocus) !== -1) {
-                        // Next try the Flyout that had focus most recently
-                        flyout = this._currentFocus;
-                    }
-                    
-                    if (!flyout) {
-                        // Finally try the Flyout at the top of the stack
-                        flyout = this.getAt(this.length - 1);
-                    }
-                    
-                    this._currentFocus = flyout;
-                    flyout && flyout._dismissable.onActivate(useSetActive);
-                },
-                onFocus: function _CascadeManager_onFocus(element) {
-                    this._currentFocus = this._flyoutForElement(element);
-                    this._currentFocus && this._currentFocus._dismissable.onFocus(element);
-                },
-                onHide: function _CascadeManager_onHide() {
-                    this._currentFocus = null;
-                },
-                onShouldLightDismiss: function _CascadeManager_onShouldLightDismiss(info) {
-                    return _LightDismissService.DismissalPolicies.light(info);
-                },
-                onLightDismiss: function _CascadeManager_onLightDismiss(info) {
-                    if (info.reason === _LightDismissService.LightDismissalReasons.escape) {
-                        this.collapseFlyout(this.getAt(this.length - 1));
-                    } else {
                         this.collapseAll();
                     }
                 }
@@ -456,6 +511,7 @@ define([
                 _dispose: function Flyout_dispose() {
                     _Dispose.disposeSubTree(this.element);
                     this._hide();
+                    Flyout._cascadeManager.hidden(this);
                     this.anchor = null;
                 },
 
@@ -503,7 +559,13 @@ define([
                     // Any calls to collapseFlyout through reentrancy should nop.
                     Flyout._cascadeManager.collapseFlyout(this);
 
-                    this._baseHide();
+                    if (this._baseHide()) {
+                        Flyout._cascadeManager.hiding(this);
+                    }
+                },
+
+                _beforeEndHide: function Flyout_beforeEndHide() {
+                   Flyout._cascadeManager.hidden(this);
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {

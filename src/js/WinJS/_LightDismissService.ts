@@ -321,6 +321,14 @@ class LightDismissService {
             this._updateDom();
         }
     }
+
+    // Dismissables should call this when their state has changed such that it'll affect the behavior of some method
+    // in its ILightDismissable interface. For example, if the dismissable was altered such that getZIndexCount will
+    // now return 2 instead of 1, that dismissable should call *updated* so the LightDismissService can find out about
+    // this change.
+    updated(client: ILightDismissable) {
+        this._updateDom();
+    }
     
     isShown(client: ILightDismissable) {
         return this._clients.indexOf(client) !== -1;
@@ -459,7 +467,8 @@ class LightDismissService {
         }
     }
 
-    private _onBackClick(eventObject: any): boolean {
+    // Called by tests.
+    _onBackClick(eventObject: any): boolean {
         var doDefault = this._dispatchLightDismiss(LightDismissalReasons.hardwareBackButton);
         return !doDefault; // Returns whether or not the event was handled.
     }
@@ -593,17 +602,21 @@ class LightDismissService {
 var service = new LightDismissService();
 export var shown = service.shown.bind(service);
 export var hidden = service.hidden.bind(service);
+export var updated = service.updated.bind(service);
 export var isShown = service.isShown.bind(service);
 export var isTopmost = service.isTopmost.bind(service);
 export var _clickEaterTapped = service._clickEaterTapped.bind(service);
+export var _onBackClick = service._onBackClick.bind(service);
 export var _setDebug = service._setDebug.bind(service);
 
 _Base.Namespace.define("WinJS.UI._LightDismissService", {
     shown: shown,
     hidden: hidden,
+    updated: updated,
     isShown: isShown,
     isTopmost: isTopmost,
     _clickEaterTapped: _clickEaterTapped,
+    _onBackClick: _onBackClick,
     _setDebug: _setDebug,
     LightDismissableElement: LightDismissableElement,
     DismissalPolicies: DismissalPolicies,
