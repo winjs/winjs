@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="../bin/Microsoft.WinJS.4.0/css/ui-light.css" />
+	<script src="../bin/Microsoft.WinJS.4.0/js/WinJS.js"></script>
+	<style>
+		.simpleoverlay {
+			display: none;
+			width: 300px;
+			height: 100px;
+			background-color: green;
+			position: absolute;
+			top: 50px;
+			left: 50px;
+		}
+		.simpleoverlay-shown {
+			display: inherit;
+		}
+	</style>
+	<script>
+		WinJS.Utilities._require('WinJS/_LightDismissService');
+		function init() {
+			WinJS.UI.processAll().then(function () {
+
+			});
+		}
+
+		function showDialog() {
+			document.getElementById("dialogEl").winControl.show();
+		}
+
+		function showOverlay() {
+			document.getElementById("overlayEl").winControl.show();
+		}
+
+		var SimpleOverlay = WinJS.Class.define(function (element) {
+			this.element = element;
+			element.winControl = this;
+			element.classList.add("simpleoverlay");
+
+			var that = this;
+			this._dismissable = new WinJS.UI._LightDismissService.LightDismissableElement({
+				element: element,
+				tabIndex: -1,
+				onLightDismiss: function () {
+					that.hide();
+				}
+			})
+		}, {
+			show: function () {
+				this.element.classList.add("simpleoverlay-shown");
+				WinJS.UI._LightDismissService.shown(this._dismissable);
+			},
+			hide: function () {
+				WinJS.UI._LightDismissService.hidden(this._dismissable);
+				this.element.classList.remove("simpleoverlay-shown");
+			}
+		})
+	</script>
+</head>
+<body onload="init();">
+	<button onclick="showDialog();">Dialog</button>
+	<button onclick="showOverlay();">Overlay</button>
+
+	<div id="dialogEl" data-win-control="WinJS.UI.ContentDialog" data-win-options="{
+		primaryCommandText: 'OK',
+		secondaryCommandText: 'Cancel',
+		title: 'A Dialog'
+	}">
+		Hello
+		<button onclick="showOverlay();">Overlay</button>
+	</div>
+
+	<div id="overlayEl" data-win-control="SimpleOverlay">
+		Hello
+		<button onclick="showDialog();">Dialog</button>
+	</div>
+</body>
+</html>
