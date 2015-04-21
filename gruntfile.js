@@ -52,7 +52,7 @@
 
         // Tasks that drop things in bin/ (should have "_postProcess" as the last task)
         grunt.registerTask("storePackage", ["configureStore", "app"]);
-        grunt.registerTask("app", ["_preBuild", "onefile:base", "onefile:ui", "_copyFinal", "replace", "_postProcess"]);
+        grunt.registerTask("app", ["_preBuild", "onefile:base", "requirejs:ui", "_copyFinal", "replace", "_postProcess"]);
         grunt.registerTask("website", ["_preBuild", "onefile:WinJS", "_copyFinal", "replace", "_postProcess"]);
         grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:WinJS", "copy:fonts", "_postProcess"]);
         grunt.registerTask("default", ["website"]);

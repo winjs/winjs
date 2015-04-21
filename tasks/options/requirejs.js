@@ -130,6 +130,7 @@
 
         // The modules build generates a require configuration with this
         if (!options.dir) {
+            console.log('test');
             options.name = options.name || key;
             var target = options.target || options.name;
             var name = options.name;
@@ -148,14 +149,11 @@
         footer: footer,
         ui: {
             options: {
-                exclude: ['./base'],
-                target: 'ui'
-            }
-        },
-        base: {
-            options: {
-                target: 'base'
+                exclude: ['./base']
             }
         }
     };
+
+    defaults('ui', module.exports['ui']);
+
 })();
