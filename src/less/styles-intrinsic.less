@@ -57,7 +57,7 @@ option {
 //
 // Text input
 //
-input[type=text], input[type=password], input[type=email], input[type=number],
+input:not([type]), input[type=""], input[type=text], input[type=password], input[type=email], input[type=number],
 input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
     -ms-user-select: element;
     border-style: solid;
