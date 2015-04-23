@@ -51,12 +51,14 @@ textarea,
 button,
 select,
 option {
-    font-family: "Segoe UI", "Segoe WP", sans-serif, "Segoe MDL2 Assets", "Symbols";
+    font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
 }
 
 //
 // Text input
 //
+input:not([type]).win-textbox,
+input[type=""].win-textbox,
 input[type=text].win-textbox,
 input[type=password].win-textbox,
 input[type=email].win-textbox,
