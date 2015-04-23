@@ -39,7 +39,7 @@
     //
     // Link
     //
-    a {
+    a.win-link {
         color: @accentColor;
 
         &:hover {
@@ -58,7 +58,7 @@
     //
     // Radio and Checkbox
     //
-    input[type=checkbox] {
+    input[type=checkbox].win-checkbox {
         &::-ms-check {
             color: @baseHigh;
             border-color: @baseMediumHigh;
@@ -103,7 +103,7 @@
         }
     }
 
-    input[type=radio] {
+    input[type=radio].win-radio {
         &::-ms-check {
             color: @baseMediumHigh;
             border-color: @baseMediumHigh;
@@ -136,7 +136,7 @@
     //
     // Progress
     //
-    progress {
+    progress.win-progress {
       // Main colors
       color: @accentColor;
 
@@ -172,11 +172,11 @@
     //
     // Push button
     //
-    button,
-    input[type=button],
-    input[type=reset],
-    input[type=submit],
-    button[type=submit] {
+    button.win-button,
+    input[type=button].win-button,
+    input[type=reset].win-button,
+    input[type=submit].win-button,
+    button[type=submit].win-button {
         color: @baseHigh;
         background-color: @baseLow;
         border-color: transparent;
@@ -196,8 +196,8 @@
         }
     }
 
-    input[type=submit],
-    button[type=submit] {
+    input[type=submit].win-button,
+    button[type=submit].win-button {
         color: #fff;
         background-color: @accentColor;
     }
@@ -205,7 +205,7 @@
     //
     // Select
     //
-    select {
+    select.win-dropdown {
         color: @baseHigh;
         background-color: @baseLow;
         border-color: @baseMediumMid;
@@ -230,7 +230,7 @@
         }
     }
 
-    option {
+    select.win-dropdown option {
         color: @baseHigh;
         background-color: @chromeMediumMid;
 
@@ -244,15 +244,15 @@
         }
     }
 
-    optgroup {
+    select.win-dropdown optgroup {
         color: @baseHigh;
         background-color: @chromeMediumMid;
     }
-    optgroup:disabled {
+    select.win-dropdown optgroup:disabled {
         color: @baseLow;
     }
 
-    select[multiple] {
+    select[multiple].win-dropdown {
         border: none;
         background-color: @chromeMediumMid;
 
@@ -271,7 +271,7 @@
     //
     // Slider
     //
-    input[type=range] {
+    input[type=range].win-slider {
         background-color: transparent;
 
         // Note the use of background instead of background-color
@@ -350,14 +350,14 @@
     //
     // Text box
     //
-    input[type=text],
-    input[type=password],
-    input[type=email],
-    input[type=number],
-    input[type=tel],
-    input[type=url],
-    input[type=search],
-    textarea,
+    input[type=text].win-textbox,
+    input[type=password].win-textbox,
+    input[type=email].win-textbox,
+    input[type=number].win-textbox,
+    input[type=tel].win-textbox,
+    input[type=url].win-textbox,
+    input[type=search].win-textbox,
+    textarea.win-textbox,
     .win-textarea {
         color: @baseHigh;
         background-color: @altMediumMid;
@@ -384,7 +384,8 @@
     //
     // Clear/Reveal buttons
     //
-    input::-ms-clear, input::-ms-reveal {
+    input.win-textbox::-ms-clear,
+    input.win-textbox::-ms-reveal {
         display: block;
         color: fade(@baseBlack, 60%); // Equivalent to altMid in dark and baseMid in light
 

@@ -57,8 +57,15 @@ option {
 //
 // Text input
 //
-input[type=text], input[type=password], input[type=email], input[type=number],
-input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
+input[type=text].win-textbox,
+input[type=password].win-textbox,
+input[type=email].win-textbox,
+input[type=number].win-textbox,
+input[type=tel].win-textbox,
+input[type=url].win-textbox,
+input[type=search].win-textbox,
+textarea.win-textbox,
+.win-textarea {
     -ms-user-select: element;
     border-style: solid;
     border-width: 2px;
@@ -74,12 +81,12 @@ input[type=tel], input[type=url], input[type=search], textarea, .win-textarea {
     .win-type-body();
 }
 
-input::-ms-value {
+input.win-textbox::-ms-value {
     margin: 0;
     padding: 0;
 }
 
-textarea, .win-textarea {
+textarea.win-textbox, .win-textarea {
     resize: none;
     overflow-y: auto;
 }
@@ -87,7 +94,8 @@ textarea, .win-textarea {
 //
 // Radio and check
 //
-input[type=radio], input[type=checkbox] {
+input[type=radio].win-radio,
+input[type=checkbox].win-checkbox {
     width: 20px;
     height: 20px;
     margin-right: 8px;
@@ -99,7 +107,8 @@ input[type=radio], input[type=checkbox] {
         margin-right: 0px;
     });
 }
-input::-ms-check {
+input.win-radio::-ms-check,
+input.win-checkbox::-ms-check {
     border-style: solid;
     display: inline-block;
     border-width: 2px;
@@ -110,7 +119,11 @@ input::-ms-check {
 //
 // Button
 //
-button, input[type=button], input[type=reset], input[type=submit], button[type=submit] {
+button.win-button,
+input[type=button].win-button,
+input[type=reset].win-button,
+input[type=submit].win-button,
+button[type=submit].win-button {
     border-style: solid;
     margin: 0px;
     min-height: 32px;
@@ -124,7 +137,8 @@ button, input[type=button], input[type=reset], input[type=submit], button[type=s
     .win-type-body();
 }
 
-input::-ms-clear, input::-ms-reveal {
+input.win-textbox::-ms-clear,
+input.win-textbox::-ms-reveal {
     padding-right: 2px;
     margin-right: -8px;
     margin-left: 2px;
@@ -133,7 +147,7 @@ input::-ms-clear, input::-ms-reveal {
     width: 30px;
     height: 32px;
 }
-input {
+input.win-textbox {
     .RTL({
         &::-ms-clear,
         &::-ms-reveal {
@@ -146,7 +160,7 @@ input {
 //
 // File upload control.
 //
-input[type=file] {
+input[type=file].win-button {
     border: none;
     min-width: 100px;
     min-height: 20px;
@@ -186,7 +200,7 @@ input[type=file] {
 //
 // Dropdown
 //
-select {
+select.win-dropdown {
     min-width: 56px;
     max-width: 368px;
     min-height: 32px;
@@ -214,19 +228,19 @@ select {
 
 }
 
-select[multiple] {
+select[multiple].win-dropdown {
     padding: 0 0 0 12px;
     vertical-align: bottom;
 }
 
-option {
+select.win-dropdown option {
     .win-type-body();
 }
 
 //
 // Progress
 //
-progress {
+progress.win-progress {
     width: 180px;
     height: 4px;
     -webkit-appearance: none;
@@ -303,7 +317,7 @@ progress {
 //
 // Horizontal slider
 //
-input[type=range] {
+input[type=range].win-slider {
     -webkit-appearance: none;
 
     width: 280px;
@@ -338,7 +352,7 @@ input[type=range] {
 //
 // Vertical slider
 //
-input[type=range].win-vertical {
+input[type=range].win-slider.win-vertical {
     writing-mode: bt-lr;
 
     width: 22px; // Leave enough room for tick marks
@@ -361,51 +375,22 @@ input[type=range].win-vertical {
 //
 // Link
 //
-a {
+a.win-link {
     text-decoration: underline;
     cursor: pointer;
     touch-action: manipulation;
 }
 
 //
-// Image
-//
-img {
-    border-style: none;
-}
-
-//
-// Form
-//
-form {
-    margin: 0px;
-    padding: 0px;
-}
-
-//
-// Legend
-//
-legend {
-    margin: 0px 0px 10px 0px;
-    padding: 0px;
-    color: inherit;
-    .win-type-body();
-}
-
-//
 // Code tags
 //
-code, pre, samp {
+code.win-code,
+pre.win-code,
+samp.win-code {
     font-family: "Consolas", "Menlo", "Monaco", "Courier New", monospace;
     .win-type-body();
 }
 
-//
-// Caption
-//
-caption, figcaption, small {
-    .win-type-caption();
-}
 
 //
 // Ellipsis
@@ -424,26 +409,6 @@ h2.win-type-ellipsis, .win-type-x-large.win-type-ellipsis {
     line-height: 1.5;
 }
 
-//
-// Description list and other things
-//
-dt, th {
-    // Not using a win-type mixin because this is a unique combination of
-    // font size, weight, and line height that is not covered.
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1.3636;
-}
-abbr, acronym, address, blockquote, cite, dl, dd, li, ol, p, q, td, tr {
-    font-weight: 300;
-}
-b, strong {
-    font-weight: 700;
-}
-em {
-    font-style: italic;
-}
-
 .win-scrollview {
     overflow-x: auto;
     overflow-y: hidden;
@@ -454,25 +419,12 @@ em {
 //
 // Headers
 //
-h1, h2, h3, h4, h5, h6 {
+h1.win-type-header,
+h2.win-type-subheader,
+h3.win-type-title,
+h4.win-type-subtitle,
+h5.win-type-base,
+h6.win-type-body {
     margin-top: 0px;
     margin-bottom: 0px;
-}
-h1 {
-    .win-type-header();
-}
-h2 {
-    .win-type-subheader();
-}
-h3 {
-    .win-type-title();
-}
-h4 {
-    .win-type-subtitle();
-}
-h5 {
-    .win-type-base();
-}
-h6 {
-    .win-type-body();
 }
