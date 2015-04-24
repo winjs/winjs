@@ -1,0 +1,483 @@
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+.win-mediaplayer {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    /* We make this a slightly strong than normal style rule so that it will override any sizes the
+   developer has set. */
+    &.win-mediaplayer-fullscreen {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 100vh;
+        width: 100vw;
+    }
+    /* Note: The back button will only be visible in full screen playback on platforms such as desktop where there
+       is not a well known convention for back.
+    */
+    .win-navigation-backbutton {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+
+    .win-toolbar {
+        .win-toolbar-actionarea {
+            .win-command {
+                flex-basis: 48px;
+            }
+        }
+    }
+
+    button.win-command {
+        height: 48px;
+        width: 48px;
+    }
+
+    .win-toolbar .win-toolbar-actionarea {
+        justify-content: center;
+    }
+    /* We use 2 levels of class specificity, because otherwise there is a very easy to hit case where the app developer sets a style like
+       display: flex on an item that has .win-mediaplayer-hidden and now the element is no longer hidden, which wasn't the app developer's
+       intention. */
+    .win-mediaplayer-hidden,
+    .win-menu button.win-command.win-mediaplayer-hidden {
+        display: none;
+    }
+
+    .win-commandicon {
+        margin: 0;
+        height: 48px;
+        width: 40px;
+    }
+
+    .win-commandimage {
+        font-size: 20px;
+        line-height: 48px;
+        width: 48px;
+        height: 48px;
+        margin: 0;
+    }
+}
+
+.win-mediaplayer-container {
+    height: 100%;
+    width: 100%;
+}
+
+.win-mediaplayer-video {
+    height: 100%;
+    width: 100%;
+}
+
+.win-mediaplayer-fullscreen {
+    .win-mediaplayer-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+}
+
+/* In both the single and double row layouts we adjust the margin-bottom so that the bottom of the flyout 
+ will appear just above the timeline. */
+.win-mediaplayer-singlerow {
+    .win-flyout,
+    &.win-flyout {
+        margin-bottom: 0;
+    }
+
+    .win-mediaplayer-timeline {
+        width: auto;
+    }
+
+    .win-toolbar {
+        width: 100%;
+    }
+    .win-mediaplayer-thumbnail {
+        margin-top: -50px;
+    }
+}
+
+.win-mediaplayer-doublerow {
+    .win-flyout,
+    &.win-flyout {
+        margin-bottom: 48px;
+    }
+
+    .win-mediaplayer-transportcontrols {
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+        padding: 0 12px 24px 12px;
+        width: calc(~"100% - 24px");
+    }
+
+    .win-mediaplayer-timeline,
+    .win-mediaplayer-commands {
+        height: 48px;
+    }
+
+    .win-mediaplayer-currenttimeindicator,
+    .win-mediaplayer-totaltimeindicator {
+        display: inline-block;
+        margin-top: 12px;
+    }
+
+    .win-mediaplayer-totaltimeindicator {
+        float: right;
+    }
+}
+
+/* The indefinite progress indicator displayed while media is loading */
+progress.win-mediaplayer-busy {
+    position: absolute;
+    top: calc(~"50% - 30px"); /*30px = height of the progress ring / 2*/
+    left: calc(~"50% - 30px"); /*30px = width of the progress ring / 2*/
+}
+
+.win-mediaplayer-fullscreen progress.win-mediaplayer-busy {
+    position: absolute;
+    top: calc(~"50% - 80px"); /*80px = height of the progress ring / 2*/
+    left: calc(~"50% - 80px"); /*80px = width of the progress ring / 2*/
+    height: 160px;
+    width: 160px;
+}
+
+.win-mediaplayer-controls {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* These styles are needed for the controls to show up in the correct
+       place for non-fullscreen mode. */
+    position: absolute;
+    bottom: 0;
+}
+
+/* Title and description */
+.win-mediaplayer-mediatitle,
+.win-mediaplayer-mediadescription {
+    height: auto;
+    padding-left: 12px;
+}
+
+.win-mediaplayer-mediadescription {
+    padding-bottom: 48px;
+    width: 100%;
+}
+
+.win-mediaplayer-transportcontrols {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    min-width: 296px;
+}
+
+.win-mediaplayer-primary,
+.win-mediaplayer-secondary {
+    height: 100%;
+    width: auto;
+    display: flex;
+}
+
+.win-mediaplayer-timeline {
+    height: 100%;
+    width: 100%;
+    margin: 0 12px;
+}
+
+.win-mediaplayer-currenttimeindicator,
+.win-mediaplayer-timeremainingindicator,
+.win-mediaplayer-totaltimeindicator {
+    display: none;
+}
+
+.win-mediaplayer-progresscontainer {
+    width: 100%;
+    height: 2px;
+    padding: 22px 0;
+    -moz-transform: scaleX(1);
+    -ms-transform: scaleX(1);
+    -o-transform: scaleX(1);
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+}
+
+.win-mediaplayer-seekbar {
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 22px;
+}
+
+.win-mediaplayer-seekprogress,
+.win-mediaplayer-buffer {
+    position: absolute;
+    height: 2px;
+    width: 100%;
+    -moz-transform-origin: left;
+    -ms-transform-origin: left;
+    -o-transform-origin: left;
+    -webkit-transform-origin: left;
+    transform-origin: left;
+}
+
+.win-mediaplayer-seekbar-disabled .win-mediaplayer-buffer {
+    display: none;
+}
+
+.win-mediaplayer-seek-mark {
+    -moz-background-clip: border-box;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    margin-top: -11px;
+    margin-left: 8px;
+}
+
+    .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark,
+    .win-mediaplayer-fastforward .win-mediaplayer-seek-mark,
+    .win-mediaplayer-rewind .win-mediaplayer-seek-mark {
+        margin-top: 17px;
+    }
+
+    .win-mediaplayer-scrubbing .win-mediaplayer-thumbnailmode .win-mediaplayer-seek-mark,
+    .win-mediaplayer-fastforward .win-mediaplayer-thumbnailmode .win-mediaplayer-seek-mark,
+    .win-mediaplayer-rewind .win-mediaplayer-thumbnailmode .win-mediaplayer-seek-mark {
+        margin-top: 15px;
+    }
+
+.win-mediaplayer-thumb.win-mediaplayer-hidden .win-mediaplayer-thumbvisual {
+    opacity: 0;
+    -moz-transform: scale(1, 0.3);
+    -ms-transform: scale(1, 0.3);
+    -o-transform: scale(1, 0.3);
+    -webkit-transform: scale(1, 0.3);
+    transform: scale(1, 0.3);
+    -moz-transition-property: opacity transform;
+    -o-transition-property: opacity transform;
+    -webkit-transition-property: opacity transform;
+    transition-property: opacity transform;
+    -moz-transition-duration: 100ms;
+    -o-transition-duration: 100ms;
+    -webkit-transition-duration: 100ms;
+    transition-duration: 100ms;
+    -moz-transition-timing-function: linear;
+    -o-transition-timing-function: linear;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+}
+
+.win-mediaplayer-thumb:not(.win-mediaplayer-hidden) .win-mediaplayer-thumbvisual {
+    opacity: 1;
+    -moz-transform: scale(1,1);
+    -ms-transform: scale(1,1);
+    -o-transform: scale(1,1);
+    -webkit-transform: scale(1,1);
+    transform: scale(1,1);
+    -moz-transition-property: opacity transform;
+    -o-transition-property: opacity transform;
+    -webkit-transition-property: opacity transform;
+    transition-property: opacity transform;
+    -moz-transition-duration: 100ms;
+    -o-transition-duration: 100ms;
+    -webkit-transition-duration: 100ms;
+    transition-duration: 100ms;
+    -moz-transition-timing-function: linear;
+    -o-transition-timing-function: linear;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+}
+
+/* Thumb visuals */
+.win-mediaplayer-seekbarvisualelements-container {
+    margin-left: -11px;
+}
+
+.win-mediaplayer-thumbnail {
+    height: auto;
+    width: 42px;
+    margin-top: -54px;
+    margin-left: -2px;
+}
+
+.win-mediaplayer-thumbnailmode {
+    .win-mediaplayer-thumbnail {
+        height: 64px;
+        width: 112px;
+        margin-top: -92px;
+        margin-left: -37px;
+    }
+
+    .win-mediaplayer-thumbnailmode {
+        .win-mediaplayer-seektimeindicator {
+            margin-left: 0;
+            margin-right: 0;
+        }
+    }
+
+    .win-mediaplayer-playbackspeedindicator {
+        display: block;
+    }
+}
+
+.win-mediaplayer-thumb,
+.win-mediaplayer-thumbnailvisual {
+    height: 100%;
+    width: 100%;
+}
+
+.win-mediaplayer-thumbnailvisual {
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.win-mediaplayer-playbackspeedindicator {
+    height: 100%;
+    align-self: flex-end;
+    padding-top: 4px;
+    padding-right: 8px;
+    display: none;
+}
+
+/* Markers */
+.win-mediaplayer-chaptermarker,
+.win-mediaplayer-advertisementmarker {
+    height: 6px;
+    width: 6px;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    -moz-background-clip: border-box;
+    -webkit-background-clip: border-box;
+    background-clip: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    margin-top: -2px;
+}
+
+/* Shared overlay styles */
+.win-mediaplayer-overlay {
+    &.win-flyout {
+        padding: 0;
+    }
+
+    >button {
+        display: block;
+        padding: 11px 12px 13px 12px;
+        min-height: 44px;
+        margin-left: 0;
+        margin-right: 0;
+        text-align: left;
+        width: 100%;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.333;
+        outline: none;
+        border: none;
+    }
+}
+
+/* Error overlay */
+.win-mediaplayer-errortext {
+    margin: 8px 12px;
+}
+
+/* Volume overlay */
+.win-mediaplayer-volume {
+    &.win-mediaplayer-overlay {
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        height: 86px;
+        max-width: 360px;
+        padding: 12px 16px;
+    }
+
+    .win-mediaplayer-volume-slider {
+        height: 48px;
+        padding: 0 16px;
+    }
+
+    input[type=range]::-ms-tooltip {
+        display: none;
+    }
+}
+
+.win-mediaplayer-volume-heading {
+    padding: 10px 0 6px 0;
+}
+
+.win-mediaplayer-volume-controls {
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+
+.win-mediaplayer-volume-icon::after {
+    font-family: 'Segoe UI Symbol';
+    font-size: 15pt;
+    content: '\E15D';
+}
+
+/* We need to set a width explicitly on the value of the volume control
+   otherwise the layout will move when the value is a single digit number 
+   (eg. 0) vs. a multi-digit number (eg. 100). */
+.win-mediaplayer-volume-value {
+    width: 32px;
+    line-height: 48px;
+}
+
+/* Unless we have an explicit rule, the focus accessibility outline won't show up. */
+button.win-mediaplayer-mutebutton:focus {
+    outline: 1px dotted;
+}
+
+/* Toolbar overrides */
+.win-mediaplayer-commands button.win-command .win-label {
+    display: none;
+}
+
+.win-toolbar .win-toolbar-actionarea .win-mediaplayer-timeline.win-command {
+    flex-grow: 5;
+    padding: 0;
+    font-size: 15px;
+}
+
+.win-mediaplayer-seektimeindicator {
+    padding: 2px 6px;
+    margin-left: 6px;
+    margin-right: 6px;
+}
+
+.win-mediaplayer-inputfeedback {
+    display: none;
+}
+
+.win-toolbar-overflowarea button.win-command.win-mediaplayer-hidden {
+    display: none;
+}
