@@ -32,7 +32,7 @@ define('WinJS/Controls/MediaPlayer', [
     '../Controls/MediaPlayer/_MediaUI',
     'require-style!less/styles-mediaplayer',
     'require-style!less/colors-mediaplayer'
-], function mediaPlayerInit(exports, _Global, _Base, _Events, _ErrorFromName, _Res, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, Application, BindingList, Animations, _TransitionAnimation, Navigation, _Dispose, _Control, _ControlProcessor, _Command, _Icon, MediaElementAdapter, BackButton, _Flyout, _ToolBar, _ElementUtilities, _MediaUI) {
+], function mediaPlayerInit(exports, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Res, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, Application, BindingList, Animations, _TransitionAnimation, Navigation, _Dispose, _Control, _ControlProcessor, _Command, _Icon, MediaElementAdapter, BackButton, _Flyout, _ToolBar, _ElementUtilities, _MediaUI) {
 
     "use strict";
 
