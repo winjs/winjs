@@ -19,6 +19,7 @@ import _Global = require("../../Core/_Global");
 import _Hoverable = require("../../Utilities/_Hoverable");
 import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
 import _KeyboardInfo = require('../../Utilities/_KeyboardInfo');
+import _LightDismissService = require('../../_LightDismissService');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
@@ -113,6 +114,7 @@ export class AppBar {
     private _adjustedOffsets: { top: string; bottom: string };
     private _handleShowingKeyboardBound: (ev: any) => Promise<any>;
     private _handleHidingKeyboardBound: (ev: any) => any;
+    private _dismissable: _LightDismissService.ILightDismissable;
 
     private _dom: {
         root: HTMLElement;
@@ -256,6 +258,13 @@ export class AppBar {
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-overflowbutton"), _Constants.ClassNames.overflowButtonCssClass);
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-ellipsis"), _Constants.ClassNames.ellipsisCssClass);
         this._isOpenedMode = _Constants.defaultOpened;
+        this._dismissable = new _LightDismissService.LightDismissableElement({
+            element: this._dom.root,
+            tabIndex: this._dom.root.hasAttribute("tabIndex") ? this._dom.root.tabIndex : -1,
+            onLightDismiss: () => {
+                this.close();
+            }
+        });
 
         // Initialize public properties.
         this.closedDisplayMode = _Constants.defaultClosedDisplayMode;
@@ -318,6 +327,7 @@ export class AppBar {
         }
 
         this._disposed = true;
+        _LightDismissService.hidden(this._dismissable);
         // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine
         // and synchronously complete any animations that might have been running.
         this._commandingSurface.dispose();
@@ -337,6 +347,32 @@ export class AppBar {
         this._commandingSurface.forceLayout();
     }
 
+    getCommandById(id: string): _Command.ICommand {
+        /// <signature helpKeyword="WinJS.UI.AppBar.getCommandById">
+        /// <summary locid="WinJS.UI.AppBar.getCommandById">
+        /// Retrieves the command with the specified ID from this AppBar.
+        /// If more than one command is found, this method returns the first command found.
+        /// </summary>
+        /// <param name="id" type="String" locid="WinJS.UI.AppBar.getCommandById_p:id">Id of the command to return.</param>
+        /// <returns type="object" locid="WinJS.UI.AppBar.getCommandById_returnValue">
+        /// The command found, or null if no command is found.
+        /// </returns>
+        /// </signature>
+        return this._commandingSurface.getCommandById(id);
+    }
+
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        /// <signature helpKeyword="WinJS.UI.AppBar.showOnlyCommands">
+        /// <summary locid="WinJS.UI.AppBar.showOnlyCommands">
+        /// Show the specified commands, hiding all of the others in the AppBar.
+        /// </summary>
+        /// <param name="commands" type="Array" locid="WinJS.UI.AppBar.showOnlyCommands_p:commands">
+        /// An array of the commands to show. The array elements may be Command objects, or the string identifiers (IDs) of commands.
+        /// </param>
+        /// </signature>
+        return this._commandingSurface.showOnlyCommands(commands);
+    }
+
     private _writeProfilerMark(text: string) {
         _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
     }
@@ -349,10 +385,6 @@ export class AppBar {
         root["winControl"] = this;
 
         this._id = root.id || _ElementUtilities._uniqueID(root);
-
-        if (!root.hasAttribute("tabIndex")) {
-            root.tabIndex = -1;
-        }
 
         _ElementUtilities.addClass(root, _Constants.ClassNames.controlCssClass);
         _ElementUtilities.addClass(root, _Constants.ClassNames.disposableCssClass);
@@ -493,11 +525,13 @@ export class AppBar {
         addClass(this._dom.root, _Constants.ClassNames.openedClass);
         removeClass(this._dom.root, _Constants.ClassNames.closedClass);
         this._commandingSurface.synchronousOpen();
+        _LightDismissService.shown(this._dismissable); // Call at the start of the open animation
     }
     private _updateDomImpl_renderClosed(): void {
         addClass(this._dom.root, _Constants.ClassNames.closedClass);
         removeClass(this._dom.root, _Constants.ClassNames.openedClass);
         this._commandingSurface.synchronousClose();
+        _LightDismissService.hidden(this._dismissable); // Call after the close animation
     }
 }
 

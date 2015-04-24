@@ -350,6 +350,8 @@
     //
     // Text box
     //
+    input:not([type]),
+    input[type=""], 
     input[type=text],
     input[type=password],
     input[type=email],
@@ -395,5 +397,9 @@
             color: @baseWhite;
             background-color: @accentColor;
         }
+    }
+
+    .win-xbox :focus {
+        outline: 2px solid white;
     }
 }

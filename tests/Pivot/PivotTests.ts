@@ -216,26 +216,26 @@ module WinJSTests {
             pivot._goNext();
             return waitForNextItemAnimationEnd(pivot);
         }).then(function () {
-                // Test second item
-                LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
-                pivot._goNext();
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                // Test third item
-                LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
-                pivot._goNext();
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                // Test wrapping around to first item
-                LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
-                pivot._goPrevious();
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                // Test wrapping around to last item
-                LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
-                pivot._goPrevious();
-                complete();
-            });
+            // Test second item
+            LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
+            pivot._goNext();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            // Test third item
+            LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
+            pivot._goNext();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            // Test wrapping around to first item
+            LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
+            pivot._goPrevious();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            // Test wrapping around to last item
+            LiveUnit.Assert.isTrue(isInViewport(pivot.selectedItem.element));
+            pivot._goPrevious();
+            complete();
+        });
     };
 
     function runKeyboardHeaderToHeader(complete, rtl) {
@@ -253,25 +253,25 @@ module WinJSTests {
             fireKeyEvent("keydown", pivot._headersContainerElement, Keys.leftArrow);
             return waitForNextItemAnimationEnd(pivot);
         }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
+            LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
 
-                fireKeyEvent("keydown", pivot._headersContainerElement, Keys.pageUp);
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? 2 : (itemCount - 2)), pivot.selectedIndex);
+            fireKeyEvent("keydown", pivot._headersContainerElement, Keys.pageUp);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? 2 : (itemCount - 2)), pivot.selectedIndex);
 
-                fireKeyEvent("keydown", pivot._headersContainerElement, Keys.rightArrow);
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
+            fireKeyEvent("keydown", pivot._headersContainerElement, Keys.rightArrow);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
 
-                fireKeyEvent("keydown", pivot._headersContainerElement, Keys.pageDown);
-                return waitForNextItemAnimationEnd(pivot);
-            }).done(function () {
-                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+            fireKeyEvent("keydown", pivot._headersContainerElement, Keys.pageDown);
+            return waitForNextItemAnimationEnd(pivot);
+        }).done(function () {
+            LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
 
-                complete();
-            });
+            complete();
+        });
     };
 
     function runHeaderTrackSwipeNavigation(complete, rtl) {
@@ -294,20 +294,20 @@ module WinJSTests {
             simulatePointerDown(pivot._headersContainerElement, 100, 10, PT_TOUCH);
             return WinJS.Promise.timeout();
         }).then(function () {
-                simulatePointerUp(pivot._headersContainerElement, 10, 30, PT_TOUCH);
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
+            simulatePointerUp(pivot._headersContainerElement, 10, 30, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
 
-                simulatePointerDown(pivot._headersContainerElement, 100, 30, PT_TOUCH);
-                return WinJS.Promise.timeout();
-            }).then(function () {
-                simulatePointerUp(pivot._headersContainerElement, 200, 10, PT_TOUCH);
-                return waitForNextItemAnimationEnd(pivot);
-            }).done(function () {
-                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
-                complete();
-            });
+            simulatePointerDown(pivot._headersContainerElement, 100, 30, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            simulatePointerUp(pivot._headersContainerElement, 200, 10, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).done(function () {
+            LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+            complete();
+        });
     };
 
     function runContentSwipeNavigation(complete, rtl) {
@@ -330,33 +330,33 @@ module WinJSTests {
             simulatePointerDown(pivot.element, 100, 10, PT_TOUCH);
             return WinJS.Promise.timeout();
         }).then(function () {
-                simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
+            simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
 
-                simulatePointerDown(pivot.element, 100, 30, PT_TOUCH);
-                return WinJS.Promise.timeout();
-            }).then(function () {
-                simulatePointerUp(pivot.element, 200, 10, PT_TOUCH);
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+            simulatePointerDown(pivot.element, 100, 30, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            simulatePointerUp(pivot.element, 200, 10, PT_TOUCH);
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
 
-                // Now set the opt-out class on pivot and navigation should no longer occur
-                pivot.element.classList.add("win-pivot-disablecontentswipenavigation");
-                simulatePointerDown(pivot.element, 100, 10, PT_TOUCH);
-                return WinJS.Promise.timeout();
-            }).then(function () {
-                pivot._headersState.handleNavigation = function () {
-                    LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
-                };
+            // Now set the opt-out class on pivot and navigation should no longer occur
+            pivot.element.classList.add("win-pivot-disablecontentswipenavigation");
+            simulatePointerDown(pivot.element, 100, 10, PT_TOUCH);
+            return WinJS.Promise.timeout();
+        }).then(function () {
+            pivot._headersState.handleNavigation = function () {
+                LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
+            };
 
-                simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
-                return WinJS.Promise.timeout(100);
-            }).done(function () {
-                complete();
-            });
+            simulatePointerUp(pivot.element, 10, 30, PT_TOUCH);
+            return WinJS.Promise.timeout(100);
+        }).done(function () {
+            complete();
+        });
     };
 
     function runNavButtons(complete, rtl) {
@@ -378,15 +378,15 @@ module WinJSTests {
             leftButton.click();
             return waitForNextItemAnimationEnd(pivot);
         }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
+            LiveUnit.Assert.areEqual((rtl ? 1 : (itemCount - 1)), pivot.selectedIndex);
 
-                rightButton.click();
-                rightButton.click();
-                return waitForNextItemAnimationEnd(pivot);
-            }).then(function () {
-                LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
-                complete();
-            });
+            rightButton.click();
+            rightButton.click();
+            return waitForNextItemAnimationEnd(pivot);
+        }).then(function () {
+            LiveUnit.Assert.areEqual((rtl ? (itemCount - 1) : 1), pivot.selectedIndex);
+            complete();
+        });
     };
 
     function skipWide(test) {
@@ -506,22 +506,22 @@ module WinJSTests {
 
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
-                    verifyAllHiddenExcept(pivot, 1);
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                verifyAllHiddenExcept(pivot, 1);
 
-                    // Remove the one in view.
-                    pivot.items.splice(1, 1);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).done(function () {
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
-                    verifyAllHiddenExcept(pivot, 0);
+                // Remove the one in view.
+                pivot.items.splice(1, 1);
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
+                verifyAllHiddenExcept(pivot, 0);
 
-                    // Remove the last one.
-                    pivot.items.pop();
-                    LiveUnit.Assert.areEqual(-1, pivot.selectedIndex, "Correct selectedIndex");
+                // Remove the last one.
+                pivot.items.pop();
+                LiveUnit.Assert.areEqual(-1, pivot.selectedIndex, "Correct selectedIndex");
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         testInserts = function testInserts(complete) {
@@ -536,23 +536,23 @@ module WinJSTests {
 
                 return waitForNextItemAnimationEnd(pivot);
             }).done(function () {
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
-                    verifyAllHiddenExcept(pivot, 0);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
+                verifyAllHiddenExcept(pivot, 0);
 
-                    // Insert after:
-                    pivot.items.push(getPivotItemProgrammatically(index++));
+                // Insert after:
+                pivot.items.push(getPivotItemProgrammatically(index++));
 
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
-                    verifyAllHiddenExcept(pivot, 0);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
+                verifyAllHiddenExcept(pivot, 0);
 
-                    // Insert before:
-                    pivot.items.unshift(getPivotItemProgrammatically(index++));
+                // Insert before:
+                pivot.items.unshift(getPivotItemProgrammatically(index++));
 
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
-                    verifyAllHiddenExcept(pivot, 1);
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                verifyAllHiddenExcept(pivot, 1);
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         testChange = function testChange(complete) {
@@ -586,11 +586,11 @@ module WinJSTests {
 
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
-                    LiveUnit.Assert.isTrue(pivot.selectedItem.contentElement.textContent.indexOf("New2") !== -1, "Key not found in contentElement");
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
+                LiveUnit.Assert.isTrue(pivot.selectedItem.contentElement.textContent.indexOf("New2") !== -1, "Key not found in contentElement");
 
-                    complete();
-                }).done();
+                complete();
+            }).done();
         };
 
         testSelectedIndex = function testSelectedIndex(complete) {
@@ -609,21 +609,21 @@ module WinJSTests {
                 pivot.selectedIndex = 1;
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    verifySelectedItem(pivot, 1);
+                verifySelectedItem(pivot, 1);
 
-                    pivot.selectedIndex = 0;
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    verifySelectedItem(pivot, 0);
+                pivot.selectedIndex = 0;
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                verifySelectedItem(pivot, 0);
 
-                    // Set to an invalid index
-                    pivot.selectedIndex = 100;
-                    return WinJS.Promise.timeout();
-                }).done(function () {
-                    verifySelectedItem(pivot, 0);
+                // Set to an invalid index
+                pivot.selectedIndex = 100;
+                return WinJS.Promise.timeout();
+            }).done(function () {
+                verifySelectedItem(pivot, 0);
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         testSelectedItem = function testSelectedItem(complete) {
@@ -641,33 +641,33 @@ module WinJSTests {
                 pivot.selectedItem = pivot.items.getAt(2);
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    verifySelectedItem(pivot, 2);
+                verifySelectedItem(pivot, 2);
 
-                    pivot.selectedItem = pivot.items.getAt(1);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    verifySelectedItem(pivot, 1);
+                pivot.selectedItem = pivot.items.getAt(1);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                verifySelectedItem(pivot, 1);
 
-                    // Remove first pivot control and build a new one
-                    pivot.element.parentNode.removeChild(pivot.element);
-                    pivot = new Pivot(undefined, {
-                        items: pivot.items,
-                        selectedItem: pivot.items.getAt(2)
-                    });
-                    pivotWrapperEl.appendChild(pivot.element);
-
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    verifySelectedItem(pivot, 2);
-
-                    // Set to an invalid PivotItem
-                    pivot.selectedItem = new PivotItem();
-                    return WinJS.Promise.timeout();
-                }).done(function () {
-                    verifySelectedItem(pivot, 2);
-
-                    complete();
+                // Remove first pivot control and build a new one
+                pivot.element.parentNode.removeChild(pivot.element);
+                pivot = new Pivot(undefined, {
+                    items: pivot.items,
+                    selectedItem: pivot.items.getAt(2)
                 });
+                pivotWrapperEl.appendChild(pivot.element);
+
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                verifySelectedItem(pivot, 2);
+
+                // Set to an invalid PivotItem
+                pivot.selectedItem = new PivotItem();
+                return WinJS.Promise.timeout();
+            }).done(function () {
+                verifySelectedItem(pivot, 2);
+
+                complete();
+            });
         };
 
         testClickHeader = function testClickHeader(complete, isWideTest) {
@@ -687,24 +687,24 @@ module WinJSTests {
 
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
 
-                    var nextItemHeader = pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader)[isWideTest ? pivot.selectedIndex + 1 : 2];
-                    simulateTap(nextItemHeader);
+                var nextItemHeader = pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader)[isWideTest ? pivot.selectedIndex + 1 : 2];
+                simulateTap(nextItemHeader);
 
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
 
-                    var nextItemHeader = pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader)[isWideTest ? pivot.selectedIndex + 1 : 2];
-                    simulateTap(nextItemHeader);
+                var nextItemHeader = pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader)[isWideTest ? pivot.selectedIndex + 1 : 2];
+                simulateTap(nextItemHeader);
 
-            return waitForNextItemAnimationEnd(pivot)
-        }).done(function () {
-                    LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
+                return waitForNextItemAnimationEnd(pivot)
+            }).done(function () {
+                LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         testLocked = function (complete, isWideTest) {
@@ -730,40 +730,40 @@ module WinJSTests {
 
             waitForNextItemAnimationEnd(pivot).
                 then(function () {
-                    var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                    if (supportsSnap) {
-                        // When snap points aren't supported, the overflow is always hidden
-                        LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
-                        LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
-                    }
-
-                    // Lock the Pivot
-                    pivot.locked = true;
-                    pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                    LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowX);
+                var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
+                if (supportsSnap) {
+                    // When snap points aren't supported, the overflow is always hidden
+                    LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
                     LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
-                    LiveUnit.Assert.areEqual(1, countVisiblePivotItemHeaders(pivot), "More than one PivotItem Header was visible");
+                }
 
-                    var selectedIndex = pivot.selectedIndex;
-                    simulateTap(pivot.element.querySelectorAll('.win-pivot-header')[2]);
-                    return WinJS.Promise.timeout().then(function () {
-                        return selectedIndex;
-                    });
-                }).
-                done(function (selectedIndex) {
-                    LiveUnit.Assert.areEqual(selectedIndex, pivot.selectedIndex);
+                // Lock the Pivot
+                pivot.locked = true;
+                pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
+                LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowX);
+                LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                LiveUnit.Assert.areEqual(1, countVisiblePivotItemHeaders(pivot), "More than one PivotItem Header was visible");
 
-                    // Unlock the Pivot
-                    pivot.locked = false;
-                    var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
-                    if (supportsSnap) {
-                        LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
-                        LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
-                    }
-                    LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 1, countVisiblePivotItemHeaders(pivot), "Not all headers were visible");
-
-                    complete();
+                var selectedIndex = pivot.selectedIndex;
+                simulateTap(pivot.element.querySelectorAll('.win-pivot-header')[2]);
+                return WinJS.Promise.timeout().then(function () {
+                    return selectedIndex;
                 });
+            }).
+                done(function (selectedIndex) {
+                LiveUnit.Assert.areEqual(selectedIndex, pivot.selectedIndex);
+
+                // Unlock the Pivot
+                pivot.locked = false;
+                var pivotViewportComputedStyle = getComputedStyle(pivot._viewportElement);
+                if (supportsSnap) {
+                    LiveUnit.Assert.areEqual("auto", pivotViewportComputedStyle.overflowX);
+                    LiveUnit.Assert.areEqual("hidden", pivotViewportComputedStyle.overflowY);
+                }
+                LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 1, countVisiblePivotItemHeaders(pivot), "Not all headers were visible");
+
+                complete();
+            });
         };
 
         testHeaderCount = function (complete, isWideTest) {
@@ -782,15 +782,15 @@ module WinJSTests {
                 pivot._goNext();
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 1, pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader).length);
+                LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 1, pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader).length);
 
-                    // Zoom prev
-                    pivot._goPrevious();
-                    return waitForNextItemAnimationEnd(pivot);
-                }).done(function () {
-                    LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 2, pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader).length);
-                    complete();
-                });
+                // Zoom prev
+                pivot._goPrevious();
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(isWideTest ? pivotItemCount : pivotItemCount + 2, pivot.element.querySelectorAll("." + Pivot._ClassName.pivotHeader).length);
+                complete();
+            });
         };
 
         // WPB: 259987
@@ -834,29 +834,29 @@ module WinJSTests {
             pivotWrapperEl.appendChild(pivot.element);
             waitForNextItemAnimationEnd(pivot).
                 then(function () {
-                    verifyHeadersAria(pivot);
+                verifyHeadersAria(pivot);
 
-                    //Verify viewport
-                    var viewportElement = pivot._viewportElement;
-                    LiveUnit.Assert.areEqual("group", viewportElement.getAttribute("role"), "Role of viewport");
-                    LiveUnit.Assert.isNotNull(viewportElement.getAttribute("aria-label"), "aria-label of viewport");
+                //Verify viewport
+                var viewportElement = pivot._viewportElement;
+                LiveUnit.Assert.areEqual("group", viewportElement.getAttribute("role"), "Role of viewport");
+                LiveUnit.Assert.isNotNull(viewportElement.getAttribute("aria-label"), "aria-label of viewport");
 
-                    //Verify selectedItem
-                    var selectedItemEl = pivot.selectedItem.element;
-                    LiveUnit.Assert.areEqual("tabpanel", selectedItemEl.getAttribute("role"), "Role of selected item");
+                //Verify selectedItem
+                var selectedItemEl = pivot.selectedItem.element;
+                LiveUnit.Assert.areEqual("tabpanel", selectedItemEl.getAttribute("role"), "Role of selected item");
 
-                    pivot.element.focus();
-                    pivot.selectedIndex++;
-                    return waitForNextItemAnimationEnd(pivot);
-                }).
+                pivot.element.focus();
+                pivot.selectedIndex++;
+                return waitForNextItemAnimationEnd(pivot);
+            }).
                 then(function () {
-                    LiveUnit.Assert.isTrue(pivot.selectedItem.element.contains(<HTMLElement>document.activeElement));
-                    verifyHeadersAria(pivot);
+                LiveUnit.Assert.isTrue(pivot.selectedItem.element.contains(<HTMLElement>document.activeElement));
+                verifyHeadersAria(pivot);
 
-                    //Verify selectedItem
-                    var selectedItemEl = pivot.selectedItem.element;
-                    LiveUnit.Assert.areEqual("tabpanel", selectedItemEl.getAttribute("role"), "Role of selected item");
-                }).
+                //Verify selectedItem
+                var selectedItemEl = pivot.selectedItem.element;
+                LiveUnit.Assert.areEqual("tabpanel", selectedItemEl.getAttribute("role"), "Role of selected item");
+            }).
                 done(complete);
         };
 
@@ -883,46 +883,46 @@ module WinJSTests {
                 pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom next
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom next
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom next
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom next
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom next
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom next
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom next
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom next
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom previous
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom previous
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(4, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Zoom previous
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextItemAnimationEnd(pivot);
-                }).done(function () {
-                    LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
+                // Zoom previous
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(3, pivot.selectedIndex, "Correct selectedIndex");
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         // WPBlue: 272771 Test is not reliable in WebUnit. Should be run using Zeus.
@@ -945,18 +945,18 @@ module WinJSTests {
                 // Don't wait until the current flip operation completes:
                 return WinJS.Promise.timeout();
             }).then(function () {
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex, "Correct selectedIndex");
 
-                    // Interrupt animation with more panning:
-                    WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: center + pivot._viewportElement.offsetWidth, scrollTop: 0 });
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                // Interrupt animation with more panning:
+                WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: center + pivot._viewportElement.offsetWidth, scrollTop: 0 });
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
 
-                    return waitForNextItemAnimationEnd(pivot);
-                }).done(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex, "Correct selectedIndex");
 
-                    complete();
-                });
+                complete();
+            });
         };
 
         testNavigateViaAPI = function testNavigateViaAPI(complete) {
@@ -974,26 +974,26 @@ module WinJSTests {
 
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
 
-                    // Test selectedIndex
-                    pivot.selectedIndex = 1;
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.api, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
+                // Test selectedIndex
+                pivot.selectedIndex = 1;
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.api, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
 
-                    // Test selectedItem
-                    pivot.selectedItem = pivot.items.getAt(2);
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.api, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
-                    complete();
-                });
+                // Test selectedItem
+                pivot.selectedItem = pivot.items.getAt(2);
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.api, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
+                complete();
+            });
         };
 
         testNavigateViaInertia = function testNavigateViaInertia(complete) {
@@ -1024,23 +1024,23 @@ module WinJSTests {
                 pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
                 return waitForNextSelectionChanged(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.inertia, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.inertia, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
 
-                    // Pan left
-                    pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
-                    return waitForNextSelectionChanged(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.inertia, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
-                    complete();
-                });
+                // Pan left
+                pivot._viewportElement.msZoomTo({ contentX: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - pivot._viewportElement.offsetWidth, contentY: 0, viewportX: 0, viewportY: 0 });
+                return waitForNextSelectionChanged(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.inertia, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                complete();
+            });
         };
 
         testNavigateViaScroll = function testNavigateViaScroll(complete) {
@@ -1065,23 +1065,23 @@ module WinJSTests {
                 WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft + 50, scrollTop: 0 });
                 return waitForNextSelectionChanged(pivot);
             }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.scroll, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.scroll, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(1, pivot.selectedIndex);
 
-                    // Pan left
-                    WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - 50, scrollTop: 0 });
-                    return waitForNextSelectionChanged(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.scroll, pivot._navMode);
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
-                    complete();
-                });
+                // Pan left
+                WinJS.Utilities.setScrollPosition(pivot._viewportElement, { scrollLeft: WinJS.Utilities.getScrollPosition(pivot._viewportElement).scrollLeft - 50, scrollTop: 0 });
+                return waitForNextSelectionChanged(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.scroll, pivot._navMode);
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(Pivot._NavigationModes.none, pivot._navMode);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                complete();
+            });
         };
 
         testContentVisibleInLTR = function testContentVisibleInRTL(complete) {
@@ -1118,9 +1118,9 @@ module WinJSTests {
                 headers[isWideTest ? 2 : 3].click();
                 return waitForNextItemAnimationEnd(pivot);
             }).done(function () {
-                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
-                    complete();
-                });
+                LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
+                complete();
+            });
         };
 
 
@@ -1158,14 +1158,14 @@ module WinJSTests {
                 simulatePointerDown(pivot._headersContainerElement, 100, 10, PT_TOUCH);
                 return WinJS.Promise.timeout();
             }).done(function () {
-                    monkeyPatch(pivot, "_loadItem", function () {
-                        LiveUnit.Assert.fail("shouldn't happen");
-                    });
-
-                    simulatePointerUp(pivot._headersContainerElement, 10, 30, PT_TOUCH);
-                    LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
-                    complete();
+                monkeyPatch(pivot, "_loadItem", function () {
+                    LiveUnit.Assert.fail("shouldn't happen");
                 });
+
+                simulatePointerUp(pivot._headersContainerElement, 10, 30, PT_TOUCH);
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                complete();
+            });
         };
 
         testMaxHeaderWidth = skipWide(function testMaxHeaderWidth(complete) {
@@ -1343,22 +1343,22 @@ module WinJSTests {
                 pivot.forceLayout();
                 return pivot._headersState._transitionAnimation;
             }).then(function () {
-                    // We should be in static mode, so the selected header should appear in order
-                    var headerContainer = (<HTMLElement>pivot.element.querySelector(".win-pivot-header")).parentElement;
+                // We should be in static mode, so the selected header should appear in order
+                var headerContainer = (<HTMLElement>pivot.element.querySelector(".win-pivot-header")).parentElement;
 
-                    LiveUnit.Assert.areEqual(item.header, headerContainer.children[pivot.selectedIndex].textContent);
+                LiveUnit.Assert.areEqual(item.header, headerContainer.children[pivot.selectedIndex].textContent);
 
-                    // Resize back to overflow mode
-                    pivot.element.parentElement.style.width = pivotWidth + "px";
-                    pivot.forceLayout();
-                    return pivot._headersState._transitionAnimation;
-                }).done(function () {
-                    // We should be back in overflow mode, so the selected header should always be at index 1
-                    var headerContainer = (<HTMLElement>pivot.element.querySelector(".win-pivot-header")).parentElement;
+                // Resize back to overflow mode
+                pivot.element.parentElement.style.width = pivotWidth + "px";
+                pivot.forceLayout();
+                return pivot._headersState._transitionAnimation;
+            }).done(function () {
+                // We should be back in overflow mode, so the selected header should always be at index 1
+                var headerContainer = (<HTMLElement>pivot.element.querySelector(".win-pivot-header")).parentElement;
 
-                    LiveUnit.Assert.areEqual(item.header, headerContainer.children[1].textContent);
-                    complete();
-                });
+                LiveUnit.Assert.areEqual(item.header, headerContainer.children[1].textContent);
+                complete();
+            });
         });
 
         testChangePivotItemCountFrom1To2BackTo1 = function (complete, isWideTest) {
@@ -1397,20 +1397,20 @@ module WinJSTests {
                 headers[1].click();
                 return waitForNextItemAnimationEnd(pivot);
             }).then(function () {
-                    goPreviousExpected = true;
-                    headers[0].click();
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    goPreviousExpected = false;
-                    headers[4].click();
-                    return waitForNextItemAnimationEnd(pivot);
-                }).then(function () {
-                    goPreviousExpected = true;
-                    headers[0].click();
-                    return waitForNextItemAnimationEnd(pivot);
-                }).done(function () {
-                    complete();
-                });
+                goPreviousExpected = true;
+                headers[0].click();
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                goPreviousExpected = false;
+                headers[4].click();
+                return waitForNextItemAnimationEnd(pivot);
+            }).then(function () {
+                goPreviousExpected = true;
+                headers[0].click();
+                return waitForNextItemAnimationEnd(pivot);
+            }).done(function () {
+                complete();
+            });
         });
 
 
@@ -1433,17 +1433,93 @@ module WinJSTests {
 
                 return waitForNextSelectionChanged(pivot);
             }).then(function () {
-                    pivot._headersState.handleNavigation = function () {
-                        LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
-                    };
-                    return WinJS.Promise.timeout(500);
-                }).done(function () {
-                    complete();
-                });
+                pivot._headersState.handleNavigation = function () {
+                    LiveUnit.Assert.fail("Navigation should not occur with content swipe disabled.");
+                };
+                return WinJS.Promise.timeout(500);
+            }).done(function () {
+                complete();
+            });
         });
 
+        testCustomContentHeaders = function (complete) {
+            var left = document.createElement("div");
+            var right = document.createElement("div");
 
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+                customHeaderContentLeft: left,
+                customHeaderContentRight: right,
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                LiveUnit.Assert.areEqual(left, document.querySelector(".win-pivot-header-customcontent-left").firstElementChild);
+                LiveUnit.Assert.areEqual(right, document.querySelector(".win-pivot-header-customcontent-right").firstElementChild);
+                complete();
+            });
+        };
 
+        testForceLayoutRelayoutsCustomContentHeaders = function (complete) {
+            var left = document.createElement("div");
+            var right = document.createElement("div");
+            left.style.width = right.style.width = "50px";
+
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+                customHeaderContentLeft: left,
+                customHeaderContentRight: right,
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            var headersWidth = 0;
+            waitForNextItemAnimationEnd(pivot).then(function () {
+                headersWidth = pivot._headerItemsWidth;
+                left.style.width = right.style.width = "75px";
+                return WinJS.Promise.timeout(0);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(headersWidth, pivot._headerItemsWidth);
+                pivot.forceLayout();
+                return WinJS.Promise.timeout(0);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(headersWidth - 50, pivot._headerItemsWidth);
+                complete();
+            });
+        };
+
+        testSettingCustomContentHeaderRelayouts = function (complete) {
+            var left = document.createElement("div");
+            var right = document.createElement("div");
+            left.style.width = right.style.width = "50px";
+
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+                customHeaderContentLeft: left,
+                customHeaderContentRight: right,
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            var headersWidth = 0;
+            waitForNextItemAnimationEnd(pivot).then(function () {
+                headersWidth = pivot._headerItemsWidth;
+                left.style.width = "75px";
+                return WinJS.Promise.timeout(0);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(headersWidth, pivot._headerItemsWidth);
+                pivot.customHeaderContentLeft = left;
+                return WinJS.Promise.timeout(0);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(headersWidth - 25, pivot._headerItemsWidth);
+                right.style.width = "75px";
+                return WinJS.Promise.timeout(0);
+            }).then(function () {
+                LiveUnit.Assert.areEqual(headersWidth - 25, pivot._headerItemsWidth);
+                pivot.customHeaderContentRight = right;
+                return WinJS.Promise.timeout(0);
+            }).done(function () {
+                LiveUnit.Assert.areEqual(headersWidth - 50, pivot._headerItemsWidth);
+                complete();
+            });
+        };
     }
 
     Object.keys(PivotTests).forEach(function (key) {

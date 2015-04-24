@@ -13,7 +13,7 @@ define([
     './_Signal',
     './Scheduler',
     './Utilities/_ElementUtilities'
-    ], function applicationInit(exports, _Global, _WinRT, _Base, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler, _ElementUtilities) {
+], function applicationInit(exports, _Global, _WinRT, _Base, _Events, _Log, _WriteProfilerMark, _State, Navigation, Promise, _Signal, Scheduler, _ElementUtilities) {
     "use strict";
 
     _Global.Debug && (_Global.Debug.setNonUserCodeExceptions = true);
@@ -45,27 +45,16 @@ define([
     var pendingDeferrals = {};
     var pendingDeferralID = 0;
     var TypeToSearch = {
-        _suggestionManager: null,
         _registered: false,
 
         updateRegistration: function Application_TypeToSearch_updateRegistration() {
             var ls = listeners._listeners && listeners._listeners[requestingFocusOnKeyboardInputET] || [];
             if (!TypeToSearch._registered && ls.length > 0) {
-                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                    TypeToSearch._suggestionManager = new _WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager();
-                    TypeToSearch._suggestionManager.addEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
-                } else {
-                    TypeToSearch._updateKeydownCaptureListeners(_Global.top, true /*add*/);
-                }
+                TypeToSearch._updateKeydownCaptureListeners(_Global.top, true /*add*/);
                 TypeToSearch._registered = true;
             }
             if (TypeToSearch._registered && ls.length === 0) {
-                if (_WinRT.Windows.ApplicationModel.Search.Core.SearchSuggestionManager) {
-                    TypeToSearch._suggestionManager && TypeToSearch._suggestionManager.removeEventListener("requestingfocusonkeyboardinput", requestingFocusOnKeyboardInput);
-                    TypeToSearch._suggestionManager = null;
-                } else {
-                    TypeToSearch._updateKeydownCaptureListeners(_Global.top, false /*add*/);
-                }
+                TypeToSearch._updateKeydownCaptureListeners(_Global.top, false /*add*/);
                 TypeToSearch._registered = false;
             }
         },
@@ -229,7 +218,7 @@ define([
                         return value;
                     } else {
                         return "[circular]";
-        }
+                    }
                 } else {
                     return value;
                 }

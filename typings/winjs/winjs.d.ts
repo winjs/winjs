@@ -3842,9 +3842,15 @@ declare module WinJS.UI {
         /**
          * Returns the Command object identified by id.
          * @param id The element idenitifier (ID) of the command to be returned.
-         * @returns The command identified by id. If multiple commands have the same ID, returns an array of all the commands matching the ID.
+         * @returns The command identified by id. If multiple commands have the same ID, returns the first command found.
         **/
         getCommandById(id: string): ICommand;
+
+        /**
+         * Shows the specified commands of the AppBar while hiding all other commands.
+         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
+        **/
+        showOnlyCommands(commands: Array<string|ICommand>): void;
 
         /**
          * Opens the AppBar.
@@ -3855,27 +3861,6 @@ declare module WinJS.UI {
          * Closes the AppBar.
         **/
         close(): void;
-
-        /**
-         * Hides the specified commands of the AppBar.
-         * @param commands The commands to hide. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to hide the commands immediately, without animating them; otherwise, false.
-        **/
-        hideCommands(commands: any[], immediate?: boolean): void;
-
-        /**
-         * Opens the specified commands of the AppBar.
-         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to open the commands immediately, without animating them; otherwise, false.
-        **/
-        showCommands(commands: any[], immediate?: boolean): void;
-
-        /**
-         * Opens the specified commands of the AppBar while hiding all other commands.
-         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to show the specified commands (and hide the others) immediately, without animating them; otherwise, false.
-        **/
-        showOnlyCommands(commands: any[], immediate?: boolean): void;
 
         /**
          * Forces the AppBar to update its layout.
@@ -6135,6 +6120,16 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
+         * Gets or sets the left custom content header.
+        **/
+        customHeaderContentLeft: HTMLElement;
+
+        /**
+         * Gets or sets the right custom content header.
+        **/
+        customHeaderContentRight: HTMLElement;
+
+        /**
          * Gets or sets the Binding.List that contains the PivotItem objects that belong to this Pivot.
         **/
         items: Binding.List<PivotItem>;
@@ -7935,6 +7930,19 @@ declare module WinJS.UI {
         public close(): void;
 
         /**
+         * Returns the Command object identified by id.
+         * @param id The element idenitifier (ID) of the command to be returned.
+         * @returns The command identified by id. If multiple commands have the same ID, returns the first command found.
+        **/
+        getCommandById(id: string): ICommand;
+
+        /**
+         * Shows the specified commands of the ToolBar while hiding all other commands.
+         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
+        **/
+        showOnlyCommands(commands: Array<string|ICommand>): void;
+
+        /**
          * Gets or sets whether the ToolBar is currently opened.
         **/
         public opened: boolean;
@@ -8410,9 +8418,6 @@ declare module WinJS.UI.XYFocus {
     export function moveFocus(direction: "right", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "up", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "down", options?: XYFocusOptions): HTMLElement;
-
-    export function enableXYFocus(): void;
-    export function disableXYFocus(): void;
 }
 /**
  * Provides functions to load HTML content programmatically.
@@ -8929,6 +8934,38 @@ declare module WinJS.Utilities {
         **/
         F12,
         /**
+         * The XBox One Remote navigation view button.
+        **/
+        NavigationView,
+        /**
+         * The XBox One Remote navigation menu button.
+        **/
+        NavigationMenu,
+        /**
+         * The XBox One Remote navigation up button.
+        **/
+        NavigationUp,
+        /**
+         * The XBox One Remote navigation down button.
+        **/
+        NavigationDown,
+        /**
+         * The XBox One Remote navigation left button.
+        **/
+        NavigationLeft,
+        /**
+         * The XBox One Remote navigation right button.
+        **/
+        NavigationRight,
+        /**
+         * The XBox One Remote navigation accept button.
+        **/
+        NavigationAccept,
+        /**
+         * The XBox One Remote navigation cancel button.
+        **/
+        NavigationCancel,
+        /**
          * The NUMBER LOCK key.
         **/
         numLock,
@@ -8974,6 +9011,105 @@ declare module WinJS.Utilities {
         graveAccent,
         /**
          * The open bracket key ([).
+        **/
+        /**
+         * The XBox One gamepad A button.
+        **/
+        GamepadA,
+        /**
+         * The XBox One gamepad B button.
+        **/
+        GamepadB,
+        /**
+         * The XBox One gamepad X button.
+        **/
+        GamepadX,
+        /**
+         * The XBox One gamepad Y button.
+        **/
+        GamepadY,
+        /**
+         * The XBox One gamepad right shoulder.
+        **/
+        GamepadRightShoulder,
+        /**
+         * The XBox One gamepad left shoulder.
+        **/
+        GamepadLeftShoulder,
+        /**
+         * The XBox One gamepad left trigger.
+        **/
+        GamepadLeftTrigger,
+        /**
+         * The XBox One gamepad right trigger.
+        **/
+        GamepadRightTrigger,
+        /**
+         * The XBox One gamepad dpad up.
+        **/
+        GamepadDPadUp,
+        /**
+         * The XBox One gamepad dpad down.
+        **/
+        GamepadDPadDown,
+        /**
+         * The XBox One gamepad dpad left.
+        **/
+        GamepadDPadLeft,
+        /**
+         * The XBox One gamepad dpad right.
+        **/
+        GamepadDPadRight,
+        /**
+         * The XBox One gamepad menu button.
+        **/
+        GamepadMenu,
+        /**
+         * The XBox One gamepad view button.
+        **/
+        GamepadView,
+        /**
+         * The XBox One gamepad left thumbstick button.
+        **/
+        GamepadLeftThumbstick,
+        /**
+         * The XBox One gamepad right thumbstick button.
+        **/
+        GamepadRightThumbstick,
+        /**
+         * The XBox One gamepad left thumbstick's up.
+        **/
+        GamepadLeftThumbstickUp,
+        /**
+         * The XBox One gamepad left thumbstick's down.
+        **/
+        GamepadLeftThumbstickDown,
+        /**
+         * The XBox One gamepad left thumbstick's right.
+        **/
+        GamepadLeftThumbstickRight,
+        /**
+         * The XBox One gamepad left thumbstick's left.
+        **/
+        GamepadLeftThumbstickLeft,
+        /**
+         * The XBox One gamepad right thumbstick's up.
+        **/
+        GamepadRightThumbstickUp,
+        /**
+         * The XBox One gamepad right thumbstick's down.
+        **/
+        GamepadRightThumbstickDown,
+        /**
+         * The XBox One gamepad right thumbstick's right.
+        **/
+        GamepadRightThumbstickRight,
+        /**
+         * The XBox One gamepad right thumbstick's left.
+        **/
+        GamepadRightThumbstickLeft,
+        /**
+            * The open bracket key ([).
         **/
         openBracket,
         /**

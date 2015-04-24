@@ -10,15 +10,31 @@
         min-height: 60px;
     }
 
-    .win-navbar-invokebutton {
-        width: 32px;
-        min-height: 0;
-        height: 24px;
-        bottom: 0;
-
-        .win-navbar-ellipsis {
+     .win-navbar-invokebutton {
             width: 32px;
-            top: 5px;
+            min-height: 0;
+            height: 24px;
+
+            .win-navbar-ellipsis {
+                width: 32px;
+            }
+        }
+
+    &.win-top {
+        .win-navbar-invokebutton {
+            bottom: 0;
+            .win-navbar-ellipsis {
+                top: 5px;
+            }
+        }
+    }
+
+    &.win-bottom {
+        .win-navbar-invokebutton {
+            top: 0;
+            .win-navbar-ellipsis {
+                top: 0;
+            }
         }
     }
 }

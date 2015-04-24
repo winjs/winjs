@@ -6,6 +6,7 @@ module Helper.ToolBar {
     "use strict";
 
     var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
+    var _LightDismissService = <typeof WinJS.UI._LightDismissService>Helper.require("WinJS/_LightDismissService");
 
     export function verifyRenderedOpened(toolBar: WinJS.UI.PrivateToolBar): void {
         // Verifies that the ToolBar is rendered correctly when opened. 
@@ -84,6 +85,9 @@ module Helper.ToolBar {
                     tolerance);
                 break;
         }
+        
+        LiveUnit.Assert.isTrue(_LightDismissService.isShown(toolBar._dismissable),
+            "ToolBar should be shown as a light dismissable when open");
 
         Helper._CommandingSurface.verifyRenderedOpened(toolBar._commandingSurface);
     }
@@ -105,6 +109,9 @@ module Helper.ToolBar {
         // Verify we have a parent element and our placeHolder element does not.
         LiveUnit.Assert.isTrue(document.body.contains(toolBar.element), "Closed ToolBar must be a descendant of the body");
         LiveUnit.Assert.isFalse(placeHolder.parentElement, "placeholder must not be in the DOM, while ToolBar is closed");
+        
+        LiveUnit.Assert.isFalse(_LightDismissService.isShown(toolBar._dismissable),
+            "ToolBar should not be in the light dismissable stack when closed");
 
         Helper._CommandingSurface.verifyRenderedClosed(toolBar._commandingSurface);
     }

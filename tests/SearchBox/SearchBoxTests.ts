@@ -176,6 +176,10 @@ module SearchBoxTests {
             searchBox._inputElement.value = "a";
             searchBox._inputElement.focus();
         }
+
+        testInitializeDisabledSearchBox() {
+            var sb = new WinJS.UI.SearchBox(null, { disabled: true });
+        }
     };
 }
 LiveUnit.registerTestClass("SearchBoxTests.SearchBoxTests");

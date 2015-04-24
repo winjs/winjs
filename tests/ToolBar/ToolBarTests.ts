@@ -12,6 +12,7 @@
 module CorsicaTests {
     var ToolBar = <typeof WinJS.UI.PrivateToolBar> WinJS.UI.ToolBar;
     var Command = <typeof WinJS.UI.PrivateCommand> WinJS.UI.AppBarCommand;
+    var _LightDismissService = <typeof WinJS.UI._LightDismissService>Helper.require("WinJS/_LightDismissService");
     var Util = WinJS.Utilities;
     var _Constants;
 
@@ -87,6 +88,7 @@ module CorsicaTests {
                 if (this._element.winControl) {
                     this._element.winControl.dispose();
                 }
+                WinJS.Utilities.disposeSubTree(this._element);
                 if (this._element.parentElement) {
                     this._element.parentElement.removeChild(this._element);
                 }
@@ -1773,6 +1775,15 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButtonEllipsis, _Constants.ClassNames.ellipsisCssClass), "ToolBar missing ellipsis class");
         }
 
+        testShowingIHMClosesToolBar() {
+            var toolBar = new ToolBar(this._element, { opened: true });
+
+            toolBar._handleShowingKeyboard();
+
+            LiveUnit.Assert.isFalse(toolBar.opened);
+
+        }
+
         testBackgroundColorPercolatesToCommandingSurface() {
             // Verifies that background color changes to the ToolBar are not impeded by the CommandingSurface element.
             var toolBar = new ToolBar(this._element, { opened: true });
@@ -1782,9 +1793,117 @@ module CorsicaTests {
             var toolBarStyle = getComputedStyle(toolBar.element),
                 commandingSurfaceStyle = getComputedStyle(commandingSurface.element);
 
-            var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
+            var msg = "ToolBar's commandingSurface element should match the background color of the ToolBar element";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.areEqual(toolBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
+        }
+        
+        testGetCommandById() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous" })
+            ]);
+
+            this._element.style.width = "10px";
+            var toolBar = new ToolBar(this._element, {
+                data: data
+            });
+            LiveUnit.Assert.isNull(toolBar.getCommandById("someID"));
+
+            var firstAddedCommand = new Command(null, { type: _Constants.typeButton, label: "B", id: "someID" });
+            data.push(firstAddedCommand);
+            LiveUnit.Assert.areEqual(firstAddedCommand, toolBar.getCommandById("someID"));
+
+            var secondAddedCommand = new Command(null, { type: _Constants.typeButton, label: "C", id: "someID" });
+            data.push(secondAddedCommand);
+
+            LiveUnit.Assert.areEqual(firstAddedCommand, toolBar.getCommandById("someID"));
+        }
+
+        testShowOnlyCommands() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "A" }),
+                new Command(null, { type: _Constants.typeButton, label: "B", id: "B" }),
+                new Command(null, { type: _Constants.typeButton, label: "C", id: "C" }),
+                new Command(null, { type: _Constants.typeButton, label: "D", id: "D" }),
+                new Command(null, { type: _Constants.typeButton, label: "E", id: "E" })
+            ]);
+
+            this._element.style.width = "10px";
+            var toolBar = new ToolBar(this._element, {
+                data: data
+            });
+            
+            function checkCommandVisibility(expectedShown, expectedHidden) {
+                for (var i = 0, len = expectedShown.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("inline-block", toolBar.getCommandById(expectedShown[i]).element.style.display);
+                }
+                for (var i = 0, len = expectedHidden.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("none", toolBar.getCommandById(expectedHidden[i]).element.style.display);
+                }
+            }
+
+            toolBar.showOnlyCommands([]);
+            checkCommandVisibility([], ["A", "B", "C", "D", "E"]);
+
+            toolBar.showOnlyCommands(["A", "B", "C", "D", "E"]);
+            checkCommandVisibility(["A", "B", "C", "D", "E"], []);
+
+            toolBar.showOnlyCommands(["A"]);
+            checkCommandVisibility(["A"], ["B", "C", "D", "E"]);
+
+            toolBar.showOnlyCommands([data.getAt(1)]);
+            checkCommandVisibility(["B"], ["A", "C", "D", "E"]);
+
+            toolBar.showOnlyCommands(["C", data.getAt(4)]);
+            checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+        }
+
+        private _testLightDismissWithTrigger(dismissToolBar) {
+            var button = document.createElement("button");
+            button.textContent = "Initially Focused";
+            var element = document.createElement("div");
+            
+            this._element.appendChild(button);
+            this._element.appendChild(element);
+            
+            var toolBar = new ToolBar(element, {
+                data: new WinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, icon: 'add', label: "add" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'remove', label: "remove" }),
+                    new Command(null, { type: _Constants.typeButton, icon: 'accept', label: "accept" }),
+                    new Command(null, { type: _Constants.typeSeparator }),
+                    new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+                ])
+            });
+            Helper.ToolBar.useSynchronousAnimations(toolBar);
+            
+            return Helper.focus(button).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement, "Button should have focus initially");
+                
+                return Helper.waitForFocusWithin(toolBar.element, () => { toolBar.open(); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(toolBar.data.getAt(0).element, document.activeElement,
+                    "ToolBar's leftmost primary command should have focus after opening");
+                LiveUnit.Assert.isTrue(_LightDismissService.isTopmost(toolBar._dismissable),
+                    "ToolBar should be the topmost light dismissable");
+                
+                return Helper.waitForFocus(button, () => { dismissToolBar(toolBar); });
+            }).then(() => {
+                LiveUnit.Assert.areEqual(button, document.activeElement,
+                    "Focus should have been restored to the button");
+                LiveUnit.Assert.isFalse(_LightDismissService.isShown(toolBar._dismissable),
+                    "ToolBar should not be in the light dismissable stack");
+            });
+        }
+        
+        testLightDismissWithClose(complete) {
+            this._testLightDismissWithTrigger((toolBar) => { toolBar.close(); }).then(complete);
+        }
+        testLightDismissWithDispose(complete) {
+            this._testLightDismissWithTrigger((toolBar) => { toolBar.dispose(); }).then(complete);
+        }
+        testLightDismissWithTap(complete) {
+            this._testLightDismissWithTrigger((toolBar) => {  _LightDismissService._clickEaterTapped(); }).then(complete);
         }
     }
 }

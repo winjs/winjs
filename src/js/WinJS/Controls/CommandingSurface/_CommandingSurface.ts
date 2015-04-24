@@ -357,6 +357,34 @@ export class _CommandingSurface {
         };
     }
 
+    getCommandById(id: string): _Command.ICommand {
+        if (this._data) {
+            for (var i = 0, len = this._data.length; i < len; i++) {
+                var command = this._data.getAt(i);
+                if (command.id === id) {
+                    return command;
+                }
+            }
+        }
+        return null;
+    }
+
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        if (this._data) {
+            for (var i = 0, len = this._data.length; i < len; i++) {
+                this._data.getAt(i).hidden = true;
+            }
+
+            for (var i = 0, len = commands.length; i < len; i++) {
+                // The array passed to showOnlyCommands can contain either command ids, or the commands themselves.
+                var command: _Command.ICommand = (typeof commands[i] === "string" ? this.getCommandById(<string>commands[i]) : <_Command.ICommand>commands[i]);
+                if (command) {
+                    command.hidden = false;
+                }
+            }
+        }
+    }
+
     deferredDomUpate(): void {
         // Notify the machine that an update has been requested.
         this._machine.updateDom();

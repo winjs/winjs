@@ -135,6 +135,32 @@ declare module WinJS {
         var _CallExpression;
         var _IdentifierExpression;
         var _GroupFocusCache;
+        
+        module _LightDismissService {
+            interface ILightDismissInfo {
+                reason: string;
+                active: boolean;
+                stopPropagation(): void;
+                preventDefault(): void;
+            }
+            
+            interface ILightDismissable {
+                setZIndex(zIndex: string): void;
+                containsElement(element: HTMLElement): boolean;
+                requiresClickEater(): boolean;
+                onActivate(): void;
+                onFocus(element: HTMLElement): void;
+                onHide(): void;
+                onShouldLightDismiss(info: ILightDismissInfo): boolean;
+                onLightDismiss(info: ILightDismissInfo): void;
+            }
+            
+            function shown(client: ILightDismissable): void;
+            function hidden(client: ILightDismissable): void;
+            function isShown(client: ILightDismissable): boolean;
+            function isTopmost(client: ILightDismissable): boolean;
+            function _clickEaterTapped(): void;
+        }
 
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
@@ -428,6 +454,7 @@ declare module WinJS {
             _updateDomImpl_renderedState: {
                 adjustedOffsets: { top: string; bottom: string; }; 
             }
+            _dismissable: _LightDismissService.ILightDismissable;
         }
 
         class PrivateToolBar extends WinJS.UI.ToolBar {
@@ -438,6 +465,8 @@ declare module WinJS {
                 placeHolder: HTMLElement;
             };
             _commandingSurface: WinJS.UI.PrivateCommandingSurface;
+            _dismissable: _LightDismissService.ILightDismissable;
+            _handleShowingKeyboard: () => void;
         }
 
         class PrivateCommand extends WinJS.UI.AppBarCommand {
@@ -581,6 +610,7 @@ declare module WinJS {
             _navMode;
             _currentScrollTargetLocation;
             _viewportWidth;
+            _headerItemsWidth: number;
 
             static _ClassName;
             static _EventName;
@@ -611,6 +641,8 @@ declare module WinJS {
             public open(): void;
             public close(): void;
             public opened: boolean;
+            public getCommandById(id: string): ICommand;
+            public showOnlyCommands(commands: Array<string|ICommand>): void;
             public onbeforeopen: (ev: CustomEvent) => void;
             public onafteropen: (ev: CustomEvent) => void;
             public onbeforeclose: (ev: CustomEvent) => void;
@@ -637,6 +669,13 @@ declare module WinJS {
         var _RIGHT_MSPOINTER_BUTTON;
         var _selectedClass;
         var _keyboardSeenLast;
+        var _lastInputType;
+        var _InputTypes: {
+            mouse: string;
+            keyboard: string;
+            touch: string;
+            pen: string;
+        };
         var _itemFocusOutlineClass;
         var _itemBoxClass;
         var _itemClass;

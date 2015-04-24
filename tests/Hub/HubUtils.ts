@@ -385,7 +385,7 @@ module HubTests {
                     default:
                         //simulate HubSection's header elements
                         var headerElement = document.createElement("button");
-                        headerElement.innerHTML = '<span class="' + HubSection._ClassName.hubSectionHeaderContent + ' ' + HubSection._Constants.ellipsisTypeClassName + '"></span>';
+                        headerElement.innerHTML = '<span class="' + HubSection._ClassName.hubSectionHeaderContent + '"></span>';
 
                         var headerElementContent = <HTMLElement>headerElement.firstElementChild;
                         var expectedHeader = typeof headerTemplate === "string" ? eval(headerTemplate)(sections[i]) : headerTemplate(sections[i]);

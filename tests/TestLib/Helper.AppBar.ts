@@ -8,6 +8,7 @@ module Helper.AppBar {
     var _Constants = Helper.require("WinJS/Controls/AppBar/_Constants");
     var _CommandingSurfaceConstants = Helper.require("WinJS/Controls/CommandingSurface/_Constants");
     var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
+    var _LightDismissService = <typeof WinJS.UI._LightDismissService>Helper.require("WinJS/_LightDismissService");
 
     export function verifyRenderedOpened(appBar: WinJS.UI.PrivateAppBar): void {
 
@@ -25,6 +26,9 @@ module Helper.AppBar {
             "Opened AppBar contentbox height should size to content.", tolerance);
         Helper.Assert.areFloatsEqual(appBarContentWidth, commandingSurfaceTotalWidth,
             "Opened AppBar contentbox width should size to content.", tolerance);
+        
+        LiveUnit.Assert.isTrue(_LightDismissService.isShown(appBar._dismissable),
+            "AppBar should be shown as a light dismissable when open");
 
         Helper._CommandingSurface.verifyRenderedOpened(appBar._commandingSurface);
     }
@@ -48,6 +52,10 @@ module Helper.AppBar {
             Helper.Assert.areFloatsEqual(appBarContentWidth, commandingSurfaceTotalWidth,
                 "Closed AppBar contentbox width should size to content.", tolerance);
         }
+        
+        LiveUnit.Assert.isFalse(_LightDismissService.isShown(appBar._dismissable),
+            "AppBar should not be in the light dismissable stack when closed");
+        
         // Verify CommandingSurface rendered closed.
         Helper._CommandingSurface.verifyRenderedClosed(appBar._commandingSurface);
     }

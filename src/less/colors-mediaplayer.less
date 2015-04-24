@@ -1,0 +1,83 @@
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+    /* The MediaPlayer uses the same colors in light and dark themes which is why we don't use
+   the light / dark theme color values. */
+    .win-mediaplayer {
+        &.win-mediaplayer-fullscreen {
+            background-color: @baseBlack;
+        }
+
+        .win-toolbar {
+            background-color: transparent;
+        }
+    }
+
+    progress.win-mediaplayer-busy {
+        color: @baseWhite;
+    }
+
+    .win-mediaplayer-transportcontrols {
+        background-color: @baseBlack;
+    }
+
+    .win-mediaplayer-seekbar {
+        background-color: rgba(194, 194, 194, 0.35);
+    }
+
+    .win-mediaplayer-seekprogress {
+        background-color: @accentColor;
+    }
+
+    .win-mediaplayer-buffer {
+        background-color: @baseWhite;
+    }
+
+    .win-mediaplayer-seekbar-disabled .win-mediaplayer-seekprogress {
+        background-color: rgb(107, 107, 107);
+    }
+
+    .win-mediaplayer-seek-mark {
+        border-color: @accentColor;
+        background-color: @baseBlack;
+    }
+
+    .win-mediaplayer-scrubbing {
+        .win-mediaplayer-seek-mark:hover {
+            border-color: @accentColor;
+        }
+
+        .win-mediaplayer-seek-mark {
+            background-color: @accentColor;
+        }
+    }
+
+    .win-mediaplayer-thumbnail {
+        background-color: rgb(31, 31, 31);
+        border: 1px solid rgb(86, 86, 86);
+    }
+
+    .win-mediaplayer-thumbnailmode {
+        .win-mediaplayer-seektimeindicator {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+    }
+
+    .win-mediaplayer-chaptermarker,
+    .win-mediaplayer-advertisementmarker {
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    .win-mediaplayer-overlay {
+        >button:hover {
+            background-color: rgb(31, 31, 31);
+        }
+    }
+
+    .win-mediaplayer-seektimeindicator {
+        background-color: transparent;
+    }
+}
+
+@media (-ms-high-contrast) {
+}

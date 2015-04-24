@@ -15,9 +15,10 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
+    '../Utilities/_KeyboardBehavior',
     './_LegacyAppBar/_Constants',
     './Flyout/_Overlay'
-], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _Constants, _Overlay) {
+], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, _Overlay) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -59,6 +60,7 @@ define([
             var _CascadeManager = _Base.Class.define(function _CascadeManager_ctor() {
                 this._cascadingStack = [];
                 this._handleKeyDownInCascade_bound = this._handleKeyDownInCascade.bind(this);
+                this._inputType = null;
             },
             {
                 appendFlyout: function _CascadeManager_appendFlyout(flyoutToAdd) {
@@ -96,6 +98,12 @@ define([
                             subFlyout = this._cascadingStack.pop();
                             subFlyout.element.removeEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                             subFlyout._hide(); // We use the reentrancyLock to prevent reentrancy here.
+                        }
+                        
+                        if (this._cascadingStack.length === 0) {
+                            // The cascade is empty so clear the input type. This gives us the opportunity
+                            // to recalculate the input type when the next cascade starts.
+                            this._inputType = null;
                         }
 
                         this.reentrancyLock = false;
@@ -147,6 +155,17 @@ define([
                     // Hide the entire cascade if focus has moved somewhere outside of it
                     if (this.indexOfElement(event.relatedTarget) < 0) {
                         this.collapseAll();
+                    }
+                },
+                // Compute the input type that is associated with the cascading stack on demand. Allows
+                // each Flyout in the cascade to adjust its sizing based on the current input type
+                // and to do it in a way that is consistent with the rest of the Flyouts in the cascade.
+                inputType: {
+                    get: function _CascadeManager_inputType_get() {
+                        if (!this._inputType) {
+                            this._inputType = _KeyboardBehavior._lastInputType;
+                        }
+                        return this._inputType;
                     }
                 },
                 _handleKeyDownInCascade: function _CascadeManager_handleKeyDownInCascade(event) {

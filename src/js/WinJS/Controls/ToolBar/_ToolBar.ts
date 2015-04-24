@@ -18,6 +18,7 @@ import _Flyout = require("../../Controls/Flyout");
 import _Global = require("../../Core/_Global");
 import _Hoverable = require("../../Utilities/_Hoverable");
 import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
+import _LightDismissService = require('../../_LightDismissService');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
@@ -25,6 +26,7 @@ import _Resources = require("../../Core/_Resources");
 import Scheduler = require("../../Scheduler");
 import _OpenCloseMachine = require('../../Utilities/_OpenCloseMachine');
 import _Signal = require('../../_Signal');
+import _WinRT = require('../../Core/_WinRT');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/styles-toolbar"]);
@@ -82,6 +84,8 @@ export class ToolBar {
     private _disposed: boolean;
     private _commandingSurface: _ICommandingSurface._CommandingSurface;
     private _isOpenedMode: boolean;
+    private _handleShowingKeyboardBound: (ev: any) => void
+    private _dismissable: _LightDismissService.ILightDismissable;
 
     private _dom: {
         root: HTMLElement;
@@ -182,6 +186,11 @@ export class ToolBar {
                 this._updateDomImpl();
             }
         });
+
+        // Events
+        this._handleShowingKeyboardBound = this._handleShowingKeyboard.bind(this);
+        _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._handleShowingKeyboardBound);
+
         // Initialize private state.
         this._disposed = false;
         this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
@@ -190,6 +199,13 @@ export class ToolBar {
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-overflowbutton"), _Constants.ClassNames.overflowButtonCssClass);
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-ellipsis"), _Constants.ClassNames.ellipsisCssClass);
         this._isOpenedMode = _Constants.defaultOpened;
+        this._dismissable = new _LightDismissService.LightDismissableElement({
+            element: this._dom.root,
+            tabIndex: this._dom.root.hasAttribute("tabIndex") ? this._dom.root.tabIndex : -1,
+            onLightDismiss: () => {
+                this.close();
+            }
+        });
 
         // Initialize public properties.
         this.closedDisplayMode = _Constants.defaultClosedDisplayMode;
@@ -251,11 +267,14 @@ export class ToolBar {
         }
 
         this._disposed = true;
+        _LightDismissService.hidden(this._dismissable);
         // Disposing the _commandingSurface will trigger dispose on its OpenCloseMachine and synchronously complete any animations that might have been running.
         this._commandingSurface.dispose();
-        // If page navigation is happening, we don't want to ToolBar left behind in the body.
+        // If page navigation is happening, we don't want the ToolBar left behind in the body.
         // Synchronoulsy close the ToolBar to force it out of the body and back into its parent element.
         this._synchronousClose();
+
+        _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._handleShowingKeyboardBound);
 
         _Dispose.disposeSubTree(this.element);
     }
@@ -267,6 +286,32 @@ export class ToolBar {
         /// </summary>
         /// </signature>
         this._commandingSurface.forceLayout();
+    }
+
+    getCommandById(id: string): _Command.ICommand {
+        /// <signature helpKeyword="WinJS.UI.ToolBar.getCommandById">
+        /// <summary locid="WinJS.UI.ToolBar.getCommandById">
+        /// Retrieves the command with the specified ID from this ToolBar.
+        /// If more than one command is found, this method returns the first command found.
+        /// </summary>
+        /// <param name="id" type="String" locid="WinJS.UI.ToolBar.getCommandById_p:id">Id of the command to return.</param>
+        /// <returns type="object" locid="WinJS.UI.ToolBar.getCommandById_returnValue">
+        /// The command found, or null if no command is found.
+        /// </returns>
+        /// </signature>
+        return this._commandingSurface.getCommandById(id);
+    }
+
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        /// <signature helpKeyword="WinJS.UI.ToolBar.showOnlyCommands">
+        /// <summary locid="WinJS.UI.ToolBar.showOnlyCommands">
+        /// Show the specified commands, hiding all of the others in the ToolBar.
+        /// </summary>
+        /// <param name="commands" type="Array" locid="WinJS.UI.ToolBar.showOnlyCommands_p:commands">
+        /// An array of the commands to show. The array elements may be Command objects, or the string identifiers (IDs) of commands.
+        /// </param>
+        /// </signature>
+        return this._commandingSurface.showOnlyCommands(commands);
     }
 
     private _writeProfilerMark(text: string) {
@@ -281,10 +326,6 @@ export class ToolBar {
         root["winControl"] = this;
 
         this._id = root.id || _ElementUtilities._uniqueID(root);
-
-        if (!root.hasAttribute("tabIndex")) {
-            root.tabIndex = -1;
-        }
 
         _ElementUtilities.addClass(root, _Constants.ClassNames.controlCssClass);
         _ElementUtilities.addClass(root, _Constants.ClassNames.disposableCssClass);
@@ -322,6 +363,22 @@ export class ToolBar {
             commandingSurfaceEl: commandingSurfaceEl,
             placeHolder: placeHolder,
         };
+    }
+
+    private _handleShowingKeyboard(event: { detail: { originalEvent: _WinRT.Windows.UI.ViewManagement.InputPaneVisibilityEventArgs } }) {
+        // Because the ToolBar takes up layout space and is not an overlay, it doesn't have the same expectation 
+        // to move itself to get out of the way of a showing IHM. Instsead we just close the ToolBar to avoid 
+        // scenarios where the ToolBar is occluded, but the click-eating-div is still present since it may seem 
+        // strange to end users that an occluded ToolBar (out of sight, out of mind) is still eating their first 
+        // click.
+
+        // Mitigation:
+        // Because (1) custom content in a ToolBar can only be included as a 'content' type command, because (2)
+        // the ToolBar only supports closedDisplayModes 'compact' and 'full', and because (3) 'content' type
+        // commands in the overflowarea use a separate contentflyout to display their contents:
+        // Interactable custom content contained within the ToolBar actionarea or overflowarea, will remain
+        // visible and interactable even when showing the IHM closes the ToolBar.
+        this.close();
     }
 
     private _synchronousOpen(): void {
@@ -392,8 +449,10 @@ export class ToolBar {
 
         // Move ToolBar element to the body in preparation of becoming a light dismissible. Leave an equal sized placeHolder element 
         // at our original DOM location to avoid reflowing surrounding app content.
-        this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
-        _Global.document.body.appendChild(this._dom.root);
+        _ElementUtilities._maintainFocus(() => {
+            this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
+            _Global.document.body.appendChild(this._dom.root);
+        });
 
         // Position the ToolBar to completely cover the same region as the placeholder element.
         this._dom.root.style.width = closedContentWidth + "px";
@@ -423,15 +482,18 @@ export class ToolBar {
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
         this._commandingSurface.synchronousOpen();
+        _LightDismissService.shown(this._dismissable); // Call at the start of the open animation
     }
 
     private _updateDomImpl_renderClosed(): void {
 
         // Restore our placement in the DOM
         if (this._dom.placeHolder.parentElement) {
-            var placeHolder = this._dom.placeHolder;
-            placeHolder.parentElement.insertBefore(this._dom.root, placeHolder);
-            placeHolder.parentElement.removeChild(placeHolder);
+            _ElementUtilities._maintainFocus(() => {
+                var placeHolder = this._dom.placeHolder;
+                placeHolder.parentElement.insertBefore(this._dom.root, placeHolder);
+                placeHolder.parentElement.removeChild(placeHolder);
+            });
         }
 
         // Render Closed
@@ -443,6 +505,7 @@ export class ToolBar {
         _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.closedClass);
         _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.openedClass);
         this._commandingSurface.synchronousClose();
+        _LightDismissService.hidden(this._dismissable); // Call after the close animation
     }
 }
 

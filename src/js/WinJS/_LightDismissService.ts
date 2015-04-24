@@ -277,6 +277,8 @@ class OrderedCache<T> {
 }
 
 class LightDismissService {
+    private _debug = false; // Disables dismiss due to window blur. Useful during debugging.
+    
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[] = [];
     // The *_activeDismissable* is essentially the dismissable that currently has focus. Note that the
@@ -335,6 +337,19 @@ class LightDismissService {
             client.onHide();
             this._updateDom();
         }
+    }
+    
+    isShown(client: ILightDismissable) {
+        return this._clients.indexOf(client) !== -1;
+    }
+    
+    isTopmost(client: ILightDismissable) {
+        return client === this._clients[this._clients.length - 1];
+    }
+    
+    // Disables dismiss due to window blur. Useful during debugging.
+    _setDebug(debug: boolean) {
+        this._debug = debug;
     }
 
     // State private to _updateDom. No other method should make use of it.
@@ -451,8 +466,9 @@ class LightDismissService {
     //
     // Light dismiss triggers
     //
-
-    private _clickEaterTapped() {
+    
+    // Called by tests.
+    _clickEaterTapped() {
         this._dispatchLightDismiss(LightDismissalReasons.tap);
     }
 
@@ -489,6 +505,8 @@ class LightDismissService {
     }
 
     private _onWindowBlur(eventObject: FocusEvent) {
+        if (this._debug) { return; }
+        
         // Want to trigger a light dismiss on window blur.
         // We get blur if we click off the window, including into an iframe within our window.
         // Both blurs call this function, but fortunately document.hasFocus is true if either
@@ -611,10 +629,18 @@ class LightDismissService {
 var service = new LightDismissService();
 export var shown = service.shown.bind(service);
 export var hidden = service.hidden.bind(service);
+export var isShown = service.isShown.bind(service);
+export var isTopmost = service.isTopmost.bind(service);
+export var _clickEaterTapped = service._clickEaterTapped.bind(service);
+export var _setDebug = service._setDebug.bind(service);
 
 _Base.Namespace.define("WinJS.UI._LightDismissService", {
     shown: shown,
     hidden: hidden,
+    isShown: isShown,
+    isTopmost: isTopmost,
+    _clickEaterTapped: _clickEaterTapped,
+    _setDebug: _setDebug,
     LightDismissableElement: LightDismissableElement,
     DismissalPolicies: DismissalPolicies,
 

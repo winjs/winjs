@@ -33,7 +33,6 @@ define([
         /// <summary locid="WinJS.UI.Pivot">
         /// Tab control which displays a item of content.
         /// </summary>
-        /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
         /// </field>
         /// <icon src="ui_winjs.ui.pivot.12x12.png" width="12" height="12" />
         /// <icon src="ui_winjs.ui.pivot.16x16.png" width="16" height="16" />
@@ -95,7 +94,7 @@ define([
 
                     headersContainerLeadingMargin: 12,
 
-                    headerPadding: 4,
+                    headerPadding: 6,
                     headerHorizontalMargin: 12,
 
                     getCumulativeHeaderWidth: function headersState_getCumulativeHeaderWidth(pivot, index) {
@@ -131,10 +130,10 @@ define([
                         var width = this._cachedWidth || this.getCumulativeHeaderWidth(pivot, pivot.items.length);
                         this._cachedWidth = width;
 
-                        if (width > pivot._viewportWidth && !(pivot._headersState instanceof headersStates.overflowState)) {
+                        if (width > pivot._headerItemsWidth && !(pivot._headersState instanceof headersStates.overflowState)) {
                             pivot._headersState.exit();
                             pivot._headersState = new headersStates.overflowState(pivot);
-                        } else if (width <= pivot._viewportWidth && !(pivot._headersState instanceof headersStates.staticState)) {
+                        } else if (width <= pivot._headerItemsWidth && !(pivot._headersState instanceof headersStates.staticState)) {
                             pivot._headersState.exit();
                             pivot._headersState = new headersStates.staticState(pivot);
                         }
@@ -228,7 +227,7 @@ define([
                         var end = 0;
                         if (pivot._rtl) {
                             start = selectedHeader.offsetLeft + selectedHeader.offsetWidth + headersStates.common.headerHorizontalMargin;
-                            end = pivot._viewportWidth - headersStates.common.getCumulativeHeaderWidth(pivot, pivot.selectedIndex) - headersStates.common.headersContainerLeadingMargin;
+                            end = pivot._headerItemsWidth - headersStates.common.getCumulativeHeaderWidth(pivot, pivot.selectedIndex) - headersStates.common.headersContainerLeadingMargin;
                             end += parseFloat(pivot._headersContainerElement.style.marginLeft);
                         } else {
                             start = selectedHeader.offsetLeft;
@@ -345,7 +344,7 @@ define([
                         var start = 0;
                         var end = 0;
                         if (pivot._rtl) {
-                            start = pivot._viewportWidth - headersStates.common.headersContainerLeadingMargin;
+                            start = pivot._headerItemsWidth - headersStates.common.headersContainerLeadingMargin;
                             end = selectedHeader.offsetLeft;
                             end += headersStates.common.headerHorizontalMargin;
                             end += selectedHeader.offsetWidth;
@@ -407,7 +406,7 @@ define([
                             // When going backwards, we render 2 additional headers, the first one as usual, and the second one for
                             // fading out the previous last header.
                             var numberOfHeadersToRender = pivot._items.length + (goPrevious ? 2 : 1);
-                            var maxHeaderWidth = pivot._viewportWidth * 0.8;
+                            var maxHeaderWidth = pivot._headerItemsWidth * 0.8;
                             var indexToRender = pivot.selectedIndex - 1;
 
                             if (pivot._viewportElement.style.overflow) {
@@ -640,24 +639,47 @@ define([
                 _ElementUtilities._addEventListener(this.element, "pointerout", this._updatePointerType.bind(this));
                 this._pointerType = PT_MOUSE;
 
+                // Title element
                 this._titleElement = _Global.document.createElement("DIV");
                 this._titleElement.style.display = "none";
                 _ElementUtilities.addClass(this._titleElement, Pivot._ClassName.pivotTitle);
                 this._element.appendChild(this._titleElement);
 
+                // Header Area
+                this._headerAreaElement = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerAreaElement, Pivot._ClassName.pivotHeaderArea);
+                this._element.appendChild(this._headerAreaElement);
+
+                // Header Items
+                this._headerItemsElement = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerItemsElement, Pivot._ClassName.pivotHeaderItems);
+                this._headerAreaElement.appendChild(this._headerItemsElement);
+                this._headerItemsElWidth = null;
+
+                // Headers Container
                 this._headersContainerElement = _Global.document.createElement("DIV");
                 _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
-                this._element.appendChild(this._headersContainerElement);
+                this._headerItemsElement.appendChild(this._headersContainerElement);
                 this._element.addEventListener('click', this._elementClickedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerdown", this._elementPointerDownHandler.bind(this));
                 _ElementUtilities._addEventListener(this._element, "pointerup", this._elementPointerUpHandler.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
                 _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
-
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                 this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
+                // Header Custom Content
+                this._headerCustomContentLeft = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContent);
+                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContentLeft);
+                this._headerAreaElement.insertBefore(this._headerCustomContentLeft, this._headerAreaElement.children[0]);
+                this._headerCustomContentRight = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContent);
+                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContentRight);
+                this._headerAreaElement.appendChild(this._headerCustomContentRight);
+
+                // Viewport
                 this._viewportElement = _Global.document.createElement("DIV");
                 this._viewportElement.className = Pivot._ClassName.pivotViewport;
                 this._element.appendChild(this._viewportElement);
@@ -666,11 +688,12 @@ define([
                 this._resizeHandlerBound = this._resizeHandler.bind(this);
                 this.element.addEventListener("mselementresize", this._resizeHandlerBound);
                 _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
-                this._viewportWidth = null;
+                this._viewportElWidth = null;
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
                 this._viewportElement.addEventListener("MSManipulationStateChanged", this._MSManipulationStateChangedHandler.bind(this));
                 _ElementUtilities._addEventListener(this._viewportElement, "pointerdown", this._pointerDownHandler.bind(this));
 
+                // Surface
                 this._surfaceElement = _Global.document.createElement("DIV");
                 this._surfaceElement.className = Pivot._ClassName.pivotSurface;
                 this._viewportElement.appendChild(this._surfaceElement);
@@ -700,7 +723,6 @@ define([
             }, {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.element" helpKeyword="WinJS.UI.Pivot.element">
                 /// Gets the DOM element that hosts the Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 element: {
                     get: function () {
@@ -708,9 +730,37 @@ define([
                     }
                 },
 
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentLeft" helpKeyword="WinJS.UI.Pivot.customHeaderContentLeft">
+                /// Gets or sets the left custom header content.
+                /// </field>
+                customHeaderContentLeft: {
+                    get: function () {
+                        return this._headerCustomContentLeft.firstElementChild;
+                    },
+                    set: function (value) {
+                        _ElementUtilities.empty(this._headerCustomContentLeft);
+                        this._headerCustomContentLeft.appendChild(value);
+                        this.forceLayout();
+                    }
+                },
+
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentRight" helpKeyword="WinJS.UI.Pivot.customHeaderContentRight">
+                /// Gets or sets the right custom header content.
+                /// </field>
+                customHeaderContentRight: {
+                    get: function () {
+                        return this._headerCustomContentRight.firstElementChild;
+                    },
+                    set: function (value) {
+                        _ElementUtilities.empty(this._headerCustomContentRight);
+                        this._headerCustomContentRight.appendChild(value);
+                        this.forceLayout();
+                        
+                    }
+                },
+
                 /// <field type="Boolean" locid="WinJS.UI.Pivot.locked" helpKeyword="WinJS.UI.Pivot.locked">
                 /// Gets or sets a value that specifies whether the Pivot is locked to the current item.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 locked: {
                     get: function () {
@@ -726,7 +776,6 @@ define([
 
                 /// <field type="WinJS.Binding.List" locid="WinJS.UI.Pivot.items" helpKeyword="WinJS.UI.Pivot.items">
                 /// Gets or sets the WinJS.Binding.List of PivotItem objects that belong to this Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 items: {
                     get: function () {
@@ -747,7 +796,6 @@ define([
 
                 /// <field type="String" locid="WinJS.UI.Pivot.title" helpKeyword="WinJS.UI.Pivot.title">
                 /// Gets or sets the title of the Pivot.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 title: {
                     get: function () {
@@ -766,7 +814,6 @@ define([
 
                 /// <field type="Number" integer="true" locid="WinJS.UI.Pivot.selectedIndex" helpKeyword="WinJS.UI.Pivot.selectedIndex">
                 /// Gets or sets the index of the item in view. This property is useful for restoring a previous view when your app launches or resumes.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 selectedIndex: {
                     get: function () {
@@ -794,7 +841,6 @@ define([
 
                 /// <field type="WinJS.UI.PivotItem" locid="WinJS.UI.Pivot.selectedItem" helpKeyword="WinJS.UI.Pivot.selectedItem">
                 /// Gets or sets the item in view. This property is useful for restoring a previous view when your app launches or resumes.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 selectedItem: {
                     get: function () {
@@ -813,7 +859,6 @@ define([
                     /// <summary locid="WinJS.UI.Pivot.dispose">
                     /// Disposes this control.
                     /// </summary>
-                    /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
                     if (this._disposed) {
                         return;
@@ -837,7 +882,6 @@ define([
                     /// Forces the control to relayout its content. This function is expected to be called
                     /// when the pivot element is manually resized.
                     /// </summary>
-                    /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                     /// </signature>
                     if (this._disposed) {
                         return;
@@ -847,19 +891,16 @@ define([
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onselectionchanged" helpKeyword="WinJS.UI.Pivot.onselectionchanged">
                 /// Raised when the user changes to a different item.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1" />
                 /// </field>
                 onselectionchanged: createEvent(eventNames.selectionChanged),
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onitemanimationstart" helpKeyword="WinJS.UI.Pivot.onitemanimationstart">
                 /// Raised when the item's animation starts.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </field>
                 onitemanimationstart: createEvent(eventNames.itemAnimationStart),
 
                 /// <field type="Function" locid="WinJS.UI.Pivot.onitemanimationend" helpKeyword="WinJS.UI.Pivot.onitemanimationend">
                 /// Raised when the item's animation ends.
-                /// <compatibleWith platform="WindowsPhoneApp" minVersion="8.1"/>
                 /// </field>
                 onitemanimationend: createEvent(eventNames.itemAnimationEnd),
 
@@ -903,6 +944,15 @@ define([
                     }
                 },
 
+                _headerItemsWidth: {
+                    get: function () {
+                        if (!this._headerItemsElWidth) {
+                            this._headerItemsElWidth = parseFloat(_Global.getComputedStyle(this._headerItemsElement).width);
+                        }
+                        return this._headerItemsElWidth || Pivot._invalidViewportWidth;
+                    },
+                },
+
                 _viewportWidth: {
                     get: function () {
                         if (!this._viewportElWidth) {
@@ -913,9 +963,10 @@ define([
                         }
                         return this._viewportElWidth || Pivot._invalidViewportWidth;
                     },
-                    set: function (value) {
-                        this._viewportElWidth = value;
-                    }
+                },
+
+                _invalidateMeasures: function pivot_invalidateMeasures() {
+                    this._viewportElWidth = this._headerItemsElWidth = null;
                 },
 
                 // Lifecycle
@@ -1005,9 +1056,11 @@ define([
                     }
 
                     var oldViewportWidth = this._viewportWidth;
-                    // Invalidate the viewportWidth
-                    this._viewportWidth = null;
-                    if (oldViewportWidth !== this._viewportWidth) {
+                    var oldHeaderItemsWidth = this._headerItemsWidth;
+                    // Invalidate the viewportWidth and header items width, note that _viewportWidth and _headerItemsWidth are
+                    // private properties that remeasure their values on access when their current value is null
+                    this._invalidateMeasures();
+                    if (oldViewportWidth !== this._viewportWidth || oldHeaderItemsWidth !== this._headerItemsWidth) {
                         _Log.log && _Log.log('_resizeHandler from:' + oldViewportWidth + " to: " + this._viewportWidth);
 
                         this._hidePivotItemAnimation && this._hidePivotItemAnimation.cancel();
