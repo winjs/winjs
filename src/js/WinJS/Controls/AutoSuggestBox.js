@@ -315,6 +315,7 @@ define([
                     this._inputElement.autocorrect = "off";
                     this._inputElement.type = "search";
                     this._inputElement.classList.add(ClassNames.asbInput);
+                    this._inputElement.classList.add("win-textbox");
                     this._inputElement.setAttribute("role", "textbox");
                     this._inputElement.addEventListener("keydown", this._keyDownHandler.bind(this));
                     this._inputElement.addEventListener("keypress", this._keyPressHandler.bind(this));

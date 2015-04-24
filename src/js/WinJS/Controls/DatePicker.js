@@ -209,11 +209,11 @@ define([
 
                 _createControlElements: function () {
                     this._monthElement = _Global.document.createElement("select");
-                    this._monthElement.className = "win-datepicker-month";
+                    this._monthElement.className = "win-datepicker-month win-dropdown";
                     this._dateElement = _Global.document.createElement("select");
-                    this._dateElement.className = "win-datepicker-date";
+                    this._dateElement.className = "win-datepicker-date win-dropdown";
                     this._yearElement = _Global.document.createElement("select");
-                    this._yearElement.className = "win-datepicker-year";
+                    this._yearElement.className = "win-datepicker-year win-dropdown";
                 },
 
                 _createControls: function () {

@@ -10,11 +10,7 @@ html, body {
     height: 100%;
     margin: 0px;
     cursor: default;
-    -moz-user-select: none;
     -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -ms-user-select: none;
     -ms-scroll-translation: vertical-to-horizontal;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
@@ -37,36 +33,30 @@ iframe {
 // Define basic font fallback list for intrinsic elements
 // Some elements must have font-family defined explicitly as
 // otherwise the browser user-agent stylesheet will win
-body,
-.win-type-xx-large,
-.win-type-x-large,
-.win-type-large,
-.win-type-medium,
-.win-type-small,
-.win-type-x-small,
-.win-type-xx-small,
-input,
-textarea,
-.win-textarea,
-button,
-select,
-option {
-    font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
+body.win-fonts {
+    &,
+    .win-type-xx-large,
+    .win-type-x-large,
+    .win-type-large,
+    .win-type-medium,
+    .win-type-small,
+    .win-type-x-small,
+    .win-type-xx-small,
+    input,
+    textarea,
+    .win-textarea,
+    button,
+    select,
+    option {
+        font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
+    }
 }
+
 
 //
 // Text input
 //
-input:not([type]).win-textbox,
-input[type=""].win-textbox,
-input[type=text].win-textbox,
-input[type=password].win-textbox,
-input[type=email].win-textbox,
-input[type=number].win-textbox,
-input[type=tel].win-textbox,
-input[type=url].win-textbox,
-input[type=search].win-textbox,
-textarea.win-textbox,
+.win-textbox,
 .win-textarea {
     -ms-user-select: element;
     border-style: solid;

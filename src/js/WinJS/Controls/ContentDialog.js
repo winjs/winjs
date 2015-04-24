@@ -91,8 +91,8 @@ define([
                 title: "win-contentdialog-title",
                 content: "win-contentdialog-content",
                 commands: "win-contentdialog-commands",
-                primaryCommand: "win-contentdialog-primarycommand",
-                secondaryCommand: "win-contentdialog-secondarycommand",
+                primaryCommand: "win-contentdialog-primarycommand win-button",
+                secondaryCommand: "win-contentdialog-secondarycommand win-button",
 
                 _verticalAlignment: "win-contentdialog-verticalalignment",
                 _scroller: "win-contentdialog-scroller",
