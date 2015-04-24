@@ -4,6 +4,7 @@
 define('WinJS/Controls/MediaPlayer', [
     'exports',
     '../Core/_Global',
+    '../Core/_WinRT',
     '../Core/_Base',
     '../Core/_Events',
     '../Core/_ErrorFromName',
@@ -48,9 +49,9 @@ define('WinJS/Controls/MediaPlayer', [
         MediaPlayer: _Base.Namespace._lazy(function () {
             var SmartGlass = null;
             if (utilities.hasWinRT &&
-                Windows.Xbox &&
-                Windows.Xbox.SmartGlass) {
-                SmartGlass = Windows.Xbox.SmartGlass;
+                _WinRT.Windows.Xbox &&
+                _WinRT.Windows.Xbox.SmartGlass) {
+                SmartGlass = _WinRT.Windows.Xbox.SmartGlass;
             }
 
             var strings = {
@@ -74,7 +75,7 @@ define('WinJS/Controls/MediaPlayer', [
                 get mediaPlayerInvalidTimeValue() { return "Invalid argument: Time must be a number."; },
                 get mediaPlayerNullContentType() { return "Invalid argument: contentType cannot be null."; },
                 get mediaPlayerNullMetadata() { return "Invalid argument: metadata cannot be null."; },
-                get mediaPlayerSetContentMetadataInvalidContentRating() { return "Invalid argument: contentRating is empty or incorrectly formatted." },
+                get mediaPlayerSetContentMetadataInvalidContentRating() { return "Invalid argument: contentRating is empty or incorrectly formatted."; },
                 get nextTrackMediaCommandDisplayText() { return _Resources._getWinJSString("ui/nextTrackMediaCommandDisplayText").value; },
                 get playbackRateHalfSpeedLabel() { return _Resources._getWinJSString("ui/playbackRateHalfSpeedLabel").value; },
                 get playbackRateNormalSpeedLabel() { return _Resources._getWinJSString("ui/playbackRateNormalSpeedLabel").value; },
@@ -115,7 +116,7 @@ define('WinJS/Controls/MediaPlayer', [
             };
 
             // If we are running in an iFrame, then wuiv should be undefined. Otherwise there will be an exception.
-            var wuiv = utilities.hasWinRT && Windows.UI.ViewManagement;
+            var wuiv = utilities.hasWinRT && _WinRT.Windows.UI.ViewManagement;
 
             // Helper methods used for animations
             // Default to 11 pixel from the left (or right if RTL)
@@ -177,26 +178,16 @@ define('WinJS/Controls/MediaPlayer', [
             function keyframeCallback(keyframe) {
                 var keyframeRtl = keyframe + "-rtl";
                 return function (i, elem) {
-                    return window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
-                }
+                    return _Global.window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
+                };
             }
-
-            function makeArray(elements) {
-                if (Array.isArray(elements) || elements instanceof NodeList || elements instanceof HTMLCollection) {
-                    return elements;
-                } else if (elements) {
-                    return [elements];
-                } else {
-                    return [];
-                }
-            };
 
             function translateCallback(offsetArray, prefix) {
                 prefix = prefix || "";
                 return function (i, elem) {
                     var offset = offsetArray.getOffset(i);
                     var left = offset.left;
-                    if (offset.rtlflip && window.getComputedStyle(elem).direction === "rtl") {
+                    if (offset.rtlflip && _Global.window.getComputedStyle(elem).direction === "rtl") {
                         left = left.toString();
                         if (left.charAt(0) === "-") {
                             left = left.substring(1);
@@ -206,7 +197,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                     return prefix + "translate(" + left + ", " + offset.top + ")";
                 };
-            };
+            }
 
             var MediaPlayer = _Base.Class.define(function (element, options) {
                 /// <signature helpKeyword="WinJS.UI.MediaPlayer.MediaPlayer">
@@ -227,7 +218,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _WriteProfilerMark("WinJS.UI.MediaPlayer:constructor,StartTM");
 
-                element = element || document.createElement("div");
+                element = element || _Global.document.createElement("div");
                 element.winControl = this;
 
                 utilities.addClass(element, "win-disposable win-mediaplayer win-mediaplayer-doublerow");
@@ -246,9 +237,9 @@ define('WinJS/Controls/MediaPlayer', [
                 this._commandsOverflowFlyout = null;
                 this._element = element;
                 if (utilities.hasWinRT &&
-                    Windows.Media.ContentRestrictions &&
-                    Windows.Media.ContentRestrictions.RatedContentRestrictions) {
-                    this._contentRestrictions = new Windows.Media.ContentRestrictions.RatedContentRestrictions();
+                    _WinRT.Windows.Media.ContentRestrictions &&
+                    _WinRT.Windows.Media.ContentRestrictions.RatedContentRestrictions) {
+                    this._contentRestrictions = new _WinRT.Windows.Media.ContentRestrictions.RatedContentRestrictions();
                 }
                 this._checkPremiumVideoPrivilegeBind = this._checkPremiumVideoPrivilege.bind(this);
                 this._checkParentalControlsBind = this._checkParentalControls.bind(this);
@@ -281,10 +272,10 @@ define('WinJS/Controls/MediaPlayer', [
                 this._gestureEventSubscriptions = [];
                 this._gestureRecognizer = null;
                 if (utilities.hasWinRT) {
-                    this._gestureRecognizer = new Windows.UI.Input.GestureRecognizer();
+                    this._gestureRecognizer = new _WinRT.Windows.UI.Input.GestureRecognizer();
                     this._gestureRecognizer.gestureSettings =
-                        Windows.UI.Input.GestureSettings.manipulationTranslateX |
-                        Windows.UI.Input.GestureSettings.manipulationTranslateY;
+                        _WinRT.Windows.UI.Input.GestureSettings.manipulationTranslateX |
+                        _WinRT.Windows.UI.Input.GestureSettings.manipulationTranslateY;
                 }
                 this._goToFullScreenButton = null;
                 this._goToLiveButton = null;
@@ -371,8 +362,8 @@ define('WinJS/Controls/MediaPlayer', [
                 this._stopButton = null;
                 this._smtControls = null;
                 if (utilities.hasWinRT &&
-                    Windows.Media.SystemMediaTransportControls) {
-                    this._smtControls = Windows.Media.SystemMediaTransportControls.getForCurrentView();
+                    _WinRT.Windows.Media.SystemMediaTransportControls) {
+                    this._smtControls = _WinRT.Windows.Media.SystemMediaTransportControls.getForCurrentView();
                 }
                 this._targetPlaybackRate = 0;
                 this._targetCurrentTime = 0;
@@ -603,7 +594,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     if (utilities.hasWinRT &&
-                        Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Xbox") {
+                        _WinRT.Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Xbox") {
                         if (this._isXboxSnapMode) {
                             utilities.removeClass(mediaPlayerContainer, "win-mediaplayer-hidden");
                             that.showControls();
@@ -638,12 +629,12 @@ define('WinJS/Controls/MediaPlayer', [
                         that._thumbImageElementWidthDividedByTwo = that._thumbnailImage.clientWidth / 2;
                     }, Scheduler.Priority.normal, this);
                 };
-                window.addEventListener("resize", this._windowResizeCallback, false);
+                _Global.window.addEventListener("resize", this._windowResizeCallback, false);
 
                 // When we are hidden, we pause the media
                 this._handleVisibilityChangedCallback = function handleVisibilityChanged(ev) {
 
-                    if (document.visibilityState === "hidden") {
+                    if (_Global.document.visibilityState === "hidden") {
                         if (that._mediaElementAdapter.mediaElement &&
                             that._mediaElementAdapter.mediaElement.paused) {
                             that._wasPlayingBeforeSuspend = false;
@@ -652,7 +643,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         that.pause();
-                    } else if (document.visibilityState === "visible") {
+                    } else if (_Global.document.visibilityState === "visible") {
                         if (that._wasPlayingBeforeSuspend) {
                             that.play();
                         } else {
@@ -660,7 +651,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
                     }
                 };
-                document.addEventListener("visibilitychange", this._handleVisibilityChangedCallback, false);
+                _Global.document.addEventListener("visibilitychange", this._handleVisibilityChangedCallback, false);
 
                 // When we go into the background, we should pause the media
                 this._handleCheckpointCallback = function () {
@@ -692,10 +683,10 @@ define('WinJS/Controls/MediaPlayer', [
 
                 // Set a timer to report state to SmartGlass periodically
                 this._updateMediaStateBind = this._updateMediaState.bind(this);
-                this._updateMediaStateTimerCookie = setInterval(this._updateMediaStateBind, this._REPORT_MEDIA_STATE_INTERVAL);
+                this._updateMediaStateTimerCookie = _Global.setInterval(this._updateMediaStateBind, this._REPORT_MEDIA_STATE_INTERVAL);
 
                 if (utilities.hasWinRT) {
-                    Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", this._checkPremiumVideoAndParentalControlsBind, false);
+                    _WinRT.Windows.UI.WebUI.WebUIApplication.addEventListener("resuming", this._checkPremiumVideoAndParentalControlsBind, false);
                 }
 
                 if (this._contentRestrictions) {
@@ -708,7 +699,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 // Set up the system transport controls event handlers
                 if (utilities.hasWinRT &&
-                    Windows.Media.SystemMediaTransportControls) {
+                    _WinRT.Windows.Media.SystemMediaTransportControls) {
                     // We need to set the enabled state for stop during construction
                     this._smtControls.isStopEnabled = nav.canGoBack;
                     this._handleSystemTransportControlsButtonPressedBind = this._handleSystemTransportControlsButtonPressed.bind(this);
@@ -777,7 +768,7 @@ define('WinJS/Controls/MediaPlayer', [
                 _isXbox: {
                     get: function () {
                         if (utilities.hasWinRT &&
-                            Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Xbox") {
+                            _WinRT.Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Xbox") {
                             return true;
                         } else {
                             return false;
@@ -788,7 +779,7 @@ define('WinJS/Controls/MediaPlayer', [
                 isXboxSnapMode: {
                     get: function () {
                         if (this._isXbox &&
-                            window.screenWidth <= 480) {
+                            _Global.window.screenWidth <= 480) {
                             return true;
                         } else {
                             return false;
@@ -844,7 +835,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     }
                                 }
                             }
-                        }
+                        };
 
                         button.addEventListener(eventName, buttonClickEventSubscription.handler, false);
                         this._buttonEventSubscriptions.push(buttonClickEventSubscription);
@@ -861,7 +852,7 @@ define('WinJS/Controls/MediaPlayer', [
                         handler: function (ev) {
                             handler.call(that, ev);
                         }
-                    }
+                    };
 
                     owner.addEventListener(eventName, gestureEventSubscription.handler, false);
                     this._gestureEventSubscriptions.push(gestureEventSubscription);
@@ -887,7 +878,7 @@ define('WinJS/Controls/MediaPlayer', [
                         // check. If we not running on Xbox, we don't do the check.
                         if (!that._mediaMetadata ||
                             !that._mediaMetadata.requiresPremiumVideoPrivilege ||
-                            !Windows.Xbox) {
+                            !_WinRT.Windows.Xbox) {
                             complete(true);
                             return;
                         }
@@ -898,15 +889,14 @@ define('WinJS/Controls/MediaPlayer', [
                         var isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
                         // '224' is the privilege for premium video
                         var premiumVideoPrivilegeId = 224;
-                        var noIssueResult = Windows.Xbox.ApplicationModel.Store.PrivilegeCheckResult.noIssue;
-                        var priviledgeCheckResult = noIssueResult;
+                        var noIssueResult = _WinRT.Windows.Xbox.ApplicationModel.Store.PrivilegeCheckResult.noIssue;
                         // We do this check asynchronously. It makes a service call so it could take a while to return.
                         // We allow the video to play, but will return an error if it comes back false.
-                        var users = Windows.Xbox.System.User.users;
+                        var users = _WinRT.Windows.Xbox.System.User.users;
                         for (var i = 0, len = users.size; i < len; i++) {
                             if (users[i].isSignedIn &&
                                 !users[i].isGuest) {
-                                hasPremiumVideoPriviledgePromises.push(Windows.Xbox.ApplicationModel.Store.Product.checkPrivilegeAsync(users[i], premiumVideoPrivilegeId, true, null));
+                                hasPremiumVideoPriviledgePromises.push(_WinRT.Windows.Xbox.ApplicationModel.Store.Product.checkPrivilegeAsync(users[i], premiumVideoPrivilegeId, true, null));
                                 numberOfSignedInNonGuestUsers++;
                             }
                         }
@@ -950,7 +940,7 @@ define('WinJS/Controls/MediaPlayer', [
                     // we check the family settings to see if the user is allowed to
                     // view the content.
                     if (!utilities.hasWinRT ||
-                        !Windows.Xbox ||
+                        !_WinRT.Windows.Xbox ||
                         !this._mediaMetadata ||
                         !this._mediaMetadata.contentRating ||
                         !this._mediaMetadata.contentType ||
@@ -960,9 +950,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // We need to map the contentType from the one in the WinJS.Data.ContentType
                     // enumeration to the contentType enumeration in the family safety API.
-                    var contentRestrictionsNamespace = Windows.Media.ContentRestrictions;
                     var contentType = this._mediaMetadata.contentType;
-                    var contentDescription = new Windows.Media.ContentRestrictions.RatedContentDescription(
+                    var contentDescription = new _WinRT.Windows.Media.ContentRestrictions.RatedContentDescription(
                         this._mediaMetadata.contentId,
                         this._mediaMetadata.title,
                         null,
@@ -987,6 +976,8 @@ define('WinJS/Controls/MediaPlayer', [
                     if (this._disposed) {
                         return;
                     }
+
+                    var that = this;
 
                     var hasPremiumVideoPriviledge = false;
                     var hasParentalControlsPrivilege = false;
@@ -1144,7 +1135,7 @@ define('WinJS/Controls/MediaPlayer', [
                         return true;
                     }
 
-                    var dispatchedEvent = document.createEvent("Event");
+                    var dispatchedEvent = _Global.document.createEvent("Event");
                     dispatchedEvent.initEvent(eventName, true, true);
 
                     if (detail) {
@@ -1160,7 +1151,7 @@ define('WinJS/Controls/MediaPlayer', [
                         return;
                     }
 
-                    clearInterval(this._fastForwardOrRewindTimer);
+                    _Global.clearInterval(this._fastForwardOrRewindTimer);
                     this._fastForwardOrRewindTimer = null;
                     this._isInFastForwardOrRewindMode = false;
 
@@ -1287,7 +1278,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _handleBeforeShowOverflowMenu: function () {
                     // Loop through all buttons in the toolbar & remove the hidden class
-                    var toolBarFlyoutEl = document.body.querySelector(".win-toolbar-overflowarea");
+                    var toolBarFlyoutEl = _Global.document.body.querySelector(".win-toolbar-overflowarea");
                     var overflowButtons = toolBarFlyoutEl.querySelectorAll("button");
                     for (var i = 0, len = overflowButtons.length; i < len; i++) {
                         utilities.removeClass(overflowButtons[i], "win-mediaplayer-hidden");
@@ -1325,7 +1316,7 @@ define('WinJS/Controls/MediaPlayer', [
                     if (this._isThumbGrabbed) {
                         if (args.clientX < 100) {
                             this._isHandAtLeftEdge = true;
-                        } else if (args.clientX > screen.availWidth - 100) {
+                        } else if (args.clientX > _Global.screen.availWidth - 100) {
                             this._isHandAtRightEdge = true;
                         } else {
                             this._isHandAtLeftEdge = false;
@@ -1456,7 +1447,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 // Handles global speech media-related commands
                 _handleSystemTransportControlsButtonPressed: function (ev) {
-                    var smtControlsButton = Windows.Media.SystemMediaTransportControlsButton;
+                    var smtControlsButton = _WinRT.Windows.Media.SystemMediaTransportControlsButton;
                     switch (ev.button) {
                         case smtControlsButton.play:
                             if (this.playPauseButtonEnabled && this.playPauseButtonVisible) {
@@ -1546,15 +1537,15 @@ define('WinJS/Controls/MediaPlayer', [
                         default:
                             // No-op
                             break;
-                    };
+                    }
                 },
 
                 _handleSystemTransportControlsPropertyChanged: function (ev) {
-                    var smtControlsProperty = Windows.Media.SystemMediaTransportControlsProperty;
+                    var smtControlsProperty = _WinRT.Windows.Media.SystemMediaTransportControlsProperty;
                     var updater = this._smtControls.displayUpdater;
                     switch (ev.property) {
                         case smtControlsProperty.playbackPosition:
-                            if (updater.type === Windows.Media.MediaPlaybackType.video) {
+                            if (updater.type === _WinRT.Windows.Media.MediaPlaybackType.video) {
                                 var numberOfMilisecondsInASecond = 1000;
                                 this._seekInternal(updater.videoProperties.playbackPosition / numberOfMilisecondsInASecond, false);
                             }
@@ -1592,8 +1583,9 @@ define('WinJS/Controls/MediaPlayer', [
                 },
 
                 _handleVolumeSliderChange: function () {
+                    var newVolume = 0;
                     if (this._volumeSlider) {
-                        var newVolume = this._volumeSlider.value;
+                        newVolume = this._volumeSlider.value;
                     }
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.mediaElement) {
@@ -1624,7 +1616,7 @@ define('WinJS/Controls/MediaPlayer', [
                             // back button or well-known convention for the back button (eg. pressing B on Xbox)
                             if (this._layout === "full" &&
                                 nav.canGoBack &&
-                                Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Desktop") {
+                                _WinRT.Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Desktop") {
                                 utilities.addClass(this._backButton.element, "win-mediaplayer-hidden");
                             }
 
@@ -1634,8 +1626,8 @@ define('WinJS/Controls/MediaPlayer', [
                             // Set focus off of the transport controls, otherwise if focus remains on one of
                             // the buttons, when the user presses 'A' to bring up the transport controls they
                             // may invoke one of the transport controls buttons without meaning to.
-                            if (document.activeElement &&
-                                this._transportControls.contains(document.activeElement)) {
+                            if (_Global.document.activeElement &&
+                                this._transportControls.contains(_Global.document.activeElement)) {
                                 this._element.focus();
                             }
 
@@ -1676,7 +1668,7 @@ define('WinJS/Controls/MediaPlayer', [
                     var isButtonEnabledOrVisible = true;
 
                     if (button) {
-                        var style = getComputedStyle(button);
+                        var style = _Global.getComputedStyle(button);
                         if ((button &&
                             button.disabled) ||
                             style.display === "none") {
@@ -1695,10 +1687,10 @@ define('WinJS/Controls/MediaPlayer', [
 
                 // Returns true if there is a flyout that has focus
                 _isFocusOnAVisibleFlyout: function () {
-                    var flyouts = document.querySelectorAll(".win-overlay, .win-customoverlay");
+                    var flyouts = _Global.document.querySelectorAll(".win-overlay, .win-customoverlay");
                     for (var i = 0, len = flyouts.length; i < len; i++) {
                         var flyoutElement = flyouts[i];
-                        if (flyoutElement.contains(document.activeElement)) {
+                        if (flyoutElement.contains(_Global.document.activeElement)) {
                             return true;
                         }
                     }
@@ -1780,9 +1772,9 @@ define('WinJS/Controls/MediaPlayer', [
                     // If the chapter skip back and chapter skip forward buttons are not present or display: none then do not create the default chapter markers.
                     // Note: If the buttons are disabled, we should still create the chapter markers, because the buttons may just be temporarily disabled.
                     if ((!this._chapterSkipBackButton ||
-                        getComputedStyle(this._chapterSkipBackButton).display === "none") &&
+                        _Global.getComputedStyle(this._chapterSkipBackButton).display === "none") &&
                         (!this._chapterSkipForwardButton ||
-                        getComputedStyle(this._chapterSkipForwardButton).display === "none")) {
+                        _Global.getComputedStyle(this._chapterSkipForwardButton).display === "none")) {
                         return;
                     }
 
@@ -1810,13 +1802,13 @@ define('WinJS/Controls/MediaPlayer', [
                 _onAudioTracksCommandInvoked: function () {
                     // We don't check in the button is enabled and visible because the button won't show up unless there are audio tracks
                     if (!this._audioTracksFlyout) {
-                        var flyoutElement = document.createElement("div");
+                        var flyoutElement = _Global.document.createElement("div");
                         utilities.addClass(flyoutElement, "win-mediaplayer-audiotracks win-mediaplayer-overlay");
                         this._audioTracksFlyout = new _Flyout.Flyout(flyoutElement);
                         this._audioTracksButton.type = "flyout";
                         this._audioTracksButton.flyout = this._audioTracksFlyout;
                         flyoutElement.style.display = "none";
-                        document.body.appendChild(flyoutElement);
+                        _Global.document.body.appendChild(flyoutElement);
                     }
 
                     // Show the flyout
@@ -1835,14 +1827,14 @@ define('WinJS/Controls/MediaPlayer', [
                         this.castButtonEnabled &&
                         this.castButtonVisible) {
 
-                        var castingPicker = new Windows.Media.Casting.CastingDevicePicker();
+                        var castingPicker = new _WinRT.Windows.Media.Casting.CastingDevicePicker();
                         var rect = {
                             height: 500,
                             width: 500,
                             x: 10,
                             y: 100
                         };
-                        castingPicker.show(rect, Windows.UI.Popups.Placement.above);
+                        castingPicker.show(rect, _WinRT.Windows.UI.Popups.Placement.above);
 
                         this._updateUIAndRaiseEvents(mediaCommandEnum.cast, strings.castMediaCommandDisplayText);
                     }
@@ -1883,13 +1875,13 @@ define('WinJS/Controls/MediaPlayer', [
                     // We don't check the enabled & visible status of this button because the closed captions
                     // button is only visible if there are captions.
                     if (!this._closedCaptionsFlyout) {
-                        var flyoutElement = document.createElement("div");
+                        var flyoutElement = _Global.document.createElement("div");
                         utilities.addClass(flyoutElement, "win-mediaplayer-closedcaptions win-mediaplayer-overlay");
                         this._closedCaptionsFlyout = new _Flyout.Flyout(flyoutElement);
                         this._closedCaptionsButton.type = "flyout";
                         this._closedCaptionsButton.flyout = this._closedCaptionsFlyout;
                         flyoutElement.style.display = "none";
-                        document.body.appendChild(flyoutElement);
+                        _Global.document.body.appendChild(flyoutElement);
                     }
 
                     // Show the flyout
@@ -1986,12 +1978,12 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _onError: function (ev) {
                     if (!this._errorFlyout) {
-                        var flyoutElement = document.createElement("div");
+                        var flyoutElement = _Global.document.createElement("div");
                         utilities.addClass(flyoutElement, "win-mediaplayer-errorflyout win-mediaplayer-overlay");
                         flyoutElement.innerHTML = '     <div class="win-mediaplayer-errortext"></div>';
                         this._errorFlyout = new _Flyout.Flyout(flyoutElement);
                         flyoutElement.style.display = "none";
-                        document.body.appendChild(flyoutElement);
+                        _Global.document.body.appendChild(flyoutElement);
                         this._errorText = flyoutElement.querySelector(".win-mediaplayer-errortext");
                     }
 
@@ -2002,6 +1994,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._mediaElementAdapter.mediaElement.error) {
                         var error = this._mediaElementAdapter.mediaElement.error;
                         var errorText = "";
+                        var mediaElement = this._mediaElementAdapter.mediaElement;
                         if (error.msExtendedErrorCode) {
                             switch (mediaElement.error.msExtendedErrorCode) {
                                 case 1: // MEDIA_ERR_ABORTED
@@ -2132,10 +2125,10 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _onGoToFullScreenCommandInvoked: function () {
                     if (utilities.hasWinRT) {
-                        if (Windows.Xbox) {
-                            Windows.UI.ViewManagement.ApplicationView.tryUnsnapToFullscreen();
+                        if (_WinRT.Windows.Xbox) {
+                            _WinRT.Windows.UI.ViewManagement.ApplicationView.tryUnsnapToFullscreen();
                         } else {
-                            Windows.UI.ViewManagement.ApplicationView.tryUnsnap();
+                            _WinRT.Windows.UI.ViewManagement.ApplicationView.tryUnsnap();
                         }
                     }
                 },
@@ -2295,7 +2288,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _inputHandlerMouseOut: function (ev) {
                     if (this._isPointerDown &&
-                        !document.hasFocus()) {
+                        !_Global.document.hasFocus()) {
                         this._isPointerDown = false;
                         this._onThumbDragStop(ev);
                     }
@@ -2457,7 +2450,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _onPlaybackRateCommandInvoked: function () {
                     if (!this._playbackRateFlyout) {
-                        var flyoutElement = document.createElement("div");
+                        var flyoutElement = _Global.document.createElement("div");
                         utilities.addClass(flyoutElement, "win-mediaplayer-playbackrate win-mediaplayer-overlay");
                         flyoutElement.innerHTML = '     <button value="0.5">' + strings.playbackRateHalfSpeedLabel + '</button>' +
                                                     '     <button value="1">' + strings.playbackRateNormalSpeedLabel + '</button>' +
@@ -2467,7 +2460,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._playbackRateButton.type = "flyout";
                         this._playbackRateButton.flyout = this._playbackRateFlyout;
                         flyoutElement.style.display = "none";
-                        document.body.appendChild(flyoutElement);
+                        _Global.document.body.appendChild(flyoutElement);
 
                         // Set up the event listeners on the buttons
                         var that = this;
@@ -2721,15 +2714,13 @@ define('WinJS/Controls/MediaPlayer', [
                     var newX = ev.pageX;
 
                     // Need to account for the Window offset
-                    // TODO - cache this
                     var seekbarRect = this._seekBar.getBoundingClientRect();
-                    var adjustedXPosition = 0;
                     if (newX < seekbarRect.left) {
                         newX = seekbarRect.left;
                     } else if (newX > seekbarRect.right) {
                         newX = seekbarRect.right;
                     } else {
-                        newX -= seekbarRect.left
+                        newX -= seekbarRect.left;
                     }
 
                     var seekBarOffset = 0;
@@ -2853,8 +2844,8 @@ define('WinJS/Controls/MediaPlayer', [
                     var mediaElement = this._mediaElementAdapter.mediaElement;
 
                     // Hide the cursor while the user is scrubbing
-                    if (utilities.hasWinRT && Windows.Xbox) {
-                        Windows.Xbox.Input.InputManager.systemCursorVisibility = Windows.Xbox.Input.SystemCursorVisibility.visible;
+                    if (utilities.hasWinRT && _WinRT.Windows.Xbox) {
+                        _WinRT.Windows.Xbox.Input.InputManager.systemCursorVisibility = _WinRT.Windows.Xbox.Input.SystemCursorVisibility.visible;
                     }
 
                     if (this._isSeekWindowEnabled) {
@@ -2935,13 +2926,12 @@ define('WinJS/Controls/MediaPlayer', [
                         // Need to also calculate the offset of the timeline
                         var currentTime = this._mediaElementAdapter.mediaElement.currentTime;
                         this._relativeTimelineStartOffset = currentTime / this._totalTime;
-                        var progress = this._relativeTimelineStartOffset * this._totalSeekBarWidth;
 
                         if (this._isSeekWindowEnabled) {
                             this._minimumSeekableRange = this._MINIMUM_ACCURATE_SEEKABLE_RANGE / this._totalTime;
 
                             // Figure out where to put the seek window based on where the hand is
-                            var relativePositionOfLeftBoundary = ev.position.x / screen.availWidth;
+                            var relativePositionOfLeftBoundary = ev.position.x / _Global.screen.availWidth;
                             var relativePositionOfRightBoundary = 1 - relativePositionOfLeftBoundary;
 
                             // Map this to real space
@@ -2978,8 +2968,8 @@ define('WinJS/Controls/MediaPlayer', [
                         this._isThumbGrabbed = true;
 
                         // Hide the cursor while the user is scrubbing
-                        if (utilities.hasWinRT && Windows.Xbox) {
-                            Windows.Xbox.Input.InputManager.systemCursorVisibility = Windows.Xbox.Input.SystemCursorVisibility.hidden;
+                        if (utilities.hasWinRT && _WinRT.Windows.Xbox) {
+                            _WinRT.Windows.Xbox.Input.InputManager.systemCursorVisibility = _WinRT.Windows.Xbox.Input.SystemCursorVisibility.hidden;
                         }
 
                         // Show the thumbnails if thumbnail mode is enabled
@@ -3042,7 +3032,6 @@ define('WinJS/Controls/MediaPlayer', [
                             // It's possible that there are more markers in close proximity to the current marker
                             // we need to fire those markers as well, otherwise they will get skipped over by the
                             // next 'timeupdate', since 'timeupdate' fires only about every 200 milliseconds.
-                            var currentMarkerTime = this._nextCustomMarkerTime;
                             var markersLength = this._markers.length;
                             var indexOfLastMarkerFired = this._nextCustomMarkerIndex;
                             for (var i = indexOfLastMarkerFired + 1; i < markersLength; i++) {
@@ -3109,7 +3098,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 _onVolumeCommandInvoked: function () {
                     if (!this._volumeFlyout) {
-                        var flyoutElement = document.createElement("div");
+                        var flyoutElement = _Global.document.createElement("div");
                         utilities.addClass(flyoutElement, "win-mediaplayer-volume win-mediaplayer-overlay");
                         flyoutElement.innerHTML = '     <div class="win-mediaplayer-volume-heading">Speakers</div>' +
                                                     '     <div class="win-mediaplayer-volume-controls">' +
@@ -3121,10 +3110,9 @@ define('WinJS/Controls/MediaPlayer', [
                         this._volumeButton.type = "flyout";
                         this._volumeButton.flyout = this._volumeFlyout;
                         flyoutElement.style.display = "none";
-                        document.body.appendChild(flyoutElement);
+                        _Global.document.body.appendChild(flyoutElement);
 
                         this._muteButton = flyoutElement.querySelector(".win-mediaplayer-mutebutton");
-                        var muteControl = new _Command.Command(this._muteButton, { icon: "volume" });
 
                         this._volumeSlider = flyoutElement.querySelector(".win-mediaplayer-volume-slider");
                         this._volumeValue = flyoutElement.querySelector(".win-mediaplayer-volume-value");
@@ -3228,10 +3216,10 @@ define('WinJS/Controls/MediaPlayer', [
                         var audioTracks = this._mediaElementAdapter.mediaElement.audioTracks;
                         for (var i = 0, len = audioTracks.length; i < len; i++) {
                             var currentTrack = audioTracks[i];
-                            var audioTrackOption = document.createElement("button");
+                            var audioTrackOption = _Global.document.createElement("button");
                             audioTrackOption.textContent = currentTrack.label || currentTrack.language;
                             if (utilities.hasWinRT && !currentTrack.label) {
-                                var language = new Windows.Globalization.Language(currentTrack.language);
+                                var language = new _WinRT.Windows.Globalization.Language(currentTrack.language);
                                 audioTrackOption.textContent = language.displayName;
                             }
                             if (currentTrack.enabled) {
@@ -3266,7 +3254,7 @@ define('WinJS/Controls/MediaPlayer', [
                             var currentTrack = textTracks[i];
                             if (currentTrack.kind === "caption" ||
                                 currentTrack.kind === "subtitles") {
-                                var closedCaptionsOption = document.createElement("button");
+                                var closedCaptionsOption = _Global.document.createElement("button");
                                 closedCaptionsOption.textContent = currentTrack.label;
                                 if (currentTrack.mode === "showing") {
                                     utilities.addClass(closedCaptionsOption, "win-active");
@@ -3284,7 +3272,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         // Create the menu option for turning closed captions off entirely
-                        var closedCaptionsOption = document.createElement("button");
+                        var closedCaptionsOption = _Global.document.createElement("button");
                         closedCaptionsOption.textContent = strings.closedCaptionsLabelNone;
                         closedCaptionsOption.addEventListener("click", function handleClick() {
                             this._setActiveTextTrack(null);
@@ -3311,7 +3299,7 @@ define('WinJS/Controls/MediaPlayer', [
                 _removeControlsTimer: function () {
 
                     if (this._controlHideTimeout) {
-                        clearTimeout(this._controlHideTimeout);
+                        _Global.clearTimeout(this._controlHideTimeout);
                         this._controlHideTimeout = null;
                     }
                 },
@@ -3336,9 +3324,9 @@ define('WinJS/Controls/MediaPlayer', [
                     if (this._controlHideTimeout) {
                         var that = this;
 
-                        clearTimeout(this._controlHideTimeout);
+                        _Global.clearTimeout(this._controlHideTimeout);
 
-                        this._controlHideTimeout = setTimeout(function () {
+                        this._controlHideTimeout = _Global.setTimeout(function () {
                             that._hideControls();
                         }, this._CONTROLS_AUTO_HIDE_DURATION);
                     }
@@ -3450,7 +3438,7 @@ define('WinJS/Controls/MediaPlayer', [
                 _setControlsTimer: function () {
 
                     var that = this;
-                    this._controlHideTimeout = setTimeout(function () {
+                    this._controlHideTimeout = _Global.setTimeout(function () {
                         that._hideControls();
                     }, this._controlsAddedHideDuration || this._CONTROLS_AUTO_HIDE_DURATION);
                     this._lastControlsResetTimeStamp = Date.now();
@@ -3499,8 +3487,6 @@ define('WinJS/Controls/MediaPlayer', [
 
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:_setupNewMediaElement,StartTM");
 
-                    var that = this;
-
                     // If there's an old mediaElement, we need to remove event listeners and CSS classes from it
                     if (oldMediaElement) {
                         this._resetInternalState();
@@ -3509,7 +3495,6 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     // Add the new mediaElement to the tree
-                    var mediaPlaybackContent = this._element.querySelector(".win-mediaplayer");
                     if (newMediaElement &&
                         this._element) {
 
@@ -3551,7 +3536,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     utilities.addClass(this._controls, "win-mediaplayer-audio-full");
                                 }
                                 if (this._smtControls) {
-                                    this._smtControls.displayUpdater.type = Windows.Media.MediaPlaybackType.audio;
+                                    this._smtControls.displayUpdater.type = _WinRT.Windows.Media.MediaPlaybackType.audio;
                                 }
                             } else {
                                 if (this._layout === layout.partial) {
@@ -3562,7 +3547,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     utilities.addClass(this._controls, "win-mediaplayer-video-full");
                                 }
                                 if (this._smtControls) {
-                                    this._smtControls.displayUpdater.type = Windows.Media.MediaPlaybackType.video;
+                                    this._smtControls.displayUpdater.type = _WinRT.Windows.Media.MediaPlaybackType.video;
                                 }
                             }
 
@@ -3576,10 +3561,6 @@ define('WinJS/Controls/MediaPlayer', [
                             }
 
                             // Update timeline
-                            var startTime = this._startTime;
-                            var endTime = this._endTime;
-                            var currentTime = newMediaElement.currentTime - startTime;
-
                             this._updateTimelineVisuals();
                         }
                     }
@@ -3670,7 +3651,7 @@ define('WinJS/Controls/MediaPlayer', [
                             // back button or well-known convention for the back button (eg. pressing B on Xbox)
                             if (this._layout === "full" &&
                                 nav.canGoBack &&
-                                Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Desktop") {
+                                _WinRT.Windows.System.Profile.AnalyticsInfo.versionInfo.deviceFamily === "Windows.Desktop") {
                                 utilities.removeClass(this._backButton.element, "win-mediaplayer-hidden");
                             }
 
@@ -3712,9 +3693,6 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // Visible transport bar buttons
                     var visibleTransportBarButtons = [];
-
-                    // Create an offsetArray
-                    var offsets = [];
 
                     // Left buttons
                     var leftButtons = [];
@@ -3864,7 +3842,6 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     // Create an offsetArray
-                    var offsets = [];
                     var numberOfTransportBarButtons = visibleTransportBarButtons.length;
 
                     var buttonOffsets = [];
@@ -3923,7 +3900,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                         var that = this;
                         this._onFastForwardRewindTimerTick();
-                        this._fastForwardOrRewindTimer = setInterval(function () { that._onFastForwardRewindTimerTick(); }, this._FAST_FORWARD_OR_REWIND_TIMER_INTERVAL);
+                        this._fastForwardOrRewindTimer = _Global.setInterval(function () { that._onFastForwardRewindTimerTick(); }, this._FAST_FORWARD_OR_REWIND_TIMER_INTERVAL);
 
                         // Show the thumbnails if thumbnail mode is enabled
                         if (this._thumbnailImage) {
@@ -4083,6 +4060,7 @@ define('WinJS/Controls/MediaPlayer', [
                         var endTime = this._endTime;
                         var currentTime = mediaElement.currentTime - startTime;
 
+                        var progress = 0;
                         if (!this._mediaElementAdapter.mediaElement.paused || force) {
                             if (!this._isThumbGrabbed &&
                                 !this._isInFastForwardOrRewindMode &&
@@ -4092,7 +4070,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     this._seekBar.clientWidth) {
                                     this._totalSeekBarWidth = this._seekBar.clientWidth;
                                 }
-                                var progress = currentTime / this._totalTime;
+                                progress = currentTime / this._totalTime;
                                 var amountToMoveSeekVisuals = progress * this._totalSeekBarWidth;
                                 this._currentTimeVisualElements.style.transform = "translateX(" + amountToMoveSeekVisuals + "px)";
                             }
@@ -4214,7 +4192,7 @@ define('WinJS/Controls/MediaPlayer', [
                                 }
 
                                 // Create a DOM element for each marker
-                                var marker = document.createElement("div");
+                                var marker = _Global.document.createElement("div");
                                 marker.id = "ms__marker" + (currentMarkerTime.toString()).replace(".", "_");
                                 utilities.addClass(marker, "win-mediaplayer-marker " + markers[i].extraClass);
 
@@ -4313,7 +4291,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                     var mediaPlaybackContent = this._element.querySelector(".win-mediaplayer");
                     if (!mediaPlaybackContent) {
-                        mediaPlaybackContent = document.createElement("div");
+                        mediaPlaybackContent = _Global.document.createElement("div");
                         utilities.addClass(mediaPlaybackContent, "win-mediaplayer");
                     }
 
@@ -4357,7 +4335,7 @@ define('WinJS/Controls/MediaPlayer', [
                     // Construct the MediaPlayer button programmatically so it's synchronous
                     this._toolbar = new _ToolBar.ToolBar(this._toolbarElement);
                     this._toolbar._updateDomImpl();
-                    var commandsOverflowFlyoutelement = document.body.querySelector(".win-toolbar-overflowarea");
+                    var commandsOverflowFlyoutelement = _Global.document.body.querySelector(".win-toolbar-overflowarea");
                     if (commandsOverflowFlyoutelement &&
                         this._commandsOverflowFlyout) {
                         this._commandsOverflowFlyout = commandsOverflowFlyoutelement.winControl;
@@ -4458,12 +4436,12 @@ define('WinJS/Controls/MediaPlayer', [
                         this._addGestureEventHandler(this._mediaPlayerContainer, "click", this._inputHandlerClickCallback);
                         this._addGestureEventHandler(this._progressContainer, "mousedown", this._inputHandlerPointerDownCallback);
                         this._addGestureEventHandler(this._progressContainer, "mouseover", this._handlePointerHover);
-                        this._addGestureEventHandler(window, "mousemove", this._inputHandlerPointerMoveCallback);
+                        this._addGestureEventHandler(_Global.window, "mousemove", this._inputHandlerPointerMoveCallback);
                         this._addGestureEventHandler(this._progressContainer, "mouseup", this._inputHandlerPointerUpCallback);
 
                         this._addGestureEventHandler(this._progressContainer, "mousedown", this._inputHandlerMouseDownCallback);
-                        this._addGestureEventHandler(document, "mouseout", this._inputHandlerMouseOutCallback);
-                        this._addGestureEventHandler(window, "mouseup", this._inputHandlerMouseUpCallback);
+                        this._addGestureEventHandler(_Global.document, "mouseout", this._inputHandlerMouseOutCallback);
+                        this._addGestureEventHandler(_Global.window, "mouseup", this._inputHandlerMouseUpCallback);
                     }
 
                     // Listen for clicks on the seek bar
@@ -4513,13 +4491,13 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // Return if we are running in an iframe or not on an Xbox
                     if (!utilities.hasWinRT ||
-                        !Windows.Xbox ||
+                        !_WinRT.Windows.Xbox ||
                         !this._smtControls) {
                         return;
                     }
 
                     var numberOfMilisecondsInASecond = 1000;
-                    var playbackStatus = Windows.Media.MediaPlaybackStatus;
+                    var playbackStatus = _WinRT.Windows.Media.MediaPlaybackStatus;
                     var updater = this._smtControls.displayUpdater;
 
                     // We need to set the contentId on every update because there could be cases where there are multiple
@@ -4589,7 +4567,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._mediaElementAdapter.isLive = true;
                     }
 
-                    if (updater.type === Windows.Media.MediaPlaybackType.video) {
+                    if (updater.type === _WinRT.Windows.Media.MediaPlaybackType.video) {
                         updater.videoProperties.mediaStart = 0;
                         if (this._mediaElementAdapter &&
                             this._mediaElementAdapter.seekAllowed) {
@@ -4602,8 +4580,7 @@ define('WinJS/Controls/MediaPlayer', [
                                 if (isFinite(this.targetCurrentTime) &&
                                     isFinite(this._startTime)) {
                                     updater.videoProperties.maxSeek = (this.targetCurrentTime - this._startTime) * numberOfMilisecondsInASecond;
-                                }
-                                else {
+                                } else {
                                     updater.videoProperties.maxSeek = 0;
                                 }
                             } else {
@@ -4617,8 +4594,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
                         if (isFinite(this.targetCurrentTime)) {
                             updater.videoProperties.playbackPosition = this.targetCurrentTime * numberOfMilisecondsInASecond;
-                        }
-                        else {
+                        } else {
                             updater.videoProperties.playbackPosition = 0;
                         }
                         updater.videoProperties.playbackRate = this.targetPlaybackRate;
@@ -5146,7 +5122,7 @@ define('WinJS/Controls/MediaPlayer', [
                         var newCommand = null;
                         var commandEl = null;
                         if (!this._toolbarInitialized) {
-                            commandEl = document.createElement("button");
+                            commandEl = _Global.document.createElement("button");
                             utilities.addClass(commandEl, currentBuiltInButton.classList);
                             newCommand = new _Command.AppBarCommand(commandEl, currentBuiltInButton.options);
                         } else {
@@ -5321,7 +5297,7 @@ define('WinJS/Controls/MediaPlayer', [
                             utilities.addClass(this._element, "win-mediaplayer-singlerow");
 
                             if (this._commandsOverflowFlyout) {
-                                utilities.removeClass(document.body.querySelector(".win-toolbar-overflowarea"), "win-mediaplayer-doublerow");
+                                utilities.removeClass(_Global.document.body.querySelector(".win-toolbar-overflowarea"), "win-mediaplayer-doublerow");
                             }
                         } else {
                             // Put the timeline on top of the toolbar
@@ -5330,7 +5306,7 @@ define('WinJS/Controls/MediaPlayer', [
                             utilities.removeClass(this._element, "win-mediaplayer-singlerow");
                             utilities.addClass(this._element, "win-mediaplayer-doublerow");
 
-                            utilities.addClass(document.body.querySelector(".win-toolbar-overflowarea"), "win-mediaplayer-doublerow");
+                            utilities.addClass(_Global.document.body.querySelector(".win-toolbar-overflowarea"), "win-mediaplayer-doublerow");
                         }
                     }
                 },
@@ -5341,30 +5317,30 @@ define('WinJS/Controls/MediaPlayer', [
                 fullScreen: {
                     get: function () {
                         if (utilities.hasWinRT) {
-                            var applicationView = Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
+                            var applicationView = _WinRT.Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
                             this._fullScreen = applicationView.isFullScreen;
                         } else {
                             var elementToMakeFullscreen = this._element;
                             if (elementToMakeFullscreen.requestFullscreen) {
-                                if (document.fullScreenElement) {
+                                if (_Global.document.fullScreenElement) {
                                     this._fullScreen = true;
                                 } else {
                                     this._fullScreen = false;
                                 }
                             } else if (elementToMakeFullscreen.msRequestFullscreen) {
-                                if (document.msFullscreenElement) {
+                                if (_Global.document.msFullscreenElement) {
                                     this._fullScreen = true;
                                 } else {
                                     this._fullScreen = false;
                                 }
                             } else if (elementToMakeFullscreen.mozRequestFullScreen) {
-                                if (document.mozFullScreenElement) {
+                                if (_Global.document.mozFullScreenElement) {
                                     this._fullScreen = true;
                                 } else {
                                     this._fullScreen = false;
                                 }
                             } else if (elementToMakeFullscreen.webkitRequestFullscreen) {
-                                if (document.webkitFullscreenElement) {
+                                if (_Global.document.webkitFullscreenElement) {
                                     this._fullScreen = true;
                                 } else {
                                     this._fullScreen = false;
@@ -5382,8 +5358,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                             this._element.removeEventListener("keydown", this._keydownInputHandler);
                             this._element.removeEventListener("keyup", this._keyupInputHandler);
-                            document.addEventListener("keydown", this._keydownInputHandler, false);
-                            document.addEventListener("keyup", this._keyupInputHandler, false);
+                            _Global.document.addEventListener("keydown", this._keydownInputHandler, false);
+                            _Global.document.addEventListener("keyup", this._keyupInputHandler, false);
 
                             if (this._toggleFullScreenButton) {
                                 this._toggleFullScreenButton.winControl.icon = "backtowindow";
@@ -5391,7 +5367,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                             // Go into full screen
                             if (utilities.hasWinRT) {
-                                var applicationView = Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
+                                var applicationView = _WinRT.Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
                                 applicationView.tryEnterFullScreenMode();
                             } else {
                                 if (elementToMakeFullscreen.requestFullscreen) {
@@ -5409,8 +5385,8 @@ define('WinJS/Controls/MediaPlayer', [
                             utilities.removeClass(this._element, "win-mediaplayer-fullscreen");
                             utilities.addClass(this.element, "win-focusable");
 
-                            document.removeEventListener("keydown", this._keydownInputHandler);
-                            document.removeEventListener("keyup", this._keyupInputHandler);
+                            _Global.document.removeEventListener("keydown", this._keydownInputHandler);
+                            _Global.document.removeEventListener("keyup", this._keyupInputHandler);
                             this._element.addEventListener("keydown", this._keydownInputHandler, false);
                             this._element.addEventListener("keyup", this._keyupInputHandler, false);
 
@@ -5420,17 +5396,17 @@ define('WinJS/Controls/MediaPlayer', [
 
                             // Exit full screen
                             if (utilities.hasWinRT) {
-                                var applicationView = Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
+                                var applicationView = _WinRT.Windows.UI.ViewManagement.ApplicationView.getForCurrentView();
                                 applicationView.exitFullScreenMode();
                             } else {
                                 if (elementToMakeFullscreen.requestFullscreen) {
-                                    document.cancelFullScreen();
+                                    _Global.document.cancelFullScreen();
                                 } else if (elementToMakeFullscreen.msRequestFullscreen) {
-                                    document.msExitFullscreen();
+                                    _Global.document.msExitFullscreen();
                                 } else if (elementToMakeFullscreen.mozRequestFullScreen) {
-                                    document.mozCancelFullScreen();
+                                    _Global.document.mozCancelFullScreen();
                                 } else if (elementToMakeFullscreen.webkitRequestFullscreen) {
-                                    document.webkitCancelFullScreen();
+                                    _Global.document.webkitCancelFullScreen();
                                 }
                             }
                             this._recalculateCachedUIElementSizes();
@@ -6410,7 +6386,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     // Remove the marker if a marker with the same time already exists
-                    var markersLength = this._markers.length
+                    var markersLength = this._markers.length;
                     for (var i = 0; i < markersLength; i++) {
                         if (this._markers[i].time === time) {
                             this._markers.splice(i, 1);
@@ -6563,11 +6539,11 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                     this._handleSeekedAfterExitFastForwardOrRewindBind = null;
 
-                    window.removeEventListener("resize", this._windowResizeCallback);
+                    _Global.window.removeEventListener("resize", this._windowResizeCallback);
                     this._windowResizeCallback = null;
 
                     if (utilities.hasWinRT) {
-                        Windows.UI.WebUI.WebUIApplication.removeEventListener("resuming", this._checkPremiumVideoAndParentalControlsBind);
+                        _WinRT.Windows.UI.WebUI.WebUIApplication.removeEventListener("resuming", this._checkPremiumVideoAndParentalControlsBind);
                     }
                     app.removeEventListener("checkpoint", this._handleCheckpointCallback);
 
@@ -6575,19 +6551,19 @@ define('WinJS/Controls/MediaPlayer', [
                         this._contentRestrictions.removeEventListener("restrictionschanged", this._checkParentalControlsBind);
                     }
 
-                    document.removeEventListener("visibilitychange", this._handleVisibilityChangedCallback);
+                    _Global.document.removeEventListener("visibilitychange", this._handleVisibilityChangedCallback);
                     this._handleVisibilityChangedCallback = null;
 
-                    document.removeEventListener("keydown", this._keydownInputHandler);
-                    document.removeEventListener("keyup", this._keyupInputHandler);
-                    document.removeEventListener("keyup", this._controlsKeyupInputHandler);
+                    _Global.document.removeEventListener("keydown", this._keydownInputHandler);
+                    _Global.document.removeEventListener("keyup", this._keyupInputHandler);
+                    _Global.document.removeEventListener("keyup", this._controlsKeyupInputHandler);
                     this._controlsKeyupInputHandler = null;
 
                     this._timeline.removeEventListener("keydown", this._handleTimelineArrowKeyDownBind);
                     this._handleTimelineArrowKeyDownBind = null;
 
                     if (utilities.hasWinRT &&
-                        Windows.Media.SystemMediaTransportControls) {
+                        _WinRT.Windows.Media.SystemMediaTransportControls) {
                         //this._smtControls.removeEventListener("buttonpressed", this._handleSystemTransportControlsButtonPressedBind);
                         //this._smtControls.removeEventListener("propertychanged", this._handleSystemTransportControlsPropertyChangedBind);
                     }
@@ -6611,10 +6587,10 @@ define('WinJS/Controls/MediaPlayer', [
                     nav.removeEventListener("beforenavigate", this._handleBeforeNavigatedCallback);
 
                     if (this._isXbox) {
-                        WinJS.UI.Voice.removeEventListener("listeningstart", this._onShowControlsCommandInvokedBind);
-                        WinJS.UI.Voice.removeEventListener("listeningend", this._onHideControlsCommandInvokedBind);
-                        window.removeEventListener("gestureengaged", this._onShowControlsCommandInvokedBind);
-                        window.removeEventListener("gesturedisengaged", this._onHideControlsCommandInvokedBind);
+                        _Global.WinJS.UI.Voice.removeEventListener("listeningstart", this._onShowControlsCommandInvokedBind);
+                        _Global.WinJS.UI.Voice.removeEventListener("listeningend", this._onHideControlsCommandInvokedBind);
+                        _Global.window.removeEventListener("gestureengaged", this._onShowControlsCommandInvokedBind);
+                        _Global.window.removeEventListener("gesturedisengaged", this._onHideControlsCommandInvokedBind);
                         this._onShowControlsCommandInvokedBind = null;
                         this._onHideControlsCommandInvokedBind = null;
                     }
@@ -6633,25 +6609,25 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // Remove any dynamically inserted elements from the DOM
                     if (this._closedCaptionsFlyout) {
-                        document.body.removeChild(this._audioTracksFlyout.element);
+                        _Global.document.body.removeChild(this._audioTracksFlyout.element);
                     }
                     if (this._closedCaptionsFlyout) {
-                        document.body.removeChild(this._closedCaptionsFlyout.element);
+                        _Global.document.body.removeChild(this._closedCaptionsFlyout.element);
                     }
                     if (this._errorFlyout) {
-                        document.body.removeChild(this._errorFlyout);
+                        _Global.document.body.removeChild(this._errorFlyout);
                     }
                     if (this._playbackRateFlyout) {
-                        document.body.removeChild(this._playbackRateFlyout);
+                        _Global.document.body.removeChild(this._playbackRateFlyout);
                     }
                     if (this._volumeFlyout) {
-                        document.body.removeChild(this._volumeFlyout.element);
+                        _Global.document.body.removeChild(this._volumeFlyout.element);
                     }
 
                     // Clear timers
                     this._removeControlsTimer();
-                    clearInterval(this._fastForwardOrRewindTimer);
-                    clearInterval(this._updateMediaStateTimerCookie);
+                    _Global.clearInterval(this._fastForwardOrRewindTimer);
+                    _Global.clearInterval(this._updateMediaStateTimerCookie);
                     this._updateMediaStateTimerCookie = null;
                     this._unsubscribeFromTimeUpdates();
 
@@ -7274,14 +7250,14 @@ define('WinJS/Controls/MediaPlayer', [
                         var updater = this._smtControls.displayUpdater;
                         if (this._mediaElementAdapter.mediaElement &&
                             this._mediaElementAdapter.mediaElement.tagName === this._TAG_NAME_AUDIO) {
-                            updater.type = Windows.Media.MediaPlaybackType.audio;
+                            updater.type = _WinRT.Windows.Media.MediaPlaybackType.audio;
                         } else {
-                            updater.type = Windows.Media.MediaPlaybackType.video;
+                            updater.type = _WinRT.Windows.Media.MediaPlaybackType.video;
                         }
                         updater.appMediaId = this._mediaMetadata.contentId;
 
                         // Set video properties
-                        if (updater.type === Windows.Media.MediaPlaybackType.video) {
+                        if (updater.type === _WinRT.Windows.Media.MediaPlaybackType.video) {
                             updater.videoProperties.title = this._mediaMetadata.title;
                         }
 
@@ -7291,6 +7267,8 @@ define('WinJS/Controls/MediaPlayer', [
                     var that = this;
                     var isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
                     var isAllowedToViewContentBasedOnFamilySafetyPolicy = false;
+
+                    _WriteProfilerMark("WinJS.UI.MediaPlayer:setContentMetadata,StopTM");
 
                     return new Promise(function (complete, error, progress) {
 
@@ -7329,8 +7307,6 @@ define('WinJS/Controls/MediaPlayer', [
                                     return;
                                 });
                     });
-
-                    _WriteProfilerMark("WinJS.UI.MediaPlayer:setContentMetadata,StopTM");
                 },
 
                 showControls: function () {

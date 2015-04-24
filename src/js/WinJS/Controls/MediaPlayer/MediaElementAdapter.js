@@ -2,13 +2,14 @@
 define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
     'exports',
     '../../Core/_Global',
+    '../../Core/_WinRT',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
     '../../Core/_Resources',
     '../../Navigation',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities'
-], function mediaElementAdapterInitInit(exports, _Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
+], function mediaElementAdapterInitInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities) {
     "use strict";
 
     var utilities = _ElementUtilities;
@@ -235,7 +236,7 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
 
                 if (this._mediaPlayer &&
                     this._mediaPlayer.element) {
-                    var dispatchedEvent = document.createEvent("Event");
+                    var dispatchedEvent = _Global.document.createEvent("Event");
                     dispatchedEvent.initEvent("mediaelementchanged", true, false);
                     this._mediaPlayer.element.dispatchEvent(dispatchedEvent);
                 }
@@ -265,8 +266,8 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
             }
 
             if (utilities.hasWinRT &&
-                Windows.Media.SystemMediaTransportControls) {
-                this._smtControls = Windows.Media.SystemMediaTransportControls.getForCurrentView();
+                _WinRT.Windows.Media.SystemMediaTransportControls) {
+                this._smtControls = _WinRT.Windows.Media.SystemMediaTransportControls.getForCurrentView();
             }
 
             if (existingMediaElement) {
