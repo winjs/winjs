@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // Back Button
 define([
+    'exports',
     '../Core/_Global',
     '../Core/_Base',
     '../Core/_ErrorFromName',
@@ -11,7 +12,7 @@ define([
     '../Utilities/_Hoverable',
     'require-style!less/styles-backbutton',
     'require-style!less/colors-backbutton'
-    ], function backButtonInit(_Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities, _Hoverable) {
+    ], function backButtonInit(exports, _Global, _Base, _ErrorFromName, _Resources, Navigation, _Control, _ElementUtilities, _Hoverable) {
     "use strict";
 
     var Key = _ElementUtilities.Key;
@@ -81,7 +82,7 @@ define([
         };
     }()); // Immediate invoke creates and returns the Singleton
 
-    _Base.Namespace.define("WinJS.UI", {
+    _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.BackButton">
         /// Provides backwards navigation functionality.

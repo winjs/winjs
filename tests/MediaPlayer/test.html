@@ -1,0 +1,36 @@
+﻿<!-- Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. -->    
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html>                                                                                                             
+<html>                                                                                                                      
+<head>                                                                                                                      
+    <title>MediaPlayer</title>                                                                                                  
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />                                                                 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  
+    <!-- WinJS references -->                                                                                               
+    <link type="text/css" rel="stylesheet" href="../../Microsoft.WinJS.4.0/css/ui-dark.css" />                               
+    <script src="../../Microsoft.WinJS.4.0/js/WinJS.js"></script>                                                             
+    <script src="../../Microsoft.WinJS.4.0/js/en-US/ui.strings.js"></script>                                                             
+                                                                                                                            
+    <!-- Test framework references -->                                                                                      
+    <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          
+    <script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>                                                    
+    <script src="../TestLib/liveToQ/liveToQ.js"></script>                                                                   
+                                                                                                                            
+    <script>                                                                                                                
+    if (window.MSApp) {                                                                                                     
+        window.addEventListener("error", function () { return true; });                                                     
+        window.removeEventListener("load", QUnit.load);                                                                     
+        window.addEventListener("load", function () { MSApp.execUnsafeLocalFunction(function () { QUnit.load(); }); });     
+        WinJS.Resources.getString = WinJS.Resources._getStringJS;                                                           
+    }                                                                                                                       
+    </script>                                                                                                               
+    <!-- Test references -->                                      
+    <script src="../TestLib/Helper.js"></script>
+    <script src="MediaPlayerUtils.js"></script>
+    <script src="MediaPlayerTests.js"></script>                                                                                                            
+</head>                                                                                                                     
+<body>                                                                                                                      
+    <div id="qunit" style="position: absolute; width: 100%; height: 100%; left: 0px; top: 0px; overflow-y: scroll; -moz-user-select: text; -webkit-user-select: text; -khtml-user-select: text; -ms-user-select: text;"></div>  
+    <div id="qunit-fixture"></div>                                                                                          
+</body>                                                                                                                     
+</html>
