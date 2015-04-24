@@ -427,7 +427,6 @@ declare module WinJS {
             _primaryCommands: ICommand[];
             _secondaryCommands: ICommand[];
             _getCommandWidth(command: ICommand): number;
-            getCommandById(id: string): ICommand;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
             _playShowAnimation(): Promise<any>;
@@ -642,6 +641,8 @@ declare module WinJS {
             public open(): void;
             public close(): void;
             public opened: boolean;
+            public getCommandById(id: string): ICommand;
+            public showOnlyCommands(commands: Array<string|ICommand>): void;
             public onbeforeopen: (ev: CustomEvent) => void;
             public onafteropen: (ev: CustomEvent) => void;
             public onbeforeclose: (ev: CustomEvent) => void;

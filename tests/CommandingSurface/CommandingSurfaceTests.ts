@@ -1684,6 +1684,46 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(firstAddedCommand, commandingSurface.getCommandById("someID"));
         }
+
+
+        testShowOnlyCommands() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "A" }),
+                new Command(null, { type: _Constants.typeButton, label: "B", id: "B" }),
+                new Command(null, { type: _Constants.typeButton, label: "C", id: "C" }),
+                new Command(null, { type: _Constants.typeButton, label: "D", id: "D" }),
+                new Command(null, { type: _Constants.typeButton, label: "E", id: "E" })
+            ]);
+
+            this._element.style.width = "10px";
+            var commandingSurface = new _CommandingSurface(this._element, {
+                data: data
+            });
+
+            function checkCommandVisibility(expectedShown, expectedHidden) {
+                for (var i = 0, len = expectedShown.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("inline-block", commandingSurface.getCommandById(expectedShown[i]).element.style.display);
+                }
+                for (var i = 0, len = expectedHidden.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("none", commandingSurface.getCommandById(expectedHidden[i]).element.style.display);
+                }
+            }
+
+            commandingSurface.showOnlyCommands([]);
+            checkCommandVisibility([], ["A", "B", "C", "D", "E"]);
+
+            commandingSurface.showOnlyCommands(["A", "B", "C", "D", "E"]);
+            checkCommandVisibility(["A", "B", "C", "D", "E"], []);
+
+            commandingSurface.showOnlyCommands(["A"]);
+            checkCommandVisibility(["A"], ["B", "C", "D", "E"]);
+
+            commandingSurface.showOnlyCommands([data.getAt(1)]);
+            checkCommandVisibility(["B"], ["A", "C", "D", "E"]);
+
+            commandingSurface.showOnlyCommands(["C", data.getAt(4)]);
+            checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+        }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests._CommandingSurfaceTests");

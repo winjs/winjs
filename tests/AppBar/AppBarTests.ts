@@ -1668,6 +1668,45 @@ module CorsicaTests {
 
             LiveUnit.Assert.areEqual(firstAddedCommand, appBar.getCommandById("someID"));
         }
+
+        testShowOnlyCommands() {
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "A" }),
+                new Command(null, { type: _Constants.typeButton, label: "B", id: "B" }),
+                new Command(null, { type: _Constants.typeButton, label: "C", id: "C" }),
+                new Command(null, { type: _Constants.typeButton, label: "D", id: "D" }),
+                new Command(null, { type: _Constants.typeButton, label: "E", id: "E" })
+            ]);
+
+            this._element.style.width = "10px";
+            var appBar = new AppBar(this._element, {
+                data: data
+            });
+
+            function checkCommandVisibility(expectedShown, expectedHidden) {
+                for (var i = 0, len = expectedShown.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("inline-block", appBar.getCommandById(expectedShown[i]).element.style.display);
+                }
+                for (var i = 0, len = expectedHidden.length; i < len; i++) {
+                    LiveUnit.Assert.areEqual("none", appBar.getCommandById(expectedHidden[i]).element.style.display);
+                }
+            }
+
+            appBar.showOnlyCommands([]);
+            checkCommandVisibility([], ["A", "B", "C", "D", "E"]);
+
+            appBar.showOnlyCommands(["A", "B", "C", "D", "E"]);
+            checkCommandVisibility(["A", "B", "C", "D", "E"], []);
+
+            appBar.showOnlyCommands(["A"]);
+            checkCommandVisibility(["A"], ["B", "C", "D", "E"]);
+
+            appBar.showOnlyCommands([data.getAt(1)]);
+            checkCommandVisibility(["B"], ["A", "C", "D", "E"]);
+
+            appBar.showOnlyCommands(["C", data.getAt(4)]);
+            checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+        }
         
         private _testLightDismissWithTrigger(dismissAppBar) {
             var button = document.createElement("button");

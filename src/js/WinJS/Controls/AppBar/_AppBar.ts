@@ -361,6 +361,18 @@ export class AppBar {
         return this._commandingSurface.getCommandById(id);
     }
 
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        /// <signature helpKeyword="WinJS.UI.AppBar.showOnlyCommands">
+        /// <summary locid="WinJS.UI.AppBar.showOnlyCommands">
+        /// Show the specified commands, hiding all of the others in the AppBar.
+        /// </summary>
+        /// <param name="commands" type="Array" locid="WinJS.UI.AppBar.showOnlyCommands_p:commands">
+        /// An array of the commands to show. The array elements may be Command objects, or the string identifiers (IDs) of commands.
+        /// </param>
+        /// </signature>
+        return this._commandingSurface.showOnlyCommands(commands);
+    }
+
     private _writeProfilerMark(text: string) {
         _WriteProfilerMark("WinJS.UI.AppBar:" + this._id + ":" + text);
     }

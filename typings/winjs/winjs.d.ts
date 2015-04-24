@@ -3847,6 +3847,12 @@ declare module WinJS.UI {
         getCommandById(id: string): ICommand;
 
         /**
+         * Shows the specified commands of the AppBar while hiding all other commands.
+         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
+        **/
+        showOnlyCommands(commands: Array<string|ICommand>): void;
+
+        /**
          * Opens the AppBar.
         **/
         open(): void;
@@ -3855,27 +3861,6 @@ declare module WinJS.UI {
          * Closes the AppBar.
         **/
         close(): void;
-
-        /**
-         * Hides the specified commands of the AppBar.
-         * @param commands The commands to hide. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to hide the commands immediately, without animating them; otherwise, false.
-        **/
-        hideCommands(commands: any[], immediate?: boolean): void;
-
-        /**
-         * Opens the specified commands of the AppBar.
-         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to open the commands immediately, without animating them; otherwise, false.
-        **/
-        showCommands(commands: any[], immediate?: boolean): void;
-
-        /**
-         * Opens the specified commands of the AppBar while hiding all other commands.
-         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
-         * @param immediate The parameter immediate is not supported and may be altered or unavailable in the future. true to show the specified commands (and hide the others) immediately, without animating them; otherwise, false.
-        **/
-        showOnlyCommands(commands: any[], immediate?: boolean): void;
 
         /**
          * Forces the AppBar to update its layout.
@@ -7950,6 +7935,12 @@ declare module WinJS.UI {
          * @returns The command identified by id. If multiple commands have the same ID, returns the first command found.
         **/
         getCommandById(id: string): ICommand;
+
+        /**
+         * Shows the specified commands of the ToolBar while hiding all other commands.
+         * @param commands The commands to show. The array elements may be ICommand objects, or the string identifiers (IDs) of commands.
+        **/
+        showOnlyCommands(commands: Array<string|ICommand>): void;
 
         /**
          * Gets or sets whether the ToolBar is currently opened.
