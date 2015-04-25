@@ -501,7 +501,10 @@ define([
                                 c();
                             }, false);
 
-                            subFlyout.show(menuCommand, "right");
+                             // Decide which side we can show the flyout on.
+                            var position = Math.abs(document.body.clientWidth - menuCommand.element.getBoundingClientRect().right) < 100 ? 'left' : 'right'
+
+                            subFlyout.show(menuCommand, position);
                         } else {
                             // Could not change command to activated state.
                             e();
