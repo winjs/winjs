@@ -91,8 +91,8 @@ define([
                 title: "win-contentdialog-title",
                 content: "win-contentdialog-content",
                 commands: "win-contentdialog-commands",
-                primaryCommand: "win-contentdialog-primarycommand win-button",
-                secondaryCommand: "win-contentdialog-secondarycommand win-button",
+                primaryCommand: "win-contentdialog-primarycommand",
+                secondaryCommand: "win-contentdialog-secondarycommand",
 
                 _verticalAlignment: "win-contentdialog-verticalalignment",
                 _scroller: "win-contentdialog-scroller",
@@ -721,9 +721,9 @@ define([
                             '<div class="' + ClassNames.title + '"></div>' +
                             '<div class="' + ClassNames._scroller + '"></div>' +
                             '<div class="' + ClassNames.commands + '">' +
-                                '<button type="button" class="' + ClassNames._commandSpacer + '"></button>' +
-                                '<button type="button" class="' + ClassNames.primaryCommand + '"></button>' +
-                                '<button type="button" class="' + ClassNames.secondaryCommand + '"></button>' +
+                                '<button type="button" class="' + ClassNames._commandSpacer + ' win-button"></button>' +
+                                '<button type="button" class="' + ClassNames.primaryCommand + ' win-button"></button>' +
+                                '<button type="button" class="' + ClassNames.secondaryCommand + ' win-button"></button>' +
                             '</div>' +
                         '</div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +

@@ -23,7 +23,6 @@ html {
 
 body {
     -ms-content-zooming: none;
-    .win-type-body();
 }
 
 iframe {
@@ -33,7 +32,9 @@ iframe {
 // Define basic font fallback list for intrinsic elements
 // Some elements must have font-family defined explicitly as
 // otherwise the browser user-agent stylesheet will win
-body.win-fonts {
+.win-fonts {
+    .win-type-body();
+
     &,
     .win-type-xx-large,
     .win-type-x-large,
@@ -232,7 +233,8 @@ select.win-dropdown option {
 //
 // Progress
 //
-progress.win-progress {
+progress.win-progress,
+progress.win-ring {
     width: 180px;
     height: 4px;
     -webkit-appearance: none;
@@ -268,22 +270,22 @@ progress.win-progress {
     &.win-error::-ms-fill {
         opacity: 0;
     }
+}
 
-    &.win-ring:indeterminate::-ms-fill {
+progress.win-ring {
+    width: 20px;
+    height: 20px;
+
+    &:indeterminate::-ms-fill {
         animation-name: -ms-ring;
     }
 
-    &.win-ring {
-        width: 20px;
-        height: 20px;
-    }
-
-    &.win-medium.win-ring {
+    &.win-medium {
         width: 40px;
         height: 40px;
     }
 
-    &.win-large.win-ring {
+    &.win-large {
         width: 60px;
         height: 60px;
     }
