@@ -607,8 +607,14 @@ define([
                         }
 
                         if (_WinRT.Windows.ApplicationModel.Search.SearchQueryLinguisticDetails) {
-                            linguisticDetails = new _WinRT.Windows.ApplicationModel.Search.SearchQueryLinguisticDetails(fullCompositionAlternatives, compositionStartOffset, compositionLength);
-                        } else {
+                            try {
+                                linguisticDetails = new _WinRT.Windows.ApplicationModel.Search.SearchQueryLinguisticDetails(fullCompositionAlternatives, compositionStartOffset, compositionLength);
+                            } catch (e) {
+                                // WP10 currently exposes SQLD API but throws on instantiation.
+                            }
+                        }
+
+                        if (!linguisticDetails) {
                             // If we're in web compartment, create a script version of the WinRT SearchQueryLinguisticDetails object
                             linguisticDetails = {
                                 queryTextAlternatives: fullCompositionAlternatives,
