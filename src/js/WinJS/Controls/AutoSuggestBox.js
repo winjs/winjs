@@ -378,7 +378,10 @@ define([
                 },
 
                 _showFlyout: function asb_showFlyout() {
-                    if (this._isFlyoutShown()) {
+                    var prevNumSuggestions = this._prevNumSuggestions || 0;
+                    this._prevNumSuggestions = this._suggestionsData.length;
+
+                    if (this._isFlyoutShown() && prevNumSuggestions === this._suggestionsData.length) {
                         return;
                     }
 
@@ -943,7 +946,7 @@ define([
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
-                        } else if (event.keyCode === Key.upArrow) {
+                        } else if ((this._flyoutBelowInput && event.keyCode === Key.upArrow) || (!this._flyoutBelowInput && event.keyCode === Key.downArrow)) {
                             var prevIndex;
                             if (this._currentSelectedIndex !== -1) {
                                 prevIndex = this._findPreviousSuggestionElementIndex(this._currentSelectedIndex);
@@ -956,7 +959,7 @@ define([
                             }
                             setSelection(prevIndex);
                             this._updateQueryTextWithSuggestionText(this._currentFocusedIndex);
-                        } else if (event.keyCode === Key.downArrow) {
+                        } else if ((this._flyoutBelowInput && event.keyCode === Key.downArrow) || (!this._flyoutBelowInput && event.keyCode === Key.upArrow)) {
                             var nextIndex = this._findNextSuggestionElementIndex(this._currentSelectedIndex);
                             // Restore user entered query when user navigates back to input.
                             if ((this._currentSelectedIndex !== -1) && (nextIndex === -1)) {
