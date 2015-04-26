@@ -705,10 +705,6 @@ define([
                     dom.endBodyTab.setAttribute("aria-flowto", dom.startBodyTab.id);
                     this._updateTabIndices();
 
-                    var onKeyLeavingElementBound = this._onKeyLeavingElement.bind(this);
-                    dom.root.addEventListener("keydown", onKeyLeavingElementBound);
-                    dom.root.addEventListener("keyup", onKeyLeavingElementBound);
-                    dom.root.addEventListener("keypress", onKeyLeavingElementBound);
                     _ElementUtilities._addEventListener(dom.root, "pointerdown", this._onPointerDown.bind(this));
                     _ElementUtilities._addEventListener(dom.root, "pointerup", this._onPointerUp.bind(this));
                     dom.root.addEventListener("click", this._onClick.bind(this));
@@ -814,14 +810,6 @@ define([
                     if (this._isTopLevel && !this._elementInDialog(_Global.document.activeElement) && eventObject.keyCode !== _ElementUtilities.Key.tab) {
                         // When focus has escaped the dialog, eat all other keys.
                         eventObject.preventDefault();
-                        eventObject.stopImmediatePropagation();
-                    }
-                },
-
-                _onKeyLeavingElement: function ContentDialog_onKeyLeavingElement(eventObject) {
-                    if (this._isTopLevel) {
-                        // stopImmediatePropagation so that none of the app's other event handlers will see the event.
-                        // Don't preventDefault so that the browser's hotkeys will still work.
                         eventObject.stopImmediatePropagation();
                     }
                 },
