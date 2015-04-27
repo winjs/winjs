@@ -3,6 +3,7 @@
     "use strict";
 
     var path = require('path');
+    var merge = require('merge');
     var config = require("../../config.js");
     var grunt = config.grunt;
 
@@ -146,13 +147,11 @@
         defaults: defaults,
         header: header,
         footer: footer,
-        ui: {
+        ui: merge.recursive(defaults('ui'), {
             options: {
                 exclude: ['./base']
             }
-        }
+        })
     };
-
-    defaults('ui', module.exports['ui']);
 
 })();
