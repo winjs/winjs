@@ -20,8 +20,8 @@
 
         testDeps: {
             files: [{
-                src: [config.desktopOutput + "/js/WinJS.js"],
-                dest: config.testsOutput + "Base/source/WinJS.js"
+                src: [config.desktopOutput + "/js/base.js", config.desktopOutput + "/js/ui.js"],
+                dest: config.testsOutput + "Base/source/"
             }]
         },
 

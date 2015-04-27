@@ -9,7 +9,7 @@
             banner: config.copyright
         },
         singleFile: {
-            src: [config.desktopOutput + "js/WinJS.js"],
+            src: [config.desktopOutput + "js/base.js", config.desktopOutput + "js/ui.js"],
             dest: config.desktopOutput + "js/WinJS.min.js"
         }
     };

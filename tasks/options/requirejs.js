@@ -147,11 +147,13 @@
         defaults: defaults,
         header: header,
         footer: footer,
-        ui: merge.recursive(defaults('ui'), {
+        ui: {
             options: {
                 exclude: ['./base']
             }
-        })
+        }
     };
+
+    defaults('ui', module.exports['ui']);
 
 })();
