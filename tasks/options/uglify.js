@@ -8,9 +8,13 @@
             sourceMap: true,
             banner: config.copyright
         },
-        singleFile: {
-            src: [config.desktopOutput + "js/base.js", config.desktopOutput + "js/ui.js"],
-            dest: config.desktopOutput + "js/WinJS.min.js"
+        base: {
+            src: [config.desktopOutput + "js/base.js"],
+            dest: config.desktopOutput + "js/base.min.js"
+        },
+        ui: {
+            src: [config.desktopOutput + "js/ui.js"],
+            dest: config.desktopOutput + "js/ui.min.js"
         }
     };
 })();
