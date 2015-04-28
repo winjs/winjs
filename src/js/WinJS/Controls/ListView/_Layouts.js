@@ -330,6 +330,7 @@ define([
                         _ElementUtilities.removeClass(this._site.surface, _Constants._headerPositionLeftClass);
                         _ElementUtilities.removeClass(this._site.surface, _Constants._structuralNodesClass);
                         _ElementUtilities.removeClass(this._site.surface, _Constants._singleItemsBlockClass);
+                        _ElementUtilities.removeClass(this._site.surface, _Constants._noCSSGrid);
                         this._site.surface.style.cssText = "";
                         if (this._groups) {
                             cleanGroups(this._groups);
@@ -342,7 +343,8 @@ define([
                         }
                         this._resetMeasurements();
                         this._oldGroupHeaderPosition = null;
-                        this._usingStructuralNodes = null;
+                        this._usingStructuralNodes = false;
+                        this._envInfo = null;
                         // The properties given to us by the app (_groupInfo, _itemInfo,
                         // _groupHeaderPosition) are not cleaned up so that the values are
                         // remembered if the layout is reused.

@@ -529,6 +529,38 @@ module WinJSTests {
 
             test(false).then(complete);
         };
+        
+        testLayoutCleansUpNoCssGridClass(complete) {
+            if (Helper.Browser.supportsCSSGrid) {
+                complete();
+                return;
+            }
+            
+            var makeAndTestSimpleListView = (layout, count) => {
+                var lv = new SimpleListView(document.getElementById("ListLayoutListView"), {
+                    layout: layout,
+                    viewportSize: { width: 100, height: 37 }
+                });
+                layout.initialize(lv._getLayoutSite(), false);
+                return layout.layout(lv._tree, { firstIndex: 0, lastIndex: count - 1 }, [], []).layoutComplete.then(function () {
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(lv._surface, "win-nocssgrid"),
+                        "SimpleListView should have had class win-nocssgrid");
+                    layout.uninitialize();
+                    LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(lv._surface, "win-nocssgrid"),
+                        "win-nocssgrid class should have been removed from SimpleListView");
+                });
+            }
+            
+            var layout = new ListLayout({ orientation: "vertical" }),
+                count = 10;
+            
+            makeAndTestSimpleListView(layout, count).then(function () {
+                return makeAndTestSimpleListView(layout, count);
+            }).then(function () {
+                complete();
+            });
+                
+        }
     }
     // Verify that ListLayout's initialize function:
     // - Returns "vertical" for its scroll direction by default
