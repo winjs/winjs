@@ -37,8 +37,9 @@
         &.win-commandingsurface, .win-commandingsurface {
 
             #win-commandingsurface > .variableDefs(@theme);
-
-            background-color: @backgroundColor;
+            .win-commandingsurface-actionarea {
+                background-color: @backgroundColor;
+            }
 
             button.win-commandingsurface-overflowbutton {
                 background-color: @overflowButtonBackground;

@@ -147,9 +147,11 @@ export class _CommandingSurface {
     private _dom: {
         root: HTMLElement;
         actionArea: HTMLElement;
+        actionAreaContainer: HTMLElement;
         spacer: HTMLDivElement;
         overflowButton: HTMLButtonElement;
         overflowArea: HTMLElement;
+        overflowAreaContainer: HTMLElement;
     };
 
     /// Display options for the actionarea when the _CommandingSurface is closed.
@@ -239,17 +241,11 @@ export class _CommandingSurface {
         this._machine = options.openCloseMachine || new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this._dom.root,
             onOpen: () => {
-                //this._cachedHiddenPaneThickness = null;
-                //var hiddenPaneThickness = this._getHiddenPaneThickness();
                 this.synchronousOpen();
-                //return this._playShowAnimation(hiddenPaneThickness);
                 return Promise.wrap();
             },
             onClose: () => {
-                //return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
                 this.synchronousClose();
-                //});
-
                 return Promise.wrap();
             },
             onUpdateDom: () => {
@@ -390,6 +386,76 @@ export class _CommandingSurface {
         this._machine.updateDom();
     }
 
+    createOpenAnimation(closedHeight: number): { execute(): Promise<any> } {
+        // createOpenAnimation should only be called when the commanding surface is in a closed state. The control using the commanding surface is expected
+        // to call createOpenAnimation() before it opens the surface, then open the commanding surface, then call .execute() to start the animation.
+        // This function is overridden by our unit tests.
+        if (_Log.log) {
+            this._updateDomImpl_renderedState.isOpenedMode &&
+            _Log.log("The CommandingSurface should only attempt to create an open animation when it's not already opened");
+        }
+        var that = this;
+        return {
+            execute(): Promise<any> {
+                var boundingRects = that.getBoundingRects();
+                // The overflowAreaContainer has no size by default. Measure the overflowArea's size and apply it to the overflowAreaContainer before animating
+                that._dom.overflowAreaContainer.style.width = boundingRects.overflowArea.width + "px";
+                that._dom.overflowAreaContainer.style.height = boundingRects.overflowArea.height + "px";
+                return Animations._commandingSurfaceOpenAnimation({
+                    actionAreaClipper: that._dom.actionAreaContainer,
+                    actionArea: that._dom.actionArea,
+                    overflowAreaClipper: that._dom.overflowAreaContainer,
+                    overflowArea: that._dom.overflowArea,
+                    oldHeight: closedHeight,
+                    newHeight: boundingRects.commandingSurface.height,
+                    overflowAreaHeight: boundingRects.overflowArea.height,
+                    menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
+                }).then(function () {
+                    that._dom.actionAreaContainer.style.transform = "";
+                    that._dom.actionArea.style.transform = "";
+                    that._dom.overflowAreaContainer.style.transform = "";
+                    that._dom.overflowArea.style.transform = "";
+                });
+            }
+        };
+    }
+
+    createCloseAnimation(closedHeight: number): { execute(): Promise<any> } {
+        // createCloseAnimation should only be called when the commanding surface is in an opened state. The control using the commanding surface is expected
+        // to call createCloseAnimation() before it closes the surface, then call execute() to let the animation run. Once the animation finishes, the control
+        // should close the commanding surface.
+        // This function is overridden by our unit tests.
+        if (_Log.log) {
+            !this._updateDomImpl_renderedState.isOpenedMode &&
+            _Log.log("The CommandingSurface should only attempt to create an closed animation when it's not already closed");
+        }
+        var openedHeight = this.getBoundingRects().commandingSurface.height,
+            overflowAreaOpenedHeight = this._dom.overflowArea.offsetHeight,
+            oldOverflowTop = this._dom.overflowArea.offsetTop,
+            that = this;
+        return {
+            execute(): Promise<any> {
+                _ElementUtilities.addClass(that.element, _Constants.ClassNames.closingClass);
+                return Animations._commandingSurfaceCloseAnimation({
+                    actionAreaClipper: that._dom.actionAreaContainer,
+                    actionArea: that._dom.actionArea,
+                    overflowAreaClipper: that._dom.overflowAreaContainer,
+                    overflowArea: that._dom.overflowArea,
+                    oldHeight: openedHeight,
+                    newHeight: closedHeight,
+                    overflowAreaHeight: overflowAreaOpenedHeight,
+                    menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
+                }).then(function () {
+                    _ElementUtilities.removeClass(that.element, _Constants.ClassNames.closingClass);
+                    that._dom.actionAreaContainer.style.transform = "";
+                    that._dom.actionArea.style.transform = "";
+                    that._dom.overflowAreaContainer.style.transform = "";
+                    that._dom.overflowArea.style.transform = "";
+                });
+            }
+        };
+    }
+
     get initialized(): Promise<any> {
         return this._initializedSignal.promise;
     }
@@ -417,7 +483,10 @@ export class _CommandingSurface {
         var actionArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionArea, _Constants.ClassNames.actionAreaCssClass);
         _ElementUtilities._reparentChildren(root, actionArea);
-        root.appendChild(actionArea);
+        var actionAreaContainer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(actionAreaContainer, _Constants.ClassNames.actionAreaContainerCssClass);
+        actionAreaContainer.appendChild(actionArea);
+        root.appendChild(actionAreaContainer);
 
         var spacer = _Global.document.createElement("div");
         _ElementUtilities.addClass(spacer, _Constants.ClassNames.spacerCssClass);
@@ -435,14 +504,19 @@ export class _CommandingSurface {
         var overflowArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.overflowAreaCssClass);
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.menuCssClass);
-        root.appendChild(overflowArea);
+        var overflowAreaContainer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(overflowAreaContainer, _Constants.ClassNames.overflowAreaContainerCssClass);
+        overflowAreaContainer.appendChild(overflowArea);
+        root.appendChild(overflowAreaContainer);
 
         this._dom = {
             root: root,
             actionArea: actionArea,
+            actionAreaContainer: actionAreaContainer,
             spacer: spacer,
             overflowButton: overflowButton,
             overflowArea: overflowArea,
+            overflowAreaContainer: overflowAreaContainer
         };
     }
 
@@ -628,16 +702,6 @@ export class _CommandingSurface {
         }
     }
 
-    // Should be called while _CommandingSurface is rendered in its opened mode
-    // Overridden by tests.
-    private _playShowAnimation(): Promise<any> {
-        return Promise.wrap();
-    }
-    // Should be called while SplitView is rendered in its opened mode
-    // Overridden by tests.
-    private _playHideAnimation(): Promise<any> {
-        return Promise.wrap();
-    }
     private _dataDirty(): void {
         this._nextLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, this._nextLayoutStage);
     }
@@ -743,7 +807,7 @@ export class _CommandingSurface {
         if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
             var offsetProperty = (this._rtl ? "left" : "right");
             var offsetTextValue = this._overflowAlignmentOffset + "px";
-            this._dom.overflowArea.style[offsetProperty] = offsetTextValue;
+            this._dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
         }
     }
 

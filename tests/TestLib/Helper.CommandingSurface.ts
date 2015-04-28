@@ -19,11 +19,19 @@ module Helper._CommandingSurface {
     }
 
     export function useSynchronousAnimations(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
-        commandingSurface._playShowAnimation = function () {
-            return WinJS.Promise.wrap();
+        commandingSurface.createOpenAnimation = function () {
+            return {
+                execute(): WinJS.Promise<any> { 
+                    return WinJS.Promise.wrap();
+                }
+            };
         };
-        commandingSurface._playHideAnimation = function () {
-            return WinJS.Promise.wrap();
+        commandingSurface.createCloseAnimation = function () {
+            return {
+                execute(): WinJS.Promise<any> {
+                    return WinJS.Promise.wrap();
+                }
+            };
         };
     }
 

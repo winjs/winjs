@@ -429,14 +429,14 @@ declare module WinJS {
             _getCommandWidth(command: ICommand): number;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
-            _playShowAnimation(): Promise<any>;
-            _playHideAnimation(): Promise<any>;
             _dom: {
                 root: HTMLElement;
                 actionArea: HTMLElement;
+                actionAreaContainer: HTMLElement;
                 spacer: HTMLDivElement;
                 overflowButton: HTMLButtonElement;
                 overflowArea: HTMLElement;
+                overflowAreaContainer: HTMLElement;
             };
             _machine: IOpenCloseMachine;
         }
@@ -638,6 +638,8 @@ declare module WinJS {
             public dispose(): void;
             public forceLayout(): void;
             public closedDisplayMode: string;
+            public createOpenAnimation(): { execute(): Promise<any> };
+            public createCloseAnimation(): { execute(): Promise<any> };
             public open(): void;
             public close(): void;
             public opened: boolean;
