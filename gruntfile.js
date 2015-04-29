@@ -65,7 +65,6 @@
         grunt.registerTask("_postProcess", ["line-endings", "add-bom"]);
 
         // Other tasks
-        grunt.registerTask("modules", ["clean:modules", "build-modules", "replace:base"]);
         grunt.registerTask("lint", ["jshint", "jscs"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };

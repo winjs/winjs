@@ -49,16 +49,8 @@
         },
     };
 
-    if (config.inRazzle) {
-        module.exports.base.files.push({ expand: true, cwd: config.testsOutput, src: ["**/*.js"], dest: config.testsOutput });
-        module.exports.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: ""
-        });
-    } else {
-        module.exports.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: "../TestData/"
-        });
-    }
+    module.exports.tests.options.patterns.push({
+        match: /\$\(TESTDATA\)\//g,
+        replacement: "../TestData/"
+    });
 })();

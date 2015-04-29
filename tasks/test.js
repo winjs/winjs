@@ -20,11 +20,7 @@
         var pathUtils = require("path");
 
         grunt.registerTask("test", function () {
-            if (config.inRazzle) {
-                grunt.task.run(["default", "clean:qunit", "shell:runTests"]);
-            } else {
-                grunt.task.run(["default", "test-results-server", "connect:localhost"]);
-            }
+            grunt.task.run(["default", "test-results-server", "connect:localhost"]);
         });
 
         grunt.registerTask("rat", function () {

@@ -13,17 +13,7 @@
     config.outputFolder = "bin/";
     config.copyright = '/*! Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */';
 
-    config.testsOutput = "";
-
-    if (process.env._NTTREE) {
-        config.inRazzle = true;
-        config.outputFolder = process.env._NTTREE + "/Corsica/";
-        config.testsOutput = config.outputFolder + "other." + config.version + ".debug/tests/unittests/";
-    } else {
-        config.testsOutput = config.outputFolder + "tests/";
-        config.inRazzle = false;
-    }
-
+    config.testsOutput = config.outputFolder + "tests/";
     config.targetName = "WinJS." + config.version;
     config.desktopFramework = "Microsoft." + config.targetName;
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
