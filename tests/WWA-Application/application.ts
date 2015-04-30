@@ -3029,7 +3029,7 @@ module CorsicaTests {
                     // other browsers prefix uncaught error message strings
                     LiveUnit.Assert.areNotEqual(-1, error.errorMessage.indexOf("error from then()"));
                     LiveUnit.Assert.areEqual(undefined, error.promise);
-                    LiveUnit.Assert.isTrue(error.errorUrl.indexOf("WinJS.js") > 0);
+                    LiveUnit.Assert.isTrue(error.errorUrl.indexOf("base.js") > 0);
                     complete();
                 });
             }
@@ -3643,7 +3643,7 @@ module CorsicaTests {
 
                     // this is the error that came from done()
                     LiveUnit.Assert.areNotEqual(-1, errorFromDone.detail.errorMessage.indexOf("exception from promise"));
-                    LiveUnit.Assert.isTrue(errorFromDone.detail.errorUrl.indexOf("WinJS.js") > 0);
+                    LiveUnit.Assert.isTrue(errorFromDone.detail.errorUrl.indexOf("base.js") > 0);
 
 
                     complete();

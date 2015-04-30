@@ -6,8 +6,10 @@
         var fragmentControlSelfHostOnErrorListener = function () { return true; }
         window.addEventListener("error", fragmentControlSelfHostOnErrorListener);
     </script>
-    <script src="../../$(TargetFramework)/js/WinJS.js"></script>
-    <script src="//$(TargetFramework)/js/WinJS.js"></script>
+    <script src="../../$(TargetFramework)/js/base.js"></script>
+    <script src="../../$(TargetFramework)/js/ui.js"></script>
+    <script src="//$(TargetFramework)/js/base.js"></script>
+    <script src="//$(TargetFramework)/js/ui.js"></script>
     <script src="FragmentControlSelfHost.js"></script>
     <script>
         window.removeEventListener("error", fragmentControlSelfHostOnErrorListener);

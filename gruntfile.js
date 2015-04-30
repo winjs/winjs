@@ -52,19 +52,19 @@
 
         // Tasks that drop things in bin/ (should have "_postProcess" as the last task)
         grunt.registerTask("storePackage", ["configureStore", "default"]);
-        grunt.registerTask("default", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat", "onefile:WinJS", "_copyFinal", "replace", "_postProcess"]);
-        grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:WinJS", "copy:fonts", "_postProcess"]);
+        grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:base", "requirejs:ui", "copy:fonts", "_postProcess"]);
+        grunt.registerTask("default", ["_preBuild", "onefile:base", "requirejs:ui", "_copyFinal", "replace", "_postProcess"]);
 
         grunt.registerTask("release", ["lint", "default", "uglify", "cssmin", "_postProcess"]);
         grunt.registerTask("minify", ["uglify", "_postProcess"]);
 
         // Private tasks (not designed to be used from the command line)
+        grunt.registerTask("_preBuild", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat"]);
         grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts", "copy:intellisense"]);
         grunt.registerTask("_copyToTsBuild", ["copy:srcjs"]);
         grunt.registerTask("_postProcess", ["line-endings", "add-bom"]);
 
         // Other tasks
-        grunt.registerTask("modules", ["clean:modules", "build-modules", "replace:base"]);
         grunt.registerTask("lint", ["jshint", "jscs"]);
         grunt.registerTask("saucelabs", ["connect:saucelabs", "saucelabs-qunit", "post-tests-results"]);
     };
