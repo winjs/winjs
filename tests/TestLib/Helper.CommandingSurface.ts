@@ -46,6 +46,21 @@ module Helper._CommandingSurface {
         return result;
     }
 
+    export function getProjectedCommandFromOriginalCommand(commandingSurface, originalCommand: WinJS.UI.ICommand): WinJS.UI.PrivateMenuCommand {
+        // Given an ICommand in the CommandingSurface, find and return its MenuCommand projection from the overflowarea, if such a projection exists.
+        var projectedCommands = getVisibleCommandsInElement(commandingSurface._dom.overflowArea).map(function (element) {
+            return element.winControl;
+        });
+        var matches = projectedCommands.filter(function (projection) {
+            return originalCommand === projection["_originalICommand"];
+        });
+
+        if (matches.length > 1) {
+            LiveUnit.Assert.fail("TEST ERROR: CommandingSurface should not project more than 1 MenuCommand into the overflowarea for each ICommand in the actionarea.");
+        }
+        return matches[0];
+    };
+
     export function verifyOverflowMenuContent(visibleElements: HTMLElement[], expectedLabels: string[]): void {
         var labelIndex = 0;
         for (var i = 0, len = visibleElements.length; i < len; i++) {

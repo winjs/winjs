@@ -135,7 +135,7 @@ declare module WinJS {
         var _CallExpression;
         var _IdentifierExpression;
         var _GroupFocusCache;
-        
+
         module _LightDismissService {
             interface ILightDismissInfo {
                 reason: string;
@@ -143,7 +143,7 @@ declare module WinJS {
                 stopPropagation(): void;
                 preventDefault(): void;
             }
-            
+
             interface ILightDismissable {
                 setZIndex(zIndex: string): void;
                 getZIndexCount(): number;
@@ -154,7 +154,7 @@ declare module WinJS {
                 onShouldLightDismiss(info: ILightDismissInfo): boolean;
                 onLightDismiss(info: ILightDismissInfo): void;
             }
-            
+
             function shown(client: ILightDismissable): void;
             function hidden(client: ILightDismissable): void;
             function isShown(client: ILightDismissable): boolean;
@@ -424,8 +424,8 @@ declare module WinJS {
 
         class PrivateCommandingSurface extends WinJS.UI._CommandingSurface {
             _disposed: boolean;
-            _primaryCommands: ICommand[];
-            _secondaryCommands: ICommand[];
+            _primaryCommands: PrivateCommand[];
+            _secondaryCommands: PrivateCommand[];
             _getCommandWidth(command: ICommand): number;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
@@ -439,6 +439,8 @@ declare module WinJS {
                 overflowAreaContainer: HTMLElement;
             };
             _machine: IOpenCloseMachine;
+            _layoutCompleteCallback(): any;
+            _menuCommandProjections: PrivateMenuCommand[];
         }
 
         class PrivateAppBar extends WinJS.UI.AppBar {
@@ -452,7 +454,7 @@ declare module WinJS {
             _handleShowingKeyboard: () => Promise<any>;
             _handleHidingKeyboard: () => void;
             _updateDomImpl_renderedState: {
-                adjustedOffsets: { top: string; bottom: string; }; 
+                adjustedOffsets: { top: string; bottom: string; };
             }
             _dismissable: _LightDismissService.ILightDismissable;
         }
@@ -469,12 +471,26 @@ declare module WinJS {
             _handleShowingKeyboard: () => void;
         }
 
+        export interface AppBarCommandPropertyMutatedEventObj {
+            detail: {
+                command: ICommand;
+                oldValue: any;
+                newValue: any;
+                propertyName: string;
+            };
+        }
+
         class PrivateCommand extends WinJS.UI.AppBarCommand {
             winControl: ICommand;
             _commandBarIconButton;
             _disposed;
             _tooltipControl;
             _lastElementFocus;
+            _propertyMutations: {
+                bind(callback:any): void;
+                unbind(callback:any): void;
+                dispatchEvent(type: string, eventProperties: any): boolean;
+            }
         }
 
         /**

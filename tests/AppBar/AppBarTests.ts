@@ -187,7 +187,12 @@ module CorsicaTests {
         }
 
         testDispose() {
-            var appBar = new AppBar(this._element);
+            this._element.style.width = "10px";
+            var data = new WinJS.Binding.List([
+                new Command(null, { type: _Constants.typeButton, label: "opt 1", section: 'primary' }),
+                new Command(null, { type: _Constants.typeButton, label: "opt 2", section: 'secondary' })
+            ]);
+            var appBar = new AppBar(this._element, { data: data });
             Helper.AppBar.useSynchronousAnimations(appBar);
             appBar.open();
 
@@ -197,9 +202,22 @@ module CorsicaTests {
             appBar.onafteropen = failEventHandler(_Constants.EventNames.afterOpen, msg);
             appBar.onafterclose = failEventHandler(_Constants.EventNames.afterClose, msg);
 
+            var menuCommandProjections = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).map(function (element) {
+                return <WinJS.UI.PrivateMenuCommand>element.winControl;
+            });
+
             appBar.dispose();
             LiveUnit.Assert.isTrue(appBar._disposed, "AppBar didn't mark itself as disposed");
             LiveUnit.Assert.isTrue(appBar._commandingSurface._disposed, "AppBar's commandingSurface was not disposed");
+
+            LiveUnit.Assert.isTrue(menuCommandProjections.every(function (menuCommand) {
+                return menuCommand._disposed;
+            }), "Disposing the AppBar should have disposed all the overflowarea MenuCommands.");
+
+            LiveUnit.Assert.isTrue(appBar.data.every(function (command) {
+                var privateCommand = <WinJS.UI.PrivateCommand>command;
+                return privateCommand._disposed;
+            }), "Disposing the AppBar should have disposed all of its commands.");
 
             // Events should not fire
             appBar.close();
@@ -1218,7 +1236,7 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length);
 
             // Delete item wth label 3
-            appBar.data.splice(2, 1)
+            appBar.data.splice(2, 1);
 
             WinJS.Utilities.Scheduler.schedule(() => {
                 LiveUnit.Assert.areEqual("4", Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea)[2].textContent);
@@ -1237,15 +1255,20 @@ module CorsicaTests {
                     // The actionarea should now show | new | 1 | 2  | ... |
                     LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length);
 
+                    // Force all commands into the overflowarea
                     this._element.style.width = "10px";
                     appBar.forceLayout();
 
-                    // Delete the first element
-                    appBar.data.splice(0, 1);
+                    // Delete the first command and verify AppBar Dom updates. 
+                    // Also verify that we dispose the deleted command's associated MenuCommand projection.
+                    var deletedCommand = appBar.data.splice(0, 1)[0];
+                    var deletedMenuCommand = Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, deletedCommand);
 
                     WinJS.Utilities.Scheduler.schedule(() => {
                         LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length);
                         LiveUnit.Assert.areEqual(8, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length);
+                        LiveUnit.Assert.isTrue(deletedMenuCommand._disposed,
+                            "Removing a command from the CommandingSurface's overflowarea should dispose the associated menucommand projection");
 
                         complete();
                     });
@@ -1281,17 +1304,171 @@ module CorsicaTests {
             // The actionarea should now show | 1 | 2 | 3 | ... |
             LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length);
 
+            var menuCommandProjections = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).map(function (element) {
+                return <WinJS.UI.PrivateMenuCommand>element.winControl;
+            });
+
             // Delete all items
             appBar.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
                 LiveUnit.Assert.areEqual(2, appBar._commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be children.");
                 LiveUnit.Assert.areEqual(0, appBar._commandingSurface._dom.overflowArea.children.length);
+                LiveUnit.Assert.isTrue(menuCommandProjections.every(function (menuCommand) {
+                    return menuCommand._disposed;
+                }), "Setting new data should have disposed all previous overflowarea MenuCommand projections.");
+
                 complete();
             }, WinJS.Utilities.Scheduler.Priority.high);
         }
 
+        testDataMutationsAreProjectedToOverflowCommands(complete) {
+            // Verifies that mutations to an ICommand in the actionarea are reflected to that ICommand's MenuCommand projection 
+            // in the overflowarea, if such a projection exists.
+            //
+
+            var buttonCmd = new Command(null, { type: _Constants.typeButton, label: "button", section: 'primary', extraClass: "myClass", });
+            var toggleCmd = new Command(null, { type: _Constants.typeToggle, label: 'toggle', section: 'primary' });
+            var flyoutCmd = new Command(null, { type: _Constants.typeFlyout, label: "flyout", section: 'primary' });
+
+            var data = new WinJS.Binding.List([buttonCmd, toggleCmd, flyoutCmd]);
+            this._element.style.width = "10px";
+            var appBar = new AppBar(this._element, { data: data, opened: true });
+            Helper.AppBar.useSynchronousAnimations(appBar);
+
+            var startingLength = 3;
+
+            // PRECONDITION: Test assumes there are 3 overflowing primary commands in the overflowarea.
+            LiveUnit.Assert.areEqual(startingLength, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                "TEST ERROR: Test expects 3 overflowing commands at the start");
+
+            // Commands in the overflowarea are all MenuCommand projections of the original ICommands in the actionarea.
+            // These projections and the rest of the overflowarea are redrawn whenever the data in the binding list changes 
+            // or when certain properties of ICommands in the CommandingSurface are mutated.
+            var projections = {
+                get button() {
+                    return Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, buttonCmd);
+                },
+                get toggle() {
+                    return Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, toggleCmd);
+                },
+                get flyout() {
+                    return Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, flyoutCmd);
+                }
+            }
+
+            var msg = " property of projected menucommand should have updated";
+
+            buttonCmd.label = "new label";
+            new WinJS.Promise((c) => {
+                appBar._commandingSurface._layoutCompleteCallback = () => {
+                    LiveUnit.Assert.areEqual(buttonCmd.label, projections.button.label, "label" + msg);
+                    c();
+                };
+            }).then(
+                () => {
+                    buttonCmd.disabled = true;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(buttonCmd.disabled, projections.button.disabled, "disabled" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    buttonCmd.disabled = false;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(buttonCmd.disabled, projections.button.disabled, "disabled" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    buttonCmd.extraClass = "new class";
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(buttonCmd.extraClass, projections.button.extraClass, "extraClass" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    buttonCmd.onclick = () => { };
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(buttonCmd.onclick, projections.button.onclick, "onclick" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    buttonCmd.hidden = true;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.isNull(projections.button,
+                                "Setting hidden = true on an overflowing ICommand should remove its menucommand projection from the overflowarea");
+                            LiveUnit.Assert.areEqual(startingLength - 1, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                                "Setting hidden = true on an overflowing ICommand should remove its menucommand projection from the overflowarea");
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    buttonCmd.hidden = false;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.isNotNull(projections.button,
+                                "Setting hidden = false on an overflowing ICommand should add a menucommand projection of it to the overflowarea");
+                            LiveUnit.Assert.areEqual(startingLength, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                                "Setting hidden = false on an overflowing ICommand should add a menucommand projection of it to the overflowarea");
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    toggleCmd.selected = true;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(toggleCmd.selected, projections.toggle.selected, "selected" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    toggleCmd.selected = false;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(toggleCmd.selected, projections.toggle.selected, "selected" + msg);
+                            c();
+                        };
+                    });
+                }
+                ).then(
+                () => {
+                    var flyout = new WinJS.UI.Flyout();
+                    flyoutCmd.flyout = flyout;
+                    return new WinJS.Promise((c) => {
+                        appBar._commandingSurface._layoutCompleteCallback = () => {
+                            LiveUnit.Assert.areEqual(flyoutCmd.flyout, projections.flyout.flyout, "flyout" + msg);
+                            flyout.dispose();
+                            c();
+                        };
+                    });
+                }
+                ).done(complete);
+        }
+
         testSelectionAndGlobalSection() {
+            // Values of "global" and "selection" are deprecated starting in WinJS 4.0.
+            // Makes sure they are both just parsed as "primary" commands.
             this._element.style.width = "1000px";
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeButton, label: "opt 1", section: 'selection' }),

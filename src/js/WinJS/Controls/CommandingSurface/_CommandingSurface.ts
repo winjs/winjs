@@ -118,7 +118,7 @@ export class _CommandingSurface {
     private _contentFlyoutInterior: HTMLElement; /* The reparented content node inside of _contentFlyout.element */
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
-    private _refreshBound: Function;
+    private _refreshBound: () => void;
     private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
     private _machine: _OpenCloseMachine.OpenCloseMachine;
@@ -133,6 +133,8 @@ export class _CommandingSurface {
     private _initializedSignal: _Signal<any>;
     private _isOpenedMode: boolean;
     private _overflowAlignmentOffset: number;
+    private _menuCommandProjections: _MenuCommand.MenuCommand[];
+    _layoutCompleteCallback: () => any;
 
     // Measurements
     private _cachedMeasurements: {
@@ -272,6 +274,7 @@ export class _CommandingSurface {
         this._initializedSignal = new _Signal();
         this._nextLayoutStage = CommandLayoutPipeline.idle;
         this._isOpenedMode = _Constants.defaultOpened;
+        this._menuCommandProjections = [];
 
         // Initialize public properties.
         this.overflowDirection = _Constants.defaultOverflowDirection;
@@ -341,7 +344,8 @@ export class _CommandingSurface {
     }
 
     forceLayout(): void {
-        /// Forces the CommandingSurface to update its layout. Use this function when the window did not change size, but the container of the CommandingSurface changed size.
+        /// Forces the CommandingSurface to update its layout. Use this function when the window did not change 
+        /// size, but the container of the CommandingSurface changed size.
         this._meaurementsDirty();
         this._machine.updateDom();
     }
@@ -843,6 +847,10 @@ export class _CommandingSurface {
             }
         }
         this._nextLayoutStage = nextStage;
+        if (nextStage === CommandLayoutPipeline.idle) {
+            // Callback for unit tests.
+            this._layoutCompleteCallback && this._layoutCompleteCallback();
+        }
     }
 
     private _getDataChangeInfo(): IDataChangeInfo {
@@ -895,6 +903,23 @@ export class _CommandingSurface {
 
         // Take a snapshot of the current state
         var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.added, changeInfo.deleted, changeInfo.affected);
+
+
+        // Unbind property mutation event listener from deleted IObservableCommands
+        changeInfo.deleted.forEach((deletedElement) => {
+            var command = <_Command.ICommand>(deletedElement['winControl']);
+            if (command && command['_propertyMutations']) {
+                (<_Command.IObservableCommand>command)._propertyMutations.unbind(this._refreshBound);
+            }
+        });
+
+        // Bind property mutation event listener to added IObservable commands.
+        changeInfo.added.forEach((deletedElement) => {
+            var command = <_Command.ICommand>(deletedElement['winControl']);
+            if (command && command['_propertyMutations']) {
+                (<_Command.IObservableCommand>command)._propertyMutations.bind(this._refreshBound);
+            }
+        });
 
         // Remove current ICommand elements
         changeInfo.currentElements.forEach((element) => {
@@ -1028,8 +1053,11 @@ export class _CommandingSurface {
         //
         // Project overflowing and secondary commands into the overflowArea as MenuCommands
         //
-
         _ElementUtilities.empty(this._dom.overflowArea);
+        this._menuCommandProjections.map(function (menuCommand: _MenuCommand.MenuCommand) {
+            menuCommand.dispose();
+        });
+        
         var hasToggleCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
@@ -1064,7 +1092,8 @@ export class _CommandingSurface {
         this._hideSeparatorsIfNeeded(menuCommandProjections);
         menuCommandProjections.forEach((command) => {
             this._dom.overflowArea.appendChild(command.element);
-        })
+        });
+        this._menuCommandProjections = menuCommandProjections;
 
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsToggleCommandClass);
 

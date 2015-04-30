@@ -16,7 +16,6 @@ module CorsicaTests {
 
     export class FlyoutTests {
 
-
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
             var flyoutElement = document.createElement('div');

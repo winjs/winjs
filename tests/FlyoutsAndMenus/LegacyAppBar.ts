@@ -1453,30 +1453,6 @@ module CorsicaTests {
             appbar.open();
         };
 
-        xtestCommandsLayoutUsingDeprecatedSectionsInCommandsLayout = function () { // TODO delete entirely or migrate into commanding surface tests. 
-            var root = document.getElementById("appBarDiv");
-            root.innerHTML =
-            "<div id='appBar'>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"primary\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 3\", type:\"button\", section:\"selection\"}'></button>" +
-            "</div>";
-            var appBar = new PrivateLegacyAppBar(<HTMLElement>root.querySelector("#appBar"), { _layout: 'commands' });
-
-            var primaryCommands = appBar.element.querySelectorAll(".win-primarygroup .win-command");
-            var secondaryCommands = appBar.element.querySelectorAll(".win-secondarygroup .win-command");
-
-
-            LiveUnit.Assert.areEqual(2, primaryCommands.length);
-            LiveUnit.Assert.areEqual("Button 0", primaryCommands[0]["winControl"].label);
-            LiveUnit.Assert.areEqual("Button 1", primaryCommands[1]["winControl"].label);
-
-            LiveUnit.Assert.areEqual(2, secondaryCommands.length);
-            LiveUnit.Assert.areEqual("Button 2", secondaryCommands[0]["winControl"].label);
-            LiveUnit.Assert.areEqual("Button 3", secondaryCommands[1]["winControl"].label);
-        }
-
         testChangingAppBarPlacementUpdatesElementPositionImmediately() {
 
             var root = document.getElementById("appBarDiv");
