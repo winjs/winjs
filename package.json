@@ -47,8 +47,5 @@
     "typescript": "1.4.1",
     "websocket": "^1.0.8",
     "seed-random": "^2.2.0"
-  },
-  "browserify": {
-    "transform": "deamdify"
   }
 }

@@ -17,7 +17,6 @@
     config.targetName = "WinJS." + config.version;
     config.desktopFramework = "Microsoft." + config.targetName;
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
-    config.modulesOutput = config.outputFolder + "modules/";
     config.compiledTsOutput = config.outputFolder + "tsbuild/";
 
     config.uiStringsFiles = [
