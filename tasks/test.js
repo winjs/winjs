@@ -16,7 +16,6 @@
     }
 
     module.exports = function (grunt) {
-        var config = require("../config.js");
         var pathUtils = require("path");
 
         grunt.registerTask("test", function () {

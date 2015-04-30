@@ -731,7 +731,6 @@ define([
                     },
                     set: function observable_set(value) {
 
-                        var affectedProperty = propertyName;
                         var oldValue = getter();
 
                         // Process value through the original setter & getter before deciding to send an event.
@@ -750,7 +749,7 @@ define([
                         }
                     }
                 });
-            };
+            }
 
             function getPropertyDescriptor(obj, propertyName) {
                 // Returns a matching property descriptor, or null, 
