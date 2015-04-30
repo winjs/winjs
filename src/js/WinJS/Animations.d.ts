@@ -424,3 +424,17 @@ export interface IResizeTransitionOptions {
     timing?: string;
 }
 export declare function _resizeTransition(elementClipper: HTMLElement, element: HTMLElement, options: IResizeTransitionOptions): Promise<any>;
+
+export interface ICommandingSurfaceTransitionArgs {
+    actionAreaClipper: HTMLElement;
+    actionArea: HTMLElement;
+    overflowAreaClipper: HTMLElement;
+    overflowArea: HTMLElement;
+    oldHeight: number;
+    newHeight: number;
+    overflowAreaHeight: number;
+    menuPositionedAbove: boolean;
+}
+
+export declare function _commandingSurfaceOpenAnimation(args: ICommandingSurfaceTransitionArgs): Promise<any>;
+export declare function _commandingSurfaceCloseAnimation(args: ICommandingSurfaceTransitionArgs): Promise<any>;

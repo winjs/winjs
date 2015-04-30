@@ -1576,20 +1576,6 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(overflowButtonEllipsis, _Constants.ClassNames.ellipsisCssClass), "AppBar missing ellipsis class");
         }
 
-        testBackgroundColorPercolatesToCommandingSurface() {
-            // Verifies that background color changes to the AppBar are not impeded by the CommandingSurface element.
-            var appBar = new AppBar(this._element, { opened: true });
-            var commandingSurface = appBar._commandingSurface;
-
-            appBar.element.style.backgroundColor = "rgb(255, 100, 05)";
-            var appBarStyle = getComputedStyle(appBar.element),
-                commandingSurfaceStyle = getComputedStyle(commandingSurface.element);
-
-            var msg = "AppBar's commandingSurface element should match the background color of the AppBar element";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.areEqual(appBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
-        }
-
         testPositionOffsetsAreCalculateAtConstructionTime() {
 
             var badOffset = "-1px";

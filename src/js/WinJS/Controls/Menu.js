@@ -275,9 +275,10 @@ define([
                     Flyout.Flyout.prototype._hide.call(this);
                 },
                 
-                _endHide: function Menu_endHide() {
+                _beforeEndHide: function Menu_beforeEndHide() {
                     _ElementUtilities.removeClass(this.element, _Constants.menuMouseSpacingClass);
                     _ElementUtilities.removeClass(this.element, _Constants.menuTouchSpacingClass);
+                    Flyout.Flyout.prototype._beforeEndHide.call(this);
                 },
 
                 _addCommand: function Menu_addCommand(command) {
@@ -336,11 +337,7 @@ define([
                 },
 
                 _handleKeyDown: function Menu_handleKeyDown(event) {
-                    if (event.keyCode === Key.escape) {
-                        // Show a focus rect on what we move focus to
-                        this._keyboardInvoked = true;
-                        this._hide();
-                    } else if (event.keyCode === Key.upArrow) {
+                    if (event.keyCode === Key.upArrow) {
                         Menu._focusOnPreviousElement(this.element);
 
                         // Prevent the page from scrolling

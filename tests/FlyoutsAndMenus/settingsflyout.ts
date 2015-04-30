@@ -5,16 +5,14 @@
 
 module CorsicaTests {
 
+    var _LightDismissService = Helper.require("WinJS/_LightDismissService");
+
     export class SettingsFlyoutTests {
         "use strict";
 
         tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             OverlayHelpers.disposeAndRemove(document.querySelector(".win-settingsflyout"));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
 
         }
 
@@ -100,63 +98,41 @@ module CorsicaTests {
     //testSettingsFlyoutDispose["Description"] = "Unit test for dispose requirements.";
 
         testDisposeRemovesAppBarClickEatingDiv = function (complete) {
-            WinJS.UI._Overlay._clickEatingAppBarDiv = null;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = null;
-
             var flyout = new WinJS.UI.SettingsFlyout();
             document.body.appendChild(flyout.element);
             flyout.show();
-
-            // ClickEater add/remove are high priority scheduler jobs, so we schedule an idle priority asserts
+            
             flyout.addEventListener("aftershow", function () {
-                var clickEater = <HTMLElement>document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass);
+                var clickEater = <HTMLElement>document.querySelector("." + _LightDismissService._ClassNames._clickEater);
                 LiveUnit.Assert.isTrue(clickEater);
                 LiveUnit.Assert.areNotEqual("none", clickEater.style.display);
 
                 flyout.dispose();
 
-                WinJS.Utilities.Scheduler.schedule(function () {
-                    LiveUnit.Assert.areEqual("none", clickEater.style.display);
-                    document.body.removeChild(flyout.element);
-                    complete();
-                }, WinJS.Utilities.Scheduler.Priority.idle);
+                LiveUnit.Assert.isNull(document.querySelector("." + _LightDismissService._ClassNames._clickEater));
+                document.body.removeChild(flyout.element);
+                complete();
             });
         };
 
         testBackClickEventTriggersSettingsLightDismiss = function (complete) {
-            // Verifies that a shown SettingsFlyout will handle the WinJS.Application.backclick event and light dismiss itself.
+            // Verifies that a shown SettingsFlyout will light dismiss due to backclick.
 
             // Simulate
             function simulateBackClick() {
-                backClickEvent = OverlayHelpers.createBackClickEvent();
-                LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
-
-                WinJS.Application.addEventListener("verification", verify, true);
-                WinJS.Application.queueEvent({ type: 'verification' });
-            };
-
-            // Verify
-            function verify() {
-                LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "SettingsFlyout should have handled the 'backclick' event");
+                var handled = _LightDismissService._onBackClick();
+                LiveUnit.Assert.isTrue(handled, "SettingsFlyout should have handled the 'backclick' event");
                 LiveUnit.Assert.isTrue(settingsFlyout.hidden, "SettingsFlyout should be hidden after light dismiss");
                 cleanup();
             };
 
             // Cleanup
             function cleanup() {
-                WinJS.Application.removeEventListener("verification", verify, true);
-                WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object.
-                // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
-                WinJS.UI._Overlay._globalEventListeners.reset();
+                OverlayHelpers.disposeAndRemove(settingsElement);
                 complete();
             }
 
             // Setup
-            WinJS.Application.start();
-            var backClickEvent;
-
             var settingsElement = document.createElement("div");
             document.body.appendChild(settingsElement);
             var settingsFlyout = new WinJS.UI.SettingsFlyout(settingsElement);

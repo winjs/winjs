@@ -29,6 +29,7 @@ export var _KeyboardInfo: {
     _visualViewportSpace: ClientRect;
     _animationShowLength: number;
     _scrollTimeout: number;
+    _layoutViewportCoords: { visibleDocTop: number; visibleDocBottom: number};
 }
 
 // WWA Soft Keyboard offsets
@@ -140,5 +141,16 @@ _KeyboardInfo = {
     // a window resize to occur.
     get _scrollTimeout(): number {
         return _Constants.scrollTimeout;
+    },
+
+    // _layoutViewportCoords is used with elements that use position:fixed instead of position:-ms-device-fixed
+    get _layoutViewportCoords(): { visibleDocTop: number; visibleDocBottom: number } {
+        var topOffset = _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
+        var bottomOffset = _Global.document.documentElement.clientHeight - (topOffset + this._visibleDocHeight);
+
+        return {
+            visibleDocTop: topOffset,
+            visibleDocBottom: bottomOffset
+        };
     }
 };

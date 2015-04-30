@@ -8,7 +8,7 @@ define([
     './Animations/_Constants',
     './Animations/_TransitionAnimation',
     './Promise'
-    ], function animationsInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
+], function animationsInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -74,7 +74,7 @@ define([
         return function (i, elem) {
             return _Global.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
         };
-        }
+    }
 
     function makeArray(elements) {
         if (Array.isArray(elements) || elements instanceof _Global.NodeList || elements instanceof _Global.HTMLCollection) {
@@ -684,8 +684,29 @@ define([
             finish(); // On cancelation, complete the promise successfully to match PVL
         });
     }
+
+    function getResizeDefaultTransitions() {
+        return {
+            defaultResizeGrowTransition: {
+                duration: 350,
+                timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
+            },
+
+            defaultResizeShrinkTransition: {
+                duration: 120,
+                timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
+            }
+        };
+    }
+
     // See _resizeTransition's comment for documentation on *args*.
     function resizeTransition(elementClipper, element, args) {
+        var defaultTransition = getResizeDefaultTransitions()[(args.to > args.from ? "defaultResizeGrowTransition" : "defaultResizeShrinkTransition")];
+        args = _BaseUtils._merge(args, {
+            duration: args.duration === undefined ? defaultTransition.duration : args.duration,
+            timing: args.timing === undefined ? defaultTransition.timing : args.timing
+        });
+
         var start = args.actualSize - args.from;
         var end = args.actualSize - args.to;
         if (!args.anchorTrailingEdge) {
@@ -706,13 +727,15 @@ define([
         _Global.getComputedStyle(elementClipper).opacity;
         _Global.getComputedStyle(element).opacity;
 
-        // Animate
+        // Merge the transitions, but don't animate yet
         var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + end + "px)" });
         var elementTransition = _BaseUtils._merge(transition, { to: translate + "(" + -end + "px)" });
-        return Promise.join([
-            transformWithTransition(elementClipper, clipperTransition),
-            transformWithTransition(element, elementTransition)
-        ]);
+
+        // Return an array so that we can prepare any other animations before beginning everything (used by commanding surface open/close animations)
+        return [
+            { element: elementClipper, transition: clipperTransition },
+            { element: element, transition: elementTransition }
+        ];
     }
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI.Animation", {
@@ -2655,21 +2678,120 @@ define([
             if (args.to === args.from) {
                 return Promise.as();
             } else {
-                var growTransition = {
-                    duration: 350,
-                    timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
-                };
-                var shrinkTransition = {
-                    duration: 120,
-                    timing: "cubic-bezier(0.1, 0.9, 0.2, 1)"
-                };
-                var defaultTransition = args.to > args.from ? growTransition : shrinkTransition;
-
-                return resizeTransition(elementClipper, element, _BaseUtils._merge(args, {
-                    duration: args.duration === undefined ? defaultTransition.duration : args.duration,
-                    timing: args.timing === undefined ? defaultTransition.timing : args.timing
-                }));
+                var animationsToPlay = resizeTransition(elementClipper, element, args);
+                var animationPromises = [];
+                for (var i = 0, len = animationsToPlay.length; i < len; i++) {
+                    animationPromises.push(transformWithTransition(animationsToPlay[i].element, animationsToPlay[i].transition));
+                }
+                return Promise.join(animationPromises);
             }
+        },
+
+        _commandingSurfaceOpenAnimation: function Utilities_commandingSurfaceOpenAnimation(args) {
+            var actionAreaClipper = args.actionAreaClipper,
+                actionArea = args.actionArea,
+                overflowAreaClipper = args.overflowAreaClipper,
+                overflowArea = args.overflowArea,
+                closedHeight = args.oldHeight,
+                openedHeight = args.newHeight,
+                overflowAreaHeight = args.overflowAreaHeight,
+                menuPositionedAbove = args.menuPositionedAbove;
+            var deltaHeight = openedHeight - closedHeight;
+            var actionAreaAnimations = [];
+            var transitionToUse = getResizeDefaultTransitions().defaultResizeGrowTransition;
+
+            // The commanding surface open animation is a combination of animations. We need to animate the actionArea and overflowArea
+            // elements expanding and appearing. The first animation we prepare is the animation on the actionArea. This animation changes depending
+            // on whether the overflow menu will appear above or below the commanding surface.
+            // When the menu is positioned above, we can do a simple translation to get the animation we want.
+            // When the menu is positioned below, we have to do a resize transition using the actionArea's clipper in order to animate the surface expanding.
+            // In either case, we don't want to play the animation immediately because the overflowArea's animation still needs to be set up,
+            // The animations that need to be played on the actionArea elements will be stored in actionAreaAnimations until after the overflowArea
+            // animations are prepared, so that we can begin every animation at once. We do this to avoid a small 1-2px gap appearing between the overflowArea
+            // and the actionArea that would appear were we to start these animations at separate times
+            if (menuPositionedAbove) {
+                actionArea.style[transformNames.scriptName] = "translateY(" + deltaHeight + "px)";
+                _Global.getComputedStyle(actionArea).opacity;
+                var transition = _BaseUtils._merge(transitionToUse, { to: "translateY(0px)" });
+                actionAreaAnimations.push({ element: actionArea, transition: transition });
+            } else {
+                actionAreaAnimations = resizeTransition(actionAreaClipper, actionArea, {
+                    from: closedHeight,
+                    to: openedHeight,
+                    actualSize: openedHeight,
+                    dimension: "height",
+                    anchorTrailingEdge: false
+                });
+            }
+
+            // Now we set up the overflowArea animations. The overflowArea animation has two parts:
+            // The first animation is played on the overflowAreaClipper. This animation is a translation animation that we play that makes it look like the
+            // overflow menu is moving up along with the actionArea as it expands.
+            // The next animation is played on the overflowArea itself, which we animate up/down by the full size of the overflowArea. 
+            // When combined, it makes it look like the overflowArea is sliding in its content while it slides up with the actionArea.
+            // Since the overflowArea and its clipper are in their final positions when this animation function is called, we apply an opposite translation
+            // to move them both to where they would have been just before the surface opened, then animate them going to translateY(0).
+            overflowAreaClipper.style[transformNames.scriptName] = "translateY(" + (menuPositionedAbove ? deltaHeight : -deltaHeight) + "px)";
+            overflowArea.style[transformNames.scriptName] = "translateY(" + (menuPositionedAbove ? overflowAreaHeight : -overflowAreaHeight) + "px)";
+
+            // Resolve styles on the overflowArea and overflowAreaClipper to prepare them for animation
+            _Global.getComputedStyle(overflowAreaClipper).opacity;
+            _Global.getComputedStyle(overflowArea).opacity;
+
+            var animationPromises = [];
+            for (var i = 0, len = actionAreaAnimations.length; i < len; i++) {
+                animationPromises.push(transformWithTransition(actionAreaAnimations[i].element, actionAreaAnimations[i].transition));
+            }
+            var overflowAreaTransition = _BaseUtils._merge(transitionToUse, { to: "translateY(0px)" });
+            animationPromises.push(transformWithTransition(overflowAreaClipper, overflowAreaTransition));
+            animationPromises.push(transformWithTransition(overflowArea, overflowAreaTransition));
+            return Promise.join(animationPromises);
+        },
+
+        _commandingSurfaceCloseAnimation: function Utilities_commandingSurfaceCloseAnimation(args) {
+            var actionAreaClipper = args.actionAreaClipper,
+                actionArea = args.actionArea,
+                overflowAreaClipper = args.overflowAreaClipper,
+                overflowArea = args.overflowArea,
+                openedHeight = args.oldHeight,
+                closedHeight = args.newHeight,
+                overflowAreaHeight = args.overflowAreaHeight,
+                menuPositionedAbove = args.menuPositionedAbove;
+            var deltaHeight = closedHeight - openedHeight;
+            var actionAreaAnimations = [];
+            var transitionToUse = getResizeDefaultTransitions().defaultResizeShrinkTransition;
+            if (menuPositionedAbove) {
+                actionArea.style[transformNames.scriptName] = "translateY(0px)";
+                _Global.getComputedStyle(actionArea).opacity;
+                var transition = _BaseUtils._merge(transitionToUse, { to: "translateY(" + -deltaHeight + "px)" });
+                actionAreaAnimations.push({ element: actionArea, transition: transition });
+            } else {
+                actionAreaAnimations = resizeTransition(actionAreaClipper, actionArea, {
+                    from: openedHeight,
+                    to: closedHeight,
+                    actualSize: openedHeight,
+                    dimension: "height",
+                    anchorTrailingEdge: false
+                });
+            }
+            // Set up
+            overflowAreaClipper.style[transformNames.scriptName] = "translateY(0px)";
+            overflowArea.style[transformNames.scriptName] = "translateY(0px)";
+
+            // Resolve styles on the overflowArea and overflowAreaClipper to prepare them for animation
+            _Global.getComputedStyle(overflowAreaClipper).opacity;
+            _Global.getComputedStyle(overflowArea).opacity;
+
+            // Now that everything's set up, we can kick off all the animations in unision
+            var animationPromises = [];
+            for (var i = 0, len = actionAreaAnimations.length; i < len; i++) {
+                animationPromises.push(transformWithTransition(actionAreaAnimations[i].element, actionAreaAnimations[i].transition));
+            }
+            var overflowAreaClipperTransition = _BaseUtils._merge(transitionToUse, { to: "translateY(" + (menuPositionedAbove ? -deltaHeight : deltaHeight) + "px)" });
+            var overflowAreaTransition = _BaseUtils._merge(transitionToUse, { to: "translateY(" + (menuPositionedAbove ? overflowAreaHeight : -overflowAreaHeight) + "px)" });
+            animationPromises.push(transformWithTransition(overflowAreaClipper, overflowAreaClipperTransition));
+            animationPromises.push(transformWithTransition(overflowArea, overflowAreaTransition));
+            return Promise.join(animationPromises);
         }
     });
 

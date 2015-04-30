@@ -31,7 +31,6 @@ import _WinRT = require('../../Core/_WinRT');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/styles-appbar"]);
-require(["require-style!less/colors-appbar"]);
 
 "use strict";
 
@@ -115,6 +114,7 @@ export class AppBar {
     private _handleShowingKeyboardBound: (ev: any) => Promise<any>;
     private _handleHidingKeyboardBound: (ev: any) => any;
     private _dismissable: _LightDismissService.ILightDismissable;
+    private _cachedClosedHeight: number;
 
     private _dom: {
         root: HTMLElement;
@@ -159,6 +159,7 @@ export class AppBar {
     set closedDisplayMode(value: string) {
         if (ClosedDisplayMode[value]) {
             this._commandingSurface.closedDisplayMode = value;
+            this._cachedClosedHeight = null;
         }
     }
 
@@ -224,16 +225,42 @@ export class AppBar {
         var stateMachine = new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this.element,
             onOpen: () => {
+                var openAnimation = this._commandingSurface.createOpenAnimation(this._getClosedHeight());
+                // We're temporarily setting the AppBar's style from position=-ms-device-fixed to fixed to work around an animations bug in IE, 
+                // where two AppBars will end up being rendered when animating instead of one.
+                // We need to recalculate our offsets relative to the top and bottom of the visible document because position fixed elements use layout viewport coordinates 
+                // while position -ms-device-fixed use visual viewport coordinates.This difference in coordinate systems is especially pronounced if the IHM has caused the visual viewport to resize.
+                this.element.style.position = "fixed";
+                if (this._placement === AppBar.Placement.top) {
+                    this.element.style.top = _KeyboardInfo._KeyboardInfo._layoutViewportCoords.visibleDocTop + "px";
+                } else {
+                    this.element.style.bottom = _KeyboardInfo._KeyboardInfo._layoutViewportCoords.visibleDocBottom + "px";
+                }
                 this._synchronousOpen();
-
-                // Animate
-                return Promise.wrap();
+                return openAnimation.execute().then(() => {
+                    this.element.style.position = "";
+                    this.element.style.top = this._adjustedOffsets.top;
+                    this.element.style.bottom = this._adjustedOffsets.bottom;
+                });
             },
-
             onClose: () => {
-                this._synchronousClose()
-                // Animate
-                return Promise.wrap();
+                var closeAnimation = this._commandingSurface.createCloseAnimation(this._getClosedHeight());
+                // We're temporarily setting the AppBar's style from position=-ms-device-fixed to fixed to work around an animations bug in IE, 
+                // where two AppBars will end up being rendered when animating instead of one.
+                // We need to recalculate our offsets relative to the top and bottom of the visible document because position fixed elements use layout viewport coordinates 
+                // while position -ms-device-fixed use visual viewport coordinates.This difference in coordinate systems is especially pronounced if the IHM has caused the visual viewport to resize.
+                this.element.style.position = "fixed";
+                if (this._placement === AppBar.Placement.top) {
+                    this.element.style.top = _KeyboardInfo._KeyboardInfo._layoutViewportCoords.visibleDocTop + "px";
+                } else {
+                    this.element.style.bottom = _KeyboardInfo._KeyboardInfo._layoutViewportCoords.visibleDocBottom + "px";
+                }
+                return closeAnimation.execute().then(() => {
+                    this._synchronousClose();
+                    this.element.style.position = "";
+                    this.element.style.top = this._adjustedOffsets.top;
+                    this.element.style.bottom = this._adjustedOffsets.bottom;
+                });
             },
             onUpdateDom: () => {
                 this._updateDomImpl();
@@ -252,6 +279,7 @@ export class AppBar {
 
         // Initialize private state.
         this._disposed = false;
+        this._cachedClosedHeight = null;
         this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-actionarea"), _Constants.ClassNames.actionAreaCssClass);
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-overflowarea"), _Constants.ClassNames.overflowAreaCssClass);
@@ -520,6 +548,20 @@ export class AppBar {
         }
 
         this._commandingSurface.updateDomImpl();
+    }
+    private _getClosedHeight(): number {
+        if (this._cachedClosedHeight === null) {
+            var wasOpen = this._isOpenedMode;
+            if (this._isOpenedMode) {
+                this._synchronousClose();
+            }
+            this._cachedClosedHeight = this._commandingSurface.getBoundingRects().commandingSurface.height;
+            if (wasOpen) {
+                this._synchronousOpen();
+            }
+        }
+
+        return this._cachedClosedHeight;
     }
     private _updateDomImpl_renderOpened(): void {
         addClass(this._dom.root, _Constants.ClassNames.openedClass);

@@ -1784,20 +1784,6 @@ module CorsicaTests {
 
         }
 
-        testBackgroundColorPercolatesToCommandingSurface() {
-            // Verifies that background color changes to the ToolBar are not impeded by the CommandingSurface element.
-            var toolBar = new ToolBar(this._element, { opened: true });
-            var commandingSurface = toolBar._commandingSurface;
-
-            toolBar.element.style.backgroundColor = "rgb(255, 100, 05)";
-            var toolBarStyle = getComputedStyle(toolBar.element),
-                commandingSurfaceStyle = getComputedStyle(commandingSurface.element);
-
-            var msg = "ToolBar's commandingSurface element should match the background color of the ToolBar element";
-            LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.areEqual(toolBarStyle.backgroundColor, commandingSurfaceStyle.backgroundColor, msg);
-        }
-        
         testGetCommandById() {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous" })
