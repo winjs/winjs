@@ -118,7 +118,7 @@ export class _CommandingSurface {
     private _contentFlyoutInterior: HTMLElement; /* The reparented content node inside of _contentFlyout.element */
     private _hoverable = _Hoverable.isHoverable; /* force dependency on hoverable module */
     private _winKeyboard: _KeyboardBehavior._WinKeyboard;
-    private _refreshBound: Function;
+    private _refreshBound: () => void;
     private _resizeHandlerBound: (ev: any) => any;
     private _dataChangedEvents = ["itemchanged", "iteminserted", "itemmoved", "itemremoved", "reload"];
     private _machine: _OpenCloseMachine.OpenCloseMachine;
@@ -133,6 +133,8 @@ export class _CommandingSurface {
     private _initializedSignal: _Signal<any>;
     private _isOpenedMode: boolean;
     private _overflowAlignmentOffset: number;
+    private _menuCommandProjections: _MenuCommand.MenuCommand[];
+    _layoutCompleteCallback: () => any;
 
     // Measurements
     private _cachedMeasurements: {
@@ -147,9 +149,11 @@ export class _CommandingSurface {
     private _dom: {
         root: HTMLElement;
         actionArea: HTMLElement;
+        actionAreaContainer: HTMLElement;
         spacer: HTMLDivElement;
         overflowButton: HTMLButtonElement;
         overflowArea: HTMLElement;
+        overflowAreaContainer: HTMLElement;
     };
 
     /// Display options for the actionarea when the _CommandingSurface is closed.
@@ -239,17 +243,11 @@ export class _CommandingSurface {
         this._machine = options.openCloseMachine || new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this._dom.root,
             onOpen: () => {
-                //this._cachedHiddenPaneThickness = null;
-                //var hiddenPaneThickness = this._getHiddenPaneThickness();
                 this.synchronousOpen();
-                //return this._playShowAnimation(hiddenPaneThickness);
                 return Promise.wrap();
             },
             onClose: () => {
-                //return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
                 this.synchronousClose();
-                //});
-
                 return Promise.wrap();
             },
             onUpdateDom: () => {
@@ -276,6 +274,7 @@ export class _CommandingSurface {
         this._initializedSignal = new _Signal();
         this._nextLayoutStage = CommandLayoutPipeline.idle;
         this._isOpenedMode = _Constants.defaultOpened;
+        this._menuCommandProjections = [];
 
         // Initialize public properties.
         this.overflowDirection = _Constants.defaultOverflowDirection;
@@ -345,7 +344,8 @@ export class _CommandingSurface {
     }
 
     forceLayout(): void {
-        /// Forces the CommandingSurface to update its layout. Use this function when the window did not change size, but the container of the CommandingSurface changed size.
+        /// Forces the CommandingSurface to update its layout. Use this function when the window did not change 
+        /// size, but the container of the CommandingSurface changed size.
         this._meaurementsDirty();
         this._machine.updateDom();
     }
@@ -369,9 +369,95 @@ export class _CommandingSurface {
         return null;
     }
 
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        if (this._data) {
+            for (var i = 0, len = this._data.length; i < len; i++) {
+                this._data.getAt(i).hidden = true;
+            }
+
+            for (var i = 0, len = commands.length; i < len; i++) {
+                // The array passed to showOnlyCommands can contain either command ids, or the commands themselves.
+                var command: _Command.ICommand = (typeof commands[i] === "string" ? this.getCommandById(<string>commands[i]) : <_Command.ICommand>commands[i]);
+                if (command) {
+                    command.hidden = false;
+                }
+            }
+        }
+    }
+
     deferredDomUpate(): void {
         // Notify the machine that an update has been requested.
         this._machine.updateDom();
+    }
+
+    createOpenAnimation(closedHeight: number): { execute(): Promise<any> } {
+        // createOpenAnimation should only be called when the commanding surface is in a closed state. The control using the commanding surface is expected
+        // to call createOpenAnimation() before it opens the surface, then open the commanding surface, then call .execute() to start the animation.
+        // This function is overridden by our unit tests.
+        if (_Log.log) {
+            this._updateDomImpl_renderedState.isOpenedMode &&
+            _Log.log("The CommandingSurface should only attempt to create an open animation when it's not already opened");
+        }
+        var that = this;
+        return {
+            execute(): Promise<any> {
+                var boundingRects = that.getBoundingRects();
+                // The overflowAreaContainer has no size by default. Measure the overflowArea's size and apply it to the overflowAreaContainer before animating
+                that._dom.overflowAreaContainer.style.width = boundingRects.overflowArea.width + "px";
+                that._dom.overflowAreaContainer.style.height = boundingRects.overflowArea.height + "px";
+                return Animations._commandingSurfaceOpenAnimation({
+                    actionAreaClipper: that._dom.actionAreaContainer,
+                    actionArea: that._dom.actionArea,
+                    overflowAreaClipper: that._dom.overflowAreaContainer,
+                    overflowArea: that._dom.overflowArea,
+                    oldHeight: closedHeight,
+                    newHeight: boundingRects.commandingSurface.height,
+                    overflowAreaHeight: boundingRects.overflowArea.height,
+                    menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
+                }).then(function () {
+                    that._dom.actionAreaContainer.style.transform = "";
+                    that._dom.actionArea.style.transform = "";
+                    that._dom.overflowAreaContainer.style.transform = "";
+                    that._dom.overflowArea.style.transform = "";
+                });
+            }
+        };
+    }
+
+    createCloseAnimation(closedHeight: number): { execute(): Promise<any> } {
+        // createCloseAnimation should only be called when the commanding surface is in an opened state. The control using the commanding surface is expected
+        // to call createCloseAnimation() before it closes the surface, then call execute() to let the animation run. Once the animation finishes, the control
+        // should close the commanding surface.
+        // This function is overridden by our unit tests.
+        if (_Log.log) {
+            !this._updateDomImpl_renderedState.isOpenedMode &&
+            _Log.log("The CommandingSurface should only attempt to create an closed animation when it's not already closed");
+        }
+        var openedHeight = this.getBoundingRects().commandingSurface.height,
+            overflowAreaOpenedHeight = this._dom.overflowArea.offsetHeight,
+            oldOverflowTop = this._dom.overflowArea.offsetTop,
+            that = this;
+        return {
+            execute(): Promise<any> {
+                _ElementUtilities.addClass(that.element, _Constants.ClassNames.closingClass);
+                return Animations._commandingSurfaceCloseAnimation({
+                    actionAreaClipper: that._dom.actionAreaContainer,
+                    actionArea: that._dom.actionArea,
+                    overflowAreaClipper: that._dom.overflowAreaContainer,
+                    overflowArea: that._dom.overflowArea,
+                    oldHeight: openedHeight,
+                    newHeight: closedHeight,
+                    overflowAreaHeight: overflowAreaOpenedHeight,
+                    menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
+                }).then(function () {
+                    _ElementUtilities.removeClass(that.element, _Constants.ClassNames.closingClass);
+                    that._dom.actionAreaContainer.style.transform = "";
+                    that._dom.actionArea.style.transform = "";
+                    that._dom.overflowAreaContainer.style.transform = "";
+                    that._dom.overflowArea.style.transform = "";
+                });
+            }
+        };
     }
 
     get initialized(): Promise<any> {
@@ -401,7 +487,10 @@ export class _CommandingSurface {
         var actionArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionArea, _Constants.ClassNames.actionAreaCssClass);
         _ElementUtilities._reparentChildren(root, actionArea);
-        root.appendChild(actionArea);
+        var actionAreaContainer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(actionAreaContainer, _Constants.ClassNames.actionAreaContainerCssClass);
+        actionAreaContainer.appendChild(actionArea);
+        root.appendChild(actionAreaContainer);
 
         var spacer = _Global.document.createElement("div");
         _ElementUtilities.addClass(spacer, _Constants.ClassNames.spacerCssClass);
@@ -419,14 +508,19 @@ export class _CommandingSurface {
         var overflowArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.overflowAreaCssClass);
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.menuCssClass);
-        root.appendChild(overflowArea);
+        var overflowAreaContainer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(overflowAreaContainer, _Constants.ClassNames.overflowAreaContainerCssClass);
+        overflowAreaContainer.appendChild(overflowArea);
+        root.appendChild(overflowAreaContainer);
 
         this._dom = {
             root: root,
             actionArea: actionArea,
+            actionAreaContainer: actionAreaContainer,
             spacer: spacer,
             overflowButton: overflowButton,
             overflowArea: overflowArea,
+            overflowAreaContainer: overflowAreaContainer
         };
     }
 
@@ -612,16 +706,6 @@ export class _CommandingSurface {
         }
     }
 
-    // Should be called while _CommandingSurface is rendered in its opened mode
-    // Overridden by tests.
-    private _playShowAnimation(): Promise<any> {
-        return Promise.wrap();
-    }
-    // Should be called while SplitView is rendered in its opened mode
-    // Overridden by tests.
-    private _playHideAnimation(): Promise<any> {
-        return Promise.wrap();
-    }
     private _dataDirty(): void {
         this._nextLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, this._nextLayoutStage);
     }
@@ -727,7 +811,7 @@ export class _CommandingSurface {
         if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
             var offsetProperty = (this._rtl ? "left" : "right");
             var offsetTextValue = this._overflowAlignmentOffset + "px";
-            this._dom.overflowArea.style[offsetProperty] = offsetTextValue;
+            this._dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
         }
     }
 
@@ -763,6 +847,10 @@ export class _CommandingSurface {
             }
         }
         this._nextLayoutStage = nextStage;
+        if (nextStage === CommandLayoutPipeline.idle) {
+            // Callback for unit tests.
+            this._layoutCompleteCallback && this._layoutCompleteCallback();
+        }
     }
 
     private _getDataChangeInfo(): IDataChangeInfo {
@@ -815,6 +903,23 @@ export class _CommandingSurface {
 
         // Take a snapshot of the current state
         var updateCommandAnimation = Animations._createUpdateListAnimation(changeInfo.added, changeInfo.deleted, changeInfo.affected);
+
+
+        // Unbind property mutation event listener from deleted IObservableCommands
+        changeInfo.deleted.forEach((deletedElement) => {
+            var command = <_Command.ICommand>(deletedElement['winControl']);
+            if (command && command['_propertyMutations']) {
+                (<_Command.IObservableCommand>command)._propertyMutations.unbind(this._refreshBound);
+            }
+        });
+
+        // Bind property mutation event listener to added IObservable commands.
+        changeInfo.added.forEach((deletedElement) => {
+            var command = <_Command.ICommand>(deletedElement['winControl']);
+            if (command && command['_propertyMutations']) {
+                (<_Command.IObservableCommand>command)._propertyMutations.bind(this._refreshBound);
+            }
+        });
 
         // Remove current ICommand elements
         changeInfo.currentElements.forEach((element) => {
@@ -948,8 +1053,11 @@ export class _CommandingSurface {
         //
         // Project overflowing and secondary commands into the overflowArea as MenuCommands
         //
-
         _ElementUtilities.empty(this._dom.overflowArea);
+        this._menuCommandProjections.map(function (menuCommand: _MenuCommand.MenuCommand) {
+            menuCommand.dispose();
+        });
+        
         var hasToggleCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
@@ -984,7 +1092,8 @@ export class _CommandingSurface {
         this._hideSeparatorsIfNeeded(menuCommandProjections);
         menuCommandProjections.forEach((command) => {
             this._dom.overflowArea.appendChild(command.element);
-        })
+        });
+        this._menuCommandProjections = menuCommandProjections;
 
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsToggleCommandClass);
 

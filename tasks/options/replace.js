@@ -43,22 +43,13 @@
             files: [
               { expand: true, flatten: true, src: [config.desktopOutput + "js/*.js"], dest: config.desktopOutput + "js/" },
               { expand: true, flatten: true, src: [config.desktopOutput + "js/" + config.localeFolder + "/*.js"], dest: config.desktopOutput + "js/" + config.localeFolder + "/" },
-              { expand: true, flatten: true, src: [config.desktopOutput + "css/*.css"], dest: config.desktopOutput + "css/" },
-              { expand: true, flatten: false, src: [config.modulesOutput + "**/*.js"], dest: "" },
+              { expand: true, flatten: true, src: [config.desktopOutput + "css/*.css"], dest: config.desktopOutput + "css/" }
             ]
         },
     };
 
-    if (config.inRazzle) {
-        module.exports.base.files.push({ expand: true, cwd: config.testsOutput, src: ["**/*.js"], dest: config.testsOutput });
-        module.exports.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: ""
-        });
-    } else {
-        module.exports.tests.options.patterns.push({
-            match: /\$\(TESTDATA\)\//g,
-            replacement: "../TestData/"
-        });
-    }
+    module.exports.tests.options.patterns.push({
+        match: /\$\(TESTDATA\)\//g,
+        replacement: "../TestData/"
+    });
 })();

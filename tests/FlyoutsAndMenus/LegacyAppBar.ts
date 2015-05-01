@@ -11,6 +11,7 @@ module CorsicaTests {
     var PrivateLegacyAppBar = <typeof WinJS.UI.PrivateLegacyAppBar>WinJS.UI._LegacyAppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
 
+    var _LightDismissService = Helper.require("WinJS/_LightDismissService");
     var _Constants;
     var _ToolBarConstants;
     var _element;
@@ -129,11 +130,6 @@ module CorsicaTests {
             LiveUnit.LoggingCore.logComment("In tearDown");
             OverlayHelpers.disposeAndRemove(document.getElementById("appBarDiv"));
             _element = null;
-
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
 
         // Test AppBar Instantiation
@@ -659,25 +655,19 @@ module CorsicaTests {
         };
 
         testDisposeRemovesAppBarClickEatingDiv = function (complete) {
-            WinJS.UI._Overlay._clickEatingAppBarDiv = null;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = null;
-
             var appBar = new PrivateLegacyAppBar(document.getElementById("appBarDiv"));
             document.body.appendChild(appBar.element);
             appBar.open();
-
-            // ClickEater add/remove are high priority scheduler jobs, so we schedule an idle priority asserts
+            
             appBar.addEventListener("afteropen", function () {
-                var clickEater = <HTMLElement>document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass);
+                var clickEater = <HTMLElement>document.querySelector("." + _LightDismissService._ClassNames._clickEater);
                 LiveUnit.Assert.isTrue(clickEater);
                 LiveUnit.Assert.areNotEqual("none", clickEater.style.display);
 
                 appBar.dispose();
 
-                WinJS.Utilities.Scheduler.schedule(function () {
-                    LiveUnit.Assert.areEqual("none", clickEater.style.display);
-                    complete();
-                }, WinJS.Utilities.Scheduler.Priority.idle);
+                LiveUnit.Assert.isNull(document.querySelector("." + _LightDismissService._ClassNames._clickEater));
+                complete();
             });
         };
 
@@ -947,24 +937,6 @@ module CorsicaTests {
 
             }
 
-        var verifyAppBarOpenAndSticky = function (appBar) {
-                appBar = appBar.element || appBar;
-
-                var msg,
-                    failures;
-
-                verifyIsOpen(appBar);
-                verifyIsSticky(appBar);
-
-                var shouldHaveInvokeButton = appBar.winControl.closedDisplayMode !== "none";
-                if (shouldHaveInvokeButton) {
-                    verifyHasInvokeButton(appBar);
-                } else {
-                    verifyNoInvokeButton(appBar);
-                }
-
-            }
-
         var verifyAppBarClosedMinimal = function (appBar) {
                 appBar = appBar.element || appBar;
                 LiveUnit.Assert.isNotNull(appBar.id, "Test Bug!! This test requires the AppBar element have an id.");
@@ -1086,18 +1058,20 @@ module CorsicaTests {
                 return filterForFailures(elements, filterFunction);
             }
 
+        var isWithinDisplayNone = function (element) {
+            while (element && element !== document.body) {
+                if (getComputedStyle(element).display === "none") {
+                    return true;
+                }
+                element = element.parentNode;
+            }
+        };
+
         var checkShouldBeTabStop = function (elements, shouldBeTabStop) {
                 LiveUnit.Assert.areEqual(!!shouldBeTabStop, shouldBeTabStop, "Test Bug!! An explicit value boolean must be passed.");
 
                 var filterFunction = function (element) {
-                    var isFocusable = function (element) {
-                        // First make sure it isn't already the active element.
-                        // Firefox for example, doesn't clear focus when an element's display is set to "none".
-                        element.blur();
-                        element.focus();
-                        return document.activeElement === element;
-                    }
-                var isTabStop = (element.tabIndex >= 0 && isFocusable(element));
+                var isTabStop = (!isWithinDisplayNone(element) && WinJS.Utilities.getTabIndex(element) >= 0);
                     return (shouldBeTabStop !== isTabStop);
                 }
             return filterForFailures(elements, filterFunction);
@@ -1216,41 +1190,6 @@ module CorsicaTests {
                 LiveUnit.Assert.areNotEqual(invokeButtonWidth, parseInt(getComputedStyle(appBar).paddingRight), msg);
             }
 
-            function verifyIsSticky(appBar) {
-                appBar = appBar.element || appBar;
-
-                var msg,
-                    failures;
-
-                var firstDiv = appBar.querySelector(".win-firstdiv");
-                var finalDiv = appBar.querySelector(".win-finaldiv");
-                var clickEater = document.querySelector("." + _Constants._clickEatingAppBarClass);
-
-                // Verify sticky properties.
-                msg = "Sticky AppBar should be sticky";
-                LiveUnit.LoggingCore.logComment("Test: " + msg);
-                LiveUnit.Assert.isTrue(appBar.winControl.sticky, msg);
-
-                if (firstDiv) {
-                    // verify its not reachable by tabbing. No use trying to focus it as part of the test since it has a focusin handler that moves focus away.
-                    msg = "firstDiv should not be reachable by tabbing";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    LiveUnit.Assert.isTrue(firstDiv.tabIndex < 0, msg);
-                }
-                if (finalDiv) {
-                    // verify its not reachable by tabbing. No use trying to focus it as part of the test since it has a focusin handler that moves focus away.
-                    msg = "finalDiv should not be reachable by tabbing";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    LiveUnit.Assert.isTrue(finalDiv.tabIndex < 0, msg);
-                }
-                if (clickEater) {
-                    msg = "AppBar Clickeater should not have dimensions when AppBar is sticky";
-                    LiveUnit.LoggingCore.logComment("Test: " + msg);
-                    failures = checkShouldBeDisplayNone(clickEater, true);
-                    LiveUnit.Assert.isFalse(failures.length, msg);
-                }
-            }
-
             function verifyLightDismissible(appBar) {
                 appBar = appBar.element || appBar;
 
@@ -1259,7 +1198,7 @@ module CorsicaTests {
 
                 var firstDiv = appBar.querySelector(".win-firstdiv");
                 var finalDiv = appBar.querySelector(".win-finaldiv");
-                var clickEater = document.querySelector("." + _Constants._clickEatingAppBarClass);
+                var clickEater = document.querySelector("." + _LightDismissService._ClassNames._clickEater);
 
                 // Verify light dismiss properties.
                 msg = "Light dismiss AppBar should not be sticky";
@@ -1490,69 +1429,29 @@ module CorsicaTests {
         };
 
         testBackClickEventTriggersLightDismiss = function (complete) {
-            // Verifies that a shown, non sticky AppBar containing focus, will handle the WinJS.Application.backclick event and light dismiss itself.
+            // Verifies that a shown, non sticky AppBar containing focus, will light dismiss due to backclick.
 
             // Simulate
             function simulateBackClick() {
-                backClickEvent = OverlayHelpers.createBackClickEvent();
-                LiveUnit.Assert.isFalse(backClickEvent._winRTBackPressedEvent.handled);
-                WinJS.Application.queueEvent(backClickEvent); // Fire the "backclick" event from WinJS.Application
-
-                WinJS.Application.addEventListener("verification", verify, true);
-                WinJS.Application.queueEvent({ type: 'verification' });
-            };
-
-            // Verify
-            function verify() {
-                LiveUnit.Assert.isTrue(backClickEvent._winRTBackPressedEvent.handled, "AppBar should have handled the 'backclick' event");
+                var handled = _LightDismissService._onBackClick();
+                LiveUnit.Assert.isTrue(handled, "AppBar should have handled the 'backclick' event");
                 LiveUnit.Assert.isFalse(appbar.opened, "AppBar should be closed by light dismiss");
                 cleanup();
             };
 
             // Cleanup
             function cleanup() {
-                WinJS.Application.removeEventListener("verification", verify, true);
-                WinJS.Application.stop();
-                // Application.stop() kills all listeners on the Application object.
-                // Reset all global _Overlay eventhandlers to reattach our listener to the Application "backclick" event.
-                WinJS.UI._Overlay._globalEventListeners.reset();
+                appbar.dispose();
                 complete();
             }
 
             // Setup
-            WinJS.Application.start();
-            var backClickEvent;
-
             var root = document.getElementById("appBarDiv");
             var appbar = new PrivateLegacyAppBar();
             root.appendChild(appbar.element);
             appbar.addEventListener("afteropen", simulateBackClick, false);
             appbar.open();
         };
-
-        xtestCommandsLayoutUsingDeprecatedSectionsInCommandsLayout = function () { // TODO delete entirely or migrate into commanding surface tests. 
-            var root = document.getElementById("appBarDiv");
-            root.innerHTML =
-            "<div id='appBar'>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 0\", type:\"button\", section:\"primary\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button0\", label:\"Button 1\", type:\"button\", section:\"global\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 2\", type:\"button\", section:\"secondary\"}'></button>" +
-            "<button data-win-control='WinJS.UI.AppBarCommand' data-win-options='{id:\"Button1\", label:\"Button 3\", type:\"button\", section:\"selection\"}'></button>" +
-            "</div>";
-            var appBar = new PrivateLegacyAppBar(<HTMLElement>root.querySelector("#appBar"), { _layout: 'commands' });
-
-            var primaryCommands = appBar.element.querySelectorAll(".win-primarygroup .win-command");
-            var secondaryCommands = appBar.element.querySelectorAll(".win-secondarygroup .win-command");
-
-
-            LiveUnit.Assert.areEqual(2, primaryCommands.length);
-            LiveUnit.Assert.areEqual("Button 0", primaryCommands[0]["winControl"].label);
-            LiveUnit.Assert.areEqual("Button 1", primaryCommands[1]["winControl"].label);
-
-            LiveUnit.Assert.areEqual(2, secondaryCommands.length);
-            LiveUnit.Assert.areEqual("Button 2", secondaryCommands[0]["winControl"].label);
-            LiveUnit.Assert.areEqual("Button 3", secondaryCommands[1]["winControl"].label);
-        }
 
         testChangingAppBarPlacementUpdatesElementPositionImmediately() {
 

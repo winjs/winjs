@@ -6,7 +6,8 @@
     <title>bug repro</title>
     <!-- WinJS references -->
     <link href="//$(TargetFramework)/css/ui-dark.css" rel="stylesheet" />
-    <script src="//$(TargetFramework)/js/WinJS.js"></script>
+    <script src="//$(TargetFramework)/js/base.js"></script>
+    <script src="//$(TargetFramework)/js/ui.js"></script>
 
     <!-- goal here is to load this as a fragment and then
         a) verify init code only runs once (count === 1 after being loaded)

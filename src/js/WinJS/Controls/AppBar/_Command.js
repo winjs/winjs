@@ -6,7 +6,9 @@ define([
     '../../Core/_Global',
     '../../Core/_WinRT',
     '../../Core/_Base',
+    "../../Core/_BaseUtils",
     '../../Core/_ErrorFromName',
+    "../../Core/_Events",
     '../../Core/_Resources',
     '../../Utilities/_Control',
     '../../Utilities/_Dispose',
@@ -15,7 +17,7 @@ define([
     '../Tooltip',
     '../_LegacyAppBar/_Constants',
     './_Icon'
-    ], function appBarCommandInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
+], function appBarCommandInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _Control, _Dispose, _ElementUtilities, _Overlay, Tooltip, _Constants, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -35,7 +37,6 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         AppBarCommand: _Base.Namespace._lazy(function () {
-
 
             function _handleClick(event) {
                 /*jshint validthis: true */
@@ -62,6 +63,21 @@ define([
                 }
             }
 
+            // Used by AppBarCommands to notify listeners that a property has changed.
+            var PropertyMutations = _Base.Class.define(function PropertyMutations_ctor() {
+                this._observer = _BaseUtils._merge({}, _Events.eventMixin);
+            }, {
+                bind: function (callback) {
+                    this._observer.addEventListener(_Constants.commandPropertyMutated, callback);
+                },
+                unbind: function (callback) {
+                    this._observer.removeEventListener(_Constants.commandPropertyMutated, callback);
+                },
+                dispatchEvent: function (type, detail) {
+                    this._observer.dispatchEvent(type, detail);
+                },
+            });
+
             var strings = {
                 get ariaLabel() { return _Resources._getWinJSString("ui/appBarCommandAriaLabel").value; },
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
@@ -72,7 +88,7 @@ define([
                 get badPriority() { return "Invalid argument: the priority of an {0} must be a non-negative integer"; }
             };
 
-            return _Base.Class.define(function AppBarCommand_ctor(element, options) {
+            var AppBarCommand = _Base.Class.define(function AppBarCommand_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.AppBarCommand.AppBarCommand">
                 /// <summary locid="WinJS.UI.AppBarCommand.constructor">
                 /// Creates a new AppBarCommand control.
@@ -163,6 +179,12 @@ define([
                         this._element.setAttribute("aria-label", strings.ariaLabel);
                     }
                 }
+
+                this._propertyMutations = new PropertyMutations();
+                var that = this;
+                ObservablePropertyWhiteList.forEach(function (propertyName) {
+                    makeObservable(that, propertyName);
+                });
             }, {
                 /// <field type="String" locid="WinJS.UI.AppBarCommand.id" helpKeyword="WinJS.UI.AppBarCommand.id" isAdvanced="true">
                 /// Gets or sets the ID of the AppBarCommand.
@@ -667,10 +689,81 @@ define([
                         return;
                     }
                     var event = _Global.document.createEvent("CustomEvent");
-                    event.initEvent(eventName, true, true, (detail || {}));
+                    event.initCustomEvent(eventName, true, true, (detail || {}));
                     return this._element.dispatchEvent(event);
                 },
             });
+
+
+            // The list of AppBarCommand properties that we care about firing an event 
+            // for, whenever they are changed after initial construction.
+            var ObservablePropertyWhiteList = [
+                "label",
+                "disabled",
+                "flyout",
+                "extraClass",
+                "selected",
+                "onclick",
+                "hidden",
+            ];
+
+            function makeObservable(command, propertyName) {
+                // Make a pre-existing AppBarCommand property observable by firing the "_commandpropertymutated"
+                // event whenever its value changes.
+
+                // Preserve initial value in JS closure variable
+                var _value = command[propertyName];
+
+                // Preserve original getter/setter if they exist, else use inline proxy functions.
+                var proto = command.constructor.prototype;
+                var originalDesc = getPropertyDescriptor(proto, propertyName) || {};
+                var getter = originalDesc.get.bind(command) || function getterProxy() {
+                    return _value;
+                };
+                var setter = originalDesc.set.bind(command) || function setterProxy(value) {
+                    _value = value;
+                };
+
+                // Define new observable Get/Set for propertyName on the command instance
+                Object.defineProperty(command, propertyName, {
+                    get: function observable_get() {
+                        return getter();
+                    },
+                    set: function observable_set(value) {
+
+                        var oldValue = getter();
+
+                        // Process value through the original setter & getter before deciding to send an event.
+                        setter(value);
+                        var newValue = getter();
+                        if (!this._disposed && oldValue !== value && oldValue !== newValue && !command._disposed) {
+
+                            command._propertyMutations.dispatchEvent(
+                                _Constants.commandPropertyMutated,
+                                {
+                                    command: command,
+                                    propertyName: propertyName,
+                                    oldValue: oldValue,
+                                    newValue: newValue,
+                                });
+                        }
+                    }
+                });
+            }
+
+            function getPropertyDescriptor(obj, propertyName) {
+                // Returns a matching property descriptor, or null, 
+                // if no matching descriptor is found.
+                var desc = null;
+                while (obj && !desc) {
+                    desc = Object.getOwnPropertyDescriptor(obj, propertyName);
+                    obj = Object.getPrototypeOf(obj);
+                    // Walk obj's prototype chain until we find a match.
+                }
+                return desc;
+            }
+
+            return AppBarCommand;
         })
     });
 

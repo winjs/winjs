@@ -1,43 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
-/*
-AppBar/Flyout z-index values:
-    1000 - AppBar/settings click-eating div
-    1002 - AppBar
-    1004 - Settings Flyout
-    1006 - Flyout click-eating div
-    1008 - Flyout
-*/
 
 @import "base.less";
 @import "mixins.less";
-
-.win-appbarclickeater {
-    z-index: 1000;
-    background-color: transparent;
-    display: none;
-    width: 110%;
-    height: 110%;
-    left: -5%;
-    top: -5%;
-    position: fixed;
-    touch-action: none;
-    outline: 1px solid Purple; /*Necessary to block passthrough over webviews*/
-    -ms-high-contrast-adjust: none;
-}
-
-.win-flyoutmenuclickeater {
-    z-index: 1006;
-    background-color: transparent;
-    display: none;
-    width: 110%;
-    height: 110%;
-    left: -5%;
-    top: -5%;
-    position: fixed;
-    touch-action: none;
-    outline: 1px solid Lime; /*Necessary to block passthrough over webviews*/
-    -ms-high-contrast-adjust: none;
-}
 
 /*
 Command buttons.
@@ -235,7 +199,6 @@ div.win-command:focus {
 AppBar
 */
 .win-navbar {
-    z-index: 1002;
     border-width: 0;
     width: 100%;
     height: auto;
@@ -523,7 +486,6 @@ High contrast AppBar needs a border
 Flyout control.
 */
 .win-flyout {
-    z-index: 1008;
     position: fixed;
     position: -ms-device-fixed;
     padding: 12px;
@@ -709,7 +671,6 @@ the style "-ms-touch-select: none;"
 Settings Pane
 */
 .win-settingsflyout {
-    z-index: 1004; /* above appbar and below flyouts */
     border-left: 1px solid;
     position: fixed;
     top: 0;

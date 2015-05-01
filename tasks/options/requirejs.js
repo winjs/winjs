@@ -145,6 +145,12 @@
     module.exports = {
         defaults: defaults,
         header: header,
-        footer: footer
+        footer: footer,
+        ui: defaults('ui', {
+            options: {
+                exclude: ['./base']
+            }
+        })
     };
+
 })();

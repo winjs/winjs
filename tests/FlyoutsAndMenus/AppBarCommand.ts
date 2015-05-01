@@ -8,6 +8,7 @@ module CorsicaTests {
 
     var PrivateLegacyAppBar = <typeof WinJS.UI.PrivateLegacyAppBar>WinJS.UI._LegacyAppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
+    var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants");
 
     export class AppBarCommandTests {
         // Test AppBarCommand Instantiation
@@ -345,6 +346,159 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(button.querySelector("#testAppBarCommandButtonsRemoveOldInnerHTML"), "AppBarCommand buttons should lose previous innerHTML on control Instantiation");
         }
     }
+
+    // Generate Tests for Observable Properties
+    interface IObservablePropertyTestCase {
+        id: number;
+        oldValue: any;
+        newValue: any;
+    }
+    interface IObservablePropertyTestSuite {
+        propertyName: string;
+        testCases: Array<IObservablePropertyTestCase>;
+        setUp?: Function;
+        tearDown?: Function;
+    }
+    function generateTests_ObservablePropertyTests() {
+
+        function runTestCases(testSuite: IObservablePropertyTestSuite) {
+            var mutatedEventName = _Constants.commandPropertyMutated;
+
+            var button = document.createElement("button");
+            var abc = new AppBarCommand(button);
+            document.body.appendChild(abc.element);
+
+            var propertyName = testSuite.propertyName;
+            var testCases = testSuite.testCases;
+
+            var idPrefix = "";
+            var currentTestCase: IObservablePropertyTestCase;
+
+            var mutatedEventFired: boolean;
+            function verifyMutatedEvent(e: WinJS.UI.AppBarCommandPropertyMutatedEventObj) {
+                LiveUnit.Assert.areEqual(propertyName, e.detail.propertyName, idPrefix + "mutation event details contain incorrect property name");
+                LiveUnit.Assert.areNotEqual(e.detail.oldValue, e.detail.newValue, idPrefix + "mutation event should not fire if the value has not changed");
+                LiveUnit.Assert.areEqual(currentTestCase.oldValue, e.detail.oldValue, idPrefix + "mutation event details contain the wrong oldValue");
+                LiveUnit.Assert.areEqual(currentTestCase.newValue, e.detail.newValue, idPrefix + "mutation event details contain the wrong newValue");
+                LiveUnit.Assert.areEqual(abc, e.detail.command, idPrefix + "mutation event details contain the wrong AppBarCommand")
+                mutatedEventFired = true;
+            }
+
+            abc._propertyMutations.bind(verifyMutatedEvent);
+
+            // Run setup if provided
+            testSuite.setUp && testSuite.setUp();
+
+            // Run test cases
+            for (var i = 0, len = testCases.length; i < len; i++) {
+                currentTestCase = testCases[i];
+                idPrefix = "CaseID " + currentTestCase.id + ", ";
+
+                // PRECONDITION: currentTest.oldValue !== currentTestCast.newValue
+                LiveUnit.Assert.areNotEqual(currentTestCase.oldValue, currentTestCase.newValue,
+                    idPrefix + "TEST ERROR: test parameters currentTestCase.oldValue and currentTestCase.newValue must be different");
+
+                // PRECONDITION: abc[propertyName] === currentTestCast.oldValue
+                LiveUnit.Assert.areEqual(currentTestCase.oldValue, abc[propertyName],
+                    idPrefix + "TEST ERROR: actual starting value of AppBarCommand." + propertyName + " does not match precondition value.");
+
+                mutatedEventFired = false;
+                abc[propertyName] = currentTestCase.newValue;
+                LiveUnit.Assert.isTrue(mutatedEventFired, idPrefix + "" + mutatedEventName + " event failed to fire")
+            }
+
+            // Run teardown if provided
+            testSuite.tearDown && testSuite.tearDown();
+
+            abc._propertyMutations.unbind(verifyMutatedEvent);
+        }
+
+        var testData = {
+            onclick1: () => { },
+            onclick2: () => { },
+            flyout1: <WinJS.UI.Flyout>undefined,
+            flyout2: <WinJS.UI.Flyout>undefined,
+        };
+
+        var ObservablePropertyTestSuites: Array<IObservablePropertyTestSuite> = [
+            {
+                propertyName: "label",
+                testCases: [
+                    { id: 1, oldValue: <string>undefined, newValue: "add" },
+                    { id: 2, oldValue: "add", newValue: "delete" },
+                    { id: 3, oldValue: "delete", newValue: null },
+                ],
+            },
+            {
+                propertyName: "disabled",
+                testCases: [
+                    { id: 1, oldValue: false, newValue: true },
+                    { id: 2, oldValue: true, newValue: false },
+                ],
+            },
+            {
+                propertyName: "flyout",
+                // Can't instantiate Flyouts until the DOM is ready, so we create them in the provided setUp 
+                // function instead.
+                setUp: function () {
+                    testData.flyout1 = new WinJS.UI.Flyout();
+                    document.body.appendChild(testData.flyout1.element);
+                    testData.flyout2 = new WinJS.UI.Flyout();
+                    document.body.appendChild(testData.flyout2.element);
+                },
+                // Pass getters to where the old and new values for each Flyout test case will be stored after
+                // they are created in setUp
+                testCases: [
+                    { id: 1, oldValue: <WinJS.UI.Flyout>undefined, get newValue() { return testData.flyout1; } },
+                    { id: 2, get oldValue() { return testData.flyout1; }, get newValue() { return testData.flyout2; } },
+                    { id: 3, get oldValue() { return testData.flyout2; }, newValue: null },
+                ],
+                tearDown: function () {
+                    testData.flyout1.element.parentElement.removeChild(testData.flyout1.element);
+                    testData.flyout2.element.parentElement.removeChild(testData.flyout2.element);
+                    testData.flyout1.dispose();
+                    testData.flyout2.dispose();
+                },
+            },
+            {
+                propertyName: "extraClass",
+                testCases: [
+                    { id: 1, oldValue: <string>undefined, newValue: "class1" },
+                    { id: 2, oldValue: "class1", newValue: "class2" },
+                    { id: 3, oldValue: "class2", newValue: "class1" },
+                ],
+            },
+            {
+                propertyName: "selected", testCases: [
+                    { id: 1, oldValue: false, newValue: true },
+                    { id: 2, oldValue: true, newValue: false },
+                ],
+            },
+            {
+                propertyName: "onclick",
+                testCases: [
+                    { id: 1, oldValue: <Function>undefined, newValue: testData.onclick1 },
+                    { id: 2, oldValue: testData.onclick1, newValue: testData.onclick2 },
+                    { id: 3, oldValue: testData.onclick2, newValue: <Function>null },
+                ],
+            },
+            {
+                propertyName: "hidden", testCases: [
+                    { id: 1, oldValue: false, newValue: true },
+                    { id: 2, oldValue: true, newValue: false },
+                ],
+            },
+        ];
+
+        ObservablePropertyTestSuites.forEach(function (testSuite: IObservablePropertyTestSuite) {
+            AppBarCommandTests.prototype["testObservableProperty_" + testSuite.propertyName] = function (complete) {
+                runTestCases(testSuite);
+                complete();
+            };
+
+        })
+    };
+    generateTests_ObservablePropertyTests();
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.AppBarCommandTests");

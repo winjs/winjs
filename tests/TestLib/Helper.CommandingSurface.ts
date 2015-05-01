@@ -19,11 +19,19 @@ module Helper._CommandingSurface {
     }
 
     export function useSynchronousAnimations(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
-        commandingSurface._playShowAnimation = function () {
-            return WinJS.Promise.wrap();
+        commandingSurface.createOpenAnimation = function () {
+            return {
+                execute(): WinJS.Promise<any> { 
+                    return WinJS.Promise.wrap();
+                }
+            };
         };
-        commandingSurface._playHideAnimation = function () {
-            return WinJS.Promise.wrap();
+        commandingSurface.createCloseAnimation = function () {
+            return {
+                execute(): WinJS.Promise<any> {
+                    return WinJS.Promise.wrap();
+                }
+            };
         };
     }
 
@@ -37,6 +45,21 @@ module Helper._CommandingSurface {
         }
         return result;
     }
+
+    export function getProjectedCommandFromOriginalCommand(commandingSurface, originalCommand: WinJS.UI.ICommand): WinJS.UI.PrivateMenuCommand {
+        // Given an ICommand in the CommandingSurface, find and return its MenuCommand projection from the overflowarea, if such a projection exists.
+        var projectedCommands = getVisibleCommandsInElement(commandingSurface._dom.overflowArea).map(function (element) {
+            return element.winControl;
+        });
+        var matches = projectedCommands.filter(function (projection) {
+            return originalCommand === projection["_originalICommand"];
+        });
+
+        if (matches.length > 1) {
+            LiveUnit.Assert.fail("TEST ERROR: CommandingSurface should not project more than 1 MenuCommand into the overflowarea for each ICommand in the actionarea.");
+        }
+        return matches[0];
+    };
 
     export function verifyOverflowMenuContent(visibleElements: HTMLElement[], expectedLabels: string[]): void {
         var labelIndex = 0;

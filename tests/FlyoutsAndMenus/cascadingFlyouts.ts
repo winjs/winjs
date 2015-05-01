@@ -8,6 +8,7 @@ module CorsicaTests {
     "use strict";
 
     var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants"),
+        _LightDismissService = Helper.require("WinJS/_LightDismissService"),
         Key = WinJS.Utilities.Key,
         Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout,
         Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,
@@ -23,7 +24,7 @@ module CorsicaTests {
             flyout.removeEventListener(eventName, handler, false);
             callback();
         }, false);
-    }
+    };
 
     // Private test class provides Helpers and tests that every implementing test class will need.
     export class _BaseCascadingTests {
@@ -122,6 +123,22 @@ module CorsicaTests {
             }
         }
 
+        verifyDismissableLayer(expectedDismissables: WinJS.UI.PrivateFlyout[]): void {
+            var dismissableLayer = cascadeManager.dismissableLayer;
+            var dismissableFlyouts = dismissableLayer.clients.map(function(client) {
+                return client.element.winControl;
+            });
+            if (expectedDismissables.length === 0) {
+                LiveUnit.Assert.isFalse(_LightDismissService.isShown(dismissableLayer),
+                    "CascadingManager's dismissable layer is empty and should not be shown.");
+            } else {
+                LiveUnit.Assert.isTrue(_LightDismissService.isShown(dismissableLayer),
+                    "CascadingManager's dismissable layer is non-empty and should be shown.");
+            }
+            Helper.Assert.areArraysEqual(expectedDismissables, dismissableFlyouts,
+                "Unexpected set of Flyouts in dismissable layer");
+        }
+
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
             chainCounter = 0;
@@ -146,10 +163,6 @@ module CorsicaTests {
             });
 
             OverlayHelpers.disposeAndRemove(_defaultAnchor);
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingAppBarClass));
-            OverlayHelpers.disposeAndRemove(document.querySelector("." + WinJS.UI._Overlay._clickEatingFlyoutClass));
-            WinJS.UI._Overlay._clickEatingAppBarDiv = false;
-            WinJS.UI._Overlay._clickEatingFlyoutDiv = false;
         }
 
         //
@@ -234,7 +247,7 @@ module CorsicaTests {
                 // Hide Flyout at the end of the cascade
                 index = flyoutChain.length - 1;
                 flyout = flyoutChain[index];
-                expectedFocusTarget = flyout._previousFocus,
+                expectedFocusTarget = flyoutChain[index - 1].element,
                 expectedCascadeAfterHiding = flyoutChain.slice(0, index);
                 return this.hideFlyout(flyout);
 
@@ -244,8 +257,8 @@ module CorsicaTests {
 
                     // Hide Flyout in the middle of the cascade
                     index = Math.floor(flyoutChain.length / 2)
-                flyout = flyoutChain[index];
-                    expectedFocusTarget = flyout._previousFocus;
+                    flyout = flyoutChain[index];
+                    expectedFocusTarget = flyoutChain[index - 1].element;
                     expectedCascadeAfterHiding = flyoutChain.slice(0, index);
                     return this.hideFlyout(flyout);
 
@@ -358,6 +371,22 @@ module CorsicaTests {
 
         }
 
+        testDisposeOfCascade = function (complete) {
+            // Verifies cascade cleans up properly when each of its flyouts gets disposed.
+
+            var flyoutChain = this.generateFlyoutChain();
+            this.showFlyoutChain(flyoutChain).then(() => {
+                this.verifyDismissableLayer(flyoutChain);
+                flyoutChain.forEach((flyout) => {
+                    flyout.dispose();
+                });
+                this.verifyCascade([]);
+                this.verifyDismissableLayer([]);
+                complete();
+            });
+
+        }
+
         testLeftArrowKeyHidesCurrentSubFlyout = function (complete) {
             // Verifies that the left arrow key will hide any flyout that is a subFlyout.
             var flyoutChain = this.generateFlyoutChain();
@@ -447,6 +476,30 @@ module CorsicaTests {
                     });
                 };
                 chain1[0].hide();
+            });
+        }
+        
+        testFocusMovesWithinCascadeSynchronously = function (complete) {
+            // Verifies Overlay.show and Overlay.hide move focus synchronously
+            // when focus is being moved between Overlays within the cascade.
+            
+            var testShow = (overlay) => {
+                var promise = OverlayHelpers.show(overlay);
+                LiveUnit.Assert.areEqual(overlay.element, document.activeElement,
+                    "Overlay should have received focus synchronously during show");
+                return promise;
+            };
+            
+            var chain = this.generateFlyoutChain();
+            
+            testShow(chain[0]).then(() => {
+                return testShow(chain[1]);
+            }).then(() => {
+                OverlayHelpers.hide(chain[1]);
+                LiveUnit.Assert.areEqual(chain[0].element, document.activeElement,
+                    "Hidden Overlay should have synchronously moved focus to its parent Overlay during hide");
+                OverlayHelpers.hide(chain[0]);
+                complete();
             });
         }
     }

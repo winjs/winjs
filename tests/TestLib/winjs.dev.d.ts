@@ -135,7 +135,7 @@ declare module WinJS {
         var _CallExpression;
         var _IdentifierExpression;
         var _GroupFocusCache;
-        
+
         module _LightDismissService {
             interface ILightDismissInfo {
                 reason: string;
@@ -143,18 +143,18 @@ declare module WinJS {
                 stopPropagation(): void;
                 preventDefault(): void;
             }
-            
+
             interface ILightDismissable {
                 setZIndex(zIndex: string): void;
+                getZIndexCount(): number;
                 containsElement(element: HTMLElement): boolean;
-                requiresClickEater(): boolean;
                 onActivate(): void;
                 onFocus(element: HTMLElement): void;
                 onHide(): void;
                 onShouldLightDismiss(info: ILightDismissInfo): boolean;
                 onLightDismiss(info: ILightDismissInfo): void;
             }
-            
+
             function shown(client: ILightDismissable): void;
             function hidden(client: ILightDismissable): void;
             function isShown(client: ILightDismissable): boolean;
@@ -424,22 +424,23 @@ declare module WinJS {
 
         class PrivateCommandingSurface extends WinJS.UI._CommandingSurface {
             _disposed: boolean;
-            _primaryCommands: ICommand[];
-            _secondaryCommands: ICommand[];
+            _primaryCommands: PrivateCommand[];
+            _secondaryCommands: PrivateCommand[];
             _getCommandWidth(command: ICommand): number;
-            getCommandById(id: string): ICommand;
             _contentFlyout: WinJS.UI.Flyout;
             _contentFlyoutInterior: HTMLElement;
-            _playShowAnimation(): Promise<any>;
-            _playHideAnimation(): Promise<any>;
             _dom: {
                 root: HTMLElement;
                 actionArea: HTMLElement;
+                actionAreaContainer: HTMLElement;
                 spacer: HTMLDivElement;
                 overflowButton: HTMLButtonElement;
                 overflowArea: HTMLElement;
+                overflowAreaContainer: HTMLElement;
             };
             _machine: IOpenCloseMachine;
+            _layoutCompleteCallback(): any;
+            _menuCommandProjections: PrivateMenuCommand[];
         }
 
         class PrivateAppBar extends WinJS.UI.AppBar {
@@ -453,7 +454,7 @@ declare module WinJS {
             _handleShowingKeyboard: () => Promise<any>;
             _handleHidingKeyboard: () => void;
             _updateDomImpl_renderedState: {
-                adjustedOffsets: { top: string; bottom: string; }; 
+                adjustedOffsets: { top: string; bottom: string; };
             }
             _dismissable: _LightDismissService.ILightDismissable;
         }
@@ -470,12 +471,26 @@ declare module WinJS {
             _handleShowingKeyboard: () => void;
         }
 
+        export interface AppBarCommandPropertyMutatedEventObj {
+            detail: {
+                command: ICommand;
+                oldValue: any;
+                newValue: any;
+                propertyName: string;
+            };
+        }
+
         class PrivateCommand extends WinJS.UI.AppBarCommand {
             winControl: ICommand;
             _commandBarIconButton;
             _disposed;
             _tooltipControl;
             _lastElementFocus;
+            _propertyMutations: {
+                bind(callback:any): void;
+                unbind(callback:any): void;
+                dispatchEvent(type: string, eventProperties: any): boolean;
+            }
         }
 
         /**
@@ -639,9 +654,13 @@ declare module WinJS {
             public dispose(): void;
             public forceLayout(): void;
             public closedDisplayMode: string;
+            public createOpenAnimation(): { execute(): Promise<any> };
+            public createCloseAnimation(): { execute(): Promise<any> };
             public open(): void;
             public close(): void;
             public opened: boolean;
+            public getCommandById(id: string): ICommand;
+            public showOnlyCommands(commands: Array<string|ICommand>): void;
             public onbeforeopen: (ev: CustomEvent) => void;
             public onafteropen: (ev: CustomEvent) => void;
             public onbeforeclose: (ev: CustomEvent) => void;

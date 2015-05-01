@@ -30,7 +30,6 @@ import _WinRT = require('../../Core/_WinRT');
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
 require(["require-style!less/styles-toolbar"]);
-require(["require-style!less/colors-toolbar"]);
 
 "use strict";
 
@@ -86,6 +85,7 @@ export class ToolBar {
     private _isOpenedMode: boolean;
     private _handleShowingKeyboardBound: (ev: any) => void
     private _dismissable: _LightDismissService.ILightDismissable;
+    private _cachedClosedHeight: number;
 
     private _dom: {
         root: HTMLElement;
@@ -126,6 +126,7 @@ export class ToolBar {
     set closedDisplayMode(value: string) {
         if (ClosedDisplayMode[value]) {
             this._commandingSurface.closedDisplayMode = value;
+            this._cachedClosedHeight = null;
         }
     }
 
@@ -166,17 +167,15 @@ export class ToolBar {
         var stateMachine = new _OpenCloseMachine.OpenCloseMachine({
             eventElement: this.element,
             onOpen: () => {
+                var openAnimation = this._commandingSurface.createOpenAnimation(this._getClosedHeight());
                 this._synchronousOpen();
-
-                // Animate
-                return Promise.wrap();
+                return openAnimation.execute();
             },
-
             onClose: () => {
-                this._synchronousClose()
-
-                // Animate
-                return Promise.wrap();
+                var closeAnimation = this._commandingSurface.createCloseAnimation(this._getClosedHeight());
+                return closeAnimation.execute().then(() => {
+                    this._synchronousClose();
+                });
             },
             onUpdateDom: () => {
                 this._updateDomImpl();
@@ -193,6 +192,7 @@ export class ToolBar {
 
         // Initialize private state.
         this._disposed = false;
+        this._cachedClosedHeight = null;
         this._commandingSurface = new _CommandingSurface._CommandingSurface(this._dom.commandingSurfaceEl, { openCloseMachine: stateMachine });
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-actionarea"), _Constants.ClassNames.actionAreaCssClass);
         addClass(<HTMLElement>this._dom.commandingSurfaceEl.querySelector(".win-commandingsurface-overflowarea"), _Constants.ClassNames.overflowAreaCssClass);
@@ -302,6 +302,18 @@ export class ToolBar {
         return this._commandingSurface.getCommandById(id);
     }
 
+    showOnlyCommands(commands: Array<string|_Command.ICommand>): void {
+        /// <signature helpKeyword="WinJS.UI.ToolBar.showOnlyCommands">
+        /// <summary locid="WinJS.UI.ToolBar.showOnlyCommands">
+        /// Show the specified commands, hiding all of the others in the ToolBar.
+        /// </summary>
+        /// <param name="commands" type="Array" locid="WinJS.UI.ToolBar.showOnlyCommands_p:commands">
+        /// An array of the commands to show. The array elements may be Command objects, or the string identifiers (IDs) of commands.
+        /// </param>
+        /// </signature>
+        return this._commandingSurface.showOnlyCommands(commands);
+    }
+
     private _writeProfilerMark(text: string) {
         _WriteProfilerMark("WinJS.UI.ToolBar:" + this._id + ":" + text);
     }
@@ -408,6 +420,21 @@ export class ToolBar {
         }
 
         this._commandingSurface.updateDomImpl();
+    }
+
+    private _getClosedHeight(): number {
+        if (this._cachedClosedHeight === null) {
+            var wasOpen = this._isOpenedMode;
+            if (this._isOpenedMode) {
+                this._synchronousClose();
+            }
+            this._cachedClosedHeight = this._commandingSurface.getBoundingRects().commandingSurface.height;
+            if (wasOpen) {
+                this._synchronousOpen();
+            }
+        }
+
+        return this._cachedClosedHeight;
     }
 
     private _updateDomImpl_renderOpened(): void {

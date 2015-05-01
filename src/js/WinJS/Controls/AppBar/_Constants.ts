@@ -14,9 +14,7 @@ export var ClassNames = {
     emptyappbarCssClass: "win-appbar-empty",
     menuCssClass: "win-menu",
     menuContainsToggleCommandClass: "win-menu-containstogglecommand",
-    openingClass: "win-appbar-opening",
     openedClass: "win-appbar-opened",
-    closingClass: "win-appbar-closing",
     closedClass: "win-appbar-closed",
     noneClass: "win-appbar-closeddisplaynone",
     minimalClass: "win-appbar-closeddisplayminimal",
@@ -27,10 +25,14 @@ export var ClassNames = {
 };
 
 export var EventNames = {
+    // AppBar
     beforeOpen: "beforeopen",
     afterOpen: "afteropen",
     beforeClose: "beforeclose",
-    afterClose: "afterclose"
+    afterClose: "afterclose",
+
+    // AppBarCommand
+    commandPropertyMutated: "_commandpropertymutated",
 };
 
 export var controlMinWidth: number = _CommandingSurfaceConstants.controlMinWidth;

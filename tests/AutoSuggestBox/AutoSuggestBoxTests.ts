@@ -847,6 +847,72 @@ module AutoSuggestBoxTests {
             };
             LiveUnit.Assert.isNull(asb._tryGetInputContext());
         }
+
+        testArrowKeysOnSuggestionFlyout(complete) {
+            var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
+            asb.addEventListener("suggestionsrequested", function (e) {
+                e.detail.searchSuggestionCollection.appendQuerySuggestion("1");
+                e.detail.searchSuggestionCollection.appendQuerySuggestion("2");
+
+                WinJS.Promise.timeout().then(function () {
+                    Helper.keydown(asb._inputElement, Key.downArrow);
+                    return WinJS.Promise.timeout();
+                })
+                    .then(function () {
+                        LiveUnit.Assert.areEqual(0, document.querySelector(".win-autosuggestbox-flyout").scrollTop);
+
+                        LiveUnit.Assert.areEqual("1", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+                        Helper.keydown(asb._inputElement, Key.downArrow);
+                        return WinJS.Promise.timeout();
+                    })
+                    .then(function () {
+                        LiveUnit.Assert.areEqual("2", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+                        Helper.keydown(asb._inputElement, Key.upArrow);
+                        return WinJS.Promise.timeout();
+                    })
+                    .done(function () {
+                        LiveUnit.Assert.areEqual("1", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+                        complete();
+                    });
+            });
+            asb._inputElement.value = "Test query";
+            asb._inputElement.focus();
+        }
+
+        testArrowKeysOnSuggestionFlyoutAbove(complete) {
+            var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
+            asb.element.style.position = "absolute";
+            asb.element.style.bottom = "0";
+            asb.addEventListener("suggestionsrequested", function (e) {
+                for (var i = 1; i < 20; i++) {
+                    e.detail.searchSuggestionCollection.appendQuerySuggestion("" + i);
+                }
+
+                WinJS.Promise.timeout().then(function () {
+                    Helper.keydown(asb._inputElement, Key.upArrow);
+                    return WinJS.Promise.timeout();
+                })
+                    .then(function () {
+                        LiveUnit.Assert.areNotEqual(0, document.querySelector(".win-autosuggestbox-flyout").scrollTop);
+
+                        LiveUnit.Assert.areEqual("1", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+                        Helper.keydown(asb._inputElement, Key.upArrow);
+                        return WinJS.Promise.timeout();
+                    })
+                    .then(function () {
+                        LiveUnit.Assert.areEqual("2", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+                        Helper.keydown(asb._inputElement, Key.downArrow);
+                        return WinJS.Promise.timeout();
+                    })
+                    .done(function () {
+                        LiveUnit.Assert.areEqual("1", asb.element.querySelector(".win-autosuggestbox-suggestion-selected").textContent);
+
+                        complete();
+                    });
+            });
+            asb._inputElement.value = "Test query";
+            asb._inputElement.focus();
+        }
     };
 }
 LiveUnit.registerTestClass("AutoSuggestBoxTests.AutoSuggestBoxTests");
