@@ -47,8 +47,7 @@ iframe {
     .win-textarea,
     button,
     select,
-    option,
-    span {
+    option {
         .win-type-body();
         font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
     }
@@ -75,12 +74,12 @@ iframe {
     .win-type-body();
 }
 
-input.win-textbox::-ms-value {
+.win-textbox::-ms-value {
     margin: 0;
     padding: 0;
 }
 
-textarea.win-textbox, .win-textarea {
+.win-textarea {
     resize: none;
     overflow-y: auto;
 }
@@ -88,8 +87,8 @@ textarea.win-textbox, .win-textarea {
 //
 // Radio and check
 //
-input[type=radio].win-radio,
-input[type=checkbox].win-checkbox {
+.win-radio,
+.win-checkbox {
     width: 20px;
     height: 20px;
     margin-right: 8px;
@@ -101,8 +100,8 @@ input[type=checkbox].win-checkbox {
         margin-right: 0px;
     });
 }
-input.win-radio::-ms-check,
-input.win-checkbox::-ms-check {
+.win-radio::-ms-check,
+.win-checkbox::-ms-check {
     border-style: solid;
     display: inline-block;
     border-width: 2px;
@@ -113,11 +112,7 @@ input.win-checkbox::-ms-check {
 //
 // Button
 //
-button.win-button,
-input[type=button].win-button,
-input[type=reset].win-button,
-input[type=submit].win-button,
-button[type=submit].win-button {
+.win-button {
     border-style: solid;
     margin: 0px;
     min-height: 32px;
@@ -131,8 +126,8 @@ button[type=submit].win-button {
     .win-type-body();
 }
 
-input.win-textbox::-ms-clear,
-input.win-textbox::-ms-reveal {
+.win-textbox::-ms-clear,
+.win-textbox::-ms-reveal {
     padding-right: 2px;
     margin-right: -8px;
     margin-left: 2px;
@@ -141,7 +136,7 @@ input.win-textbox::-ms-reveal {
     width: 30px;
     height: 32px;
 }
-input.win-textbox {
+.win-textbox {
     .RTL({
         &::-ms-clear,
         &::-ms-reveal {
@@ -154,7 +149,7 @@ input.win-textbox {
 //
 // File upload control.
 //
-input[type=file].win-button {
+.win-button.win-button-file {
     border: none;
     min-width: 100px;
     min-height: 20px;
@@ -194,7 +189,7 @@ input[type=file].win-button {
 //
 // Dropdown
 //
-select.win-dropdown {
+.win-dropdown {
     min-width: 56px;
     max-width: 368px;
     min-height: 32px;
@@ -227,16 +222,16 @@ select[multiple].win-dropdown {
     vertical-align: bottom;
 }
 
-select.win-dropdown option {
+.win-dropdown option {
     .win-type-body();
 }
 
 //
 // Progress
 //
-progress.win-progress-bar,
-progress.win-progress-ring,
-progress.win-ring {
+.win-progress-bar,
+.win-progress-ring,
+.win-ring {
     width: 180px;
     height: 4px;
     -webkit-appearance: none;
@@ -260,6 +255,7 @@ progress.win-ring {
     &:indeterminate::-webkit-progress-value {
         position: relative;
         -webkit-animation: win-progress-indeterminate 3s linear infinite;
+        animation: win-progress-indeterminate 3s linear infinite;
     }
 
     &.win-paused:not(:indeterminate) {
@@ -274,8 +270,8 @@ progress.win-ring {
     }
 }
 
-progress.win-progress-ring,
-progress.win-ring {
+.win-progress-ring,
+.win-ring {
     width: 20px;
     height: 20px;
 
@@ -302,6 +298,14 @@ progress.win-ring {
     100% {left: 0; width: 25%;}
 }
 
+@keyframes win-progress-indeterminate {
+    0% {left: 0; width: 25%;}
+    50% {left: calc(75%); width: 25%;}
+    75% {left: calc(100%); width: 0%;}
+    75.1% {left: 0; width: 0%;}
+    100% {left: 0; width: 25%;}
+}
+
 @keyframes win-progress-fade-out {
     from {
         opacity: 1.0;
@@ -314,7 +318,7 @@ progress.win-ring {
 //
 // Horizontal slider
 //
-input[type=range].win-slider {
+.win-slider {
     -webkit-appearance: none;
 
     width: 280px;
@@ -349,7 +353,7 @@ input[type=range].win-slider {
 //
 // Vertical slider
 //
-input[type=range].win-slider.win-vertical {
+.win-slider.win-vertical {
     writing-mode: bt-lr;
 
     width: 22px; // Leave enough room for tick marks
@@ -372,7 +376,7 @@ input[type=range].win-slider.win-vertical {
 //
 // Link
 //
-a.win-link {
+.win-link {
     text-decoration: underline;
     cursor: pointer;
     touch-action: manipulation;
@@ -381,9 +385,7 @@ a.win-link {
 //
 // Code tags
 //
-code.win-code,
-pre.win-code,
-samp.win-code {
+.win-code {
     font-family: "Consolas", "Menlo", "Monaco", "Courier New", monospace;
     .win-type-body();
 }
