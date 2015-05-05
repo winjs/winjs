@@ -33,7 +33,6 @@ iframe {
 // Some elements must have font-family defined explicitly as
 // otherwise the browser user-agent stylesheet will win
 .win-fonts {
-    .win-type-body();
 
     &,
     .win-type-xx-large,
@@ -48,7 +47,9 @@ iframe {
     .win-textarea,
     button,
     select,
-    option {
+    option,
+    span {
+        .win-type-body();
         font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
     }
 }
