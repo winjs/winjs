@@ -136,7 +136,9 @@
     //
     // Progress
     //
-    progress.win-progress {
+    progress.win-progress-bar,
+    progress.win-progress-ring,
+    progress.win-ring, {
       // Main colors
       color: @accentColor;
 
@@ -154,11 +156,6 @@
         background-color: @accentColor;
       }
 
-      // Ring
-      &.win-ring {
-        background-color: transparent;
-      }
-
       // This is a weird webkit issue where the background color
       // of the progress seems to overlay with this background color,
       // but neither one on its own seems to work correctly. Really we just
@@ -167,6 +164,11 @@
       &::-webkit-progress-bar {
         background-color: transparent;
       }
+    }
+
+    progress.win-progress-ring,
+    progress.win-ring, {
+        background-color: transparent;
     }
 
     //
