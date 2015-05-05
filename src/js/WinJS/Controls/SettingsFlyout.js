@@ -130,7 +130,7 @@ define([
                     onLightDismiss: function () {
                         that.hide();
                     },
-                    onActivate: function (useSetActive) {
+                    onTakeFocus: function (useSetActive) {
                         if (!that._dismissable.restoreFocus()) {
                             var firstDiv = that.element.querySelector("." + _Constants.firstDivClass);
                             if (firstDiv) {

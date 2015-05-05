@@ -146,7 +146,7 @@ define([
                     onLightDismiss: function () {
                         that.close();
                     },
-                    onActivate: function (useSetActive) {
+                    onTakeFocus: function (useSetActive) {
                         if (!that._dismissable.restoreFocus()) {
                             that._layoutImpl.setFocusOnShow();
                         }
