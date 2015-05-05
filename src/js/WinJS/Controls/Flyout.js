@@ -73,6 +73,7 @@ define([
                     var index = this._clients.indexOf(client);
                     if (index === -1) {
                         this._clients.push(client);
+                        client.onShow(this);
                         if (!_LightDismissService.isShown(this)) {
                             _LightDismissService.shown(this);
                         } else {
@@ -107,6 +108,16 @@ define([
                             this._activateTopFocusableClientIfNeeded();
                         }
                     }
+                },
+                
+                keyDown: function _LightDismissableLayer_keyDown(client /*: ILightDismissable */, eventObject) {
+                    _LightDismissService.keyDown(client, eventObject);
+                },
+                keyUp: function _LightDismissableLayer_keyUp(client /*: ILightDismissable */, eventObject) {
+                    _LightDismissService.keyUp(client, eventObject);
+                },
+                keyPress: function _LightDismissableLayer_keyPress(client /*: ILightDismissable */, eventObject) {
+                    _LightDismissService.keyPress(client, eventObject);
                 },
 
                 // Used by tests.
