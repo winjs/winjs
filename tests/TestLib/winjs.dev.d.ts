@@ -148,7 +148,7 @@ declare module WinJS {
                 setZIndex(zIndex: string): void;
                 getZIndexCount(): number;
                 containsElement(element: HTMLElement): boolean;
-                onActivate(): void;
+                onTakeFocus(useSetActive: boolean): void;
                 onFocus(element: HTMLElement): void;
                 onHide(): void;
                 onShouldLightDismiss(info: ILightDismissInfo): boolean;

@@ -203,7 +203,7 @@ define([
                             onLightDismiss: function () {
                                 dialog.hide(DismissalResult.none);
                             },
-                            onActivate: function (useSetActive) {
+                            onTakeFocus: function (useSetActive) {
                                 // TODO: Make sure dialog._dom.dialog has tabIndex
                                 dialog._dismissable.restoreFocus() ||
                                     _ElementUtilities._focusFirstFocusableElement(dialog._dom.content) ||

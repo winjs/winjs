@@ -113,17 +113,13 @@ export interface ILightDismissable {
     // Hooks
 
     // The dismissable should take focus if focus isn't already inside of it.
-    // This fires when the dismissable becomes the focused/active/topmost dismissable.
-    // *useSetActive* is a hint to onActivate as to whether or not it should draw a
+    // This fires when the dismissable becomes the focused/active/topmost dismissable
+    // and when the topmost dismissable loses focus but doesn't dismiss.
+    // *useSetActive* is a hint to onTakeFocus as to whether or not it should draw a
     // keyboard focus visual when taking focus. If the last input type was keyboard,
     // use focus() so a keyboard focus visual is drawn. Otherwise, use setActive() so
     // no focus visual is drawn.
-    
-    // TODO: Rename onActivate -> onTakeFocus so we can call it even when the dismissable
-    // is the top dismissable (e.g. we can call it when the dismissable is the top dismissable,
-    // loses focus, and doesn't want to dismiss (onShouldLightDismiss)).
-    
-    onActivate(useSetActive: boolean): void;
+    onTakeFocus(useSetActive: boolean): void;
     // Focus has moved into or within this dismissable (similar to a focusin handler except
     // you don't have to explicitly register for it).
     onFocus(element: HTMLElement): void;
@@ -189,7 +185,7 @@ export interface ILightDismissableElementArgs {
     setZIndex?(zIndex: string): void;
     getZIndexCount?(): number;
     containsElement?(element: HTMLElement): boolean;
-    onActivate?(useSetActive: boolean): void;
+    onTakeFocus?(useSetActive: boolean): void;
     onFocus?(element: HTMLElement): void;
     onShow?(service: ILightDismissService): void;
     onHide?(): void;
@@ -222,7 +218,7 @@ class AbstractDismissableElement implements ILightDismissable {
         if (args.setZIndex) { this.setZIndex = args.setZIndex; }
         if (args.getZIndexCount) { this.getZIndexCount = args.getZIndexCount; }
         if (args.containsElement) { this.containsElement = args.containsElement; }
-        if (args.onActivate) { this.onActivate = args.onActivate; }
+        if (args.onTakeFocus) { this.onTakeFocus = args.onTakeFocus; }
         this._customOnFocus = args.onFocus;
         this._customOnShow = args.onShow;
         this._customOnHide = args.onHide;
@@ -270,7 +266,7 @@ class AbstractDismissableElement implements ILightDismissable {
     containsElement(element: HTMLElement): boolean {
         return this.element.contains(element);
     }
-    onActivate(useSetActive: boolean): void {
+    onTakeFocus(useSetActive: boolean): void {
         this.restoreFocus() ||
             _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
             tryFocus(this.element, useSetActive);
@@ -343,7 +339,7 @@ class LightDismissableBody implements ILightDismissable {
     containsElement(element: HTMLElement): boolean {
         return _Global.document.body.contains(element);
     }
-    onActivate(useSetActive: boolean): void {
+    onTakeFocus(useSetActive: boolean): void {
         this.currentFocus && this.containsElement(this.currentFocus) && tryFocus(this.currentFocus, useSetActive);
     }
     onFocus(element: HTMLElement): void {
@@ -378,9 +374,13 @@ class LightDismissService implements ILightDismissService {
     
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[] = [];
-    // The *_activeDismissable* is the dismissable that currently has focus. It is also
-    // the topmost dismissable.
-    private _activeDismissable: ILightDismissable;
+    // The *_activeClient.dismissable* is the dismissable that currently has focus. It is also
+    // the topmost dismissable. *_activeClient.needsFocus* represents whether or not
+    // updateDom needs to set focus on that dismissable.
+    private _activeClient: { dismissable: ILightDismissable; needsFocus: boolean; } = {
+        dismissable: null,
+        needsFocus: false
+    };
     private _notifying = false;
     private _bodyClient = new LightDismissableBody();
 
@@ -520,12 +520,19 @@ class LightDismissService implements ILightDismissService {
         }
 
         var activeDismissable = this._clients.length > 0 ? this._clients[this._clients.length - 1] : null;
-        if (this._activeDismissable !== activeDismissable) {
-            this._activeDismissable = activeDismissable;
+        if (this._activeClient.dismissable !== activeDismissable) {
+            this._activeClient = {
+                dismissable: activeDismissable,
+                needsFocus: true
+            };
+        }
+        
+        if (this._activeClient.needsFocus) {
+            this._activeClient.needsFocus = false;
             // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
             // Otherwise, use setActive() so no focus visual is drawn.
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
-            this._activeDismissable && this._activeDismissable.onActivate(useSetActive);
+            this._activeClient.dismissable && this._activeClient.dismissable.onTakeFocus(useSetActive);
         }
     }
     
@@ -574,7 +581,7 @@ class LightDismissService implements ILightDismissService {
             }
         };
         for (var i = clients.length - 1; i >= 0 && !lightDismissInfo._stop; i--) {
-            lightDismissInfo.active = this._activeDismissable === clients[i];
+            lightDismissInfo.active = this._activeClient.dismissable === clients[i];
             if (clients[i].onShouldLightDismiss(lightDismissInfo)) {
                 clients[i].onLightDismiss(lightDismissInfo);
             }
@@ -605,8 +612,11 @@ class LightDismissService implements ILightDismissService {
         if (i !== -1) {
             this._clients[i].onFocus(target);
         }
-
-        this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1, this._clients.length));
+        
+        if (i + 1 < this._clients.length) {
+            this._activeClient.needsFocus = true;
+            this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1));
+        }
     }
 
     private _onKeyDown(eventObject: KeyboardEvent) {

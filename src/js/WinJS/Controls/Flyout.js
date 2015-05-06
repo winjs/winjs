@@ -161,7 +161,7 @@ define([
                         // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
                         // Otherwise, use setActive() so no focus visual is drawn.
                         var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
-                        topClient.onActivate(useSetActive);
+                        topClient.onTakeFocus(useSetActive);
                     }
                 },
 
@@ -179,7 +179,7 @@ define([
                 containsElement: function _LightDismissableLayer_containsElement(element) {
                     return !!this._clientForElement(element);
                 },
-                onActivate: function _LightDismissableLayer_onActivate(useSetActive) {
+                onTakeFocus: function _LightDismissableLayer_onTakeFocus(useSetActive) {
                     // Prefer the client that has focus
                     var client = this._focusableClientForElement(_Global.document.activeElement);
 
@@ -194,7 +194,7 @@ define([
                     }
 
                     this._currentlyFocusedClient = client;
-                    client && client.onActivate(useSetActive);
+                    client && client.onTakeFocus(useSetActive);
                 },
                 onFocus: function _LightDismissableLayer_onFocus(element) {
                     this._currentlyFocusedClient = this._clientForElement(element);
@@ -422,7 +422,7 @@ define([
                         onLightDismiss: function () {
                             that.hide();
                         },
-                        onActivate: function (useSetActive) {
+                        onTakeFocus: function (useSetActive) {
                             if (!that._dismissable.restoreFocus()) {
                                 if (!_ElementUtilities.hasClass(that.element, _Constants.menuClass)) {
                                     // Put focus on the first child in the Flyout
