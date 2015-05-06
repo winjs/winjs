@@ -311,7 +311,7 @@ class LightDismissableBody implements ILightDismissable {
     onFocus(element: HTMLElement): void {
          this.currentFocus = element;
     }
-    onShow(): void { }
+    onShow(service: ILightDismissService): void { }
     onHide(): void {
         this.currentFocus = null;
     }

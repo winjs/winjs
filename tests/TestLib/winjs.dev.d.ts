@@ -143,14 +143,29 @@ declare module WinJS {
                 stopPropagation(): void;
                 preventDefault(): void;
             }
+            
+            export interface IKeyboardInfo {
+                type: string;
+                keyCode: number;
+                propagationStopped: boolean;
+                stopPropagation(): void;
+            }
+            
+            export interface ILightDismissService {
+                keyDown(client: ILightDismissable, eventObject: KeyboardEvent): void;
+                keyUp(client: ILightDismissable, eventObject: KeyboardEvent): void;
+                keyPress(client: ILightDismissable, eventObject: KeyboardEvent): void;
+            }
 
-            interface ILightDismissable {
+            export interface ILightDismissable {
                 setZIndex(zIndex: string): void;
                 getZIndexCount(): number;
                 containsElement(element: HTMLElement): boolean;
                 onTakeFocus(useSetActive: boolean): void;
                 onFocus(element: HTMLElement): void;
+                onShow(service: ILightDismissService): void;
                 onHide(): void;
+                onKeyInStack(info: IKeyboardInfo): void;
                 onShouldLightDismiss(info: ILightDismissInfo): boolean;
                 onLightDismiss(info: ILightDismissInfo): void;
             }
@@ -159,6 +174,9 @@ declare module WinJS {
             function hidden(client: ILightDismissable): void;
             function isShown(client: ILightDismissable): boolean;
             function isTopmost(client: ILightDismissable): boolean;
+            function keyDown(client: ILightDismissable, eventObject: KeyboardEvent): void;
+            function keyUp(client: ILightDismissable, eventObject: KeyboardEvent): void;
+            function keyPress(client: ILightDismissable, eventObject: KeyboardEvent): void;
             function _clickEaterTapped(): void;
         }
 
