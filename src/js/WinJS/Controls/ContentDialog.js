@@ -460,7 +460,6 @@ define([
                 }
                 options = options || {};
                 
-                this._onBeforeRequestingFocusOnKeyboardInputBound = this._onBeforeRequestingFocusOnKeyboardInput.bind(this);
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
                 this._onInputPaneHiddenBound = this._onInputPaneHidden.bind(this);
 
@@ -755,11 +754,6 @@ define([
                     }
                 },
 
-                _onBeforeRequestingFocusOnKeyboardInput: function ContentDialog_onBeforeRequestingFocusOnKeyboardInput(eventObject) {
-                    // Suppress the requestingFocusOnKeyboardInput event.
-                    eventObject.preventDefault();
-                },
-
                 _onStartBodyTabFocusIn: function ContentDialog_onStartBodyTabFocusIn() {
                     _ElementUtilities._focusLastFocusableElement(this._dom.dialog);
                 },
@@ -849,15 +843,11 @@ define([
                 _addExternalListeners: function ContentDialog_addExternalListeners() {
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
-                    
-                    Application._applicationListener.addEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
 
                 _removeExternalListeners: function ContentDialog_removeExternalListeners() {
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
-                    
-                    Application._applicationListener.removeEventListener(this._dom.root, "beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 },
 
                 _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {

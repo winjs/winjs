@@ -348,7 +348,8 @@ class LightDismissService implements ILightDismissService {
     };
     private _notifying = false;
     private _bodyClient = new LightDismissableBody();
-
+    
+    private _onBeforeRequestingFocusOnKeyboardInputBound: (eventObject: Event) => void;
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
     private _onWindowResizeBound: (eventObject: Event) => void;
@@ -357,7 +358,8 @@ class LightDismissService implements ILightDismissService {
 
     constructor() {
         this._clickEaterEl = this._createClickEater();
-
+        
+        this._onBeforeRequestingFocusOnKeyboardInputBound = this._onBeforeRequestingFocusOnKeyboardInput.bind(this);
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
         this._onWindowResizeBound = this._onWindowResize.bind(this);
@@ -449,12 +451,14 @@ class LightDismissService implements ILightDismissService {
         if (serviceActive !== rendered.serviceActive) {
             // Unregister/register for events that occur frequently.
             if (serviceActive) {
+                Application.addEventListener("beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 _ElementUtilities._addEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.documentElement.addEventListener("keydown", this._onKeyDownBound);
                 _Global.window.addEventListener("resize", this._onWindowResizeBound);
                 this._bodyClient.currentFocus = <HTMLElement>_Global.document.activeElement;
                 _Global.document.body.appendChild(this._clickEaterEl);
             } else {
+                Application.removeEventListener("beforerequestingfocusonkeyboardinput", this._onBeforeRequestingFocusOnKeyboardInputBound);
                 _ElementUtilities._removeEventListener(_Global.document.documentElement, "focusin", this._onFocusInBound);
                 _Global.document.documentElement.removeEventListener("keydown", this._onKeyDownBound);
                 _Global.window.removeEventListener("resize", this._onWindowResizeBound);
@@ -551,6 +555,11 @@ class LightDismissService implements ILightDismissService {
         this._updateDom();
 
         return lightDismissInfo._doDefault;
+    }
+    
+    _onBeforeRequestingFocusOnKeyboardInput(eventObject: Event) {
+        // Suppress the requestingFocusOnKeyboardInput event.
+        return true;
     }
 
     //
