@@ -96,7 +96,14 @@ export interface ILightDismissInfo {
     preventDefault(): void;
 }
 
+var KeyboardInfoType = {
+    keyDown: "keyDown",
+    keyUp: "keyUp",
+    keyPress: "keyPress"
+};
+
 export interface IKeyboardInfo {
+    type: string;
     keyCode: number;
     stopPropagation(): void;
 }
@@ -129,9 +136,7 @@ export interface ILightDismissable {
     onHide(): void;
     
     // Keyboard events
-    onKeyDownInStack(info: IKeyboardInfo): void;
-    onKeyUpInStack(info: IKeyboardInfo): void;
-    onKeyPressInStack(info: IKeyboardInfo): void;
+    onKeyInStack(info: IKeyboardInfo): void;
 
     // Dismissal
 
@@ -189,9 +194,7 @@ export interface ILightDismissableElementArgs {
     onFocus?(element: HTMLElement): void;
     onShow?(service: ILightDismissService): void;
     onHide?(): void;
-    onKeyDownInStack?(info: IKeyboardInfo): void;
-    onKeyUpInStack?(info: IKeyboardInfo): void;
-    onKeyPressInStack?(info: IKeyboardInfo): void;
+    onKeyInStack?(info: IKeyboardInfo): void;
     onShouldLightDismiss?(info: ILightDismissInfo): boolean;
 }
 
@@ -200,9 +203,9 @@ class AbstractDismissableElement implements ILightDismissable {
 
     // lde prefix stands for LightDismissableElement
     private _ldeCurrentFocus: HTMLElement;
-    private _ldeOnKeyDownInStackBound: (eventObject: KeyboardEvent) => void;
-    private _ldeOnKeyUpInStackBound: (eventObject: KeyboardEvent) => void;
-    private _ldeOnKeyPressInStackBound: (eventObject: KeyboardEvent) => void;
+    private _ldeOnKeyDownBound: (eventObject: KeyboardEvent) => void;
+    private _ldeOnKeyUpBound: (eventObject: KeyboardEvent) => void;
+    private _ldeOnKeyPressBound: (eventObject: KeyboardEvent) => void;
     private _ldeService: ILightDismissService;
 
     private _customOnFocus: (element: HTMLElement) => void;
@@ -224,9 +227,9 @@ class AbstractDismissableElement implements ILightDismissable {
         this._customOnHide = args.onHide;
         if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
         
-        this._ldeOnKeyDownInStackBound = this._ldeOnKeyDownInStack.bind(this);
-        this._ldeOnKeyUpInStackBound = this._ldeOnKeyUpInStack.bind(this);
-        this._ldeOnKeyPressInStackBound = this._ldeOnKeyPressInStack.bind(this);
+        this._ldeOnKeyDownBound = this._ldeOnKeyDown.bind(this);
+        this._ldeOnKeyUpBound = this._ldeOnKeyUp.bind(this);
+        this._ldeOnKeyPressBound = this._ldeOnKeyPress.bind(this);
     }
     
     restoreFocus(): boolean {
@@ -243,14 +246,13 @@ class AbstractDismissableElement implements ILightDismissable {
         }
     }
     
-    // TODO: remove InStack from name
-    private _ldeOnKeyDownInStack(eventObject: KeyboardEvent) {
+    private _ldeOnKeyDown(eventObject: KeyboardEvent) {
         this._ldeService.keyDown(this, eventObject);
     }
-    private _ldeOnKeyUpInStack(eventObject: KeyboardEvent) {
+    private _ldeOnKeyUp(eventObject: KeyboardEvent) {
         this._ldeService.keyUp(this, eventObject);
     }
-    private _ldeOnKeyPressInStack(eventObject: KeyboardEvent) {
+    private _ldeOnKeyPress(eventObject: KeyboardEvent) {
         this._ldeService.keyPress(this, eventObject);
     }
     
@@ -277,22 +279,20 @@ class AbstractDismissableElement implements ILightDismissable {
     }
     onShow(service: ILightDismissService): void {
         this._ldeService = service;
-        this.element.addEventListener("keydown", this._ldeOnKeyDownInStackBound);
-        this.element.addEventListener("keyup", this._ldeOnKeyUpInStackBound);
-        this.element.addEventListener("keypress", this._ldeOnKeyPressInStackBound);
+        this.element.addEventListener("keydown", this._ldeOnKeyDownBound);
+        this.element.addEventListener("keyup", this._ldeOnKeyUpBound);
+        this.element.addEventListener("keypress", this._ldeOnKeyPressBound);
         this._customOnShow && this._customOnShow(service);
     }
     onHide(): void {
         this._ldeCurrentFocus = null;
         this._ldeService = null;
-        this.element.removeEventListener("keydown", this._ldeOnKeyDownInStackBound);
-        this.element.removeEventListener("keyup", this._ldeOnKeyUpInStackBound);
-        this.element.removeEventListener("keypress", this._ldeOnKeyPressInStackBound);
+        this.element.removeEventListener("keydown", this._ldeOnKeyDownBound);
+        this.element.removeEventListener("keyup", this._ldeOnKeyUpBound);
+        this.element.removeEventListener("keypress", this._ldeOnKeyPressBound);
         this._customOnHide && this._customOnHide();
     }
-    onKeyDownInStack(info: IKeyboardInfo): void { }
-    onKeyUpInStack(info: IKeyboardInfo): void { }
-    onKeyPressInStack(info: IKeyboardInfo): void { }
+    onKeyInStack(info: IKeyboardInfo): void { }
     onShouldLightDismiss(info: ILightDismissInfo): boolean {
         return DismissalPolicies.light(info);
     }
@@ -306,17 +306,7 @@ export class LightDismissableElement extends AbstractDismissableElement implemen
 }
 
 export class ModalElement extends AbstractDismissableElement implements ILightDismissable {
-    onKeyDownInStack(info: IKeyboardInfo): void {
-        // stopPropagation so that none of the app's other event handlers will see the event.
-        // Don't preventDefault so that the browser's hotkeys will still work.
-        info.stopPropagation();
-    }
-    onKeyUpInStack(info: IKeyboardInfo): void {
-        // stopPropagation so that none of the app's other event handlers will see the event.
-        // Don't preventDefault so that the browser's hotkeys will still work.
-        info.stopPropagation();
-    }
-    onKeyPressInStack(info: IKeyboardInfo): void {
+    onKeyInStack(info: IKeyboardInfo): void {
         // stopPropagation so that none of the app's other event handlers will see the event.
         // Don't preventDefault so that the browser's hotkeys will still work.
         info.stopPropagation();
@@ -349,9 +339,7 @@ class LightDismissableBody implements ILightDismissable {
     onHide(): void {
         this.currentFocus = null;
     }
-    onKeyDownInStack(info: IKeyboardInfo): void { }
-    onKeyUpInStack(info: IKeyboardInfo): void { }
-    onKeyPressInStack(info: IKeyboardInfo): void { }
+    onKeyInStack(info: IKeyboardInfo): void { }
     onShouldLightDismiss(info: ILightDismissInfo): boolean {
         return false;
     }
@@ -444,22 +432,16 @@ class LightDismissService implements ILightDismissService {
         if (eventObject.keyCode === _ElementUtilities.Key.escape) {
             this._escapePressed(eventObject);
         } else {
-            this._dispatchKeyboardEvent(client, eventObject, function (currentClient, info) {
-                currentClient.onKeyDownInStack(info);
-            });
+            this._dispatchKeyboardEvent(client, KeyboardInfoType.keyDown, eventObject);
         }
     }
     
     keyUp(client: ILightDismissable, eventObject: KeyboardEvent) {
-        this._dispatchKeyboardEvent(client, eventObject, function (currentClient, info) {
-            currentClient.onKeyUpInStack(info);
-        });
+        this._dispatchKeyboardEvent(client, KeyboardInfoType.keyUp, eventObject);
     }
     
     keyPress(client: ILightDismissable, eventObject: KeyboardEvent) {
-        this._dispatchKeyboardEvent(client, eventObject, function (currentClient, info) {
-            currentClient.onKeyPressInStack(info);
-        });
+        this._dispatchKeyboardEvent(client, KeyboardInfoType.keyPress, eventObject);
     }
     
     isShown(client: ILightDismissable) {
@@ -536,10 +518,11 @@ class LightDismissService implements ILightDismissService {
         }
     }
     
-    private _dispatchKeyboardEvent(client: ILightDismissable, eventObject: KeyboardEvent, callback: (client: ILightDismissable, info: IKeyboardInfo) => void) {
+    private _dispatchKeyboardEvent(client: ILightDismissable, keyboardInfoType: string, eventObject: KeyboardEvent) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
             var info = {
+                type: keyboardInfoType,
                 keyCode: eventObject.keyCode,
                 _stop: false,
                 stopPropagation: function () {
@@ -547,9 +530,9 @@ class LightDismissService implements ILightDismissService {
                     eventObject.stopPropagation();
                 }
             };
-            var clients = this._clients.slice(0, index);
+            var clients = this._clients.slice(0, index + 1);
             for (var i = clients.length - 1; i >= 0 && !info._stop; i--) {
-                callback(clients[i], info);
+                clients[i].onKeyInStack(info);
             }
         }
     }
