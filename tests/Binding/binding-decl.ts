@@ -931,6 +931,33 @@ module CorsicaTests {
                 then(cleanup).
                 then(complete, errorHandler);
         };
+        
+        testSimpleWithConverterWithUndefinedProperty = function (complete) {
+            var mydiv = document.createElement('div');
+            var cleanup = parent(mydiv);
+            mydiv.setAttribute('id', 'mydiv');
+            // The non-exiting tooltip should trigger the myaction also and set it to an empty string ""
+            mydiv.setAttribute('data-win-bind', 'textContent:name myaction;title:tooltip myaction');
+
+            window['myaction'] = WinJS.Binding.converter(function (v) {
+                return v ? v : "";
+            });
+            WinJS.Binding.initializer(window['myaction']);
+
+            var obj = { name: 'Sally', width: 100 };
+            var bindingDone = WinJS.Binding.processAll(mydiv, WinJS.Binding.as(obj));
+
+            bindingDone.
+                then(post).
+                then(function () {
+                    delete window['myaction'];
+                    LiveUnit.Assert.areEqual("Sally", mydiv.textContent);
+                    LiveUnit.Assert.areEqual("", mydiv.title);
+                }).
+                then(null, errorHandler).
+                then(cleanup).
+                then(complete, errorHandler);
+        };
 
         testSimpleWithConverterDefaultInitializer = function (complete) {
             var mydiv = document.createElement('div');

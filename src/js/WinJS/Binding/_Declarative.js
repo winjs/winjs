@@ -382,13 +382,7 @@ define([
                 bindable = source._getObservable();
             }
             if (bindable) {
-                var counter = 0;
                 var workerResult = bindWorker(_Data.as(source), sourceProperties, function (v) {
-                    if (++counter === 1) {
-                        if (v === initialValue) {
-                            return;
-                        }
-                    }
                     var found = checkBindingToken(_DomWeakRefTable._getWeakRefElement(ref), bindingId);
                     if (found) {
                         nestedSet(found, destProperties, convert(requireSupportedForProcessing(v)));
