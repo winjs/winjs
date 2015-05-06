@@ -186,16 +186,8 @@ export interface ILightDismissableElementArgs {
     //     element.
     tabIndex: number;
     onLightDismiss(info: ILightDismissInfo): void;
-
-    setZIndex?(zIndex: string): void;
-    getZIndexCount?(): number;
-    containsElement?(element: HTMLElement): boolean;
+    
     onTakeFocus?(useSetActive: boolean): void;
-    onFocus?(element: HTMLElement): void;
-    onShow?(service: ILightDismissService): void;
-    onHide?(): void;
-    onKeyInStack?(info: IKeyboardInfo): void;
-    onShouldLightDismiss?(info: ILightDismissInfo): boolean;
 }
 
 class AbstractDismissableElement implements ILightDismissable {
@@ -208,24 +200,13 @@ class AbstractDismissableElement implements ILightDismissable {
     private _ldeOnKeyPressBound: (eventObject: KeyboardEvent) => void;
     private _ldeService: ILightDismissService;
 
-    private _customOnFocus: (element: HTMLElement) => void;
-    private _customOnShow: (service: ILightDismissService) => void;
-    private _customOnHide: () => void;
-
     constructor(args: ILightDismissableElementArgs) {
         this.element = args.element;
         this.element.tabIndex = args.tabIndex;
         this.onLightDismiss = args.onLightDismiss;
 
         // Allow the caller to override the default implementations of our ILightDismissable methods.
-        if (args.setZIndex) { this.setZIndex = args.setZIndex; }
-        if (args.getZIndexCount) { this.getZIndexCount = args.getZIndexCount; }
-        if (args.containsElement) { this.containsElement = args.containsElement; }
         if (args.onTakeFocus) { this.onTakeFocus = args.onTakeFocus; }
-        this._customOnFocus = args.onFocus;
-        this._customOnShow = args.onShow;
-        this._customOnHide = args.onHide;
-        if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
         
         this._ldeOnKeyDownBound = this._ldeOnKeyDown.bind(this);
         this._ldeOnKeyUpBound = this._ldeOnKeyUp.bind(this);
@@ -275,14 +256,12 @@ class AbstractDismissableElement implements ILightDismissable {
     }
     onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
-        this._customOnFocus && this._customOnFocus(element);
     }
     onShow(service: ILightDismissService): void {
         this._ldeService = service;
         this.element.addEventListener("keydown", this._ldeOnKeyDownBound);
         this.element.addEventListener("keyup", this._ldeOnKeyUpBound);
         this.element.addEventListener("keypress", this._ldeOnKeyPressBound);
-        this._customOnShow && this._customOnShow(service);
     }
     onHide(): void {
         this._ldeCurrentFocus = null;
@@ -290,16 +269,19 @@ class AbstractDismissableElement implements ILightDismissable {
         this.element.removeEventListener("keydown", this._ldeOnKeyDownBound);
         this.element.removeEventListener("keyup", this._ldeOnKeyUpBound);
         this.element.removeEventListener("keypress", this._ldeOnKeyPressBound);
-        this._customOnHide && this._customOnHide();
     }
+    
+    // Concrete subclasses are expected to implement these.
     onKeyInStack(info: IKeyboardInfo): void { }
-    onShouldLightDismiss(info: ILightDismissInfo): boolean {
-        return DismissalPolicies.light(info);
-    }
+    onShouldLightDismiss(info: ILightDismissInfo): boolean { return false; }
+    
+    // Consumers of concrete subclasses of AbstractDismissableElement are expected to
+    // provide these as parameters to the constructor.
     onLightDismiss(info: ILightDismissInfo): void { }
 }
 
 export class LightDismissableElement extends AbstractDismissableElement implements ILightDismissable {
+    onKeyInStack(info: IKeyboardInfo): void { }
     onShouldLightDismiss(info: ILightDismissInfo): boolean {
         return DismissalPolicies.light(info);
     }
