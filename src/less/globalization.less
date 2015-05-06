@@ -114,27 +114,23 @@
 
     // Apply the font fallback mixin to each of these elements,
     // for this index
-    .win-fonts {
-        &,
-        .win-type-xx-large,
-        .win-type-x-large,
-        .win-type-large,
-        .win-type-medium,
-        .win-type-small,
-        .win-type-x-small,
-        .win-type-xx-small,
-        input,
-        textarea,
-        .win-textarea,
-        button,
-        select,
-        option {
-            .fontFallBack(@index);
-        }
-
-        // Run the next iteration
-        .buildFontFallbacks(@index + 1);
+    .win-type-header,
+    .win-type-subheader,
+    .win-type-title,
+    .win-type-subtitle,
+    .win-type-base,
+    .win-type-body,
+    .win-type-caption,
+    .win-button,
+    .win-dropdown,
+    .win-textbox,
+    .win-link,
+    .win-textarea {
+        .fontFallBack(@index);
     }
+
+    // Run the next iteration
+    .buildFontFallbacks(@index + 1);
 }
 
 // Begin the loop at index 1, the first index in LESS

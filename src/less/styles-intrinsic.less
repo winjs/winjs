@@ -29,28 +29,20 @@ iframe {
     border: 0;
 }
 
-// Define basic font fallback list for intrinsic elements
-// Some elements must have font-family defined explicitly as
-// otherwise the browser user-agent stylesheet will win
-.win-fonts {
-
-    &,
-    .win-type-xx-large,
-    .win-type-x-large,
-    .win-type-large,
-    .win-type-medium,
-    .win-type-small,
-    .win-type-x-small,
-    .win-type-xx-small,
-    input,
-    textarea,
-    .win-textarea,
-    button,
-    select,
-    option {
-        .win-type-body();
-        font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
-    }
+// Define basic font fallback list
+.win-type-header,
+.win-type-subheader,
+.win-type-title,
+.win-type-subtitle,
+.win-type-base,
+.win-type-body,
+.win-type-caption,
+.win-button,
+.win-dropdown,
+.win-textbox,
+.win-link,
+.win-textarea {
+    font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
 }
 
 
@@ -400,11 +392,11 @@ select[multiple].win-dropdown {
     white-space: nowrap;
 }
 
-h1.win-type-ellipsis, .win-type-xx-large.win-type-ellipsis {
+h1.win-type-ellipsis, .win-type-header.win-type-ellipsis {
     line-height: 1.4286;
 }
 
-h2.win-type-ellipsis, .win-type-x-large.win-type-ellipsis {
+h2.win-type-ellipsis, .win-type-subheader.win-type-ellipsis {
     line-height: 1.5;
 }
 
@@ -418,12 +410,12 @@ h2.win-type-ellipsis, .win-type-x-large.win-type-ellipsis {
 //
 // Headers
 //
-.win-fonts h1,
-.win-fonts h2,
-.win-fonts h3,
-.win-fonts h4,
-.win-fonts h5,
-.win-fonts h6 {
+h1.win-type-header,
+h2.win-type-subheader,
+h3.win-type-title,
+h4.win-type-subtitle,
+h5.win-type-base,
+h6.win-type-body {
     margin-top: 0px;
     margin-bottom: 0px;
 }
