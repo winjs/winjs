@@ -14,7 +14,6 @@ require(["require-style!less/styles-lightdismissservice"]);
 "use strict";
 
 var baseZIndex = 1000;
-var rightButton = 2;
 
 var Strings = {
     get closeOverlay() { return _Resources._getWinJSString("ui/closeOverlay").value; }
@@ -23,10 +22,7 @@ export var _ClassNames = {
     _clickEater: "win-clickeater"
 };
 var EventNames = {
-    requestingFocusOnKeyboardInput: "requestingfocusonkeyboardinput",
-    edgyStarting: "edgystarting",
-    edgyCompleted: "edgycompleted",
-    edgyCanceled: "edgycanceled"
+    requestingFocusOnKeyboardInput: "requestingfocusonkeyboardinput"
 };
 export var LightDismissalReasons = {
     tap: "tap",
@@ -34,8 +30,7 @@ export var LightDismissalReasons = {
     escape: "escape",
     hardwareBackButton: "hardwareBackButton",
     windowResize: "windowResize",
-    windowBlur: "windowBlur",
-    edgy: "edgy"
+    windowBlur: "windowBlur"
 };
 // Built-in implementations of ILightDismissable's onShouldLightDismiss.
 export var DismissalPolicies = {
@@ -62,7 +57,6 @@ export var DismissalPolicies = {
             case LightDismissalReasons.lostFocus:
             case LightDismissalReasons.windowResize:
             case LightDismissalReasons.windowBlur:
-            case LightDismissalReasons.edgy:
                 return true;
         }
     },
@@ -75,7 +69,6 @@ export var DismissalPolicies = {
             case LightDismissalReasons.lostFocus:
             case LightDismissalReasons.windowResize:
             case LightDismissalReasons.windowBlur:
-            case LightDismissalReasons.edgy: // TODO: Delete edgy
                 return false;
                 break;
             case LightDismissalReasons.escape:
@@ -332,7 +325,8 @@ class LightDismissableBody implements ILightDismissable {
 // Light dismiss service
 //
 
-// TODO: Better name?
+// Methods of the LightDismissService that the builtin implementations of
+// ILightDismissable take a dependency on.
 export interface ILightDismissService {
     keyDown(client: ILightDismissable, eventObject: KeyboardEvent): void;
     keyUp(client: ILightDismissable, eventObject: KeyboardEvent): void;
@@ -645,10 +639,6 @@ class LightDismissService implements ILightDismissService {
     //     handlers have to communicate so that they don't trigger a double dismiss. In this case,
     //     PointerUp runs first so it triggers the dismiss and the click handler does nothing (due to the
     //     _skipClickEaterClick flag).
-    //  - Right-click: Right-click triggers edgy so we have to be careful not to trigger a double dismiss
-    //    (one for edgy and one for clicking on the click eater). Consequently, the pointer event handlers
-    //    ignore right-clicks and leave it up to the edgy handler to handle this case. Note: right-click
-    //    doesn't trigger click events so we don't have to worry about right-clicks in our click event handler.
     //
 
     private _clickEaterPointerId: number;
@@ -672,13 +662,11 @@ class LightDismissService implements ILightDismissService {
         eventObject.stopPropagation();
         eventObject.preventDefault();
 
-        if (eventObject.button !== rightButton) {
-            this._clickEaterPointerId = eventObject.pointerId;
-            if (!this._registeredClickEaterCleanUp) {
-                _ElementUtilities._addEventListener(_Global.window, "pointerup", this._onClickEaterPointerUpBound);
-                _ElementUtilities._addEventListener(_Global.window, "pointercancel", this._onClickEaterPointerCancelBound);
-                this._registeredClickEaterCleanUp = true;
-            }
+        this._clickEaterPointerId = eventObject.pointerId;
+        if (!this._registeredClickEaterCleanUp) {
+            _ElementUtilities._addEventListener(_Global.window, "pointerup", this._onClickEaterPointerUpBound);
+            _ElementUtilities._addEventListener(_Global.window, "pointercancel", this._onClickEaterPointerCancelBound);
+            this._registeredClickEaterCleanUp = true;
         }
     }
 
