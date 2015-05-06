@@ -111,13 +111,13 @@ define([
                 },
                 
                 keyDown: function _LightDismissableLayer_keyDown(client /*: ILightDismissable */, eventObject) {
-                    _LightDismissService.keyDown(client, eventObject);
+                    _LightDismissService.keyDown(this, eventObject);
                 },
                 keyUp: function _LightDismissableLayer_keyUp(client /*: ILightDismissable */, eventObject) {
-                    _LightDismissService.keyUp(client, eventObject);
+                    _LightDismissService.keyUp(this, eventObject);
                 },
                 keyPress: function _LightDismissableLayer_keyPress(client /*: ILightDismissable */, eventObject) {
-                    _LightDismissService.keyPress(client, eventObject);
+                    _LightDismissService.keyPress(this, eventObject);
                 },
 
                 // Used by tests.
@@ -200,8 +200,20 @@ define([
                     this._currentlyFocusedClient = this._clientForElement(element);
                     this._currentlyFocusedClient && this._currentlyFocusedClient.onFocus(element);
                 },
+                onShow: function _LightDismissableLayer_onShow(service /*: ILightDismissService */) { },
                 onHide: function _LightDismissableLayer_onHide() {
                     this._currentlyFocusedClient = null;
+                },
+                onKeyInStack: function _LightDismissableLayer_onKeyInStack(info /*: IKeyboardInfo*/) {
+                    var index = this._clients.indexOf(this._currentlyFocusedClient);
+                    if (index !== -1) {
+                        var clients = this._clients.slice(0, index + 1);
+                        for (var i = clients.length - 1; i >= 0 && !info.propagationStopped; i--) {
+                            if (clients[i]._focusable) {
+                                clients[i].onKeyInStack(info);
+                            }
+                        }
+                    }
                 },
                 onShouldLightDismiss: function _LightDismissableLayer_onShouldLightDismiss(info) {
                     return _LightDismissService.DismissalPolicies.light(info);

@@ -98,6 +98,7 @@ var KeyboardInfoType = {
 export interface IKeyboardInfo {
     type: string;
     keyCode: number;
+    propagationStopped: boolean;
     stopPropagation(): void;
 }
 
@@ -500,14 +501,14 @@ class LightDismissService implements ILightDismissService {
             var info = {
                 type: keyboardInfoType,
                 keyCode: eventObject.keyCode,
-                _stop: false,
+                propagationStopped: false,
                 stopPropagation: function () {
-                    this._stop = true;
+                    this.propagationStopped = true;
                     eventObject.stopPropagation();
                 }
             };
             var clients = this._clients.slice(0, index + 1);
-            for (var i = clients.length - 1; i >= 0 && !info._stop; i--) {
+            for (var i = clients.length - 1; i >= 0 && !info.propagationStopped; i--) {
                 clients[i].onKeyInStack(info);
             }
         }
@@ -722,6 +723,9 @@ export var hidden = service.hidden.bind(service);
 export var updated = service.updated.bind(service);
 export var isShown = service.isShown.bind(service);
 export var isTopmost = service.isTopmost.bind(service);
+export var keyDown = service.keyDown.bind(service);
+export var keyUp = service.keyUp.bind(service);
+export var keyPress = service.keyPress.bind(service);
 export var _clickEaterTapped = service._clickEaterTapped.bind(service);
 export var _onBackClick = service._onBackClick.bind(service);
 export var _setDebug = service._setDebug.bind(service);
@@ -732,6 +736,9 @@ _Base.Namespace.define("WinJS.UI._LightDismissService", {
     updated: updated,
     isShown: isShown,
     isTopmost: isTopmost,
+    keyDown: keyDown,
+    keyUp: keyUp,
+    keyPress: keyPress,
     _clickEaterTapped: _clickEaterTapped,
     _onBackClick: _onBackClick,
     _setDebug: _setDebug,
