@@ -37,6 +37,12 @@ iframe {
 .win-type-base,
 .win-type-body,
 .win-type-caption,
+.win-h1,
+.win-h2,
+.win-h3,
+.win-h4,
+.win-h5,
+.win-h6,
 .win-button,
 .win-dropdown,
 .win-textbox,
@@ -69,6 +75,26 @@ iframe {
 .win-textbox::-ms-value {
     margin: 0;
     padding: 0;
+}
+
+.win-textbox::-ms-clear,
+.win-textbox::-ms-reveal {
+    padding-right: 2px;
+    margin-right: -8px;
+    margin-left: 2px;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    width: 30px;
+    height: 32px;
+}
+.win-textbox {
+    .RTL({
+        &::-ms-clear,
+        &::-ms-reveal {
+            margin-left: -8px;
+            margin-right: 2px;
+        }
+    });
 }
 
 .win-textarea {
@@ -116,26 +142,6 @@ iframe {
     touch-action: manipulation;
     -webkit-appearance: none;
     .win-type-body();
-}
-
-.win-textbox::-ms-clear,
-.win-textbox::-ms-reveal {
-    padding-right: 2px;
-    margin-right: -8px;
-    margin-left: 2px;
-    margin-top: -8px;
-    margin-bottom: -8px;
-    width: 30px;
-    height: 32px;
-}
-.win-textbox {
-    .RTL({
-        &::-ms-clear,
-        &::-ms-reveal {
-            margin-left: -8px;
-            margin-right: 2px;
-        }
-    });
 }
 
 //
@@ -226,7 +232,6 @@ select[multiple].win-dropdown {
 .win-ring {
     width: 180px;
     height: 4px;
-    -webkit-appearance: none;
 
     &:not(:indeterminate) {
         border-style: none;
@@ -242,12 +247,6 @@ select[multiple].win-dropdown {
 
     &.win-large {
         width: 100%;
-    }
-
-    &:indeterminate::-webkit-progress-value {
-        position: relative;
-        -webkit-animation: win-progress-indeterminate 3s linear infinite;
-        animation: win-progress-indeterminate 3s linear infinite;
     }
 
     &.win-paused:not(:indeterminate) {
@@ -280,22 +279,6 @@ select[multiple].win-dropdown {
         width: 60px;
         height: 60px;
     }
-}
-
-@-webkit-keyframes win-progress-indeterminate {
-    0% {left: 0; width: 25%;}
-    50% {left: calc(75%); width: 25%;}
-    75% {left: calc(100%); width: 0%;}
-    75.1% {left: 0; width: 0%;}
-    100% {left: 0; width: 25%;}
-}
-
-@keyframes win-progress-indeterminate {
-    0% {left: 0; width: 25%;}
-    50% {left: calc(75%); width: 25%;}
-    75% {left: calc(100%); width: 0%;}
-    75.1% {left: 0; width: 0%;}
-    100% {left: 0; width: 25%;}
 }
 
 @keyframes win-progress-fade-out {
