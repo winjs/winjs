@@ -149,22 +149,6 @@ export interface ILightDismissable {
 // ILightDismissable implementations
 //
 
-function tryFocus(element: HTMLElement, useSetActive: boolean) {
-    var previousActiveElement = _Global.document.activeElement;
-
-    if (element === previousActiveElement) {
-        return true;
-    }
-    
-    if (useSetActive) {
-        _ElementUtilities._setActive(element);
-    } else {
-        element.focus();
-    }
-    
-    return previousActiveElement !== _Global.document.activeElement;
-}
-
 // Keep in sync with ILightDismissable and the LightDismissableElement constructor.
 export interface ILightDismissableElementArgs {
     element: HTMLElement;
@@ -217,7 +201,7 @@ class AbstractDismissableElement implements ILightDismissable {
             // Otherwise, use setActive() so no focus visual is drawn.
             var useSetActive = !_KeyboardBehavior._keyboardSeenLast;
 
-            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && tryFocus(this._ldeCurrentFocus, useSetActive);
+            return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocusOnAnyElement(this._ldeCurrentFocus, useSetActive);
         }
     }
     
@@ -246,7 +230,7 @@ class AbstractDismissableElement implements ILightDismissable {
     onTakeFocus(useSetActive: boolean): void {
         this.restoreFocus() ||
             _ElementUtilities._focusFirstFocusableElement(this.element, useSetActive) ||
-            tryFocus(this.element, useSetActive);
+            _ElementUtilities._tryFocusOnAnyElement(this.element, useSetActive);
     }
     onFocus(element: HTMLElement): void {
         this._ldeCurrentFocus = element;
@@ -306,7 +290,7 @@ class LightDismissableBody implements ILightDismissable {
         return _Global.document.body.contains(element);
     }
     onTakeFocus(useSetActive: boolean): void {
-        this.currentFocus && this.containsElement(this.currentFocus) && tryFocus(this.currentFocus, useSetActive);
+        this.currentFocus && this.containsElement(this.currentFocus) && _ElementUtilities._tryFocusOnAnyElement(this.currentFocus, useSetActive);
     }
     onFocus(element: HTMLElement): void {
          this.currentFocus = element;

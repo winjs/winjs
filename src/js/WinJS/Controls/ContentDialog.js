@@ -20,8 +20,6 @@ define([
     'require-style!less/colors-contentdialog'
     ], function contentDialogInit(Application, _Dispose, Promise, _Signal, _LightDismissService, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
-    
-    // TODO: Prune dismissables from LDS that are no longer in the DOM?
 
     _Base.Namespace.define("WinJS.UI", {
         /// <field>
@@ -207,8 +205,7 @@ define([
                                 // TODO: Make sure dialog._dom.dialog has tabIndex
                                 dialog._dismissable.restoreFocus() ||
                                     _ElementUtilities._focusFirstFocusableElement(dialog._dom.content) ||
-                                    _ElementUtilities._tryFocus(dialog._dom.dialog, useSetActive);
-                                    // TODO: Use a variant of _tryFocus that can focus things with tabIndex -1
+                                    _ElementUtilities._tryFocusOnAnyElement(dialog._dom.dialog, useSetActive);
                             }
                         });
                         this.dialog._dismissedSignal = null; // The signal will be created on demand when show() is called

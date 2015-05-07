@@ -2507,13 +2507,38 @@ define([
         _maintainFocus: function ElementUtilities_maintainFocus(callback) {
             var focusedElement = _Global.document.activeElement;
             callback();
-            exports._trySetActive(focusedElement);
+            exports._trySetActiveOnAnyElement(focusedElement);
         },
+        
+        // Tries to give focus to an element (even if its tabIndex is -1) via setActive.
+        _trySetActiveOnAnyElement: function Utilities_trySetActive(element, scroller) {
+            return exports._tryFocusOnAnyElement(element, true, scroller);
+        },
+        
+        // Tries to give focus to an element (even if its tabIndex is -1).
+        _tryFocusOnAnyElement: function Utilities_tryFocusOnAny(element, useSetActive, scroller) {
+            var previousActiveElement = _Global.document.activeElement;
 
+            if (element === previousActiveElement) {
+                return true;
+            }
+            
+            if (useSetActive) {
+                exports._setActive(element, scroller);
+            } else {
+                element.focus();
+            }
+            
+            return previousActiveElement !== _Global.document.activeElement;
+        },
+        
+        // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0)
+        // via setActive.
         _trySetActive: function Utilities_trySetActive(elem, scroller) {
             return this._tryFocus(elem, true, scroller);
         },
-
+        
+        // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0).
         _tryFocus: function Utilities_tryFocus(elem, useSetActive, scroller) {
             var previousActiveElement = _Global.document.activeElement;
 
