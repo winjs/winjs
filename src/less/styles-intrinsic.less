@@ -232,6 +232,7 @@ select[multiple].win-dropdown {
 .win-ring {
     width: 180px;
     height: 4px;
+    -webkit-appearance: none;
 
     &:not(:indeterminate) {
         border-style: none;
@@ -247,6 +248,11 @@ select[multiple].win-dropdown {
 
     &.win-large {
         width: 100%;
+    }
+
+    &:indeterminate::-webkit-progress-value {
+        position: relative;
+        -webkit-animation: win-progress-indeterminate 3s linear infinite;
     }
 
     &.win-paused:not(:indeterminate) {
@@ -279,6 +285,14 @@ select[multiple].win-dropdown {
         width: 60px;
         height: 60px;
     }
+}
+
+@-webkit-keyframes win-progress-indeterminate {
+    0% {left: 0; width: 25%;}
+    50% {left: calc(75%); width: 25%;}
+    75% {left: calc(100%); width: 0%;}
+    75.1% {left: 0; width: 0%;}
+    100% {left: 0; width: 25%;}
 }
 
 @keyframes win-progress-fade-out {
@@ -375,11 +389,15 @@ select[multiple].win-dropdown {
     white-space: nowrap;
 }
 
-h1.win-type-ellipsis, .win-type-header.win-type-ellipsis {
+h1.win-type-ellipsis,
+.win-type-header.win-type-ellipsis,
+.win-h1.win-type-ellipsis {
     line-height: 1.4286;
 }
 
-h2.win-type-ellipsis, .win-type-subheader.win-type-ellipsis {
+h2.win-type-ellipsis,
+.win-type-subheader.win-type-ellipsis,
+.win-h2.win-type-ellipsis {
     line-height: 1.5;
 }
 
