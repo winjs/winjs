@@ -669,15 +669,13 @@ define([
                 this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
                 this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
-                // Header Custom Content
-                this._headerCustomContentLeft = _Global.document.createElement("DIV");
-                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContent);
-                _ElementUtilities.addClass(this._headerCustomContentLeft, Pivot._ClassName.pivotHeaderCustomContentLeft);
-                this._headerAreaElement.insertBefore(this._headerCustomContentLeft, this._headerAreaElement.children[0]);
-                this._headerCustomContentRight = _Global.document.createElement("DIV");
-                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContent);
-                _ElementUtilities.addClass(this._headerCustomContentRight, Pivot._ClassName.pivotHeaderCustomContentRight);
-                this._headerAreaElement.appendChild(this._headerCustomContentRight);
+                // Custom Headers
+                this._customLeftHeader = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._customLeftHeader, Pivot._ClassName.pivotHeaderLeftCustom);
+                this._headerAreaElement.insertBefore(this._customLeftHeader, this._headerAreaElement.children[0]);
+                this._customRightHeader = _Global.document.createElement("DIV");
+                _ElementUtilities.addClass(this._customRightHeader, Pivot._ClassName.pivotHeaderRightCustom);
+                this._headerAreaElement.appendChild(this._customRightHeader);
 
                 // Viewport
                 this._viewportElement = _Global.document.createElement("DIV");
@@ -730,30 +728,30 @@ define([
                     }
                 },
 
-                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentLeft" helpKeyword="WinJS.UI.Pivot.customHeaderContentLeft">
-                /// Gets or sets the left custom header content.
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customLeftHeader" helpKeyword="WinJS.UI.Pivot.customLeftHeader">
+                /// Gets or sets the left custom header.
                 /// </field>
-                customHeaderContentLeft: {
+                customLeftHeader: {
                     get: function () {
-                        return this._headerCustomContentLeft.firstElementChild;
+                        return this._customLeftHeader.firstElementChild;
                     },
                     set: function (value) {
-                        _ElementUtilities.empty(this._headerCustomContentLeft);
-                        this._headerCustomContentLeft.appendChild(value);
+                        _ElementUtilities.empty(this._customLeftHeader);
+                        this._customLeftHeader.appendChild(value);
                         this.forceLayout();
                     }
                 },
 
-                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customHeaderContentRight" helpKeyword="WinJS.UI.Pivot.customHeaderContentRight">
-                /// Gets or sets the right custom header content.
+                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customRightHeader" helpKeyword="WinJS.UI.Pivot.customRightHeader">
+                /// Gets or sets the right custom header.
                 /// </field>
-                customHeaderContentRight: {
+                customRightHeader: {
                     get: function () {
-                        return this._headerCustomContentRight.firstElementChild;
+                        return this._customRightHeader.firstElementChild;
                     },
                     set: function (value) {
-                        _ElementUtilities.empty(this._headerCustomContentRight);
-                        this._headerCustomContentRight.appendChild(value);
+                        _ElementUtilities.empty(this._customRightHeader);
+                        this._customRightHeader.appendChild(value);
                         this.forceLayout();
                         
                     }

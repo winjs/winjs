@@ -6672,14 +6672,14 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Gets or sets the left custom content header.
+         * Gets or sets the left custom header.
         **/
-        customHeaderContentLeft: HTMLElement;
+        customLeftHeader: HTMLElement;
 
         /**
-         * Gets or sets the right custom content header.
+         * Gets or sets the right custom header.
         **/
-        customHeaderContentRight: HTMLElement;
+        customRightHeader: HTMLElement;
 
         /**
          * Gets or sets the Binding.List that contains the PivotItem objects that belong to this Pivot.
