@@ -58,6 +58,7 @@ define(['require'], function (req) {
         var fs = require.nodeRequire('fs-extra');
         var less = require.nodeRequire('less');
         var path = require.nodeRequire('path');
+        var grunt = require.nodeRequire('grunt');;
 
         // Build a custom LESS file that imports every resource
         // with theme defines at the top
@@ -115,7 +116,7 @@ define(['require'], function (req) {
         var parser = new less.Parser(lessConfig);
         parser.parse(lessFile, function (error, tree) {
             if (error) {
-                console.error(error + ' in ' + error.filename + '\n' + 'line number: ' + error.line);
+                grunt.fail.warn(error + ' in ' + error.filename + '\n' + 'line number: ' + error.line);
                 return;
             }
 

@@ -331,15 +331,15 @@ define([
                     _ElementUtilities.addClass(this._domElement, "win-timepicker");
 
                     this._hourElement = _Global.document.createElement("select");
-                    _ElementUtilities.addClass(this._hourElement, "win-timepicker-hour");
+                    _ElementUtilities.addClass(this._hourElement, "win-timepicker-hour win-dropdown");
 
                     this._minuteElement = _Global.document.createElement("select");
-                    _ElementUtilities.addClass(this._minuteElement, "win-timepicker-minute");
+                    _ElementUtilities.addClass(this._minuteElement, "win-timepicker-minute win-dropdown");
 
                     this._ampmElement = null;
                     if (info.clock === "12HourClock") {
                         this._ampmElement = _Global.document.createElement("select");
-                        _ElementUtilities.addClass(this._ampmElement, "win-timepicker-period");
+                        _ElementUtilities.addClass(this._ampmElement, "win-timepicker-period win-dropdown");
                     }
 
                     this._addControlsInOrder(info);

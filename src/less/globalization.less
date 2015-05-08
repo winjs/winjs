@@ -114,20 +114,24 @@
 
     // Apply the font fallback mixin to each of these elements,
     // for this index
-    body,
-    .win-type-xx-large,
-    .win-type-x-large,
-    .win-type-large,
-    .win-type-medium,
-    .win-type-small,
-    .win-type-x-small,
-    .win-type-xx-small,
-    input,
-    textarea,
-    .win-textarea,
-    button,
-    select,
-    option {
+    .win-type-header,
+    .win-type-subheader,
+    .win-type-title,
+    .win-type-subtitle,
+    .win-type-base,
+    .win-type-body,
+    .win-type-caption,
+    .win-h1,
+    .win-h2,
+    .win-h3,
+    .win-h4,
+    .win-h5,
+    .win-h6,
+    .win-button,
+    .win-dropdown,
+    .win-textbox,
+    .win-link,
+    .win-textarea {
         .fontFallBack(@index);
     }
 

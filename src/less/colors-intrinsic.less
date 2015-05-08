@@ -39,7 +39,7 @@
     //
     // Link
     //
-    a {
+    .win-link {
         color: @accentColor;
 
         &:hover {
@@ -58,7 +58,7 @@
     //
     // Radio and Checkbox
     //
-    input[type=checkbox] {
+    .win-checkbox {
         &::-ms-check {
             color: @baseHigh;
             border-color: @baseMediumHigh;
@@ -103,7 +103,7 @@
         }
     }
 
-    input[type=radio] {
+    .win-radio {
         &::-ms-check {
             color: @baseMediumHigh;
             border-color: @baseMediumHigh;
@@ -136,7 +136,9 @@
     //
     // Progress
     //
-    progress {
+    .win-progress-bar,
+    .win-progress-ring,
+    .win-ring, {
       // Main colors
       color: @accentColor;
 
@@ -154,11 +156,6 @@
         background-color: @accentColor;
       }
 
-      // Ring
-      &.win-ring {
-        background-color: transparent;
-      }
-
       // This is a weird webkit issue where the background color
       // of the progress seems to overlay with this background color,
       // but neither one on its own seems to work correctly. Really we just
@@ -169,14 +166,15 @@
       }
     }
 
+    .win-progress-ring,
+    .win-ring, {
+        background-color: transparent;
+    }
+
     //
     // Push button
     //
-    button,
-    input[type=button],
-    input[type=reset],
-    input[type=submit],
-    button[type=submit] {
+    .win-button {
         color: @baseHigh;
         background-color: @baseLow;
         border-color: transparent;
@@ -196,8 +194,7 @@
         }
     }
 
-    input[type=submit],
-    button[type=submit] {
+    .win-button.win-button-primary {
         color: #fff;
         background-color: @accentColor;
     }
@@ -205,7 +202,7 @@
     //
     // Select
     //
-    select {
+    .win-dropdown {
         color: @baseHigh;
         background-color: @baseLow;
         border-color: @baseMediumMid;
@@ -230,7 +227,7 @@
         }
     }
 
-    option {
+    .win-dropdown option {
         color: @baseHigh;
         background-color: @chromeMediumMid;
 
@@ -244,15 +241,15 @@
         }
     }
 
-    optgroup {
+    .win-dropdown optgroup {
         color: @baseHigh;
         background-color: @chromeMediumMid;
     }
-    optgroup:disabled {
+    .win-dropdown optgroup:disabled {
         color: @baseLow;
     }
 
-    select[multiple] {
+    select[multiple].win-dropdown {
         border: none;
         background-color: @chromeMediumMid;
 
@@ -271,7 +268,7 @@
     //
     // Slider
     //
-    input[type=range] {
+    .win-slider {
         background-color: transparent;
 
         // Note the use of background instead of background-color
@@ -350,16 +347,7 @@
     //
     // Text box
     //
-    input:not([type]),
-    input[type=""], 
-    input[type=text],
-    input[type=password],
-    input[type=email],
-    input[type=number],
-    input[type=tel],
-    input[type=url],
-    input[type=search],
-    textarea,
+    .win-textbox,
     .win-textarea {
         color: @baseHigh;
         background-color: @altMediumMid;
@@ -386,7 +374,8 @@
     //
     // Clear/Reveal buttons
     //
-    input::-ms-clear, input::-ms-reveal {
+    .win-textbox::-ms-clear,
+    .win-textbox::-ms-reveal {
         display: block;
         color: fade(@baseBlack, 60%); // Equivalent to altMid in dark and baseMid in light
 

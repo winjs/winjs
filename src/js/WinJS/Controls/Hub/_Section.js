@@ -75,8 +75,8 @@ define([
                 this._headerElement.innerHTML =
                     '<button type="button" role="link" class="' + HubSection._ClassName.hubSectionInteractive + ' ' + HubSection._ClassName.hubSectionHeaderTabStop + '">' +
                         '<div class="' +  HubSection._ClassName.hubSectionHeaderWrapper + '" tabindex="-1">' +
-                            '<h2 class="' + HubSection._ClassName.hubSectionHeaderContent + '"></h2>' +
-                            '<span class="' + HubSection._ClassName.hubSectionHeaderChevron + '">' + strings.seeMore + '</span>' +
+                            '<h2 class="win-type-subheader ' + HubSection._ClassName.hubSectionHeaderContent + '"></h2>' +
+                            '<span class="' + HubSection._ClassName.hubSectionHeaderChevron + ' win-type-body">' + strings.seeMore + '</span>' +
                         '</div>' +
                     '</button>';
                 this._headerTabStopElement = this._headerElement.firstElementChild;

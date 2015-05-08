@@ -1529,6 +1529,7 @@ define([
 
                     this._progressBar = _Global.document.createElement("progress");
                     _ElementUtilities.addClass(this._progressBar, _Constants._progressClass);
+                    _ElementUtilities.addClass(this._progressBar, "win-progress-ring");
                     this._progressBar.style.position = "absolute";
                     this._progressBar.max = 100;
                 },
