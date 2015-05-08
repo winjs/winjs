@@ -58,7 +58,7 @@ define(['require'], function (req) {
         var fs = require.nodeRequire('fs-extra');
         var less = require.nodeRequire('less');
         var path = require.nodeRequire('path');
-        var grunt = require.nodeRequire('grunt');;
+        var grunt = require.nodeRequire('grunt');
 
         // Build a custom LESS file that imports every resource
         // with theme defines at the top
