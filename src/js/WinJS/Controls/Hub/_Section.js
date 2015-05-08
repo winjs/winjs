@@ -76,7 +76,7 @@ define([
                     '<button type="button" role="link" class="' + HubSection._ClassName.hubSectionInteractive + ' ' + HubSection._ClassName.hubSectionHeaderTabStop + '">' +
                         '<div class="' +  HubSection._ClassName.hubSectionHeaderWrapper + '" tabindex="-1">' +
                             '<h2 class="win-type-subheader ' + HubSection._ClassName.hubSectionHeaderContent + '"></h2>' +
-                            '<span class="' + HubSection._ClassName.hubSectionHeaderChevron + '">' + strings.seeMore + '</span>' +
+                            '<span class="' + HubSection._ClassName.hubSectionHeaderChevron + ' win-type-body">' + strings.seeMore + '</span>' +
                         '</div>' +
                     '</button>';
                 this._headerTabStopElement = this._headerElement.firstElementChild;

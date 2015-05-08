@@ -479,7 +479,7 @@ define([
                 _createSemanticZoomButton: function () {
                     this._sezoButton = _Global.document.createElement("button");
                     this._sezoButton.setAttribute("type", "button");
-                    this._sezoButton.className = sezoButtonClass + " " + sezoButtonLocationClass;
+                    this._sezoButton.className = sezoButtonClass + " " + sezoButtonLocationClass + " win-button";
                     this._sezoButton.tabIndex = -1;
                     this._sezoButton.style.visibility = "hidden";
                     this._sezoButton.setAttribute("aria-hidden", true);
