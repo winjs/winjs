@@ -6671,7 +6671,7 @@ declare module WinJS.UI {
          * Raised when the user selects a suggested option for the search.
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.tag, detail.keyModifiers, detail.storageFile.
         **/
-        onresultsuggestionschosen(eventInfo: CustomEvent): void;
+        onresultsuggestionchosen(eventInfo: CustomEvent): void;
 
         /**
          * Raised when the system requests search suggestions from this app.
