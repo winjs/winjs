@@ -42,6 +42,15 @@
                 dest: config.desktopOutput + "js/"
             }]
         },
+        
+        strings: {
+            files: [{
+                expand: true,
+                cwd: "src/strings/",
+                src: ["**/*.resjson"],
+                dest: config.desktopOutput + "js/"
+            }]
+        },
 
         srcjs: {
             files: [{

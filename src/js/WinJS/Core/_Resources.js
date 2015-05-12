@@ -16,7 +16,9 @@ define([
     }
 
     function _getWinJSString(id) {
-        var result = getString("ms-resource://" + appxVersion + "/" + id);
+        var parts = id.split("/");
+        id = parts[parts.length - 1];
+        var result = getString("ms-resource:///Microsoft.WinJS/" + id);
 
         if (result.empty) {
             result = _getStringBuiltIn(id);

@@ -60,7 +60,7 @@
 
         // Private tasks (not designed to be used from the command line)
         grunt.registerTask("_preBuild", ["clean", "check-file-names", "ts", "build-qunit", "less", "concat"]);
-        grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts", "copy:intellisense"]);
+        grunt.registerTask("_copyFinal", ["copy:tests", "copy:testDeps", "copy:fonts", "copy:intellisense", "copy:strings"]);
         grunt.registerTask("_copyToTsBuild", ["copy:srcjs"]);
         grunt.registerTask("_postProcess", ["line-endings", "add-bom"]);
 
