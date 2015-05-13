@@ -57,9 +57,13 @@
     }
 
     function header(name, dependencies) {
+        var amdDependencies = dependencies.map(JSON.stringify).join(",");
+        var commonJsDependencies = dependencies.map(function (dep) {
+            return "require(" + JSON.stringify(dep) + ")";
+        }).join(",");
         var header = "\n" +
 "/*! Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information. */\n" +
-"(function (globalObject) {\n" +
+"(function () {\n" +
 "\n" +
 "    var globalObject = \n" +
 "        typeof window !== 'undefined' ? window :\n" +
@@ -68,11 +72,18 @@
 "        {};\n" +
 "    (function (factory) {\n" +
 "        if (typeof define === 'function' && define.amd) {\n" +
-"            define([" + dependencies.map(JSON.stringify).join(",") + "], factory);\n" +
+"            // amd\n" +
+"            define([" + amdDependencies + "], factory);\n" +
 "        } else {\n" +
 "            globalObject.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StartTM');\n" +
+"            if (typeof module !== 'undefined') {\n" +
+"                // CommonJS\n" +
+"                factory(" + commonJsDependencies + ");\n" +
+"            } else {\n" +
 // globalObject.WinJS is here for the have dependencies case where they have already defined WinJS
-"            factory(globalObject.WinJS);\n" +
+"                // No module system\n" +
+"                factory(globalObject.WinJS);\n" +
+"            }\n" +
 "            globalObject.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StopTM');\n" +
 "        }\n" +
 "    }(function (WinJS) {\n" +
@@ -91,7 +102,12 @@
     function footer(name) {
         return "\n" +
 "        require(['WinJS/Core/_WinJS', '" + name + "'], function (_WinJS) {\n" +
+"            // WinJS always publishes itself to global\n" +
 "            globalObject.WinJS = _WinJS;\n" +
+"            if (typeof module !== 'undefined') {\n" +
+"                // This is a CommonJS context so publish to exports\n" +
+"                module.exports = _WinJS;\n" +
+"            }\n" +
 "        });\n" +
 "        return globalObject.WinJS;\n" +
 "    }));\n" +
