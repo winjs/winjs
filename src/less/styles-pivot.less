@@ -92,7 +92,7 @@
     }
 
     .win-pivot-header {
-        .win-type-body();
+        ._win-type-body();
         display: inline-block;
         transition: opacity linear 167ms;
         -webkit-transition: opacity linear 167ms;
@@ -127,8 +127,8 @@
 
     .win-pivot-header.win-pivot-header-selected,
     &.win-pivot-locked .win-pivot-header.win-pivot-header-selected {
-        .win-type-base();
-        font-weight: 600; /* Font-weight 500 provided by .win-type-base() is indistinguishable from the default 400 in some fonts */
+        ._win-type-base();
+        font-weight: 600; /* Font-weight 500 provided by ._win-type-base() is indistinguishable from the default 400 in some fonts */
         opacity: 1.0;
         visibility: inherit;
     }

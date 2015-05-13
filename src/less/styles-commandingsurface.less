@@ -147,7 +147,7 @@
             min-height: 44px;
             border: 1px dotted transparent;
             padding: 10px 11px 12px 11px;
-            .win-type-body();
+            ._win-type-body();
             white-space: nowrap;
             overflow: hidden;
         }
@@ -165,7 +165,7 @@
     // Hide the commands (or just command labels, where appropriate) when animating closed, but use opacity: 0 instead of display: none so the layout doesn't
     // get changed and invalidate measurements taken during the animation function.
     &.win-commandingsurface-closing.win-commandingsurface-closeddisplaycompact .win-command .win-label,
-    &.win-commandingsurface-closing.win-commandingsurface-closeddisplayminimal .win-command, 
+    &.win-commandingsurface-closing.win-commandingsurface-closeddisplayminimal .win-command,
     &.win-commandingsurface-closing.win-commandingsurface-closeddisplaynone .win-command {
         opacity: 0;
     }
