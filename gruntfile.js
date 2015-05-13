@@ -55,7 +55,7 @@
         grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:base", "requirejs:ui", "copy:fonts", "_postProcess"]);
         grunt.registerTask("default", ["_preBuild", "onefile:base", "requirejs:ui", "_copyFinal", "replace", "_postProcess"]);
 
-        grunt.registerTask("release", ["lint", "default", "uglify", "_postProcess"]);
+        grunt.registerTask("release", ["lint", "default", "uglify", "cssmin", "_postProcess"]);
         grunt.registerTask("minify", ["uglify", "_postProcess"]);
 
         // Private tasks (not designed to be used from the command line)
