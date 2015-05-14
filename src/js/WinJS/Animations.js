@@ -2675,7 +2675,7 @@ define([
         //   - timing (optional): String representing the CSS timing function that controls the progress of the animation.
         //
         _resizeTransition: function Utilities_resizeTransition(elementClipper, element, args) {
-            if (args.to === args.from) {
+            if (args.to === args.from || !_TransitionAnimation.isAnimationEnabled()) {
                 return Promise.as();
             } else {
                 var animationsToPlay = resizeTransition(elementClipper, element, args);
@@ -2688,6 +2688,10 @@ define([
         },
 
         _commandingSurfaceOpenAnimation: function Utilities_commandingSurfaceOpenAnimation(args) {
+            if (!_TransitionAnimation.isAnimationEnabled()) {
+                return Promise.as();
+            }
+
             var actionAreaClipper = args.actionAreaClipper,
                 actionArea = args.actionArea,
                 overflowAreaClipper = args.overflowAreaClipper,
@@ -2749,6 +2753,10 @@ define([
         },
 
         _commandingSurfaceCloseAnimation: function Utilities_commandingSurfaceCloseAnimation(args) {
+            if (!_TransitionAnimation.isAnimationEnabled()) {
+                return Promise.as();
+            }
+
             var actionAreaClipper = args.actionAreaClipper,
                 actionArea = args.actionArea,
                 overflowAreaClipper = args.overflowAreaClipper,
