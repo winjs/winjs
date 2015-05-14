@@ -10,8 +10,6 @@ define([
     "use strict";
 
     function _getWinJSString(id) {
-        var parts = id.split("/");
-        id = parts[parts.length - 1];
         var result = getString("ms-resource:///Microsoft.WinJS/" + id);
 
         if (result.empty) {
