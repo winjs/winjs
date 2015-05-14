@@ -9,12 +9,6 @@ define([
     ], function resourcesInit(exports, _Global, _WinRT, _Base, _Events, defaultStrings) {
     "use strict";
 
-    var appxVersion = "$(TARGET_DESTINATION)";
-    var developerPrefix = "Developer.";
-    if (appxVersion.indexOf(developerPrefix) === 0) {
-        appxVersion = appxVersion.substring(developerPrefix.length);
-    }
-
     function _getWinJSString(id) {
         var parts = id.split("/");
         id = parts[parts.length - 1];
@@ -32,7 +26,7 @@ define([
         var parts = resourceId.split("/");
         parts.shift(); // ignore the leading ui/
 
-        var str = defaultStrings[parts.join("\\")];
+        var str = defaultStrings[resourceId];
 
         if (typeof str === "string") {
             str = { value: str };
