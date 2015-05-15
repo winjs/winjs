@@ -379,6 +379,46 @@ module WinJSTests {
             });
         };
 
+        testInvokeEvent = function (complete) {
+            var items = [];
+            for (var i = 0; i < 100; ++i) {
+                items[i] = { title: "Tile" + i };
+            }
+
+            var listView = new ListView(list, {
+                itemDataSource: new WinJS.Binding.List(items).dataSource
+            });
+            Helper.ListView.waitForReady(listView, -1)().then(function () {
+                var gotItemInvokedEvent = false;
+                listView.addEventListener("iteminvoked", function () {
+                    gotItemInvokedEvent = true;
+                });
+
+                listView.tapBehavior = WinJS.UI.TapBehavior.none;
+                listView.selectionMode = WinJS.UI.SelectionMode.none;
+                var firstItem = listView.elementFromIndex(0);
+                listView._mode.onKeyDown(createKeyEvent(firstItem, Key.enter));
+                LiveUnit.Assert.isFalse(gotItemInvokedEvent);
+
+                listView.tapBehavior = WinJS.UI.TapBehavior.invokeOnly;
+                listView._mode.onKeyDown(createKeyEvent(firstItem, Key.enter));
+                LiveUnit.Assert.isTrue(gotItemInvokedEvent);
+                gotItemInvokedEvent = false;
+
+                listView.tapBehavior = WinJS.UI.TapBehavior.toggleSelect;
+                listView.selectionMode = WinJS.UI.SelectionMode.single;
+                listView._mode.onKeyDown(createKeyEvent(firstItem, Key.enter));
+                LiveUnit.Assert.isTrue(gotItemInvokedEvent);
+                gotItemInvokedEvent = false;
+
+                listView.selectionMode = WinJS.UI.SelectionMode.multi;
+                listView._mode.onKeyDown(createKeyEvent(firstItem, Key.enter));
+                LiveUnit.Assert.isFalse(gotItemInvokedEvent);
+
+                complete();
+            });
+        };
+
         // Verify that right-click doesn't trigger the pressed visual when selection is disabled
         testRightClickDisabled = function (complete) {
             LiveUnit.LoggingCore.logComment("In testRightClickDisabled");

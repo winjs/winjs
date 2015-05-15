@@ -336,7 +336,8 @@ define([
                             fireInvokeEventImpl(this.site.groupDataSource, true);
                         }
                     } else {
-                        if (this.site._tap !== _UI.TapBehavior.none && entity.index !== _Constants._INVALID_INDEX) {
+                        // We don't want to raise an iteminvoked event when the ListView's tapBehavior is none, or if it's in selection mode.
+                        if (this.site._tap !== _UI.TapBehavior.none && entity.index !== _Constants._INVALID_INDEX && !(this.site._isInSelectionMode())) {
                             fireInvokeEventImpl(this.site.itemDataSource, false);
                         }
                     }
