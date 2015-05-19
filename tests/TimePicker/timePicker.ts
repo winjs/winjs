@@ -98,6 +98,7 @@ module CorsicaTests {
             // this select element will be used as the truth, ie styles of the datepicker subelements
             // should be the same as a basic select element
             var selectElement = document.createElement("select");
+            selectElement.className = "win-dropdown";
 
             try {
                 var control = new WinJS.UI.TimePicker(controlElement);
@@ -449,17 +450,17 @@ module CorsicaTests {
                 var childNodes = controlElement.childNodes;
                 for (var i = 0; i < childNodes.length; i++) {
                     var child = <HTMLElement>childNodes[i];
-                    if (child.className === that.TimePickerClassName.TimePicker_Hour + " win-order0") {
+                    if (child.classList.contains(that.TimePickerClassName.TimePicker_Hour) && child.classList.contains("win-order0")) {
                         LiveUnit.Assert.areEqual("Select Hour", child.getAttribute("aria-label"));
                         continue;
                     }
 
-                    if (child.className === that.TimePickerClassName.TimePicker_Minute + " win-order1") {
+                    if (child.classList.contains(that.TimePickerClassName.TimePicker_Minute) && child.classList.contains("win-order1")) {
                         LiveUnit.Assert.areEqual("Select Minute", child.getAttribute("aria-label"));
                         continue;
                     }
 
-                    if (child.className === that.TimePickerClassName.TimePicker_Period + " win-order2") {
+                    if (child.classList.contains(that.TimePickerClassName.TimePicker_Period) && child.classList.contains("win-order2")) {
                         LiveUnit.Assert.areEqual("Select A.M P.M", child.getAttribute("aria-label"));
                         continue;
                     }

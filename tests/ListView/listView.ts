@@ -3,7 +3,7 @@
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
 /// <reference path="../TestLib/Helper.ts" />
 /// <reference path="../TestLib/Helper.ListView.ts" />
-
+// <reference path="../TestData/ListView.less.css" />
 
 module WinJSTests {
 
@@ -556,8 +556,7 @@ module WinJSTests {
                 });
 
             var lv = new ListView();
-            lv.element.style.width = "450px";
-            lv.element.style.height = "100px";
+            lv.element.id = "EnsureVisibleHeaderTest";
             lv.itemDataSource = glist.dataSource;
             lv.groupDataSource = glist.groups.dataSource;
 
