@@ -11,6 +11,7 @@ define([
     "../Utilities/_ElementListUtilities",
     "../Utilities/_ElementUtilities",
     '../Utilities/_Hoverable',
+    "../Accents",
     "../Animations",
     "../BindingList",
     "../Promise",
@@ -18,8 +19,12 @@ define([
     "./AutoSuggestBox/_SearchSuggestionManagerShim",
     "require-style!less/styles-autosuggestbox",
     "require-style!less/colors-autosuggestbox"
-], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
+], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, Accents, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
+
+    Accents.createAccentRule(".win-autosuggestbox-suggestion-selected", [{ name: "background-color", value: Accents.ColorTypes.listSelectRest }]);
+    Accents.createAccentRule(".win-autosuggestbox-suggestion-selected.win-autosuggestbox-suggestion-selected:hover", [{ name: "background-color", value: Accents.ColorTypes.listSelectHover }]);
+    Accents.createAccentRule(".win-autosuggestbox-suggestion-selected.win-autosuggestbox-suggestion-selected:hover:active", [{ name: "background-color", value: Accents.ColorTypes.listSelectPress }]);
 
     var ClassNames = {
         asb: "win-autosuggestbox",
