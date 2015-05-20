@@ -181,7 +181,27 @@ export declare module Windows {
 
 export declare module Windows {
     export module UI {
+        export class Color {
+            a: number;
+            r: number;
+            g: number;
+            b: number;
+        }
+
         export module ViewManagement {
+            export enum UIColorType {
+                background,
+                foreground,
+                accentDark3,
+                accentDark2,
+                accentDark1,
+                accent,
+                accentLight1,
+                accentLight2,
+                accentLight3,
+                complement
+            }
+
             export class InputPaneVisibilityEventArgs {
                 ensuredFocusedElementInView: boolean;
                 occludedRect: Windows.Foundation.Rect;
@@ -193,6 +213,15 @@ export declare module Windows {
                 addEventListener(type: string, listener: Function, capture?: boolean): void;
                 removeEventListener(type: string, listener: Function, capture?: boolean): void;
                 static getForCurrentView(): Windows.UI.ViewManagement.InputPane;
+            }
+
+            export class UISettings {
+                oncolorvalueschanged: Function;
+
+                addEventListener(type: string, listener: Function): void;
+                removeEventListener(type: string, listener: Function): void;
+
+                getColorValue(type: UIColorType): Color;
             }
         }
     }
