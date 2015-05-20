@@ -18,10 +18,12 @@
     config.desktopFramework = "Microsoft." + config.targetName;
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
     config.compiledTsOutput = config.outputFolder + "tsbuild/";
+    
+    config.stringsOutput = config.outputFolder + config.desktopFramework + "-strings/";
 
     config.uiStringsFiles = [
         "src/js/" + config.localeFolder + "/ui.prefix.js",
-        "src/js/" + config.localeFolder + "/ui.resjson",
+        "src/strings/en-us/Microsoft.WinJS.resjson",
         "src/js/" + config.localeFolder + "/ui.suffix.js"
     ];
 

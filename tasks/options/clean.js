@@ -17,6 +17,9 @@
         ],
         qunit: [
             config.testsOutput + "TestLib/liveToQ/*.*"
+        ],
+        strings: [
+            config.stringsOutput
         ]
     };
 })();

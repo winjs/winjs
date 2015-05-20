@@ -5,18 +5,12 @@ define([
     './_WinRT',
     './_Base',
     './_Events',
-    'require-json!en-US/ui.resjson',
+    'require-json!strings/en-us/Microsoft.WinJS.resjson',
     ], function resourcesInit(exports, _Global, _WinRT, _Base, _Events, defaultStrings) {
     "use strict";
 
-    var appxVersion = "$(TARGET_DESTINATION)";
-    var developerPrefix = "Developer.";
-    if (appxVersion.indexOf(developerPrefix) === 0) {
-        appxVersion = appxVersion.substring(developerPrefix.length);
-    }
-
     function _getWinJSString(id) {
-        var result = getString("ms-resource://" + appxVersion + "/" + id);
+        var result = getString("ms-resource:///Microsoft.WinJS/" + id);
 
         if (result.empty) {
             result = _getStringBuiltIn(id);
@@ -26,11 +20,7 @@ define([
     }
 
     function _getStringBuiltIn(resourceId) {
-
-        var parts = resourceId.split("/");
-        parts.shift(); // ignore the leading ui/
-
-        var str = defaultStrings[parts.join("\\")];
+        var str = defaultStrings[resourceId];
 
         if (typeof str === "string") {
             str = { value: str };

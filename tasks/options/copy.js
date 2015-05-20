@@ -50,6 +50,15 @@
                 src: ["**/*.js", "**/*.resjson"],
                 dest: config.compiledTsOutput
             }]
-        }
+        },
+        
+        strings: {
+            files: [{
+                expand: true,
+                cwd: "src/strings/",
+                src: ["**/*.resjson"],
+                dest: config.stringsOutput
+            }]
+        },
     };
 })();

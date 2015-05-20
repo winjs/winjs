@@ -119,6 +119,7 @@
         var outputBase = config.desktopOutput + "js/";
         options.paths = {
             "less": "../../src/less",
+            "strings": "../../src/strings",
             "require-json": "../../tasks/utilities/require-json",
             "require-style": "../../tasks/utilities/require-style",
         };

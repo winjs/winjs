@@ -12,15 +12,9 @@
         {};
     globalObject.strings = globalObject.strings || {};
 
-    var appxVersion = "$(TARGET_DESTINATION)";
-    var developerPrefix = "Developer.";
-    if (appxVersion.indexOf(developerPrefix) === 0) {
-        appxVersion = appxVersion.substring(developerPrefix.length);
-    }
-
     function addStrings(keyPrefix,  strings) {
         Object.keys(strings).forEach(function (key) {
-            globalObject.strings[keyPrefix + key.replace("\\", "/")] = strings[key];
+            globalObject.strings[keyPrefix + key] = strings[key];
         });
     }
-    addStrings("ms-resource://"+appxVersion+"/ui/",
+    addStrings("ms-resource:///Microsoft.WinJS/",
