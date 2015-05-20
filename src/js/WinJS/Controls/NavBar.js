@@ -10,13 +10,19 @@ define([
     '../Scheduler',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
+    "../Accents",
     './_LegacyAppBar',
     './NavBar/_Command',
     './NavBar/_Container',
     'require-style!less/styles-navbar',
     'require-style!less/colors-navbar'
-], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, _LegacyAppBar, _Command, _Container) {
+], function NavBarInit(_Global,_WinRT, _Base, _BaseUtils, _Events, _WriteProfilerMark, Promise, Scheduler, _ElementUtilities, _Hoverable, Accents, _LegacyAppBar, _Command, _Container) {
     "use strict";
+
+    Accents.createAccentRule(".win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened", [{ name: "background-color", value: Accents.ColorTypes.listSelectRest }]);
+    Accents.createAccentRule(".win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened.win-pressed", [{ name: "background-color", value: Accents.ColorTypes.listSelectPress }]);
+    Accents.createAccentRule(".win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover", [{ name: "background-color", value: Accents.ColorTypes.listSelectHover }]);
+    Accents.createAccentRule(".win-navbarcommand-splitbutton.win-navbarcommand-splitbutton-opened:hover.win-pressed", [{ name: "background-color", value: Accents.ColorTypes.listSelectPress }]);
 
     var customLayout = "custom";
 
