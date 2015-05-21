@@ -3,13 +3,6 @@
     .colorDefinitions(@theme);
 
     //
-    // Theme detection
-    //
-    winjs {
-        opacity: 0;
-    }
-
-    //
     // Body
     //
     .bodyStyle(@theme) {
@@ -29,6 +22,11 @@
     & when (@theme = dark) {
         .win-ui-dark { .bodyStyle(dark); }
         .win-ui-light { .bodyStyle(light); }
+
+        // Theme detection
+        winjs {
+            opacity: 0;
+        }
     }
     & when (@theme = light) {
         .win-ui-light { .bodyStyle(light); }

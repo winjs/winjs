@@ -41,7 +41,7 @@ function scheduleWriteRules() {
     if (!rules.length || writeRulesTOHandle !== -1) {
         return;
     }
-    writeRulesTOHandle = _Global.setTimeout(() => {
+    writeRulesTOHandle = _BaseUtils._setImmediate(() => {
         writeRulesTOHandle = -1;
         cleanup();
 
@@ -76,7 +76,7 @@ function scheduleWriteRules() {
             // Inverse Theme Selectors
             var isThemedColor = rule.props.some(prop => prop.value !== ColorTypes.accent)
             if (isThemedColor) {
-                var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? ((prop.value + 3) % (colors.length - 1)) : prop.value)] + ";").join("\n  ");
+                var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? (prop.value + 3) : prop.value)] + ";").join("\n  ");
                 // inverseBody = "color: *accent*; background-color: *listSelectHoverInverse"
 
                 selectorSplit.forEach(sel => {
@@ -130,12 +130,17 @@ function cleanup() {
     style && style.parentNode.removeChild(style);
 }
 
+function _reset() {
+    rules = [];
+    cleanup();
+}
+
 _BaseUtils.ready().then(() => {
     // Figure out color theme
     var tag = _Global.document.createElement("winjs");
     _Global.document.body.appendChild(tag);
     var theme = _Global.getComputedStyle(tag).opacity;
-    isDarkTheme = theme === "1";
+    isDarkTheme = theme === "0";
     tag.parentElement.removeChild(tag);
 
     if (_BaseUtils.hasWinRT) {
@@ -154,3 +159,13 @@ _BaseUtils.ready().then(() => {
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
     }
 });
+
+// Publish to WinJS namespace
+var toPublish = {
+    ColorTypes: ColorTypes,
+    createAccentRule: createAccentRule,
+
+    _colors: colors,
+    _reset: _reset
+};
+_Base.Namespace.define("WinJS.UI._Accents", toPublish);

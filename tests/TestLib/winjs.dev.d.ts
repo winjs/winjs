@@ -162,6 +162,23 @@ declare module WinJS {
             function _clickEaterTapped(): void;
         }
 
+        module _Accents {
+            export enum ColorTypes {
+                accent,
+                listSelectRest,
+                listSelectHover,
+                listSelectPress,
+                listSelectRestInverse,
+                listSelectHoverInverse,
+                listSelectPressInverse
+            } 
+
+            export function createAccentRule(selector: string, props: { name: string; value: ColorTypes }[], noHoverRules?: boolean);
+
+            export var _colors: string[];
+            export function _reset();
+        }
+
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
             sort(sortFunc: (a: any, b: any) => number);
