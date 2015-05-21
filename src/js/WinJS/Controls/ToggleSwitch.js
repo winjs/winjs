@@ -5,13 +5,16 @@ define([
     '../Core/_BaseUtils',
     '../Core/_Events',
     '../Core/_Resources',
+    '../Accents',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     'require-style!less/styles-toggleswitch',
     'require-style!less/colors-toggleswitch'
     ],
-    function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Control, _ElementUtilities) {
+    function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, Accents, _Control, _ElementUtilities) {
         "use strict";
+
+        Accents.createAccentRule(".win-toggleswitch-on .win-toggleswitch-track", [{ name: "border-color", value: Accents.ColorTypes.accent }]);
 
         _Base.Namespace.define("WinJS.UI", {
             /// <field>
