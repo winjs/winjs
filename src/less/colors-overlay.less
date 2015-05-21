@@ -3,9 +3,6 @@
     .variableDefs(@theme) when not (@theme = highcontrast) {
         .colorDefinitions(@theme);
 
-        @accentColorDefaultOpacity: @listSelectRestOpacity;
-        @accentColorHoverOpacity: @listSelectHoverOpacity;
-        @accentColorActiveOpacity: @listSelectPressOpacity;
         @borderColor: @baseHigh;
         @textColor: @baseHigh;
         @textColorDisabled: @baseLow;
@@ -17,20 +14,14 @@
         @appbarBorderColor: @chromeMid;
         @commandHoverBackgroundColor: @listHover;
         @commandActiveBackgroundColor: @listPress;
-        @flyoutBorderColor: @accentColor;
         @flyoutBackgroundColor: @altHigh;
         @menuCommandActiveBackgroundColor: @listPress;
         @menuCommandHoverBackgroundColor: @listHover;
         @menuCommandDisabledColor: @baseLow;
         @settingsFlyoutBackgroundColor: @altHigh;
-        @settingsFlyoutBorderColor: @accentColor;
     }
 
     .variableDefs(highcontrast) {
-        @accentColor:ButtonText;
-        @accentColorDefaultOpacity: 1;
-        @accentColorHoverOpacity: 1;
-        @accentColorActiveOpacity: 1;
         @borderColor:ButtonText;
         @textColor:ButtonText;
         @textColorDisabled: GrayText;
@@ -42,13 +33,11 @@
         @appbarBorderColor: Highlight;
         @commandHoverBackgroundColor: Highlight;
         @commandActiveBackgroundColor: ButtonText;
-        @flyoutBorderColor: Highlight;
         @flyoutBackgroundColor: ButtonFace;
         @menuCommandActiveBackgroundColor: ButtonText;
         @menuCommandHoverBackgroundColor: Highlight;
         @menuCommandDisabledColor: GrayText;
         @settingsFlyoutBackgroundColor: ButtonFace;
-        @settingsFlyoutBorderColor: Highlight;
     }
 
     .stylesForTheme(@theme) {
@@ -114,16 +103,14 @@
             position: absolute;
             height: 100%;
             width: 100%;
-            background-color: @accentColor;
-            opacity:@accentColorDefaultOpacity;
             box-sizing: content-box;
             content: "";
             /* We want this pseudo element to cover the border of its parent. */
             /* Put a 1px border on this element to make it larger and then set its top/left to -1px.*/
-            border: 1px solid @accentColor;
+            border-width: 1px;
+            border-style: solid;
             top:-1px;
             left:-1px;
-
         }
 
         button.win-command:enabled:-ms-keyboard-active {
@@ -201,16 +188,11 @@
         }
 
         &.win-flyout, .win-flyout {
-            border-color: @flyoutBorderColor;
             background-color: @flyoutBackgroundColor;
         }
 
         .win-settingsflyout {
             background-color: @settingsFlyoutBackgroundColor;
-        }
-
-        &.win-settingsflyout, .win-settingsflyout {
-            border-color: @settingsFlyoutBorderColor;
         }
 
         &.win-menu button, .win-menu button {
@@ -229,13 +211,12 @@
             position: absolute;
             height: 100%;
             width: 100%;
-            background-color: @accentColor;
-            opacity: @listSelectRestOpacity;
             content: "";
             box-sizing: content-box;
             /* We want this pseudo element to cover the border of its parent. */
             /* Put a 1px border on this element to make it larger and then set its top/left to -1px.*/
-            border: @accentColor 1px solid;
+            border-width: 1px;
+            border-style: solid;
             top: -1px;
             left: -1px;
         }
@@ -299,18 +280,6 @@
         .win-menu button.win-command:enabled:hover {
             background-color: @menuCommandHoverBackgroundColor;
             color: @textColorHover;
-        }
-
-        button[aria-checked=true].win-command:hover {
-            background-color: transparent;
-        }
-
-        button:enabled[aria-checked=true].win-command:hover:before {
-            opacity:@accentColorHoverOpacity;
-        }
-
-        button:enabled[aria-checked=true].win-command:hover:active:before {
-            opacity:@accentColorActiveOpacity;
         }
     }
 }

@@ -10,6 +10,7 @@ define([
     '../../Core/_Events',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
+    '../../Accents',
     '../../Animations',
     '../../Application',
     '../../ControlProcessor',
@@ -21,8 +22,22 @@ define([
     '../_LegacyAppBar/_Constants',
     'require-style!less/styles-overlay',
     'require-style!less/colors-overlay'
-], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardInfo, _Constants) {
+], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Accents, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardInfo, _Constants) {
     "use strict";
+
+    Accents.createAccentRule("button[aria-checked=true].win-command:before", [
+        { name: "background-color", value: Accents.ColorTypes.accent },
+        { name: "border-color", value: Accents.ColorTypes.accent },
+    ]);
+
+    Accents.createAccentRule(".win-menu-containsflyoutcommand button.win-command-flyout-activated:before", [
+        { name: "background-color", value: Accents.ColorTypes.listSelectRest },
+        { name: "border-color", value: Accents.ColorTypes.accent },
+    ]);
+    Accents.createAccentRule("button:enabled[aria-checked=true].win-command:hover:active:before", [{ name: "background-color", value: Accents.ColorTypes.listSelectPress }]);
+    Accents.createAccentRule("button:enabled[aria-checked=true].win-command:hover:before", [{ name: "background-color", value: Accents.ColorTypes.listSelectHover }]);
+    Accents.createAccentRule(".win-flyout, .win-settingsflyout", [{ name: "border-color", value: Accents.ColorTypes.accent }]);
+    Accents.createAccentRule("button[aria-checked=true].win-command:hover", [{ name: "background-color", value: Accents.ColorTypes.accent }]);
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Overlay: _Base.Namespace._lazy(function () {
@@ -51,7 +66,7 @@ define([
             // _Overlay Global Events Listener Class. We hang a singleton instance of this class off of a static _Overlay property.
             var _GlobalListener = _Base.Class.define(function _GlobalListener_ctor() {
                 this._currentState = _GlobalListener.states.off;
-                
+
                 this._inputPaneShowing = this._inputPaneShowing.bind(this);
                 this._inputPaneHiding = this._inputPaneHiding.bind(this);
                 this._documentScroll = this._documentScroll.bind(this);
@@ -467,7 +482,7 @@ define([
                     // have something to do in beforeShow that requires afterHide first.
                     Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._Overlay._checkDoNext");
                 },
-                
+
                 // Called after the animation but while the Overlay is still visible. It's
                 // important that this runs while the Overlay is visible because hiding
                 // a DOM element (e.g. visibility="hidden", display="none") while it contains
