@@ -10,12 +10,13 @@ var Constants = {
     themeDetectionTag: "winjs",
 
     hoverSelector: "html.win-hoverable",
+    lightThemeSelector: ".win-ui-light",
+    darkThemeSelector: ".win-ui-dark"
 };
 
 var CSSSelectorTokens = [".", "#", ":"];
 
-var UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
-
+var UISettings: _WinRT.Windows.UI.ViewManagement.UISettings = null;
 var colors: string[] = [];
 var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; noHoverSelector: boolean; }[] = [];
@@ -25,7 +26,10 @@ export enum ColorTypes {
     accent = 0,
     listSelectRest = 1,
     listSelectHover = 2,
-    listSelectPress = 3
+    listSelectPress = 3,
+    listSelectRestInverse = 4,
+    listSelectHoverInverse = 5,
+    listSelectPressInverse = 6,
 }
 
 export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[], noHoverSelector = false) {
@@ -41,37 +45,55 @@ function scheduleWriteRules() {
         writeRulesTOHandle = -1;
         cleanup();
 
-        var inverseThemeSelector = ".win-ui-" + (isDarkTheme ? "light" : "dark");
+        var inverseThemeSelector = isDarkTheme ? Constants.lightThemeSelector : Constants.darkThemeSelector;
 
         var style = _Global.document.createElement("style");
         style.id = Constants.accentStyleId;
         style.textContent = rules.map(rule => {
-            var body = "  " + rule.props.map(prop => prop.name + ": " + colors[prop.value] + ";").join("\n  ");
+            // example rule: { selector: "  .foo,  .bar:hover ,  div:hover  ", props: [{ name: "color", value: 0 }, { name: "background-color", value: 1 }, noHoverSelector: false }
 
-            var selector = rule.selector;
-            var selectorSplit = selector.split(",").map(str => str.trim());
+            var body = "  " + rule.props.map(prop => prop.name + ": " + colors[prop.value] + ";").join("\n  ");
+            // body = color: *accent*; background-color: *listSelectHover*
+
+            var selectorSplit = rule.selector.split(",").map(str => str.trim()); // [".foo", ".bar:hover", "div"]
+            var selector = selectorSplit.join(",\n"); // ".foo, .bar:hover, div"
 
             // Hover Selectors
-            var isHoverSelector = !rule.noHoverSelector && rule.selector.indexOf(":hover") !== -1
-            if (isHoverSelector) {
-                selector += ",\n" + Constants.hoverSelector + " " + selectorSplit.join(",\n" + Constants.hoverSelector + " ");
-                if (CSSSelectorTokens.indexOf(rule.selector[0]) !== -1) {
-                    selector + ",\n" + Constants.hoverSelector + selectorSplit.join(",\n" + Constants.hoverSelector);
-                }
+            if (!rule.noHoverSelector) {
+                selectorSplit.forEach(sel => {
+                    if (sel.indexOf(":hover") !== -1) {
+                        selector += ",\n" + Constants.hoverSelector + " " + sel;
+                        if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
+                            selector += ",\n" + Constants.hoverSelector + sel;
+                        }
+                    }
+                });
+                // selector = .foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover
             }
             var css = selector + " {\n" + body + "\n}";
+            // css = .foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover {body}
 
             // Inverse Theme Selectors
             var isThemedColor = rule.props.some(prop => prop.value !== ColorTypes.accent)
             if (isThemedColor) {
-                var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? ((prop.value + 3) % colors.length) : prop.value)] + ";").join("\n  ");
-                css += "\n" + inverseThemeSelector + " " + selectorSplit.join(",\n" + inverseThemeSelector + " ") + " {\n" + inverseBody + "\n}";
+                var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? ((prop.value + 3) % (colors.length - 1)) : prop.value)] + ";").join("\n  ");
+                // inverseBody = "color: *accent*; background-color: *listSelectHoverInverse"
 
-                if (CSSSelectorTokens.indexOf(rule.selector[0]) !== -1) {
-                    css += ",\n" + inverseThemeSelector + selectorSplit.join(",\n" + inverseThemeSelector)  + " {\n" + inverseBody + "\n}";
-                }
+                selectorSplit.forEach(sel => {
+                    css += "\n" + inverseThemeSelector + " " + sel;
+                    if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
+                        css += ",\n" + inverseThemeSelector + sel;
+                    }
+                    css += " {\n" + inverseBody + "\n}";
+                });
+                // css
+                //.foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover {body} 
+                //.win-ui-light .foo {inverseBody}
+                //.win-ui-light.foo {inverseBody}
+                //.win-ui-light .bar:hover {inverseBody}
+                //.win-ui-light.bar:hover {inverseBody}
+                //.win-ui-light div:hover {inverseBody}
             }
-
             return css;
         }).join("\n");
         _Global.document.head.insertBefore(style, _Global.document.head.firstChild);
@@ -79,32 +101,22 @@ function scheduleWriteRules() {
 }
 
 function handleColorsChanged() {
-    // TODO: oncolorvalueschanged fires randomly?
     var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
     var accent = colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 1);
     if (colors[0] === accent) {
         return;
     }
-    colors = [];
-    colors.push(accent);
-
-    // Figure out color theme
-    var tag = _Global.document.createElement("winjs");
-    _Global.document.body.appendChild(tag);
-    var theme = _Global.getComputedStyle(tag).opacity;
-    isDarkTheme = theme === "1";
-    tag.parentElement.removeChild(tag);
 
     // Establish colors
-    if (isDarkTheme) {
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.6));
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.8));
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.9));
-    } else {
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.4));
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.6));
-        colors.push(colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 0.7));
-    }
+    colors = [];
+    colors.push(accent);
+    colors.push(
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.6 : 0.4)),
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.8 : 0.6)),
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.9 : 0.7)),
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.4 : 0.6)),
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.6 : 0.8)),
+        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.7 : 0.9)));
 
     scheduleWriteRules();
 }
@@ -118,5 +130,27 @@ function cleanup() {
     style && style.parentNode.removeChild(style);
 }
 
-UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
-_BaseUtils.ready().then(handleColorsChanged);
+_BaseUtils.ready().then(() => {
+    // Figure out color theme
+    var tag = _Global.document.createElement("winjs");
+    _Global.document.body.appendChild(tag);
+    var theme = _Global.getComputedStyle(tag).opacity;
+    isDarkTheme = theme === "1";
+    tag.parentElement.removeChild(tag);
+
+    if (_BaseUtils.hasWinRT) {
+        UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
+        UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
+        handleColorsChanged();
+    } else {
+        // No WinRT - use hardcoded blue accent color
+        colors.push(
+            "rgb(0, 120, 215)",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.8" : "0.6") + ")",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.9" : "0.7") + ")",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.4" : "0.6") + ")",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
+            "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
+    }
+});
