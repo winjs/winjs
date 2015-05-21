@@ -729,6 +729,10 @@ define([
                     }, false);
 
                     this._flipviewDiv.addEventListener("keydown", function (event) {
+                        if (that._disposed) {
+                            return;
+                        }
+
                         var cancelBubbleIfHandled = true;
                         if (!that._isInteractive(event.target)) {
                             var Key = _ElementUtilities.Key,
@@ -828,6 +832,10 @@ define([
                 },
 
                 _windowWheelHandler: function FlipView_windowWheelHandler(ev) {
+                    if (this._disposed) {
+                        return;
+                    }
+
                     // When you are using the mouse wheel to scroll a horizontal area such as a WinJS.UI.Hub and one of the sections
                     // has a WinJS.UI.FlipView you may get stuck on that item. This logic is to allow a scroll event to skip the flipview's
                     // overflow scroll div and instead go to the parent scroller. We only skip the scroll wheel event for a fixed amount of time
@@ -1124,7 +1132,9 @@ define([
                 },
 
                 _scrollPosChanged: function FlipView_scrollPosChanged() {
-                    this._pageManager.scrollPosChanged();
+                    if (!this._disposed) {
+                        this._pageManager.scrollPosChanged();
+                    }
                 },
 
                 _axisAsString: function FlipView_axisAsString() {
