@@ -39,7 +39,6 @@
     // Text selection
     //
     ::selection {
-        background-color: @accentColor;
         color: #fff;
     }
 
@@ -47,8 +46,6 @@
     // Link
     //
     .win-link {
-        color: @accentColor;
-
         &:hover {
             color: @baseMid;
         }
@@ -74,12 +71,10 @@
 
         &:indeterminate::-ms-check {
             color: @baseMediumHigh;
-            border-color: @accentColor;
         }
 
         &:checked::-ms-check {
             color: #fff;
-            background-color: @accentColor;
             border-color: transparent;
         }
 
@@ -89,7 +84,6 @@
 
         &:hover:indeterminate::-ms-check {
             color: @baseHigh;
-            border-color: @accentColor;
         }
 
         &:active::-ms-check {
@@ -121,10 +115,6 @@
             border-color: @baseHigh;
         }
 
-        &:checked::-ms-check {
-            border-color: @accentColor;
-        }
-
         &:hover::-ms-check {
             color: @baseHigh;
         }
@@ -147,20 +137,12 @@
     .win-progress-ring,
     .win-ring, {
       // Main colors
-      color: @accentColor;
 
       // Only style background color in determinate mode to leave
       // indeterminate background transparent and preserve firefox's
       // default animation
       &:not(:indeterminate) {
         background-color: @baseLow;
-      }
-
-      &::-webkit-progress-value {
-        background-color: @accentColor;
-      }
-      &:not(:indeterminate)::-moz-progress-bar {
-        background-color: @accentColor;
       }
 
       // This is a weird webkit issue where the background color
@@ -203,7 +185,6 @@
 
     .win-button.win-button-primary {
         color: #fff;
-        background-color: @accentColor;
     }
 
     //
@@ -240,7 +221,6 @@
 
         &:checked {
             color: @baseWhite;
-            background-color: @accentColor;
         }
         &:hover, &:active {
             background-color: fade(@baseBlack, 20%);
@@ -268,7 +248,6 @@
         }
         option:checked {
             color: @baseWhite;
-            background-color: @accentColor;
         }
     }
 
@@ -278,12 +257,6 @@
     .win-slider {
         background-color: transparent;
 
-        // Note the use of background instead of background-color
-        // FF slider styling doesn't work with background-color
-        // so using background for everything here for consistency
-        .thumb() {
-            background: @accentColor;
-        }
         .thumbHover() {
             background: @sliderThumbHover;
         }
@@ -292,9 +265,6 @@
         }
         .thumbDisabled() {
             background: @sliderThumbDisabled;
-        }
-        .lowerFill() {
-            background: @accentColor;
         }
         .upperFill() {
             background: @baseMediumMid;
@@ -310,9 +280,6 @@
         // mixed browser pseudo selectors will get thrown out
 
         // Thumb
-        &::-ms-thumb {.thumb();}
-        &::-webkit-slider-thumb {.thumb();}
-        &::-moz-range-thumb {.thumb();}
         &:hover::-ms-thumb {.thumbHover();}
         &:hover::-webkit-slider-thumb {.thumbHover();}
         &:hover::-moz-range-thumb {.thumbHover();}
@@ -324,7 +291,6 @@
         &:disabled::-moz-range-thumb {.thumbDisabled();}
 
         // Lower fill (only supported in IE)
-        &::-ms-fill-lower {.lowerFill();}
         &:disabled::-ms-fill-lower {.fillDisabled();}
 
         // Upper fill / track
@@ -374,7 +340,6 @@
         &:focus {
             color: @baseBlack;
             background-color: @baseWhite;
-            border-color: @accentColor;
         }
     }
 
@@ -386,12 +351,8 @@
         display: block;
         color: fade(@baseBlack, 60%); // Equivalent to altMid in dark and baseMid in light
 
-        &:hover {
-            color: @accentColor;
-        }
         &:active {
             color: @baseWhite;
-            background-color: @accentColor;
         }
     }
 
