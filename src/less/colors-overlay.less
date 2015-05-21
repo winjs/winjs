@@ -3,12 +3,15 @@
     .variableDefs(@theme) when not (@theme = highcontrast) {
         .colorDefinitions(@theme);
 
+        @accentColorDefaultOpacity: @listSelectRestOpacity;
+        @accentColorHoverOpacity: @listSelectHoverOpacity;
+        @accentColorActiveOpacity: @listSelectPressOpacity;
         @borderColor: @baseHigh;
         @textColor: @baseHigh;
         @textColorDisabled: @baseLow;
-        @textColorActive:  @baseHigh;
-        @textColorSelected:  @baseHigh;
-        @textColorHover:  @baseHigh;
+        @textColorActive: @baseHigh;
+        @textColorSelected: @baseHigh;
+        @textColorHover: @baseHigh;
         @separatorBackgroundColor: @baseMediumMid;
         @appbarBackgroundColor: @chromeMid;
         @appbarBorderColor: @chromeMid;
@@ -22,8 +25,11 @@
     }
 
     .variableDefs(highcontrast) {
-        @borderColor:ButtonText;
-        @textColor:ButtonText;
+        @accentColorDefaultOpacity: 1;
+        @accentColorHoverOpacity: 1;
+        @accentColorActiveOpacity: 1;
+        @borderColor: ButtonText;
+        @textColor: ButtonText;
         @textColorDisabled: GrayText;
         @textColorActive: ButtonFace;
         @textColorSelected: ButtonFace;
@@ -41,7 +47,6 @@
     }
 
     .stylesForTheme(@theme) {
-
         #win-overlay > .variableDefs(@theme);
 
         .win-overlay {
@@ -55,7 +60,7 @@
         div.win-command,
         button.win-command {
             border-color: transparent;
-            background-color:transparent;
+            background-color: transparent;
         }
 
         div.win-command:hover:active,
@@ -69,6 +74,7 @@
         div.win-command.win-command.win-keyboard:hover:focus {
             border-color: @borderColor;
         }
+
         .win-commandimage {
             color: @textColor;
         }
@@ -76,12 +82,12 @@
         button.win-command.win-command:enabled:hover:active,
         button.win-command.win-command:enabled:active {
             background-color: @commandActiveBackgroundColor;
-            color:@textColorActive;
+            color: @textColorActive;
         }
 
         button:enabled:hover:active .win-commandimage,
         button:enabled:active .win-commandimage {
-            color:@textColorActive;
+            color: @textColorActive;
         }
 
         button:disabled .win-commandimage,
@@ -103,6 +109,7 @@
             position: absolute;
             height: 100%;
             width: 100%;
+            opacity:@accentColorDefaultOpacity;
             box-sizing: content-box;
             content: "";
             /* We want this pseudo element to cover the border of its parent. */
@@ -111,6 +118,7 @@
             border-style: solid;
             top:-1px;
             left:-1px;
+
         }
 
         button.win-command:enabled:-ms-keyboard-active {
@@ -203,7 +211,7 @@
         .win-menu button.win-command.win-command:enabled:hover:active,
         .win-menu button[aria-checked=true].win-command.win-command:enabled:hover:active {
             background-color: @menuCommandActiveBackgroundColor;
-            color:@textColorActive;
+            color: @textColorActive;
         }
 
         &.win-menu-containsflyoutcommand button.win-command-flyout-activated:before,
@@ -211,6 +219,7 @@
             position: absolute;
             height: 100%;
             width: 100%;
+            opacity: @listSelectRestOpacity;
             content: "";
             box-sizing: content-box;
             /* We want this pseudo element to cover the border of its parent. */
@@ -235,9 +244,7 @@
     }
 
     .stylesForThemeHover(@theme) {
-
         #win-overlay > .variableDefs(@theme);
-
         /* LegacyAppBar control colors */
         &.win-navbar, .win-navbar {
 
@@ -245,7 +252,6 @@
             button.win-navbar-invokebutton:disabled:hover {
                 background-color: transparent;
             }
-
             // When the LegacyAppBar is showing or shown, only the ellipsis has a hover background.*/
             &.win-navbar-opening, &.win-navbar-opened {
                 button.win-navbar-invokebutton:enabled:hover {
@@ -280,6 +286,18 @@
         .win-menu button.win-command:enabled:hover {
             background-color: @menuCommandHoverBackgroundColor;
             color: @textColorHover;
+        }
+
+        button[aria-checked=true].win-command:hover {
+            background-color: transparent;
+        }
+
+        button:enabled[aria-checked=true].win-command:hover:before {
+            opacity:@accentColorHoverOpacity;
+        }
+
+        button:enabled[aria-checked=true].win-command:hover:active:before {
+            opacity:@accentColorActiveOpacity;
         }
     }
 }

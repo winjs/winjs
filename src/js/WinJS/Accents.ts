@@ -61,7 +61,7 @@ function scheduleWriteRules() {
             // Hover Selectors
             if (!rule.noHoverSelector) {
                 selectorSplit.forEach(sel => {
-                    if (sel.indexOf(":hover") !== -1) {
+                    if (sel.indexOf(":hover") !== -1 && sel.indexOf(Constants.hoverSelector) === -1) {
                         selector += ",\n" + Constants.hoverSelector + " " + sel;
                         if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
                             selector += ",\n" + Constants.hoverSelector + sel;

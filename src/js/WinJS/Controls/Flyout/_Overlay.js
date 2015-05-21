@@ -25,19 +25,14 @@ define([
 ], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Accents, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardInfo, _Constants) {
     "use strict";
 
-    Accents.createAccentRule("button[aria-checked=true].win-command:before", [
+    Accents.createAccentRule(
+        "button[aria-checked=true].win-command:before,\
+         .win-menu-containsflyoutcommand button.win-command-flyout-activated:before", [
         { name: "background-color", value: Accents.ColorTypes.accent },
         { name: "border-color", value: Accents.ColorTypes.accent },
     ]);
 
-    Accents.createAccentRule(".win-menu-containsflyoutcommand button.win-command-flyout-activated:before", [
-        { name: "background-color", value: Accents.ColorTypes.listSelectRest },
-        { name: "border-color", value: Accents.ColorTypes.accent },
-    ]);
-    Accents.createAccentRule("button:enabled[aria-checked=true].win-command:hover:active:before", [{ name: "background-color", value: Accents.ColorTypes.listSelectPress }]);
-    Accents.createAccentRule("button:enabled[aria-checked=true].win-command:hover:before", [{ name: "background-color", value: Accents.ColorTypes.listSelectHover }]);
     Accents.createAccentRule(".win-flyout, .win-settingsflyout", [{ name: "border-color", value: Accents.ColorTypes.accent }]);
-    Accents.createAccentRule("button[aria-checked=true].win-command:hover", [{ name: "background-color", value: Accents.ColorTypes.accent }]);
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Overlay: _Base.Namespace._lazy(function () {
