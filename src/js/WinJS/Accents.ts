@@ -18,7 +18,7 @@ var UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
 
 var colors: string[] = [];
 var isDarkTheme = false;
-var rules: { selector: string; props: { name: string; value: ColorTypes; }[] }[] = [];
+var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; noHoverSelector: boolean; }[] = [];
 var writeRulesTOHandle = -1;
 
 export enum ColorTypes {
@@ -28,8 +28,8 @@ export enum ColorTypes {
     listSelectPress = 3
 }
 
-export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[]) {
-    rules.push({ selector: selector, props: props });
+export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[], noHoverSelector = false) {
+    rules.push({ selector: selector, props: props, noHoverSelector: noHoverSelector });
     scheduleWriteRules();
 }
 
@@ -52,7 +52,7 @@ function scheduleWriteRules() {
             var selectorSplit = selector.split(",").map(str => str.trim());
 
             // Hover Selectors
-            var isHoverSelector = rule.selector.indexOf(":hover") !== -1
+            var isHoverSelector = !rule.noHoverSelector && rule.selector.indexOf(":hover") !== -1
             if (isHoverSelector) {
                 selector += ",\n" + Constants.hoverSelector + " " + selectorSplit.join(",\n" + Constants.hoverSelector + " ");
                 if (CSSSelectorTokens.indexOf(rule.selector[0]) !== -1) {
