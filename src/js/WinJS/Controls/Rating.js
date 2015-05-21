@@ -5,6 +5,7 @@ define([
     '../Core/_ErrorFromName',
     '../Core/_Events',
     '../Core/_Resources',
+    '../Accents',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
@@ -12,8 +13,10 @@ define([
     './Tooltip',
     'require-style!less/styles-rating',
     'require-style!less/colors-rating'
-    ], function ratingInit(_Global,_Base, _ErrorFromName, _Events, _Resources, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
+], function ratingInit(_Global, _Base, _ErrorFromName, _Events, _Resources, Accents, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
     "use strict";
+
+    Accents.createAccentRule(".win-rating .win-star.win-user.win-full, .win-rating .win-star.win-user.win-full.win-disabled", [{ name: "color", value: Accents.ColorTypes.accent }]);
 
     // Rating control implementation
     _Base.Namespace.define("WinJS.UI", {
@@ -879,7 +882,7 @@ define([
 
                 _resetNextElement: function (prevState) {
                     if (this._averageRatingElement.nextSibling !== null) {
-                        _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1, shrink: 1});
+                        _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, { grow: 1, shrink: 1 });
                         var style = this._averageRatingElement.nextSibling.style;
                         var direction = _Global.getComputedStyle(this._element).direction;
                         if (prevState) {
@@ -982,12 +985,12 @@ define([
                         nextStyle.borderLeft = "0px";
                         nextStyle.direction = "rtl";
                     }
-                    _ElementUtilities._setFlexStyle(this._averageRatingElement, {grow: this._floatingValue, shrink: this._floatingValue});
+                    _ElementUtilities._setFlexStyle(this._averageRatingElement, { grow: this._floatingValue, shrink: this._floatingValue });
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
                     style.display = _Global.getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
-                    _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, {grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue});
+                    _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, { grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue });
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
                     nextStyle.backgroundSize = (100 / (1 - this._floatingValue)) + "% 100%";
                 },
