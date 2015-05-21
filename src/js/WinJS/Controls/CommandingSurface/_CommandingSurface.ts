@@ -415,10 +415,7 @@ export class _CommandingSurface {
                     overflowAreaHeight: boundingRects.overflowArea.height,
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
-                    that._dom.actionAreaContainer.style.transform = "";
-                    that._dom.actionArea.style.transform = "";
-                    that._dom.overflowAreaContainer.style.transform = "";
-                    that._dom.overflowArea.style.transform = "";
+                    that._clearAnimation();
                 });
             }
         };
@@ -451,10 +448,7 @@ export class _CommandingSurface {
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
                     _ElementUtilities.removeClass(that.element, _Constants.ClassNames.closingClass);
-                    that._dom.actionAreaContainer.style.transform = "";
-                    that._dom.actionArea.style.transform = "";
-                    that._dom.overflowAreaContainer.style.transform = "";
-                    that._dom.overflowArea.style.transform = "";
+                    that._clearAnimation();
                 });
             }
         };
@@ -1244,6 +1238,14 @@ export class _CommandingSurface {
                 break;
             }
         }
+    }
+
+    private _clearAnimation(): void {
+        var transformScriptName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
+        this._dom.actionAreaContainer.style[transformScriptName] = "";
+        this._dom.actionArea.style[transformScriptName] = "";
+        this._dom.overflowAreaContainer.style[transformScriptName] = "";
+        this._dom.overflowArea.style[transformScriptName] = "";
     }
 }
 
