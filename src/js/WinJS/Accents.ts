@@ -7,13 +7,19 @@ import _BaseUtils = require("./Core/_BaseUtils");
 
 var Constants = {
     accentStyleId: "WinJSAccentsStyle",
-    themeDetectionTag: "winjs"
+    themeDetectionTag: "winjs",
+
+    hoverSelector: "html.win-hoverable",
 };
 
+var CSSSelectorTokens = [".", "#", ":"];
+
 var UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
+
+var colors: string[] = [];
+var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[] }[] = [];
 var writeRulesTOHandle = -1;
-var colors: string[] = [];
 
 export enum ColorTypes {
     accent = 0,
@@ -24,9 +30,6 @@ export enum ColorTypes {
 
 export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[]) {
     rules.push({ selector: selector, props: props });
-    if (selector.indexOf(":hover") !== -1) {
-        rules.push({ selector: "html.win-hoverable " + selector, props: props });
-    }
     scheduleWriteRules();
 }
 
@@ -38,11 +41,38 @@ function scheduleWriteRules() {
         writeRulesTOHandle = -1;
         cleanup();
 
+        var inverseThemeSelector = ".win-ui-" + (isDarkTheme ? "light" : "dark");
+
         var style = _Global.document.createElement("style");
         style.id = Constants.accentStyleId;
         style.textContent = rules.map(rule => {
-            var props = rule.props.map(prop => prop.name + ": " + colors[prop.value] + ";").join(" ");
-            return rule.selector + " { " + props + " }";
+            var body = "  " + rule.props.map(prop => prop.name + ": " + colors[prop.value] + ";").join("\n  ");
+
+            var selector = rule.selector;
+            var selectorSplit = selector.split(",").map(str => str.trim());
+
+            // Hover Selectors
+            var isHoverSelector = rule.selector.indexOf(":hover") !== -1
+            if (isHoverSelector) {
+                selector += ",\n" + Constants.hoverSelector + " " + selectorSplit.join(",\n" + Constants.hoverSelector + " ");
+                if (CSSSelectorTokens.indexOf(rule.selector[0]) !== -1) {
+                    selector + ",\n" + Constants.hoverSelector + selectorSplit.join(",\n" + Constants.hoverSelector);
+                }
+            }
+            var css = selector + " {\n" + body + "\n}";
+
+            // Inverse Theme Selectors
+            var isThemedColor = rule.props.some(prop => prop.value !== ColorTypes.accent)
+            if (isThemedColor) {
+                var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? ((prop.value + 3) % colors.length) : prop.value)] + ";").join("\n  ");
+                css += "\n" + inverseThemeSelector + " " + selectorSplit.join(",\n" + inverseThemeSelector + " ") + " {\n" + inverseBody + "\n}";
+
+                if (CSSSelectorTokens.indexOf(rule.selector[0]) !== -1) {
+                    css += ",\n" + inverseThemeSelector + selectorSplit.join(",\n" + inverseThemeSelector)  + " {\n" + inverseBody + "\n}";
+                }
+            }
+
+            return css;
         }).join("\n");
         _Global.document.head.insertBefore(style, _Global.document.head.firstChild);
     });
@@ -62,7 +92,7 @@ function handleColorsChanged() {
     var tag = _Global.document.createElement("winjs");
     _Global.document.body.appendChild(tag);
     var theme = _Global.getComputedStyle(tag).opacity;
-    var isDarkTheme = theme === "1";
+    isDarkTheme = theme === "1";
     tag.parentElement.removeChild(tag);
 
     // Establish colors
