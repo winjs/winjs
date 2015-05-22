@@ -270,6 +270,15 @@ declare module WinJS {
             _disposed: boolean;
             _machine: IOpenCloseMachine
         }
+        
+        class PrivateSplitViewPaneToggle extends WinJS.UI.SplitViewPaneToggle {
+            static _ClassNames: {
+                splitViewPaneToggle: string;
+            }
+            
+            _invoked(): void;
+            _disposed: boolean;
+        }
 
         interface ISelect {
             value;

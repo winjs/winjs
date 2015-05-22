@@ -1,0 +1,25 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+@import "base.less";
+
+button.win-splitviewpanetoggle {
+    touch-action: manipulation;
+    box-sizing: border-box;
+    height: 48px;
+    width: 48px;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+    border: 1px dotted transparent; // Color is added for keyboard focus in colors styles
+    margin: 0;
+    outline: none;
+    background-color: transparent;
+}
+
+button.win-splitviewpanetoggle:after {
+    font-size: 24px;
+    font-family: 'Segoe MDL2 Assets', 'Symbols';
+    font-weight: 400;
+    line-height: 1.333;
+    content: "\E700";
+}

@@ -1,0 +1,24 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+    
+    button.win-splitviewpanetoggle {
+        color: @baseHigh;
+    }
+    
+    button.win-splitviewpanetoggle:active,
+    button.win-splitviewpanetoggle.win-splitviewpanetoggle:active:hover {
+        background-color: @listPress;
+    }
+    
+    button.win-splitviewpanetoggle.win-keyboard:focus {
+        border-color: @baseHigh;
+    }
+}
+
+.ColorsHover(@theme) {
+    button.win-splitviewpanetoggle:hover {
+        background-color: @listHover;
+    }
+}
