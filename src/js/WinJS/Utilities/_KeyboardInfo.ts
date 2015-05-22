@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../../../typings/require.d.ts" />
 
+import _BaseCoreUtils = require('../Core/_BaseCoreUtils');
 import _Global = require('../Core/_Global');
 import _WinRT = require('../Core/_WinRT');
 
@@ -121,7 +122,7 @@ _KeyboardInfo = {
 
     // Get total length of the IHM showPanel animation
     get _animationShowLength(): number {
-        if (_WinRT) {
+        if (_BaseCoreUtils.hasWinRT) {
             if (_WinRT.Windows.UI.Core.AnimationMetrics) {
                 // Desktop exposes the AnimationMetrics API that allows us to look up the relevant IHM animation metrics.
                 var a = _WinRT.Windows.UI.Core.AnimationMetrics, animationDescription = new a.AnimationDescription(a.AnimationEffect.showPanel, a.AnimationEffectTarget.primary);
