@@ -46,19 +46,23 @@ module CorsicaTests {
 
             var cs = getComputedStyle(testElement);
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], cs.backgroundColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], cs.columnRuleColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], cs.borderBottomColor);
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectPressInverse], cs.outlineColor);
 
             Accents.createAccentRule("#accent-test-element", [
                 { name: "background-color", value: Accents.ColorTypes.listSelectRest },
-                { name: "column-rule-color", value: Accents.ColorTypes.listSelectHover },
+                { name: "border-bottom-color", value: Accents.ColorTypes.listSelectHover },
                 { name: "outline-color", value: Accents.ColorTypes.listSelectPress },
             ]);
 
             WinJS.Promise.timeout().done(() => {
+                var expectedlistSelectPressInverseColor = Accents._colors[Accents.ColorTypes._listSelectPressInverse];
+
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], getComputedStyle(testElement).columnRuleColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectPressInverse], getComputedStyle(testElement).outlineColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], getComputedStyle(testElement).borderBottomColor);
+
+                // Some browsers end up computing 'rgba(x,x,x,0.7)' to 'rgba(x,x,x,0.70196)' so we have to change the assertion
+                LiveUnit.Assert.stringContains(getComputedStyle(testElement).outlineColor, (expectedlistSelectPressInverseColor.substr(0, expectedlistSelectPressInverseColor.length - 2)));
                 complete();
             });
         }
@@ -140,13 +144,11 @@ module CorsicaTests {
 
             var cs = getComputedStyle(testElement);
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], cs.backgroundColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], cs.columnRuleColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectPressInverse], cs.outlineColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], cs.borderBottomColor);
 
             Accents.createAccentRule("randomTag, #accent-test-element", [
                 { name: "background-color", value: Accents.ColorTypes.listSelectRest },
-                { name: "column-rule-color", value: Accents.ColorTypes.listSelectHover },
-                { name: "outline-color", value: Accents.ColorTypes.listSelectPress },
+                { name: "border-bottom-color", value: Accents.ColorTypes.listSelectHover },
             ]);
 
             WinJS.Promise.timeout().done(() => {
@@ -158,8 +160,7 @@ module CorsicaTests {
                 LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, ".win-ui-lightrandomTag");
 
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], getComputedStyle(testElement).columnRuleColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectPressInverse], getComputedStyle(testElement).outlineColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], getComputedStyle(testElement).borderBottomColor);
                 complete();
             });
         }
@@ -168,22 +169,24 @@ module CorsicaTests {
             var cs = getComputedStyle(testElement);
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.accent], cs.color);
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectRest], cs.backgroundColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], cs.columnRuleColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectPress], cs.outlineColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], cs.borderBottomColor);
 
             Accents.createAccentRule("#accent-test-element", [
                 { name: "color", value: Accents.ColorTypes.accent },
                 { name: "background-color", value: Accents.ColorTypes.listSelectRest },
-                { name: "column-rule-color", value: Accents.ColorTypes.listSelectHover },
+                { name: "border-bottom-color", value: Accents.ColorTypes.listSelectHover },
                 { name: "outline-color", value: Accents.ColorTypes.listSelectPress },
             ]);
             WinJS.Promise.timeout().done(() => {
+                var expectedlistSelectPressColor = Accents._colors[Accents.ColorTypes.listSelectPress];
                 cs = getComputedStyle(testElement);
                 LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "#accent-test-element");
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.accent], cs.color);
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectRest], cs.backgroundColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectHover], cs.columnRuleColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectPress], cs.outlineColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectHover], cs.borderBottomColor);
+
+                // Some browsers end up computing 'rgba(x,x,x,0.9)' to 'rgba(x,x,x,0.90196)' so we have to change the assertion
+                LiveUnit.Assert.stringContains(getComputedStyle(testElement).outlineColor, (expectedlistSelectPressColor.substr(0, expectedlistSelectPressColor.length - 2)));
                 complete();
             });
         }
