@@ -22,9 +22,9 @@ define([
 ], function autoSuggestBoxInit(exports, _Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, _Control, _ElementListUtilities, _ElementUtilities, _Hoverable, _Accents, Animations, BindingList, Promise, Repeater, _SuggestionManagerShim) {
     "use strict";
 
-    _Accents.createAccentRule(".win-autosuggestbox-suggestion-selected", [{ name: "background-color", value: _Accents.ColorTypes.listSelectRest }]);
-    _Accents.createAccentRule(".win-autosuggestbox-suggestion-selected.win-autosuggestbox-suggestion-selected:hover", [{ name: "background-color", value: _Accents.ColorTypes.listSelectHover }]);
-    _Accents.createAccentRule(".win-autosuggestbox-suggestion-selected.win-autosuggestbox-suggestion-selected:hover:active", [{ name: "background-color", value: _Accents.ColorTypes.listSelectPress }]);
+    _Accents.createAccentRule("html.win-hoverable .win-autosuggestbox .win-autosuggestbox-suggestion-selected:hover", [{ name: "background-color", value: _Accents.ColorTypes.listSelectHover }]);
+    _Accents.createAccentRule(".win-autosuggestbox .win-autosuggestbox-suggestion-selected", [{ name: "background-color", value: _Accents.ColorTypes.listSelectRest }]);
+    _Accents.createAccentRule(".win-autosuggestbox .win-autosuggestbox-suggestion-selected.win-autosuggestbox-suggestion-selected:hover:active", [{ name: "background-color", value: _Accents.ColorTypes.listSelectPress }]);
 
     var ClassNames = {
         asb: "win-autosuggestbox",

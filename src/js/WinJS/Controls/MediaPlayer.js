@@ -37,7 +37,7 @@ define('WinJS/Controls/MediaPlayer', [
     "use strict";
 
     _Accents.createAccentRule(".win-mediaplayer-seekprogress, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark", [{ name: "background-color", value: _Accents.ColorTypes.accent }]);
-    _Accents.createAccentRule(".win-mediaplayer-seek-mark, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark:hover", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-mediaplayer-seek-mark, html.win-hoverable .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark:hover", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
 
     var app = Application;
     var nav = Navigation;

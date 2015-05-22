@@ -14,6 +14,7 @@ module CorsicaTests {
 
     export class AccentTests {
         setUp() {
+            Accents._reset();
             testElement = document.createElement("div");
             testElement2 = document.createElement("div");
             testElement.id = testElementId;
@@ -27,7 +28,6 @@ module CorsicaTests {
             testElement && testElement.parentElement && testElement.parentElement.removeChild(testElement);
             testElement2 && testElement2.parentElement && testElement2.parentElement.removeChild(testElement2);
             testElement = testElement2 = null;
-            Accents._reset();
         }
 
         testCreateAccentRuleSimple(complete) {
@@ -63,6 +63,42 @@ module CorsicaTests {
             });
         }
 
+        testCreateAccentRuleInverseHover(complete) {
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], getComputedStyle(testElement).color);
+
+            Accents.createAccentRule("html.win-hoverable #accent-test-element", [{ name: "color", value: Accents.ColorTypes.listSelectHover }]);
+            WinJS.Promise.timeout().done(() => {
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable #accent-test-element");
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-light #accent-test-element");
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-light#accent-test-element");
+                complete();
+            });
+        }
+
+        testCreateAccentRuleInverseHoverNoLeadingToken(complete) {
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], getComputedStyle(testElement).color);
+
+            Accents.createAccentRule("html.win-hoverable randomTag", [{ name: "color", value: Accents.ColorTypes.listSelectHover }]);
+            WinJS.Promise.timeout().done(() => {
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable randomTag");
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-light randomTag");
+                LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-lightrandomTag");
+                complete();
+            });
+        }
+
+        testCreateAccentRuleInverseHoverWithWhitespace(complete) {
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], getComputedStyle(testElement).color);
+
+            Accents.createAccentRule("  html.win-hoverable   #accent-test-element    ", [{ name: "color", value: Accents.ColorTypes.listSelectHover }]);
+            WinJS.Promise.timeout().done(() => {
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable #accent-test-element");
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-light #accent-test-element");
+                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable .win-ui-light#accent-test-element");
+                complete();
+            });
+        }
+
         testCreateAccentRuleInverseNoLeadingToken(complete) {
             LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHover], getComputedStyle(testElement).color);
 
@@ -71,36 +107,6 @@ module CorsicaTests {
                 LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "randomTag");
                 LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, ".win-ui-light randomTag");
                 LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, ".win-ui-lightrandomTag");
-                complete();
-            });
-        }
-
-        testCreateHoverSelectors(complete) {
-            Accents.createAccentRule("#accent-test-element:hover", [{ name: "color", value: Accents.ColorTypes.accent }]);
-            WinJS.Promise.timeout().done(() => {
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "#accent-test-element:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable #accent-test-element:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable#accent-test-element:hover");
-                complete();
-            });
-        }
-
-        testCreateHoverSelectorsNoLeadingToken(complete) {
-            Accents.createAccentRule("randomTag:hover", [{ name: "color", value: Accents.ColorTypes.accent }]);
-            WinJS.Promise.timeout().done(() => {
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "randomTag:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable randomTag:hover");
-                LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, "html.win-hoverablerandomTag:hover");
-                complete();
-            });
-        }
-
-        testCreateHoverSelectorNoHoverRule(complete) {
-            Accents.createAccentRule("#accent-test-element:hover", [{ name: "color", value: Accents.ColorTypes.accent }], true);
-            WinJS.Promise.timeout().done(() => {
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "#accent-test-element:hover");
-                LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, "html.win-hoverable #accent-test-element:hover");
-                LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, "html.win-hoverable#accent-test-element:hover");
                 complete();
             });
         }
@@ -154,23 +160,6 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectHoverInverse], getComputedStyle(testElement).columnRuleColor);
                 LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectPressInverse], getComputedStyle(testElement).outlineColor);
-                complete();
-            });
-        }
-
-        testMultipleSelectorsWithHover(complete) {
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.accent], getComputedStyle(testElement).color);
-
-            Accents.createAccentRule("#accent-test-element, #randomId:hover, randomTag2:hover", [{ name: "color", value: Accents.ColorTypes.accent }]);
-            WinJS.Promise.timeout().done(() => {
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "#accent-test-element");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "#randomId:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "randomTag2:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable #randomId:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable#randomId:hover");
-                LiveUnit.Assert.stringContains(getDynamicStyleElement().textContent, "html.win-hoverable randomTag2:hover");
-                LiveUnit.Assert.stringDoesNotContain(getDynamicStyleElement().textContent, "html.win-hoverablerandomTag2:hover");
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.accent], getComputedStyle(testElement).color);
                 complete();
             });
         }

@@ -19,7 +19,7 @@ var CSSSelectorTokens = [".", "#", ":"];
 var UISettings: _WinRT.Windows.UI.ViewManagement.UISettings = null;
 var colors: string[] = [];
 var isDarkTheme = false;
-var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; noHoverSelector: boolean; }[] = [];
+var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; }[] = [];
 var writeRulesTOHandle = -1;
 
 // Enum values align with the colors array indices
@@ -33,8 +33,8 @@ export enum ColorTypes {
     _listSelectPressInverse = 6,
 }
 
-export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[], noHoverSelector = false) {
-    rules.push({ selector: selector, props: props, noHoverSelector: noHoverSelector });
+export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[]) {
+    rules.push({ selector: selector, props: props });
     scheduleWriteRules();
 }
 
@@ -47,32 +47,20 @@ function scheduleWriteRules() {
         cleanup();
 
         var inverseThemeSelector = isDarkTheme ? Constants.lightThemeSelector : Constants.darkThemeSelector;
+        var inverseThemeHoverSelector = Constants.hoverSelector + " " + inverseThemeSelector;
 
         var style = _Global.document.createElement("style");
         style.id = Constants.accentStyleId;
         style.textContent = rules.map(rule => {
-            // example rule: { selector: "  .foo,  .bar:hover ,  div:hover  ", props: [{ name: "color", value: 0 }, { name: "background-color", value: 1 }, noHoverSelector: false }
+            // example rule: { selector: "  .foo,   html.win-hoverable   .bar:hover ,  div:hover  ", props: [{ name: "color", value: 0 }, { name: "background-color", value: 1 } }
 
             var body = "  " + rule.props.map(prop => prop.name + ": " + colors[prop.value] + ";").join("\n  ");
             // body = color: *accent*; background-color: *listSelectHover*
 
-            var selectorSplit = rule.selector.split(",").map(str => str.trim()); // [".foo", ".bar:hover", "div"]
-            var selector = selectorSplit.join(",\n"); // ".foo, .bar:hover, div"
-
-            // Hover Selectors
-            if (!rule.noHoverSelector) {
-                selectorSplit.forEach(sel => {
-                    if (sel.indexOf(":hover") !== -1 && sel.indexOf(Constants.hoverSelector) === -1) {
-                        selector += ",\n" + Constants.hoverSelector + " " + sel;
-                        if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
-                            selector += ",\n" + Constants.hoverSelector + sel;
-                        }
-                    }
-                });
-                // selector = .foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover
-            }
+            var selectorSplit = rule.selector.split(",").map(str => sanitizeSpaces(str)); // [".foo", ".bar:hover", "div"]
+            var selector = selectorSplit.join(",\n"); // ".foo, html.win-hoverable .bar:hover, div:hover"
             var css = selector + " {\n" + body + "\n}";
-            // css = .foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover {body}
+            // css = .foo, html.win-hoverable .bar:hover, div:hover { *body* }
 
             // Inverse Theme Selectors
             var isThemedColor = rule.props.some(prop => prop.value !== ColorTypes.accent)
@@ -81,19 +69,29 @@ function scheduleWriteRules() {
                 // inverseBody = "color: *accent*; background-color: *listSelectHoverInverse"
 
                 selectorSplit.forEach(sel => {
-                    css += "\n" + inverseThemeSelector + " " + sel;
-                    if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
-                        css += ",\n" + inverseThemeSelector + sel;
+                    sel = sanitizeSpaces(sel);
+
+                    if (sel.indexOf(Constants.hoverSelector) !== -1 && sel.indexOf(inverseThemeHoverSelector) === -1) {
+                        css += ",\n" + sel.replace(Constants.hoverSelector, inverseThemeHoverSelector);
+                        var selWithoutHover = sel.replace(Constants.hoverSelector, "").trim();
+                        if (CSSSelectorTokens.indexOf(selWithoutHover[0]) !== -1) {
+                            css += ",\n" + sel.replace(Constants.hoverSelector + " ", inverseThemeHoverSelector);
+                        }
+                    } else {
+                        css += "\n" + inverseThemeSelector + " " + sel;
+                        if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
+                            css += ",\n" + inverseThemeSelector + sel;
+                        }
                     }
                     css += " {\n" + inverseBody + "\n}";
                 });
                 // css
-                //.foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover {body} 
+                //.foo, html.win-hoverable .bar:hover, div:hover, { *body* } 
                 //.win-ui-light .foo,
                 //.win-ui-light.foo,
-                //.win-ui-light .bar:hover,
-                //.win-ui-light.bar:hover,
-                //.win-ui-light div:hover {inverseBody}
+                //html.win-hoverable .win-ui-light .bar:hover,
+                //html.win-hoverable .win-ui-light.bar:hover,
+                //.win-ui-light div:hover { *inverseBody* }
             }
             return css;
         }).join("\n");
@@ -125,6 +123,10 @@ function handleColorsChanged() {
 
 function colorToString(color: _WinRT.Windows.UI.Color, alpha: number) {
     return "rgba(" + color.r + "," + color.g + "," + color.b + "," + alpha + ")";
+}
+
+function sanitizeSpaces(str: string) {
+    return str.replace(/  /g, " ").replace(/  /g, " ").trim();
 }
 
 function cleanup() {

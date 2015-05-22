@@ -17,8 +17,8 @@ define([
 ], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Accents, _Control, _ElementUtilities, _SuggestionManagerShim, Application) {
     "use strict";
 
-    _Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover", [{ name: "color", value: _Accents.ColorTypes.accent }, ]);
-    _Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover:active", [{ name: "background-color", value: _Accents.ColorTypes.accent }, ]);
+    _Accents.createAccentRule("html.win-hoverable .win-searchbox-button:not(.win-searchbox-button-disabled):hover", [{ name: "color", value: _Accents.ColorTypes.accent }, ]);
+    _Accents.createAccentRule(".win-searchbox-button.win-searchbox-button:not(.win-searchbox-button-disabled):hover:active", [{ name: "background-color", value: _Accents.ColorTypes.accent }, ]);
 
     _Base.Namespace.define("WinJS.UI", {
         /// <field>

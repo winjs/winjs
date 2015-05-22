@@ -173,7 +173,7 @@ declare module WinJS {
                 _listSelectPressInverse
             } 
 
-            export function createAccentRule(selector: string, props: { name: string; value: ColorTypes }[], noHoverRules?: boolean);
+            export function createAccentRule(selector: string, props: { name: string; value: ColorTypes }[]);
 
             export var _colors: string[];
             export function _reset();
