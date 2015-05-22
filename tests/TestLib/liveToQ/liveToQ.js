@@ -396,6 +396,36 @@
                     testFailed = true;
                 }
             },
+
+            stringContains: function (str, substr, message) {
+                var pass = str.indexOf(substr) !== -1;
+                if (!pass) {
+                    if (QUnit.breakOnAssertFail) {
+                        debugger;
+                    }
+                    testError = testError || {
+                        message: formatString("stringContains - {0} (substring '{1}' not present in '{2}')", message || "", substr, str),
+                        expected: substr,
+                        actual: str
+                    };
+                    testFailed = true;
+                }
+            },
+
+            stringDoesNotContain: function (str, substr, message) {
+                var pass = str.indexOf(substr) === -1;
+                if (!pass) {
+                    if (QUnit.breakOnAssertFail) {
+                        debugger;
+                    }
+                    testError = testError || {
+                        message: formatString("stringDoesNotContain - {0} (substring '{1}' was present in '{2}')", message || "", substr, str),
+                        expected: substr,
+                        actual: str
+                    };
+                    testFailed = true;
+                }
+            }
         },
 
         GetWrappedCallback: function (func) {

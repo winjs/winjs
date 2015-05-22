@@ -8,6 +8,7 @@ define([
     '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
+    '../_Accents',
     '../Animations',
     '../Animations/_TransitionAnimation',
     '../BindingList',
@@ -22,8 +23,13 @@ define([
     './Hub/_Section',
     'require-style!less/styles-hub',
     'require-style!less/colors-hub'
-], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
+], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
     "use strict";
+
+    _Accents.createAccentRule(
+            ".win-semanticzoom-zoomedoutview .win-hub-section-header-interactive .win-hub-section-header-content,\
+             .win-hub-section-header-interactive .win-hub-section-header-chevron",
+        [{ name: "color", value: _Accents.ColorTypes.accent }]);
 
     _Base.Namespace.define("WinJS.UI", {
         /// <field>

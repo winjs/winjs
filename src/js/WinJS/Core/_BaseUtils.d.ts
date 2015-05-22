@@ -4,6 +4,7 @@ import Promise = require("../Promise");
 
 export declare var hasWinRT: boolean;
 
+export declare function _setImmediate(callback: Function): number;
 export declare function _setHasWinRT(value: boolean): void;
 export declare function _setIsiOS(value: boolean): void;
 export declare function _isiOS(func: any): any;

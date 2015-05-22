@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 .colorDefinitions(@theme) {
-    // Accent color
-    @accentColor: rgb(0, 120, 215);
-
     // Primary theme colors
     .mixin(light) {
         @altHigh: rgb(255, 255, 255);
@@ -14,16 +11,14 @@
         @chromeLow: #f2f2f2;
 
         @listSelectRestOpacity: .4;
-        @listSelectRest: fade(@accentColor, 40%);
         @listSelectHoverOpacity: .6;
-        @listSelectHover: fade(@accentColor, 60%);
         @listSelectPressOpacity: .7;
-        @listSelectPress: fade(@accentColor, 70%);
 
         // One off colors
         @sliderThumbHover: #1f1f1f;
         @sliderThumbDisabled: #ccc;
     }
+
     .mixin(dark) {
         @altHigh: rgb(0, 0, 0);
         @baseHigh: rgb(255, 255, 255);
@@ -31,13 +26,10 @@
         @chromeMid: #393939;
         @chromeMediumMid: #2b2b2b;
         @chromeLow: #171717;
-
+        
         @listSelectRestOpacity: .6;
-        @listSelectRest: fade(@accentColor, 60%);
         @listSelectHoverOpacity: .8;
-        @listSelectHover: fade(@accentColor, 80%);
         @listSelectPressOpacity: .9;
-        @listSelectPress: fade(@accentColor, 90%);
 
         // One off colors
         @sliderThumbHover: #f9f9f9;
