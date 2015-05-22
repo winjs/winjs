@@ -168,9 +168,9 @@ declare module WinJS {
                 listSelectRest,
                 listSelectHover,
                 listSelectPress,
-                listSelectRestInverse,
-                listSelectHoverInverse,
-                listSelectPressInverse
+                _listSelectRestInverse,
+                _listSelectHoverInverse,
+                _listSelectPressInverse
             } 
 
             export function createAccentRule(selector: string, props: { name: string; value: ColorTypes }[], noHoverRules?: boolean);

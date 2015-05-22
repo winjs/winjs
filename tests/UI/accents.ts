@@ -39,9 +39,9 @@ module CorsicaTests {
             document.body.parentElement.classList.add("win-ui-light");
 
             var cs = getComputedStyle(testElement);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectRestInverse], cs.backgroundColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHoverInverse], cs.columnRuleColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectPressInverse], cs.outlineColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], cs.backgroundColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes_listSelectHoverInversee], cs.columnRuleColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorType_listSelectPressInversese], cs.outlineColor);
 
             Accents.createAccentRule("#accent-test-element", [
                 { name: "background-color", value: Accents.ColorTypes.listSelectRest },
@@ -51,9 +51,9 @@ module CorsicaTests {
 
             Accents.createAccentRule("#accent-test-element", [{ name: "color", value: Accents.ColorTypes.listSelectHover }]);
             WinJS.Promise.timeout().done(() => {
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectHoverInverse], getComputedStyle(testElement).columnRuleColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectPressInverse], getComputedStyle(testElement).outlineColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorType_listSelectHoverInversese], getComputedStyle(testElement).columnRuleColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTy_listSelectPressInverseerse], getComputedStyle(testElement).outlineColor);
                 complete();
             });
         }
@@ -127,9 +127,9 @@ module CorsicaTests {
             document.body.parentElement.classList.add("win-ui-light");
 
             var cs = getComputedStyle(testElement);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectRestInverse], cs.backgroundColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectHoverInverse], cs.columnRuleColor);
-            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes.listSelectPressInverse], cs.outlineColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], cs.backgroundColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.ColorTyp_listSelectHoverInverserse], cs.columnRuleColor);
+            LiveUnit.Assert.areNotEqual(Accents._colors[Accents.Color_listSelectPressInversenverse], cs.outlineColor);
 
             Accents.createAccentRule("#accent-test-element, randomTag", [
                 { name: "background-color", value: Accents.ColorTypes.listSelectRest },
@@ -146,9 +146,9 @@ module CorsicaTests {
                 LiveUnit.Assert.isTrue(getDynamicStyleElement().textContent.indexOf(".win-ui-light randomTag") !== -1);
                 LiveUnit.Assert.isFalse(getDynamicStyleElement().textContent.indexOf(".win-ui-lightrandomTag") !== -1);
 
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectHoverInverse], getComputedStyle(testElement).columnRuleColor);
-                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes.listSelectPressInverse], getComputedStyle(testElement).outlineColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTypes._listSelectRestInverse], getComputedStyle(testElement).backgroundColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.ColorTy_listSelectHoverInverseerse], getComputedStyle(testElement).columnRuleColor);
+                LiveUnit.Assert.areEqual(Accents._colors[Accents.Col_listSelectPressInversesInverse], getComputedStyle(testElement).outlineColor);
                 complete();
             });
         }

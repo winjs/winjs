@@ -22,14 +22,15 @@ var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; noHoverSelector: boolean; }[] = [];
 var writeRulesTOHandle = -1;
 
+// Enum values align with the colors array indices
 export enum ColorTypes {
     accent = 0,
     listSelectRest = 1,
     listSelectHover = 2,
     listSelectPress = 3,
-    listSelectRestInverse = 4,
-    listSelectHoverInverse = 5,
-    listSelectPressInverse = 6,
+    _listSelectRestInverse = 4,
+    _listSelectHoverInverse = 5,
+    _listSelectPressInverse = 6,
 }
 
 export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[], noHoverSelector = false) {
@@ -38,7 +39,7 @@ export function createAccentRule(selector: string, props: { name: string; value:
 }
 
 function scheduleWriteRules() {
-    if (!rules.length || writeRulesTOHandle !== -1) {
+    if (rules.length === 0 || writeRulesTOHandle !== -1) {
         return;
     }
     writeRulesTOHandle = _BaseUtils._setImmediate(() => {
@@ -88,10 +89,10 @@ function scheduleWriteRules() {
                 });
                 // css
                 //.foo, .bar:hover, div:hover, html.win-hoverable .bar:hover, html.win-hoverable.bar:hover {body} 
-                //.win-ui-light .foo {inverseBody}
-                //.win-ui-light.foo {inverseBody}
-                //.win-ui-light .bar:hover {inverseBody}
-                //.win-ui-light.bar:hover {inverseBody}
+                //.win-ui-light .foo,
+                //.win-ui-light.foo,
+                //.win-ui-light .bar:hover,
+                //.win-ui-light.bar:hover,
                 //.win-ui-light div:hover {inverseBody}
             }
             return css;
@@ -108,9 +109,10 @@ function handleColorsChanged() {
     }
 
     // Establish colors
-    colors = [];
-    colors.push(accent);
+    // The order of the colors align with the ColorTypes enum values
+    colors.length = 0;
     colors.push(
+        accent,
         colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.6 : 0.4)),
         colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.8 : 0.6)),
         colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.9 : 0.7)),
@@ -131,24 +133,25 @@ function cleanup() {
 }
 
 function _reset() {
-    rules = [];
+    rules.length = 0;
     cleanup();
 }
 
 _BaseUtils.ready().then(() => {
     // Figure out color theme
-    var tag = _Global.document.createElement("winjs");
+    var tag = _Global.document.createElement(Constants.themeDetectionTag);
     _Global.document.body.appendChild(tag);
     var theme = _Global.getComputedStyle(tag).opacity;
     isDarkTheme = theme === "0";
     tag.parentElement.removeChild(tag);
 
-    if (_BaseUtils.hasWinRT) {
+    if (_WinRT.Windows.UI.ViewManagement.UISettings) {
         UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
         UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
         handleColorsChanged();
     } else {
         // No WinRT - use hardcoded blue accent color
+        // The order of the colors align with the ColorTypes enum values
         colors.push(
             "rgb(0, 120, 215)",
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
