@@ -2,6 +2,10 @@
 .Colors(@theme) {
     .colorDefinitions(@theme);
 
+    .win-pivot .win-pivot-title {
+        color: @baseHigh;
+    }
+
     .win-pivot .win-pivot-navbutton {
         background-color: @baseMediumMid;
         color: @altMediumHigh;
@@ -11,10 +15,22 @@
         color: @baseMediumHigh;
     }
 
-    .win-pivot button.win-pivot-header,
+    .win-pivot button.win-pivot-header {
+        color: @baseMid;
+        background-color: transparent;
+    }
+
     .win-pivot button.win-pivot-header:focus,
     .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
+        color: @baseMediumHigh;
+    }
+
+    .win-pivot button.win-pivot-header.win-pivot-header-selected {
         color: @baseHigh;
+    }
+
+    .win-pivot-header[disabled] {
+        color: @baseMediumMid;
     }
 }
 
@@ -26,6 +42,6 @@
     }
 
     .win-pivot button.win-pivot-header:hover {
-        color: @baseHigh;
+        color: @baseMediumHigh;
     }
 }

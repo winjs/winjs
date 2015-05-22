@@ -94,7 +94,6 @@ define([
 
                     headersContainerLeadingMargin: 12,
 
-                    headerPadding: 6,
                     headerHorizontalMargin: 12,
 
                     getCumulativeHeaderWidth: function headersState_getCumulativeHeaderWidth(pivot, index) {
@@ -113,7 +112,6 @@ define([
                         var leftElement = pivot._rtl ? pivot._headersContainerElement.lastElementChild : pivot._headersContainerElement.children[originalLength];
                         var rightElement = pivot._rtl ? pivot._headersContainerElement.children[originalLength] : pivot._headersContainerElement.lastElementChild;
                         width = (rightElement.offsetLeft + rightElement.offsetWidth) - leftElement.offsetLeft;
-                        width += index * headersStates.common.headerPadding;
                         width += 2 * headersStates.common.headerHorizontalMargin;
 
                         for (var i = 0; i < index; i++) {
@@ -175,14 +173,6 @@ define([
                         return headerContainerEl;
                     },
 
-                    freezeHeaderWidth: function headersState_freezeHeaderWidth(headerElement) {
-                        // Depending on whether a header is selected or not, its size grows and shrinks slightly due to different type ramps.
-                        // To prevent that from happening we freeze the header's size to its size at creation as if it was selected. We also
-                        // add a few pixels of padding to the computed size so that when it grows, it won't run into clipping issues.
-                        headerElement.style.width = "";
-                        headerElement.style.width = (headerElement.offsetWidth + headersStates.common.headerPadding) + "px";
-                    },
-
                     updateHeader: function headersState_updateHeader(pivot, item) {
                         // Updates the label of a header
                         var index = pivot.items.indexOf(item);
@@ -191,22 +181,20 @@ define([
 
                         var template = _ElementUtilities._syncRenderer(pivotDefaultHeaderTemplate);
                         template(item, headerElement);
-
-                        this.freezeHeaderWidth(headerElement);
                     },
 
-                    setActiveHeader: function headersState_setActiveHeader(newSelectedHeader, currentSelectedHeader) {
+                    setActiveHeader: function headersState_setActiveHeader(pivot, newSelectedHeader, currentSelectedHeader) {
                         // Updates the selected header and clears the previously selected header if applicable
-                        var focusSelectedHeader = false;
+                        var focusWasInHeaders = false;
                         if (currentSelectedHeader) {
                             currentSelectedHeader.classList.remove(Pivot._ClassName.pivotHeaderSelected);
                             currentSelectedHeader.setAttribute("aria-selected", false);
-                            focusSelectedHeader = _Global.document.activeElement === currentSelectedHeader;
+                            focusWasInHeaders = pivot._headersContainerElement.contains(_Global.document.activeElement);
                         }
 
                         newSelectedHeader.classList.add(Pivot._ClassName.pivotHeaderSelected);
                         newSelectedHeader.setAttribute("aria-selected", true);
-                        focusSelectedHeader && newSelectedHeader.focus();
+                        focusWasInHeaders && pivot._headersContainerElement.focus();
                     }
                 },
 
@@ -283,7 +271,6 @@ define([
                             for (var i = 0; i < pivot.items.length; i++) {
                                 var header = headersStates.common.renderHeader(pivot, i, true);
                                 pivot._headersContainerElement.appendChild(header);
-                                headersStates.common.freezeHeaderWidth(header);
 
                                 if (i === pivot.selectedIndex) {
                                     header.classList.add(Pivot._ClassName.pivotHeaderSelected);
@@ -297,7 +284,7 @@ define([
 
                     activateHeader: function staticState_activateHeader(headerElement) {
                         var currentActiveHeader = this.pivot._headersContainerElement.children[this.pivot.selectedIndex];
-                        headersStates.common.setActiveHeader(headerElement, currentActiveHeader);
+                        headersStates.common.setActiveHeader(this.pivot, headerElement, currentActiveHeader);
                         this.pivot._animateToPrevious = headerElement._pivotItemIndex < this.pivot.selectedIndex;
                         this.pivot.selectedIndex = headerElement._pivotItemIndex;
                     },
@@ -306,7 +293,7 @@ define([
                         if (this._firstRender) {
                             this.render();
                         }
-                        headersStates.common.setActiveHeader(this.pivot._headersContainerElement.children[index], this.pivot._headersContainerElement.children[oldIndex]);
+                        headersStates.common.setActiveHeader(this.pivot, this.pivot._headersContainerElement.children[index], this.pivot._headersContainerElement.children[oldIndex]);
                         this.pivot._tabContainer.childFocus = this.pivot._headersContainerElement.children[index];
                     },
 
@@ -396,7 +383,6 @@ define([
                             var header = headersStates.common.renderHeader(pivot, 0, true);
                             header.classList.add(Pivot._ClassName.pivotHeaderSelected);
                             pivot._headersContainerElement.appendChild(header);
-                            headersStates.common.freezeHeaderWidth(header);
 
                             pivot._viewportElement.style.overflow = "hidden";
                             pivot._headersContainerElement.style.marginLeft = "0px";
@@ -426,8 +412,6 @@ define([
                                 if (header.offsetWidth > maxHeaderWidth) {
                                     header.style.textOverflow = "ellipsis";
                                     header.style.width = maxHeaderWidth + "px";
-                                } else {
-                                    headersStates.common.freezeHeaderWidth(header);
                                 }
 
                                 if (indexToRender === pivot.selectedIndex) {
@@ -496,7 +480,7 @@ define([
                         var firstHeaderIndex = pivot._headersContainerElement.children.length > 1 ? 1 : 0;
                         pivot._tabContainer.childFocus = pivot._headersContainerElement.children[firstHeaderIndex];
                         if (restoreFocus) {
-                            pivot._headersContainerElement.children[firstHeaderIndex].focus();
+                            pivot._headersContainerElement.focus();
                         }
                         this._firstRender = false;
                     },
@@ -658,6 +642,7 @@ define([
 
                 // Headers Container
                 this._headersContainerElement = _Global.document.createElement("DIV");
+                this._headersContainerElement.tabindex = 0;
                 _ElementUtilities.addClass(this._headersContainerElement, Pivot._ClassName.pivotHeaders);
                 this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
                 this._headerItemsElement.appendChild(this._headersContainerElement);

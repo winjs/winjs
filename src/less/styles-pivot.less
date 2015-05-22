@@ -42,15 +42,16 @@
 
     .win-pivot-title {
         #flex > .flex(@shrink: 0);
-        font-size: 14px;
-        font-weight: 600;
+        font-family: "Segoe UI", sans-serif, "Segoe MDL2 Assets", "Symbols";
+        font-size: 15px;
+        font-weight: bold;
         white-space: nowrap;
-        margin: 12px 0 -8px 18px;
+        margin: 14px 0 13px 24px;
     }
 
     .win-pivot-title {
         .RTL( {
-            margin: 12px 18px -8px 0;
+            margin: 14px 24px 13px 0;
         }
 
         );
@@ -79,6 +80,7 @@
     .win-pivot-header-items {
         #flex > .flex(1, 1, 0%);
         overflow-x: hidden;
+        padding: 1px; // 1px padding so the keyboard focus outline is visible
     }
 
     .win-pivot-headers {
@@ -91,8 +93,14 @@
         outline: 0;
     }
 
-    .win-pivot-header {
-        ._win-type-body();
+    .win-pivot-headers.win-keyboard:focus {
+        outline-style: dotted;
+        outline-width: 1px;
+    }
+
+    .win-pivot-header,
+    .win-pivot-header.win-pivot-header:hover:active {
+        ._win-type-title();
         display: inline-block;
         transition: opacity linear 167ms;
         -webkit-transition: opacity linear 167ms;
@@ -101,23 +109,9 @@
         border: 0;
         padding: 0;
         outline: 0;
-        margin: 13px 12px 0px 12px;
-    }
-
-    button.win-pivot-header,
-    button.win-pivot-header:hover:active {
-        background-color: transparent;
-        border: 0;
-        padding: 0;
-        letter-spacing: 0px;
-        margin: 13px 12px 0px 12px;
+        margin: 12px 12px 0px 12px;
         min-height: 0;
         min-width: 0;
-    }
-
-    button.win-pivot-header.win-keyboard:focus {
-        outline-style: dotted;
-        outline-width: 1px;
     }
 
     &.win-pivot-locked .win-pivot-header {
@@ -127,8 +121,6 @@
 
     .win-pivot-header.win-pivot-header-selected,
     &.win-pivot-locked .win-pivot-header.win-pivot-header-selected {
-        ._win-type-base();
-        font-weight: 600; /* Font-weight 500 provided by ._win-type-base() is indistinguishable from the default 400 in some fonts */
         opacity: 1.0;
         visibility: inherit;
     }
@@ -172,7 +164,7 @@ html.win-hoverable .win-pivot {
         border: 0;
         padding: 0;
         letter-spacing: 0px;
-        margin: 13px 12px 0px 12px;
+        margin: 12px 12px 0px 12px;
         min-height: 0;
         min-width: 0;
     }
@@ -201,7 +193,7 @@ html.win-hoverable .win-pivot {
     height: 100%;
     overflow-y: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
-    padding: 0px 19px;
+    padding: 0px 24px;
 }
 
 /*
