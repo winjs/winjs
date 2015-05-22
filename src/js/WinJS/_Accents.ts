@@ -68,22 +68,23 @@ function scheduleWriteRules() {
                 var inverseBody = "  " + rule.props.map(prop => prop.name + ": " + colors[(prop.value ? (prop.value + 3) : prop.value)] + ";").join("\n  ");
                 // inverseBody = "color: *accent*; background-color: *listSelectHoverInverse"
 
+                var themedSelectors: string[] = [];
                 selectorSplit.forEach(sel => {
                     sel = sanitizeSpaces(sel);
 
                     if (sel.indexOf(Constants.hoverSelector) !== -1 && sel.indexOf(inverseThemeHoverSelector) === -1) {
-                        css += ",\n" + sel.replace(Constants.hoverSelector, inverseThemeHoverSelector);
+                        themedSelectors.push(sel.replace(Constants.hoverSelector, inverseThemeHoverSelector));
                         var selWithoutHover = sel.replace(Constants.hoverSelector, "").trim();
                         if (CSSSelectorTokens.indexOf(selWithoutHover[0]) !== -1) {
-                            css += ",\n" + sel.replace(Constants.hoverSelector + " ", inverseThemeHoverSelector);
+                            themedSelectors.push(sel.replace(Constants.hoverSelector + " ", inverseThemeHoverSelector));
                         }
                     } else {
-                        css += "\n" + inverseThemeSelector + " " + sel;
+                        themedSelectors.push(inverseThemeSelector + " " + sel);
                         if (CSSSelectorTokens.indexOf(sel[0]) !== -1) {
-                            css += ",\n" + inverseThemeSelector + sel;
+                            themedSelectors.push(inverseThemeSelector + sel);
                         }
                     }
-                    css += " {\n" + inverseBody + "\n}";
+                    css += "\n" + themedSelectors.join(",\n") + " {\n" + inverseBody + "\n}";
                 });
                 // css
                 //.foo, html.win-hoverable .bar:hover, div:hover, { *body* } 
