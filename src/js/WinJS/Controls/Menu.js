@@ -259,11 +259,11 @@ define([
                                 _Constants.menuTouchSpacingClass
                         );
                     }
-                    // Call flyout show
+                    // Call flyout show 
                     this._baseFlyoutShow(anchor, placement, alignment);
 
-                    // We need to adjust MenuCommand layouts based on the various types of
-                    // commands visible in our Menu, but only after we send the beforeshow
+                    // Menu will need to adjust MenuCommand layouts based on the various 
+                    // types of commands visible in our Menu, but only after we send the beforeshow
                     // event, so the developer has a chance to show or hide more commands.
                     // Flyout's _findPosition will make that call.
                 },

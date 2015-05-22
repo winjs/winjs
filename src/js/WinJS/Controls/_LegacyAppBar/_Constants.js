@@ -73,6 +73,8 @@ define([
         flyoutLightClass: "win-ui-light",
         settingsFlyoutClass: "win-settingsflyout",
         scrollsClass: "win-scrolls",
+        pinToRightEdge: -1,
+        pinToBottomEdge: -1,
 
         // Constants for AppBarCommand full-size widths.
         separatorWidth: 34,

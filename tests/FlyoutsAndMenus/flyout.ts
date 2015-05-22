@@ -14,6 +14,8 @@ module CorsicaTests {
     var expectedDistanceFromAnchor = 5,
         anchorStyling = "position:absolute; top:50%; left:50%; height:10px; width:10px; background-color: red;"
 
+    var Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout;
+
     export class FlyoutTests {
 
         setUp() {
@@ -36,7 +38,7 @@ module CorsicaTests {
 
         // Test flyout Instantiation
         testFlyoutInstantiation = function () {
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
 
@@ -63,7 +65,7 @@ module CorsicaTests {
     // Test flyout Instantiation with null element
     testFlyoutNullInstantiation = function () {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the flyout with null element");
-            var flyout = new WinJS.UI.Flyout(null);
+            var flyout = new Flyout(null);
             LiveUnit.Assert.isNotNull(flyout, "flyout instantiation was null when sent a null flyout element.");
         }
 
@@ -74,10 +76,10 @@ module CorsicaTests {
     // Test multiple instantiation of the same flyout DOM element
         testFlyoutMultipleInstantiation() {
             FlyoutTests.prototype.testFlyoutMultipleInstantiation["LiveUnit.ExpectedException"] = { message: "Invalid argument: Controls may only be instantiated one time for each DOM element" };
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
-            new WinJS.UI.Flyout(_element);
+            new Flyout(_element);
         }
 
 
@@ -89,7 +91,7 @@ module CorsicaTests {
                 document.body.appendChild(div);
                 var options = {};
                 options[paramName] = value;
-                var flyout = new WinJS.UI.Flyout(div, options);
+                var flyout = new Flyout(div, options);
                 LiveUnit.Assert.isNotNull(flyout);
             }
 
@@ -101,7 +103,7 @@ module CorsicaTests {
                 options[paramName] = value;
                 var exception = null;
                 try {
-                    new WinJS.UI.Flyout(div, options);
+                    new Flyout(div, options);
                     LiveUnit.Assert.fail("Expected creating Flyout with " + paramName + "=" + value + " to throw an exception");
                 } catch (e) {
                     exception = e;
@@ -148,7 +150,7 @@ module CorsicaTests {
 
     // Test defaults
     testDefaultflyoutParameters = function () {
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
 
@@ -163,7 +165,7 @@ module CorsicaTests {
 
     // Simple Function Tests
     testSimpleflyoutFunctions = function () {
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
 
@@ -179,7 +181,7 @@ module CorsicaTests {
 
 
     testFlyoutDispose = function () {
-            var flyout = <WinJS.UI.PrivateFlyout>new WinJS.UI.Flyout();
+            var flyout = new Flyout();
             LiveUnit.Assert.isTrue(flyout.dispose);
             LiveUnit.Assert.isFalse(flyout._disposed);
 
@@ -204,7 +206,7 @@ module CorsicaTests {
 
 
     testFlyoutShowThrows = function (complete) {
-            var flyout: any = new WinJS.UI.Flyout(_element);
+            var flyout: any = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
 
@@ -227,7 +229,7 @@ module CorsicaTests {
 
     testFlyoutInnerHTMLChangeDuringShowAnimation = function (complete) {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the flyout element");
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
 
@@ -239,7 +241,7 @@ module CorsicaTests {
         }
 
     testDisposeRemovesFlyoutClickEatingDiv = function (complete) {
-            var flyout = new WinJS.UI.Flyout();
+            var flyout = new Flyout();
             document.body.appendChild(flyout.element);
             flyout.show(document.body);
 
@@ -260,7 +262,7 @@ module CorsicaTests {
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             flyout.show(anchor, "top");
 
             flyout.addEventListener('aftershow', function () {
@@ -270,8 +272,8 @@ module CorsicaTests {
                 // In High DPI scenarios the actual distance may be within 1px of the expected distance.
                 var actualDistance = anchorRect.top - flyoutRect.bottom;
 
-                LiveUnit.LoggingCore.logComment("Flyout should be on top of the anchor")
-            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+                LiveUnit.LoggingCore.logComment("Flyout should be on top of the anchor");
+                LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
                 LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 
                 LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
@@ -285,7 +287,7 @@ module CorsicaTests {
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             flyout.show(anchor, "bottom");
 
             flyout.addEventListener('aftershow', function () {
@@ -295,8 +297,8 @@ module CorsicaTests {
                 // In High DPI scenarios the actual distance may be within 1px of the expected distance.
                 var actualDistance = flyoutRect.top - anchorRect.bottom;
 
-                LiveUnit.LoggingCore.logComment("Flyout should be underneath the anchor")
-            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+                LiveUnit.LoggingCore.logComment("Flyout should be underneath the anchor");
+                LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
                 LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 
                 LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
@@ -310,7 +312,7 @@ module CorsicaTests {
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             flyout.show(anchor, "left");
 
             flyout.addEventListener('aftershow', function () {
@@ -320,8 +322,8 @@ module CorsicaTests {
                 // In High DPI scenarios the actual distance may be within 1px of the expected distance.
                 var actualDistance = anchorRect.left - flyoutRect.right;
 
-                LiveUnit.LoggingCore.logComment("Flyout should be to the left of the anchor")
-            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+                LiveUnit.LoggingCore.logComment("Flyout should be to the left of the anchor");
+                LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
                 LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 
                 LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
@@ -335,7 +337,7 @@ module CorsicaTests {
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             flyout.show(anchor, "right");
 
             flyout.addEventListener('aftershow', function () {
@@ -345,8 +347,8 @@ module CorsicaTests {
                 // In High DPI scenarios the actual distance may be within 1px of the expected distance.
                 var actualDistance = flyoutRect.left - anchorRect.right;
 
-                LiveUnit.LoggingCore.logComment("Flyout should be to the right of the anchor")
-            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+                LiveUnit.LoggingCore.logComment("Flyout should be to the right of the anchor");
+                LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
                 LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 
                 LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
@@ -360,7 +362,7 @@ module CorsicaTests {
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
 
             // By default, based on the configuration, this  flyout would be shown to the top of the anchor,
             // but we are going to restrict it to only horizontal positions, so it will be shown at the left.
@@ -391,7 +393,7 @@ module CorsicaTests {
             _element.style.width = "100px";
             _element.style.backgroundColor = "red";
 
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
 
             // By default, based on the configuration, this tall flyout would be shown to the left side of the anchor,
             // but we are going to restrict it to only vertical positions, so it will be shown at the top.
@@ -424,7 +426,7 @@ module CorsicaTests {
             "<button id='button1'>Button1</button>" +
             "</div>";
             var outsideFlyout = root.querySelector("#outsideFlyout");
-            var flyout = new WinJS.UI.Flyout(root.querySelector("#flyout"), {
+            var flyout = new Flyout(root.querySelector("#flyout"), {
                 anchor: root.querySelector("#anchor")
             });
 
@@ -442,7 +444,7 @@ module CorsicaTests {
             "<button id='button0'>Button0</button>" +
             "<button id='button1'>Button1</button>" +
             "</div>";
-            var flyout = new WinJS.UI.Flyout(root.querySelector("#flyout"), {
+            var flyout = new Flyout(root.querySelector("#flyout"), {
                 anchor: root.querySelector("#anchor")
             });
             OverlayHelpers.Assert.remainsVisibleWhenMovingFocusInternally({
@@ -470,7 +472,7 @@ module CorsicaTests {
             }
 
             // Setup
-            var flyout = new WinJS.UI.Flyout(_element);
+            var flyout = new Flyout(_element);
             flyout.addEventListener("aftershow", simulateBackClick, false);
             flyout.show(document.body);
         };
@@ -483,7 +485,7 @@ module CorsicaTests {
                 complete();
             }
 
-            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+            var flyout = new Flyout(_element, { anchor: document.body });
             flyout.addEventListener("afterhide", afterHide, false);
 
             OverlayHelpers.show(flyout).then(() => {
@@ -499,7 +501,7 @@ module CorsicaTests {
             var button = document.createElement("button");
             document.body.appendChild(button);
 
-            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+            var flyout = new Flyout(_element, { anchor: document.body });
 
             var msg = "",
                 test1Ran = false;
@@ -531,7 +533,7 @@ module CorsicaTests {
                 msg = "Flyout.hide should move focus before the 'afterhide' event";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(flyout);
-            });
+                });
         }
     }
 }
