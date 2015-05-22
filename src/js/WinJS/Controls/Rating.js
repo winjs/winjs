@@ -5,7 +5,7 @@ define([
     '../Core/_ErrorFromName',
     '../Core/_Events',
     '../Core/_Resources',
-    '../Accents',
+    '../_Accents',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
@@ -13,10 +13,10 @@ define([
     './Tooltip',
     'require-style!less/styles-rating',
     'require-style!less/colors-rating'
-], function ratingInit(_Global, _Base, _ErrorFromName, _Events, _Resources, Accents, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
+], function ratingInit(_Global, _Base, _ErrorFromName, _Events, _Resources, _Accents, _Control, _ElementUtilities, _Hoverable, _SafeHtml, Tooltip) {
     "use strict";
 
-    Accents.createAccentRule(".win-rating .win-star.win-user.win-full, .win-rating .win-star.win-user.win-full.win-disabled", [{ name: "color", value: Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-rating .win-star.win-user.win-full, .win-rating .win-star.win-user.win-full.win-disabled", [{ name: "color", value: _Accents.ColorTypes.accent }]);
 
     // Rating control implementation
     _Base.Namespace.define("WinJS.UI", {

@@ -16,7 +16,7 @@ define('WinJS/Controls/MediaPlayer', [
     '../Scheduler',
     '../Application',
     '../BindingList',
-    '../Accents',
+    '../_Accents',
     '../Animations',
     '../Animations/_TransitionAnimation',
     '../Navigation',
@@ -33,11 +33,11 @@ define('WinJS/Controls/MediaPlayer', [
     '../Controls/MediaPlayer/_MediaUI',
     'require-style!less/styles-mediaplayer',
     'require-style!less/colors-mediaplayer'
-], function mediaPlayerInit(exports, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Res, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, Application, BindingList, Accents, Animations, _TransitionAnimation, Navigation, _Dispose, _Control, _ControlProcessor, _Command, _Icon, MediaElementAdapter, BackButton, _Flyout, _ToolBar, _ElementUtilities, _MediaUI) {
+], function mediaPlayerInit(exports, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Res, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, Application, BindingList, _Accents, Animations, _TransitionAnimation, Navigation, _Dispose, _Control, _ControlProcessor, _Command, _Icon, MediaElementAdapter, BackButton, _Flyout, _ToolBar, _ElementUtilities, _MediaUI) {
     "use strict";
 
-    Accents.createAccentRule(".win-mediaplayer-seekprogress, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark", [{ name: "background-color", value: Accents.ColorTypes.accent }]);
-    Accents.createAccentRule(".win-mediaplayer-seek-mark, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark:hover", [{ name: "border-color", value: Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-mediaplayer-seekprogress, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark", [{ name: "background-color", value: _Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-mediaplayer-seek-mark, .win-mediaplayer-scrubbing .win-mediaplayer-seek-mark:hover", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
 
     var app = Application;
     var nav = Navigation;

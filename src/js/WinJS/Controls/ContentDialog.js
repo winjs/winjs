@@ -2,7 +2,7 @@
 define([
     '../Application',
     '../Utilities/_Dispose',
-    '../Accents',
+    '../_Accents',
     '../Promise',
     '../_Signal',
     '../Core/_BaseUtils',
@@ -18,10 +18,10 @@ define([
     '../Animations',
     'require-style!less/styles-contentdialog',
     'require-style!less/colors-contentdialog'
-    ], function contentDialogInit(Application, _Dispose, Accents, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
+], function contentDialogInit(Application, _Dispose, _Accents, Promise, _Signal, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
     "use strict";
 
-    Accents.createAccentRule(".win-contentdialog-dialog", [{ name: "outline-color", value: Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-contentdialog-dialog", [{ name: "outline-color", value: _Accents.ColorTypes.accent }]);
 
     var ContentDialogManager;
 

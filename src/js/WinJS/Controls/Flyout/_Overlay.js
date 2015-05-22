@@ -10,7 +10,7 @@ define([
     '../../Core/_Events',
     '../../Core/_Resources',
     '../../Core/_WriteProfilerMark',
-    '../../Accents',
+    '../../_Accents',
     '../../Animations',
     '../../Application',
     '../../ControlProcessor',
@@ -22,17 +22,17 @@ define([
     '../_LegacyAppBar/_Constants',
     'require-style!less/styles-overlay',
     'require-style!less/colors-overlay'
-], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Accents, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardInfo, _Constants) {
+], function overlayInit(exports, _Global, _WinRT, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, _Accents, Animations, Application, ControlProcessor, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardInfo, _Constants) {
     "use strict";
 
-    Accents.createAccentRule(
+    _Accents.createAccentRule(
         "button[aria-checked=true].win-command:before,\
          .win-menu-containsflyoutcommand button.win-command-flyout-activated:before", [
-        { name: "background-color", value: Accents.ColorTypes.accent },
-        { name: "border-color", value: Accents.ColorTypes.accent },
+        { name: "background-color", value: _Accents.ColorTypes.accent },
+        { name: "border-color", value: _Accents.ColorTypes.accent },
     ]);
 
-    Accents.createAccentRule(".win-flyout, .win-settingsflyout", [{ name: "border-color", value: Accents.ColorTypes.accent }]);
+    _Accents.createAccentRule(".win-flyout, .win-settingsflyout", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         _Overlay: _Base.Namespace._lazy(function () {

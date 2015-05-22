@@ -7,18 +7,18 @@ define([
     '../Core/_Events',
     '../Core/_Resources',
     './AutoSuggestBox',
-    '../Accents',
+    '../_Accents',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
     './AutoSuggestBox/_SearchSuggestionManagerShim',
     '../Application',
     'require-style!less/styles-searchbox',
     'require-style!less/colors-searchbox'
-], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, Accents, _Control, _ElementUtilities, _SuggestionManagerShim, Application) {
+], function searchboxInit(_Global, _WinRT, _Base, _ErrorFromName, _Events, _Resources, AutoSuggestBox, _Accents, _Control, _ElementUtilities, _SuggestionManagerShim, Application) {
     "use strict";
 
-    Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover", [{ name: "color", value: Accents.ColorTypes.accent }, ]);
-    Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover:active", [{ name: "background-color", value: Accents.ColorTypes.accent }, ]);
+    _Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover", [{ name: "color", value: _Accents.ColorTypes.accent }, ]);
+    _Accents.createAccentRule(".win-searchbox-button:not(.win-searchbox-button-disabled):hover:active", [{ name: "background-color", value: _Accents.ColorTypes.accent }, ]);
 
     _Base.Namespace.define("WinJS.UI", {
         /// <field>

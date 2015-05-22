@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 define([
     'WinJS/Core/_WinJS',
-    'WinJS/Accents',
     'WinJS/VirtualizedDataSource',
     'WinJS/Controls/IntrinsicControls',
     'WinJS/Controls/ListView',

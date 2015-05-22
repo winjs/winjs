@@ -8,7 +8,7 @@ define([
     '../Core/_Log',
     '../Core/_Resources',
     '../Core/_WriteProfilerMark',
-    '../Accents',
+    '../_Accents',
     '../Animations',
     '../Animations/_TransitionAnimation',
     '../BindingList',
@@ -37,26 +37,26 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/styles-listview',
     'require-style!less/colors-listview'
-], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
-    Accents.createAccentRule(
+    _Accents.createAccentRule(
         ".win-listview:not(.win-selectionstylefilled) .win-selectioncheckmarkbackground,\
          .win-itemcontainer:not(.win-selectionstylefilled) .win-selectioncheckmarkbackground", [
-             { name: "border-color", value: Accents.ColorTypes.accent },
-             { name: "background-color", value: Accents.ColorTypes.accent },
+             { name: "border-color", value: _Accents.ColorTypes.accent },
+             { name: "background-color", value: _Accents.ColorTypes.accent },
          ]);
 
-    Accents.createAccentRule(
+    _Accents.createAccentRule(
         ".win-listview:not(.win-selectionstylefilled) .win-container.win-selected .win-selectionborder,\
          .win-itemcontainer:not(.win-selectionstylefilled).win-container.win-selected .win-selectionborder", [
-            { name: "border-color", value: Accents.ColorTypes.accent },
+            { name: "border-color", value: _Accents.ColorTypes.accent },
          ]);
 
-    Accents.createAccentRule(
+    _Accents.createAccentRule(
         ".win-listview.win-selectionstylefilled .win-selected .win-selectionbackground,\
          .win-itemcontainer.win-selectionstylefilled.win-selected .win-selectionbackground", [
-             { name: "background-color", value: Accents.ColorTypes.accent }
+             { name: "background-color", value: _Accents.ColorTypes.accent }
          ]);
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
