@@ -270,8 +270,8 @@ module CorsicaTests {
                 // In High DPI scenarios the actual distance may be within 1px of the expected distance.
                 var actualDistance = anchorRect.top - flyoutRect.bottom;
 
-                LiveUnit.LoggingCore.logComment("Flyout should be on top of the anchor")
-            LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
+                LiveUnit.LoggingCore.logComment("Flyout should be on top of the anchor");
+                LiveUnit.LoggingCore.logComment("actual: " + actualDistance);
                 LiveUnit.LoggingCore.logComment("expected: " + expectedDistanceFromAnchor);
 
                 LiveUnit.Assert.isTrue(Math.abs(expectedDistanceFromAnchor - actualDistance) < 1, "Flyout is not in the right location");
@@ -483,7 +483,7 @@ module CorsicaTests {
                 complete();
             }
 
-            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+            var flyout = new WinJS.UI.Flyout(_element, { anchor: document.body });
             flyout.addEventListener("afterhide", afterHide, false);
 
             OverlayHelpers.show(flyout).then(() => {
@@ -499,7 +499,7 @@ module CorsicaTests {
             var button = document.createElement("button");
             document.body.appendChild(button);
 
-            var flyout = new WinJS.UI.Flyout(_element, {anchor: document.body});
+            var flyout = new WinJS.UI.Flyout(_element, { anchor: document.body });
 
             var msg = "",
                 test1Ran = false;
