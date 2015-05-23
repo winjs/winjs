@@ -1218,7 +1218,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "s1", section: _Constants.secondaryCommandSection }),
                 new Command(null, { type: _Constants.typeButton, label: "s2", section: _Constants.secondaryCommandSection }),
                 new Command(null, { type: _Constants.typeButton, label: "s3", section: _Constants.secondaryCommandSection }),
-                new Command(null, { type: _Constants.typeButton, label: "s4", section: _Constants.secondaryCommandSection }),
+                new Command(null, { type: _Constants.typeContent, label: "content", section: _Constants.secondaryCommandSection }),
             ]);
             this._element.style.width = "10px";
             var appBar = new AppBar(this._element, {
@@ -1261,14 +1261,20 @@ module CorsicaTests {
 
                     // Delete the first command and verify AppBar Dom updates. 
                     // Also verify that we dispose the deleted command's associated MenuCommand projection.
-                    var deletedCommand = appBar.data.splice(0, 1)[0];
-                    var deletedMenuCommand = Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, deletedCommand);
+                    var deletedCommand = appBar.data.splice(data.length - 1, 1)[0];
 
+                    // PRECONDITION: Sanity check that the command we got back is our content command.
+                    LiveUnit.Assert.areEqual(_Constants.typeContent, deletedCommand.type);
+
+                    var deletedMenuCommand = Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(appBar._commandingSurface, deletedCommand);
                     WinJS.Utilities.Scheduler.schedule(() => {
                         LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length);
                         LiveUnit.Assert.areEqual(8, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length);
                         LiveUnit.Assert.isTrue(deletedMenuCommand._disposed,
                             "Removing a command from the CommandingSurface's overflowarea should dispose the associated menucommand projection");
+
+                        LiveUnit.Assert.isFalse(appBar._commandingSurface._contentFlyout._disposed,
+                            "Disposing a menucommand projection should not dispose the CommandingSurface._contentFlyout");
 
                         complete();
                     });
