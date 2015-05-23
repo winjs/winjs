@@ -1183,7 +1183,8 @@ module WinJSTests {
             waitForNextItemAnimationEnd(pivot).done(function () {
                 var headers = document.querySelectorAll("." + Pivot._ClassName.pivotHeader);
                 var longHeader = <HTMLElement>headers[1];
-                LiveUnit.Assert.areEqual(Math.floor(pivotWidth * 0.8), parseInt(longHeader.style.width));
+                var width = parseInt(getComputedStyle(pivot._headerItemsElement).width);
+                LiveUnit.Assert.areEqual(Math.floor(width * 0.8), parseInt(longHeader.style.width));
                 complete();
             });
         });

@@ -656,6 +656,7 @@ declare module WinJS {
             _goNext;
             _goPrevious;
             _headersContainerElement;
+            _headerItemsElement;
             _headersState;
             forceLayout();
             _navMode;
