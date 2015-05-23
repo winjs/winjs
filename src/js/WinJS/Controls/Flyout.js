@@ -376,7 +376,7 @@ define([
                 bottom: { top: "-50px", left: "0px", keyframe: "WinJS-showFlyoutBottom" },
                 left: { top: "0px", left: "50px", keyframe: "WinJS-showFlyoutLeft" },
                 right: { top: "0px", left: "-50px", keyframe: "WinJS-showFlyoutRight" },
-            }
+            };
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
@@ -1063,7 +1063,7 @@ define([
                     if (this._lastMaxHeight !== null) {
                         this._element.style.maxHeight = this._lastMaxHeight;
                         this._lastMaxHeight = null;
-                    };
+                    }
 
                     // Clear Alignment
                     _ElementUtilities.removeClass(this._element, "win-rightalign");
@@ -1082,7 +1082,7 @@ define([
                         case "center":
                         case "none":
                             break;
-                    };
+                    }
                 },
 
                 _showingKeyboard: function Flyout_showingKeyboard(event) {
