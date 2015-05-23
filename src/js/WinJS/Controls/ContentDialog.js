@@ -570,11 +570,23 @@ define([
                 },
 
                 /// <field type="Boolean" readonly="true" hidden="true" locid="WinJS.UI.ContentDialog.hidden" helpKeyword="WinJS.UI.ContentDialog.hidden">
-                /// Read only. True if the dialog is currently not visible.
+                /// Gets or sets ContentDialog's visibility.
                 /// </field>
                 hidden: {
                     get: function ContentDialog_hidden_get() {
                         return this._state.hidden;
+                    },
+                    set: function ContentDialog_hidden_set(hidden) {
+                        if (!hidden && this._state.hidden) {
+                            var nop = function () {
+                            };
+                            // Show returns a promise. If hidden is set while the ContentDialog is disposed, show will return a promise
+                            // error which will be impossible to handle and it'll cause the app to terminate. We'll eat the promise returned by show 
+                            // to stop that from happening.
+                            this.show().done(nop, nop); 
+                        } else if (hidden && !this._state.hidden) {
+                            this.hide(DismissalResult.none);
+                        }
                     }
                 },
 

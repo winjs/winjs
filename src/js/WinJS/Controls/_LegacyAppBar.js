@@ -409,9 +409,7 @@ define([
                     },
                 },
 
-
-
-                /// <field type="Boolean" hidden="true" locid="WinJS.UI._LegacyAppBar.opened" helpKeyword="WinJS.UI._LegacyAppBar.opened">Read only, true if an _LegacyAppBar is 'hidden'.</field>
+                /// <field type="Boolean" hidden="true" locid="WinJS.UI._LegacyAppBar.opened" helpKeyword="WinJS.UI._LegacyAppBar.opened">Gets or sets _LegacyAppBar's visibility.</field>
                 opened: {
                     get: function () {
                         // Returns true if _LegacyAppBar is not 'hidden'.
@@ -421,6 +419,14 @@ define([
                             this._doNext !== displayModeVisiblePositions.compact &&
                             this._doNext !== displayModeVisiblePositions.none;
                     },
+                    set: function (opened) {
+                        var currentlyOpen = this.opened;
+                        if (opened && !currentlyOpen) {
+                            this._show();
+                        } else if (!opened && currentlyOpen) {
+                            this._hide();
+                        }
+                    }
                 },
 
                 /// <field type="Function" locid="WinJS.UI._LegacyAppBar.onbeforeopen" helpKeyword="WinJS.UI._LegacyAppBar.onbeforeopen">

@@ -409,6 +409,25 @@ module ContentDialogTests {
             Helper.validateUnhandledErrors();
         }
 
+        testHiddenProperty(complete) {
+            // The dialog created for this test doesn't use synchronous animations, so that the test can verify that changes to the hidden property are applied immediately even with animations
+            // playing on the content dialog as it shows/hides
+            var dialog = createDialog(); 
+
+            dialog.addEventListener("aftershow", function () {
+                LiveUnit.Assert.isFalse(dialog.hidden);
+                dialog.hidden = true;
+                LiveUnit.Assert.isTrue(dialog.hidden);
+                dialog.addEventListener("afterhide", function () {
+                    LiveUnit.Assert.isTrue(dialog.hidden);
+                    complete();
+                });
+            });
+            LiveUnit.Assert.isTrue(dialog.hidden);
+            dialog.hidden = false;
+            LiveUnit.Assert.isFalse(dialog.hidden);
+        }
+
         testTabIndexOfZeroIsHighest() {
             var innerHTML =
                 '<div tabIndex="4">4</div>' +

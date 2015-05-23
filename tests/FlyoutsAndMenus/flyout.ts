@@ -177,7 +177,23 @@ module CorsicaTests {
         }
 
 
+    testHiddenProperty = function (complete) {
+        var flyout = new WinJS.UI.Flyout(_element);
+        flyout.anchor = document.body;
 
+        flyout.addEventListener("aftershow", function () {
+            LiveUnit.Assert.isFalse(flyout.hidden);
+            flyout.hidden = true;
+            LiveUnit.Assert.isTrue(flyout.hidden);
+            flyout.addEventListener("afterhide", function () {
+                LiveUnit.Assert.isTrue(flyout.hidden);
+                complete();
+            });
+        });
+        LiveUnit.Assert.isTrue(flyout.hidden);
+        flyout.hidden = false;
+        LiveUnit.Assert.isFalse(flyout.hidden);
+    }
 
 
     testFlyoutDispose = function () {

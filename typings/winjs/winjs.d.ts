@@ -4386,7 +4386,7 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Read only. True if the dialog is currently not visible.
+         * Gets or sets the ContentDialog's visibility.
         **/
         hidden: boolean;
 
@@ -4882,7 +4882,7 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Gets a value that indicates whether the Flyout is hidden or in the process of becoming hidden.
+         * Gets a value that indicates whether the Flyout is hidden or in the process of becoming hidden, or sets the Flyout to hide or show itself.
         **/
         hidden: boolean;
 
@@ -6887,7 +6887,7 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Gets a value that indicates whether the Menu is hidden or in the process of becoming hidden.
+         * Gets a value that indicates whether the Menu is hidden or in the process of becoming hidden, or sets the Menu to hide or show itself.
         **/
         hidden: boolean;
 
@@ -7124,7 +7124,7 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Gets a value that indicates whether the NavBar is opened or in the process of becoming opened.
+         * Gets a value that indicates whether the NavBar is opened or in the process of becoming opened, or sets the NavBar to hide or show itself.
         **/
         opened: boolean;
 

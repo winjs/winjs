@@ -125,6 +125,22 @@ module WinJSTests {
                 }).
                 done(complete);
         };
+
+        testNavBarOpenedProperty = function (complete) {
+            var navBar = new WinJS.UI.NavBar(document.getElementById("navbarDiv"));
+            navBar.addEventListener("afteropen", function () {
+                LiveUnit.Assert.isTrue(navBar.opened);
+                navBar.opened = false;
+                LiveUnit.Assert.isFalse(navBar.opened);
+                navBar.addEventListener("afterclose", function () {
+                    LiveUnit.Assert.isFalse(navBar.opened);
+                    complete();
+                });
+            });
+            LiveUnit.Assert.isFalse(navBar.opened);
+            navBar.opened = true;
+            LiveUnit.Assert.isTrue(navBar.opened);
+        };
     };
 }
 LiveUnit.registerTestClass("WinJSTests.NavBarTests");

@@ -288,12 +288,20 @@ define([
                 },
 
                 // Is the overlay "hidden"?
-                /// <field type="Boolean" hidden="true" locid="WinJS.UI._Overlay.hidden" helpKeyword="WinJS.UI._Overlay.hidden">Read only, true if an overlay is currently not visible.</field>
+                /// <field type="Boolean" hidden="true" locid="WinJS.UI._Overlay.hidden" helpKeyword="WinJS.UI._Overlay.hidden">Gets or sets Overlay's visibility.</field>
                 hidden: {
                     get: function () {
                         return (this._element.style.visibility === "hidden" ||
                                 this._element.winAnimating === "hiding" ||
                                 this._doNext === "hide");
+                    },
+                    set: function (hidden) {
+                        var currentlyHidden = this.hidden;
+                        if (!hidden && currentlyHidden) {
+                            this._show();
+                        } else if (hidden && !currentlyHidden) {
+                            this._hide();
+                        }
                     }
                 },
 

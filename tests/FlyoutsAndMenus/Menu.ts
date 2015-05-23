@@ -181,6 +181,28 @@ module CorsicaTests {
             OverlayHelpers.disposeAndRemove(menuElement);
         }
 
+        testHiddenProperty = function (complete) {
+            var menuElement = document.createElement("div");
+            document.body.appendChild(menuElement);
+
+            var menu = new Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
+            menu.anchor = document.body;
+
+            menu.addEventListener("aftershow", function () {
+                LiveUnit.Assert.isFalse(menu.hidden);
+                menu.hidden = true;
+                LiveUnit.Assert.isTrue(menu.hidden);
+                menu.addEventListener("afterhide", function () {
+                    LiveUnit.Assert.isTrue(menu.hidden);
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    complete();
+                });
+            });
+            LiveUnit.Assert.isTrue(menu.hidden);
+            menu.hidden = false;
+            LiveUnit.Assert.isFalse(menu.hidden);
+        }
+
         testMenuDispose = function () {
             var mc1 = new MenuCommand(document.createElement("button"), { label: "mc1" });
             var mc2 = new MenuCommand(document.createElement("button"), { label: "mc2" });
