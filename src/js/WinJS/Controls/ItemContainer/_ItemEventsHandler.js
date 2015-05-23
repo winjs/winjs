@@ -360,15 +360,13 @@ define([
                 // contextmenu events. It does this only when selection is enabled, the event occurred on or within an item, and
                 // the event did not occur on an interactive element.
                 onContextMenu: function ItemEventsHandler_onContextMenu(eventObject) {
-                    var containerElement = this._site.containerFromElement(eventObject.target);
-
-                    if (this._selectionAllowed() && containerElement && !this._isInteractive(eventObject.target)) {
+                    if (this._shouldSuppressContextMenu(eventObject.target)) {
                         eventObject.preventDefault();
                     }
                 },
 
                 onMSHoldVisual: function ItemEventsHandler_onMSHoldVisual(eventObject) {
-                    if (!this._isInteractive(eventObject.target)) {
+                    if (this._shouldSuppressContextMenu(eventObject.target)) {
                         eventObject.preventDefault();
                     }
                 },
@@ -447,6 +445,12 @@ define([
 
                 _isInteractive: function ItemEventsHandler_isInteractive(element) {
                     return this._containedInElementWithClass(element, "win-interactive");
+                },
+
+                _shouldSuppressContextMenu: function ItemEventsHandler_shouldSuppressContextMenu(element) {
+                    var containerElement = this._site.containerFromElement(element);
+
+                    return (this._selectionAllowed() && containerElement && !this._isInteractive(element));
                 },
 
                 _togglePressed: function ItemEventsHandler_togglePressed(add, synchronous, eventObject) {
