@@ -1244,7 +1244,9 @@ module CorsicaTests {
                 // The actionarea should now show | 1 | 2 | 4  | ... |
                 LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length);
 
-                commandingSurface.data.splice(0, 0, new Command(null, { type: _Constants.typeButton, label: "new" }));
+                // Add a 'content' typed command.
+                var contentCommand = new Command(null, { type: _Constants.content, label: "new" });
+                commandingSurface.data.splice(0, 0, contentCommand);
 
                 WinJS.Utilities.Scheduler.schedule(() => {
                     var visibleCommands = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea);
@@ -1262,6 +1264,11 @@ module CorsicaTests {
                     // Delete the first command and verify CommandingSurface Dom updates. 
                     // Also verify that we dispose the deleted command's associated MenuCommand projection.
                     var deletedCommand = commandingSurface.data.splice(0, 1)[0];
+
+                    // PRECONDITION: Sanity check that the command we got back is our same content command.
+                    LiveUnit.Assert.areEqual(contentCommand, deletedCommand,
+                        "TEST ERROR: Test ");
+
                     var deletedMenuCommand = Helper._CommandingSurface.getProjectedCommandFromOriginalCommand(commandingSurface, deletedCommand);
 
                     WinJS.Utilities.Scheduler.schedule(() => {
