@@ -43,6 +43,7 @@ define([
         "Windows.UI.Input.PointerPoint",
         "Windows.UI.ViewManagement.HandPreference",
         "Windows.UI.ViewManagement.InputPane",
+        "Windows.UI.ViewManagement.UIColorType",
         "Windows.UI.ViewManagement.UISettings",
         "Windows.UI.WebUI.Core.WebUICommandBar",
         "Windows.UI.WebUI.Core.WebUICommandBarBitmapIcon",

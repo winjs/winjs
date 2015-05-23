@@ -12,6 +12,8 @@ declare module LiveUnit {
         function isTrue(truthy: any, message?: string): void;
         function isNull(obj: any, message?: string): void;
         function isNotNull(obj: any, message?: string): void;
+        function stringContains(str: string, substr: string, message?: string): void;
+        function stringDoesNotContain(str: string, substr: string, message?: string): void;
     }
 
     function GetWrappedCallback(func: any): any;

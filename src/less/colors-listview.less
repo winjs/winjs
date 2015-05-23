@@ -67,19 +67,6 @@
     .win-selectioncheckmark {
         color: @baseHigh;
     }
-    .win-listview:not(.win-selectionstylefilled) .win-selectioncheckmarkbackground,
-    .win-itemcontainer:not(.win-selectionstylefilled) .win-selectioncheckmarkbackground {
-        border-color: @accentColor;
-        background-color: @accentColor;
-    }
-    .win-listview:not(.win-selectionstylefilled) .win-container.win-selected .win-selectionborder,
-    .win-itemcontainer:not(.win-selectionstylefilled).win-container.win-selected .win-selectionborder {
-        border-color: @accentColor;
-    }
-    .win-listview.win-selectionstylefilled .win-selected .win-selectionbackground,
-    .win-itemcontainer.win-selectionstylefilled.win-selected .win-selectionbackground {
-        background-color: @accentColor;
-    }
     // We need to add html.win-hoverable to this class list to ensure that this selector wins out over the regular hover color selector defined in ColorsHover.
     html.win-hoverable .win-listview.win-selectionstylefilled .win-container.win-pressed .win-itembox,
     html.win-hoverable .win-itemcontainer.win-selectionstylefilled.win-container .win-itembox,
