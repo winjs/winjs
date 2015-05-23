@@ -1047,8 +1047,14 @@ export class _CommandingSurface {
         //
         // Project overflowing and secondary commands into the overflowArea as MenuCommands
         //
+
+        // Clean up previous MenuCommand projections
         _ElementUtilities.empty(this._dom.overflowArea);
-        this._menuCommandProjections.map(function (menuCommand: _MenuCommand.MenuCommand) {
+        this._menuCommandProjections.map((menuCommand: _MenuCommand.MenuCommand) => {
+            if (this._contentFlyout && menuCommand.flyout === this._contentFlyout) {
+                // Prevent our _contentFlyout from being disposed with the MenuCommand.
+                menuCommand.flyout = null;
+            }
             menuCommand.dispose();
         });
         

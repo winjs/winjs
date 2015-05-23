@@ -624,8 +624,8 @@ define([
                 },
 
                 _baseFlyoutShow: function Flyout_baseFlyoutShow(anchor, placement, alignment) {
-                    // Don't do anything if disabled
-                    if (this.disabled) {
+                    if (this.disabled || this._disposed) {
+                        // Don't do anything.
                         return;
                     }
 

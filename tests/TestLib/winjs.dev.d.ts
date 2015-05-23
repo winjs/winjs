@@ -471,7 +471,7 @@ declare module WinJS {
             _primaryCommands: PrivateCommand[];
             _secondaryCommands: PrivateCommand[];
             _getCommandWidth(command: ICommand): number;
-            _contentFlyout: WinJS.UI.Flyout;
+            _contentFlyout: WinJS.UI.PrivateFlyout;
             _contentFlyoutInterior: HTMLElement;
             _dom: {
                 root: HTMLElement;
