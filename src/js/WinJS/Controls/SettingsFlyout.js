@@ -99,8 +99,14 @@ define([
                 /// The set of properties and values to apply to the new SettingsFlyout.
                 /// </param>
                 /// <returns type="WinJS.UI.SettingsFlyout" locid="WinJS.UI.SettingsFlyout.constructor_returnValue">The new SettingsFlyout control.</returns>
+                /// <deprecated type="deprecate">
+                /// SettingsFlyout is deprecated and may not be available in future releases. Instead, put
+                /// settings on their own page within the app.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
                 /// </signature>
+                
+                _ElementUtilities._deprecated(strings.settingsFlyoutIsDeprecated);
 
                 // Make sure there's an input element
                 this._element = element || _Global.document.createElement("div");
@@ -658,6 +664,7 @@ define([
                 get badReference() { return "Invalid argument: Invalid href to settings flyout fragment"; },
                 get backbuttonAriaLabel() { return _Resources._getWinJSString("ui/backbuttonarialabel").value; },
                 get widthDeprecationMessage() { return "SettingsFlyout.width may be altered or unavailable in future versions. Instead, style the CSS width property on elements with the .win-settingsflyout class."; },
+                get settingsFlyoutIsDeprecated() { return "SettingsFlyout is deprecated and may not be available in future releases. Instead, put settings on their own page within the app."; }
             };
 
             return SettingsFlyout;
