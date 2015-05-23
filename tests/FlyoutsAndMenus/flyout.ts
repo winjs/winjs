@@ -11,7 +11,7 @@ module CorsicaTests {
         _LightDismissService = Helper.require("WinJS/_LightDismissService"),
         _element;
 
-    var expectedDistanceFromAnchor = 5,
+    var expectedDistanceFromAnchor = 4,
         anchorStyling = "position:absolute; top:50%; left:50%; height:10px; width:10px; background-color: red;"
 
     var Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout;

@@ -491,11 +491,11 @@ Flyout control.
     padding: 12px;
     border-style: solid;
     border-width: 1px;
-    margin: 5px;
-    min-width: 68px; /* 96px - padding - border */
-    max-width: 428px; /* 456px - padding - border */
-    min-height: 16px; /* 44px - padding - border */
-    max-height: 730px; /* 758px - padding - border */
+    margin: 4px;
+    min-width: 70px; /* 96px - 2px border - 24px padding */
+    max-width: 430px; /* 456px - 2px border - 24px padding */
+    min-height: 16px; /* 44px - 2px border - 24px padding */
+    max-height: 730px; /* 758px - 2px border - 24px padding */
     width: auto;
     height: auto;
     word-wrap: break-word;
@@ -515,6 +515,13 @@ Flyout control.
     overflow: auto;
 }
 
+@media(max-width:464px) {
+    // If the viewport can't fit flyout with max-width 456px + 4px of margin on each side, reduce flyout max width
+    .win-flyout {
+        max-width: ~"calc(100% - 34px)"; /* 100% - 8px margin - 2px border - 24px padding */
+    }
+}
+
 /*
 Menu control.
 */
@@ -522,10 +529,10 @@ Menu control.
     padding: 0;
     line-height: 33px;
     text-align: left; /* Set explicitly in case our parent has different alignment, like appbar overflow. */
-    min-height: 46px; /* 44px -  2px in border = 46px */
+    min-height: 42px; /* 44px - 2px border */
     max-height: ~"calc(100% - 26px)";
-    min-width: 136px;
-    max-width: 456px;
+    min-width: 134px; /* 136px - 2px border */
+    max-width: 454px; /* 456px - 2px border */
 }
 
 /*
@@ -630,6 +637,13 @@ Menu toggle and flyout commands.
 .win-menu-containstogglecommand button.win-command-toggle[aria-checked=true] .win-menucommand-liner .win-toggleicon,
 .win-menu-containsflyoutcommand button.win-command-flyout .win-menucommand-liner .win-flyouticon {
     visibility: visible;
+}
+
+@media(max-width:464px) {
+    // If the viewport can't fit menu with max-width 456px + 4px of margin on each side, reduce menu max width
+    .win-menu {
+        max-width: ~"calc(100% - 10px)"; /* 100% - 8px margin - 2px border */
+    }
 }
 
 /*
