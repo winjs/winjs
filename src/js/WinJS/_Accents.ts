@@ -7,7 +7,7 @@ import _BaseUtils = require("./Core/_BaseUtils");
 
 var Constants = {
     accentStyleId: "WinJSAccentsStyle",
-    themeDetectionTag: "winjs",
+    themeDetectionTag: "winjs-themedetection-tag",
 
     hoverSelector: "html.win-hoverable",
     lightThemeSelector: ".win-ui-light",
@@ -70,8 +70,6 @@ function scheduleWriteRules() {
 
                 var themedSelectors: string[] = [];
                 selectorSplit.forEach(sel => {
-                    sel = sanitizeSpaces(sel);
-
                     if (sel.indexOf(Constants.hoverSelector) !== -1 && sel.indexOf(inverseThemeHoverSelector) === -1) {
                         themedSelectors.push(sel.replace(Constants.hoverSelector, inverseThemeHoverSelector));
                         var selWithoutHover = sel.replace(Constants.hoverSelector, "").trim();
@@ -102,7 +100,8 @@ function scheduleWriteRules() {
 
 function handleColorsChanged() {
     var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
-    var accent = colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), 1);
+    var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
+    var accent = colorToString(uiColor, 1);
     if (colors[0] === accent) {
         return;
     }
@@ -112,12 +111,12 @@ function handleColorsChanged() {
     colors.length = 0;
     colors.push(
         accent,
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.6 : 0.4)),
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.8 : 0.6)),
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.9 : 0.7)),
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.4 : 0.6)),
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.6 : 0.8)),
-        colorToString(UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent), (isDarkTheme ? 0.7 : 0.9)));
+        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)),
+        colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)),
+        colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)),
+        colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)),
+        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)),
+        colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
 
     scheduleWriteRules();
 }
