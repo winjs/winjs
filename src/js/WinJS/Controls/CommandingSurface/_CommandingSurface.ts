@@ -1004,7 +1004,7 @@ export class _CommandingSurface {
             command.element.style.display = (command.hidden ? "none" : "");
         })
 
-        var primaryCommandsLocation = this._getPrimaryCommandsLocation();
+        var primaryCommandsLocation = this._getVisiblePrimaryCommandsLocation();
 
         this._hideSeparatorsIfNeeded(primaryCommandsLocation.actionArea);
 
@@ -1107,7 +1107,7 @@ export class _CommandingSurface {
         return _ElementUtilities._uniqueID(command.element);
     }
 
-    private _getCommandsInfo(): ICommandInfo[] {
+    private _getVisiblePrimaryCommandsInfo(): ICommandInfo[] {
         var width = 0;
         var commands: ICommandInfo[] = [];
         var priority = 0;
@@ -1115,32 +1115,34 @@ export class _CommandingSurface {
 
         for (var i = this._primaryCommands.length - 1; i >= 0; i--) {
             var command = this._primaryCommands[i];
-            if (command.priority === undefined) {
-                priority = currentAssignedPriority--;
-            } else {
-                priority = command.priority;
-            }
-            width = (command.element.style.display === "none" ? 0 : this._getCommandWidth(command));
+            if (!command.hidden) {
+                if (command.priority === undefined) {
+                    priority = currentAssignedPriority--;
+                } else {
+                    priority = command.priority;
+                }
+                width = (command.element.style.display === "none" ? 0 : this._getCommandWidth(command));
 
-            commands.unshift({
-                command: command,
-                width: width,
-                priority: priority
-            });
+                commands.unshift({
+                    command: command,
+                    width: width,
+                    priority: priority
+                });
+            }
         }
 
         return commands;
     }
 
-    private _getPrimaryCommandsLocation() {
-        this._writeProfilerMark("_getCommandsLocation,info");
+    private _getVisiblePrimaryCommandsLocation() {
+        this._writeProfilerMark("_getVisiblePrimaryCommandsLocation,info");
 
         var actionAreaCommands: _Command.ICommand[] = [];
         var overflowAreaCommands: _Command.ICommand[] = [];
         var overflowButtonSpace = 0;
         var hasSecondaryCommands = this._secondaryCommands.length > 0;
 
-        var commandsInfo = this._getCommandsInfo();
+        var commandsInfo = this._getVisiblePrimaryCommandsInfo();
         var sortedCommandsInfo = commandsInfo.slice(0).sort((commandInfo1: ICommandInfo, commandInfo2: ICommandInfo) => {
             return commandInfo1.priority - commandInfo2.priority;
         });

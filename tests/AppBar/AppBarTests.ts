@@ -1854,10 +1854,14 @@ module CorsicaTests {
 
             function checkCommandVisibility(expectedShown, expectedHidden) {
                 for (var i = 0, len = expectedShown.length; i < len; i++) {
-                    LiveUnit.Assert.areEqual("inline-block", appBar.getCommandById(expectedShown[i]).element.style.display);
+                    var shownCommand = appBar.getCommandById(expectedShown[i]);
+                    LiveUnit.Assert.isFalse(shownCommand.hidden);
+                    LiveUnit.Assert.areEqual("inline-block", shownCommand.element.style.display);
                 }
                 for (var i = 0, len = expectedHidden.length; i < len; i++) {
-                    LiveUnit.Assert.areEqual("none", appBar.getCommandById(expectedHidden[i]).element.style.display);
+                    var hiddenCommand = appBar.getCommandById(expectedHidden[i]);
+                    LiveUnit.Assert.isTrue(hiddenCommand.hidden);
+                    LiveUnit.Assert.areEqual("none", hiddenCommand.element.style.display);
                 }
             }
 
@@ -1875,6 +1879,57 @@ module CorsicaTests {
 
             appBar.showOnlyCommands(["C", data.getAt(4)]);
             checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+        }
+
+        testThatHiddenCommandsDoNotAppearVisible(complete) {
+            // Regression test for https://github.com/winjs/winjs/issues/915
+            var p0 = new Command(null, { id: "p0", label: "p0", type: _Constants.typeButton, section: "primary", hidden: false });
+            var p1 = new Command(null, { id: "p1", label: "p1", type: _Constants.typeButton, section: "primary", hidden: false });
+            var p2 = new Command(null, { id: "p2", label: "p2", type: _Constants.typeButton, section: "primary", hidden: true });
+            var s0 = new Command(null, { id: "s0", label: "s0", type: _Constants.typeButton, section: "secondary", hidden: false });
+            var s1 = new Command(null, { id: "s1", label: "s1", type: _Constants.typeButton, section: "secondary", hidden: true });
+
+            this._element.style.width = "1000px";
+            var appBar = new AppBar(this._element, {
+                data: new WinJS.Binding.List([p0, p1, p2, s0, s1])
+            });
+
+            var actionAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea);
+            var overflowAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea);
+
+            // The actionarea should only show | p0 | p1 | ... |
+            LiveUnit.Assert.areEqual(2, actionAreaCommands.length, "actionarea should display 2 command");
+            LiveUnit.Assert.areEqual(p0.label, actionAreaCommands[0].winControl.label);
+            LiveUnit.Assert.areEqual(p1.label, actionAreaCommands[1].winControl.label);
+
+            // The overflowarea should only show | s0 |
+            LiveUnit.Assert.areEqual(1, overflowAreaCommands.length, "overflowarea should display 1 command");
+            LiveUnit.Assert.areEqual(s0.label, overflowAreaCommands[0].winControl.label);
+
+            new WinJS.Promise((c) => {
+                appBar._commandingSurface._layoutCompleteCallback = () => {
+
+                    actionAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea);
+                    overflowAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea);
+
+                    // The actionarea should not show any commands
+                    LiveUnit.Assert.areEqual(0, actionAreaCommands.length, "actionarea should display 0 command");
+
+                    // The overflowarea should show | p0 | p1 | separator | s0 |
+                    LiveUnit.Assert.areEqual(4, overflowAreaCommands.length, "overflowarea should display 4 command");
+                    LiveUnit.Assert.areEqual(p0.label, overflowAreaCommands[0].winControl.label);
+                    LiveUnit.Assert.areEqual(p1.label, overflowAreaCommands[1].winControl.label);
+                    LiveUnit.Assert.areEqual(_Constants.typeSeparator, overflowAreaCommands[2].winControl.type);
+                    LiveUnit.Assert.areEqual(s0.label, overflowAreaCommands[3].winControl.label);
+
+                    c();
+                };
+
+                // Overflow everything
+                this._element.style.width = "10px";
+                appBar.forceLayout();
+
+            }).done(complete);
         }
         
         private _testLightDismissWithTrigger(dismissAppBar) {
