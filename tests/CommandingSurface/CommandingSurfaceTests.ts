@@ -1245,8 +1245,7 @@ module CorsicaTests {
                 // The actionarea should now show | 1 | 2 | 4  | ... |
                 LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length);
 
-                // Add a new command.
-                commandingSurface.data.splice(0, 0, new Command(null, { type: _Constants.button, label: "new" }));
+                commandingSurface.data.splice(0, 0, new Command(null, { type: _Constants.typeButton, label: "new" }));
 
                 WinJS.Utilities.Scheduler.schedule(() => {
                     var visibleCommands = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea);
