@@ -1641,8 +1641,10 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(0, changingCount);
-                    LiveUnit.Assert.areEqual(0, changedCount);
+                    // Even though the data change didn't affect any of the items that were selected, we should still get selectionchanged events
+                    // since the selection indices changed from [5-10, 20-25] to [4-9, 19-24].
+                    LiveUnit.Assert.areEqual(1, changingCount);
+                    LiveUnit.Assert.areEqual(1, changedCount);
 
                     expectedRanges = [{ firstIndex: 18, lastIndex: 23 }];
 
@@ -1653,8 +1655,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(1, changingCount);
-                    LiveUnit.Assert.areEqual(1, changedCount);
+                    LiveUnit.Assert.areEqual(2, changingCount);
+                    LiveUnit.Assert.areEqual(2, changedCount);
 
                     expectedRanges = [{ firstIndex: 18, lastIndex: 22 }];
 
@@ -1665,8 +1667,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(2, changingCount);
-                    LiveUnit.Assert.areEqual(2, changedCount);
+                    LiveUnit.Assert.areEqual(3, changingCount);
+                    LiveUnit.Assert.areEqual(3, changedCount);
 
                     expectedRanges = [{ firstIndex: 18, lastIndex: 23 }];
 
@@ -1677,8 +1679,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(3, changingCount);
-                    LiveUnit.Assert.areEqual(3, changedCount);
+                    LiveUnit.Assert.areEqual(4, changingCount);
+                    LiveUnit.Assert.areEqual(4, changedCount);
 
                     expectedRanges = [{ firstIndex: 19, lastIndex: 24 }];
 
@@ -1689,8 +1691,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(3, changingCount);
-                    LiveUnit.Assert.areEqual(3, changedCount);
+                    LiveUnit.Assert.areEqual(5, changingCount);
+                    LiveUnit.Assert.areEqual(5, changedCount);
 
                     expectedRanges = [{ firstIndex: 18, lastIndex: 24 }];
 
@@ -1701,8 +1703,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(4, changingCount);
-                    LiveUnit.Assert.areEqual(4, changedCount);
+                    LiveUnit.Assert.areEqual(6, changingCount);
+                    LiveUnit.Assert.areEqual(6, changedCount);
 
                     expectedRanges = [{ firstIndex: 18, lastIndex: 23 }];
 
@@ -1713,8 +1715,8 @@ module WinJSTests {
                     validate(listView.selection._selected, retainedItems, realizedCount(listView));
                     compareIndices(expectedRanges, listView.selection.getRanges());
 
-                    LiveUnit.Assert.areEqual(5, changingCount);
-                    LiveUnit.Assert.areEqual(5, changedCount);
+                    LiveUnit.Assert.areEqual(7, changingCount);
+                    LiveUnit.Assert.areEqual(7, changedCount);
 
                     document.body.removeChild(element);
                     complete();
