@@ -90,7 +90,16 @@ var EventNames = {
     beforeOpen: "beforeopen",
     afterOpen: "afteropen",
     beforeClose: "beforeclose",
-    afterClose: "afterclose"
+    afterClose: "afterclose",
+    
+    // Private events
+    
+    // Indicates that the OpenCloseMachine has settled either into the Opened state
+    // or Closed state. This is more comprehensive than the "afteropen" and "afterclose"
+    // events because it fires even if the machine has reached the state due to:
+    //   - Exiting the Init state
+    //   - The beforeopen/beforeclose events being canceled
+    _openCloseStateSettled: "_openCloseStateSettled"
 };
 
 //
@@ -352,6 +361,7 @@ module States {
             if (args.openIsPending) {
                 this.open();
             }
+            this.machine._fireEvent(EventNames._openCloseStateSettled);
         }
         exit = _;
         opened = false;
@@ -427,6 +437,7 @@ module States {
             if (args.closeIsPending) {
                 this.close();
             }
+            this.machine._fireEvent(EventNames._openCloseStateSettled);
         }
         exit = _;
         opened = true;

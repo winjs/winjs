@@ -989,6 +989,17 @@ export interface IPosition {
     height: number;
 }
 
+export interface IMutationObserverShim {
+    disconnect(): void;
+    observe(element: HTMLElement, configuration: { attributes?: boolean; attributeFilter?: string[]; }): void;
+}
+
+export interface IMutationRecordShim {
+    type: string;
+    target: HTMLElement;
+    attributeName: string;
+}
+
 //#endregion Interfaces
 
 export declare function _getPositionRelativeTo(element: HTMLElement, ancestor: HTMLElement): IPosition;
@@ -1029,3 +1040,9 @@ export declare function _getPreciseTotalWidth(element: HTMLElement): number;
 export declare function _getPreciseContentHeight(element: HTMLElement): number;
 export declare function _getPreciseContentWidth(element: HTMLElement): number;
 export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number; };
+export declare function _ensureId(element: HTMLElement): void;
+export declare function _setAttribute(element: HTMLElement, attribute: string, value: string): void;
+export declare var _MutationObserver: {
+    prototype: IMutationObserverShim;
+    new(callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
+};
