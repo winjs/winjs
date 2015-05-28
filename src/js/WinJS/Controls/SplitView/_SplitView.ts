@@ -188,7 +188,7 @@ export class SplitView {
         content: HTMLElement;
         contentWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
     };
-    _dismissable: _LightDismissService.ILightDismissable;
+    _dismissable: _LightDismissService.LightDismissableElement;
     _isOpenedMode: boolean; // Is ClassNames.paneOpened present on the SplitView?
     _rtl: boolean;
     _cachedHiddenPaneThickness: IThickness;
@@ -251,6 +251,10 @@ export class SplitView {
             tabIndex: -1,
             onLightDismiss: () => {
                 this.closePane();
+            },
+            onTakeFocus: (useSetActive) => {
+                this._dismissable.restoreFocus() ||
+                    _ElementUtilities._tryFocusOnAnyElement(this._dom.pane, useSetActive);
             }
         });
         this._cachedHiddenPaneThickness = null;
@@ -383,6 +387,9 @@ export class SplitView {
         // The first child is the pane
         var paneEl = <HTMLElement>root.firstElementChild || _Global.document.createElement("div");
         _ElementUtilities.addClass(paneEl, ClassNames.pane);
+        if (!paneEl.hasAttribute("tabIndex")) {
+            paneEl.tabIndex = -1;
+        }
 
         // All other children are members of the content
         var contentEl = _Global.document.createElement("div");

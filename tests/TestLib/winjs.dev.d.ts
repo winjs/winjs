@@ -252,6 +252,15 @@ declare module WinJS {
             _updateTabIndices();
             _updateTabIndicesImpl();
         }
+        
+        interface ISplitViewDom {
+            root: HTMLElement;
+            pane: HTMLElement;
+            paneWrapper: HTMLElement;
+            panePlaceholder: HTMLElement;
+            content: HTMLElement;
+            contentWrapper: HTMLElement;
+        }
 
         class PrivateSplitView extends WinJS.UI.SplitView {
             static _ClassNames: {
@@ -262,7 +271,8 @@ declare module WinJS {
                 paneOpened: string;
                 paneClosed: string;
             }
-
+            
+            _dom: ISplitViewDom;
             _playShowAnimation(): Promise<any>;
             _playHideAnimation(): Promise<any>;
             _prepareAnimation(paneRect: any, contentRect: any): void;
