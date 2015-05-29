@@ -1940,12 +1940,14 @@ define([
                                 if (range) {
                                     range.newFirstIndex = newIndex;
                                     that._updater.changed = true;
+                                    that._updater.selectionChanged = true;
                                     that._updater.updateDrag = true;
                                 }
                                 range = that._updater.selectionLast[oldIndex];
                                 if (range) {
                                     range.newLastIndex = newIndex;
                                     that._updater.changed = true;
+                                    that._updater.selectionChanged = true;
                                     that._updater.updateDrag = true;
                                 }
                             },
@@ -1983,6 +1985,8 @@ define([
                                 var index = that._updater.selectionHandles[itemPromise.handle];
                                 if (index === +index) {
                                     that._updater.updateDrag = true;
+                                    that._updater.selectionChanged = true;
+                                    that._updater.changed = true;
 
                                     var firstRange = that._updater.selectionFirst[index],
                                         lastRange = that._updater.selectionLast[index],
@@ -1991,8 +1995,6 @@ define([
                                     if (range && range.oldFirstIndex !== range.oldLastIndex) {
                                         delete that._updater.selectionFirst[range.oldFirstIndex];
                                         delete that._updater.selectionLast[range.oldLastIndex];
-                                        that._updater.selectionChanged = true;
-                                        that._updater.changed = true;
                                     }
                                 }
                                 that._writeProfilerMark("moved(" + index + "),info");
