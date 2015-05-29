@@ -462,63 +462,66 @@ export class ToolBar {
         placeHolderStyle.marginBottom = closedMargins.bottom + "px";
         placeHolderStyle.marginLeft = closedMargins.left + "px";
 
-        // Move ToolBar element to the body in preparation of becoming a light dismissible. Leave an equal sized placeHolder element 
-        // at our original DOM location to avoid reflowing surrounding app content.
         _ElementUtilities._maintainFocus(() => {
+            // Move ToolBar element to the body in preparation of becoming a light dismissible. Leave an equal sized placeHolder element 
+            // at our original DOM location to avoid reflowing surrounding app content.
             this._dom.root.parentElement.insertBefore(placeHolder, this._dom.root);
             _Global.document.body.appendChild(this._dom.root);
+
+            // Position the ToolBar to completely cover the same region as the placeholder element.
+            this._dom.root.style.width = closedContentWidth + "px";
+            this._dom.root.style.left = closedBorderBox.left - closedMargins.left + "px";
+
+            // Determine which direction to expand the CommandingSurface elements when opened. The overflow area will be rendered at the corresponding edge of 
+            // the ToolBar's content box, so we choose the direction that offers the most space between that edge and the corresponding edge of the viewport. 
+            // This is to reduce the chance that the overflow area might clip through the edge of the viewport.
+            var topOfViewport = 0;
+            var bottomOfViewport = _Global.innerHeight;
+            var distanceFromTop = closedContentBoxTop - topOfViewport;
+            var distanceFromBottom = bottomOfViewport - closedContentBoxBottom;
+
+            if (distanceFromTop > distanceFromBottom) {
+                // CommandingSurface is going to expand updwards.
+                this._commandingSurface.overflowDirection = _Constants.OverflowDirection.top;
+                // Position the bottom edge of the ToolBar marginbox over the bottom edge of the placeholder marginbox.
+                this._dom.root.style.bottom = (bottomOfViewport - closedBorderBox.bottom) - closedMargins.bottom + "px";
+            } else {
+                // CommandingSurface is going to expand downwards.
+                this._commandingSurface.overflowDirection = _Constants.OverflowDirection.bottom;
+                // Position the top edge of the ToolBar marginbox over the top edge of the placeholder marginbox.
+                this._dom.root.style.top = (topOfViewport + closedBorderBox.top) - closedMargins.top + "px";
+            }
+
+            // Render opened state
+            _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
+            _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
+
         });
 
-        // Position the ToolBar to completely cover the same region as the placeholder element.
-        this._dom.root.style.width = closedContentWidth + "px";
-        this._dom.root.style.left = closedBorderBox.left - closedMargins.left + "px";
-
-        // Determine which direction to expand the CommandingSurface elements when opened. The overflow area will be rendered at the corresponding edge of 
-        // the ToolBar's content box, so we choose the direction that offers the most space between that edge and the corresponding edge of the viewport. 
-        // This is to reduce the chance that the overflow area might clip through the edge of the viewport.
-        var topOfViewport = 0;
-        var bottomOfViewport = _Global.innerHeight;
-        var distanceFromTop = closedContentBoxTop - topOfViewport;
-        var distanceFromBottom = bottomOfViewport - closedContentBoxBottom;
-
-        if (distanceFromTop > distanceFromBottom) {
-            // CommandingSurface is going to expand updwards.
-            this._commandingSurface.overflowDirection = _Constants.OverflowDirection.top;
-            // Position the bottom edge of the ToolBar marginbox over the bottom edge of the placeholder marginbox.
-            this._dom.root.style.bottom = (bottomOfViewport - closedBorderBox.bottom) - closedMargins.bottom + "px";
-        } else {
-            // CommandingSurface is going to expand downwards.
-            this._commandingSurface.overflowDirection = _Constants.OverflowDirection.bottom;
-            // Position the top edge of the ToolBar marginbox over the top edge of the placeholder marginbox.
-            this._dom.root.style.top = (topOfViewport + closedBorderBox.top) - closedMargins.top + "px";
-        }
-
-        // Render opened state
-        _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.openedClass);
-        _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.closedClass);
         this._commandingSurface.synchronousOpen();
         _LightDismissService.shown(this._dismissable); // Call at the start of the open animation
     }
 
     private _updateDomImpl_renderClosed(): void {
 
-        // Restore our placement in the DOM
-        if (this._dom.placeHolder.parentElement) {
-            _ElementUtilities._maintainFocus(() => {
+        _ElementUtilities._maintainFocus(() => {
+            if (this._dom.placeHolder.parentElement) {
+                // Restore our placement in the DOM
                 var placeHolder = this._dom.placeHolder;
                 placeHolder.parentElement.insertBefore(this._dom.root, placeHolder);
                 placeHolder.parentElement.removeChild(placeHolder);
-            });
-        }
+            }
 
-        // Render Closed
-        this._dom.root.style.top = "";
-        this._dom.root.style.right = "";
-        this._dom.root.style.bottom = "";
-        this._dom.root.style.left = "";
-        this._dom.root.style.width = this._updateDomImpl_renderedState.prevInlineWidth;
-        _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.closedClass);
-        _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.openedClass);
+            // Render Closed
+            this._dom.root.style.top = "";
+            this._dom.root.style.right = "";
+            this._dom.root.style.bottom = "";
+            this._dom.root.style.left = "";
+            this._dom.root.style.width = this._updateDomImpl_renderedState.prevInlineWidth;
+            _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.closedClass);
+            _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.openedClass);
+        });
+
         this._commandingSurface.synchronousClose();
         _LightDismissService.hidden(this._dismissable); // Call after the close animation
     }
