@@ -21,8 +21,8 @@ require(["require-style!less/colors-splitviewpanetoggle"]);
 
 // This control has 2 modes depending on whether or not the app has provided a SplitView:
 //   - SplitView not provided
-//     SplitViewPaneToggle provides button visuals and fires the invoked event. It's up
-//     to the app to do everything else:
+//     SplitViewPaneToggle provides button visuals and fires the invoked event. The app
+//     intends to do everything else:
 //       - Handle the invoked event
 //       - Handle the SplitView opening and closing
 //       - Handle aria-expanded being mutated by UIA (i.e. screen readers)
@@ -46,10 +46,13 @@ var Strings = {
     get badButtonElement() { return "Invalid argument: The SplitViewPaneToggle's element must be a button element"; }
 };
 
+// The splitViewElement may not have a winControl associated with it yet in the case
+// that the SplitViewPaneToggle was constructed before the SplitView. This may happen
+// when WinJS.UI.processAll is used to construct the controls because the order of construction
+// depends on the order in which the SplitView and SplitViewPaneToggle appear in the DOM.
 function getSplitViewControl(splitViewElement: HTMLElement): SplitViewTypeInfo.SplitView {
     return <SplitViewTypeInfo.SplitView>(splitViewElement && splitViewElement["winControl"]);
 }
-
 function getPaneOpened(splitViewElement: HTMLElement): boolean {
     var splitViewControl = getSplitViewControl(splitViewElement);
     return splitViewControl ? splitViewControl.paneOpened : false;
@@ -219,6 +222,10 @@ export class SplitViewPaneToggle {
             var expanded = this._opened ? "true" : "false";
             _ElementUtilities._setAttribute(this._dom.root, "aria-expanded", expanded);
             
+            // The splitView element may not have a winControl associated with it yet in the case
+            // that the SplitViewPaneToggle was constructed before the SplitView. This may happen
+            // when WinJS.UI.processAll is used to construct the controls because the order of construction
+            // depends on the order in which the SplitView and SplitViewPaneToggle appear in the DOM.
             var splitViewControl = getSplitViewControl(this._splitView);
             if (splitViewControl) {
                 splitViewControl.paneOpened = this._opened;
