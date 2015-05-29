@@ -22,7 +22,11 @@ require(["require-style!less/colors-splitviewpanetoggle"]);
 // This control has 2 modes depending on whether or not the app has provided a SplitView:
 //   - SplitView not provided
 //     SplitViewPaneToggle provides button visuals and fires the invoked event. It's up
-//     to the app to do everything else.
+//     to the app to do everything else:
+//       - Handle the invoked event
+//       - Handle the SplitView opening and closing
+//       - Handle aria-expanded being mutated by UIA (i.e. screen readers)
+//       - Keep the aria-controls attribute, aria-expanded attribute, and SplitView in sync
 //   - SplitView is provided via splitView property
 //     SplitViewPaneToggle keeps the SplitView, the aria-controls attribute, and the
 //     aria-expands attribute in sync. In this use case, apps typically won't listen
@@ -67,7 +71,7 @@ export class SplitViewPaneToggle {
     
     static supportedForProcessing: boolean = true;
     
-    private _onPaneStateChangedBound: EventListener;
+    private _onPaneStateSettledBound: EventListener;
     
     private _opened: boolean; // Only used when a splitView is specified
     private _ariaExpandedMutationObserver: _ElementUtilities.IMutationObserverShim;
@@ -102,7 +106,7 @@ export class SplitViewPaneToggle {
             throw new _ErrorFromName("WinJS.UI.SplitViewPaneToggle.DuplicateConstruction", Strings.duplicateConstruction);
         }
         
-        this._onPaneStateChangedBound = this._onPaneStateChanged.bind(this);
+        this._onPaneStateSettledBound = this._onPaneStateSettled.bind(this);
         this._ariaExpandedMutationObserver = new _ElementUtilities._MutationObserver(this._onAriaExpandedPropertyChanged.bind(this));
         
         this._initializeDom(element || _Global.document.createElement("button"));
@@ -223,7 +227,7 @@ export class SplitViewPaneToggle {
     }
     
     private _addListeners(splitViewElement: HTMLElement) {
-        splitViewElement.addEventListener("_openCloseStateSettled", this._onPaneStateChangedBound);
+        splitViewElement.addEventListener("_openCloseStateSettled", this._onPaneStateSettledBound);
         this._ariaExpandedMutationObserver.observe(this._dom.root, {
             attributes: true,
             attributeFilter: ["aria-expanded"]
@@ -231,7 +235,7 @@ export class SplitViewPaneToggle {
     }
     
     private _removeListeners(splitViewElement: HTMLElement) {
-        splitViewElement.removeEventListener("_openCloseStateSettled", this._onPaneStateChangedBound);
+        splitViewElement.removeEventListener("_openCloseStateSettled", this._onPaneStateSettledBound);
         this._ariaExpandedMutationObserver.disconnect();
     }
     
@@ -249,7 +253,7 @@ export class SplitViewPaneToggle {
     // Inputs that change the SplitViewPaneToggle's state
     //
     
-    private _onPaneStateChanged(eventObject: Event) {
+    private _onPaneStateSettled(eventObject: Event) {
         if (eventObject.target === this._splitView) {
             this._opened = getPaneOpened(this._splitView);
             this._updateDom();
