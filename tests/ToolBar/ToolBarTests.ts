@@ -8,6 +8,7 @@
 /// <reference path="../TestLib/liveToQ/liveToQ.d.ts" />
 /// <reference path="../TestLib/winjs.dev.d.ts" />
 // <reference path="../TestData/ToolBar.less.css" />
+/// <deploy src="../TestData/" />
 
 module CorsicaTests {
     var ToolBar = <typeof WinJS.UI.PrivateToolBar> WinJS.UI.ToolBar;
@@ -1420,7 +1421,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     buttonCmd.disabled = false;
                     return new WinJS.Promise((c) => {
@@ -1430,7 +1431,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     buttonCmd.extraClass = "new class";
                     return new WinJS.Promise((c) => {
@@ -1440,7 +1441,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     buttonCmd.onclick = () => { };
                     return new WinJS.Promise((c) => {
@@ -1450,7 +1451,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     buttonCmd.hidden = true;
                     return new WinJS.Promise((c) => {
@@ -1463,7 +1464,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     buttonCmd.hidden = false;
                     return new WinJS.Promise((c) => {
@@ -1476,7 +1477,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     toggleCmd.selected = true;
                     return new WinJS.Promise((c) => {
@@ -1486,7 +1487,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     toggleCmd.selected = false;
                     return new WinJS.Promise((c) => {
@@ -1496,7 +1497,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).then(
+                ).then(
                 () => {
                     var flyout = new WinJS.UI.Flyout();
                     flyoutCmd.flyout = flyout;
@@ -1508,7 +1509,7 @@ module CorsicaTests {
                         };
                     });
                 }
-            ).done(complete);
+                ).done(complete);
         }
 
         testSelectionAndGlobalSection() {
@@ -1782,7 +1783,7 @@ module CorsicaTests {
                 "TEST ERROR, Test failed to correctly set enviornment. The content box should be centered " +
                 "around the middpoint of the viewport height", 1);
 
-            // Verify that an opened toolbar will automatically overflow in the direction (top/bottom) that has
+            // Verify that an opened ToolBar will automatically overflow in the direction (top/bottom) that has
             // the most available space between the viewport and content box.
 
             // Pull the center of the content box up one pixel from the middle of the viewport. 
@@ -2001,7 +2002,7 @@ module CorsicaTests {
             var toolBar = new ToolBar(this._element, {
                 data: data
             });
-            
+
             function checkCommandVisibility(expectedShown, expectedHidden) {
                 for (var i = 0, len = expectedShown.length; i < len; i++) {
                     var shownCommand = toolBar.getCommandById(expectedShown[i]);
@@ -2128,6 +2129,67 @@ module CorsicaTests {
         }
         testLightDismissWithTap(complete) {
             this._testLightDismissWithTrigger((toolBar) => { _LightDismissService._clickEaterTapped(); }).then(complete);
+        }
+
+        testToolBarDoesntScrollPage = function (complete) {
+            // https://github.com/winjs/winjs/issues/1174
+            // When the ToolBar is opened or closed, it reparents itself to or from the <body>. If the ToolBar had focus before reparenting,
+            // it will lose focus in most browsers, to combat this the ToolBar will refocus itself after re-parenting. Verify that the operation 
+            // for opening and closing, the ToolBar will not cause the body to scroll.
+
+            var iframe = document.createElement("iframe");
+            iframe.src = "$(TESTDATA)/WinJSSandbox.html";
+            iframe.onload = function () {
+
+                // Be safe, and only use the WinJS loaded inside of the Iframe.
+                var iframeWinJS = <typeof WinJS>iframe.contentWindow["WinJS"];
+                var ToolBar = <typeof WinJS.UI.PrivateToolBar> iframeWinJS.UI.ToolBar;
+                var AppBarCommand = <typeof WinJS.UI.PrivateCommand> iframeWinJS.UI.AppBarCommand;
+
+                var iframeWindow = iframe.contentWindow;
+                var iframeDocument = iframeWindow.document;
+                iframeDocument.documentElement.style.overflowY = "auto";
+
+                var data = new iframeWinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, icon: 'add', label: "button" }),
+                    new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
+                ]);
+
+                var element = iframeDocument.createElement("DIV");
+                iframeDocument.body.appendChild(element);
+                var toolBar = new ToolBar(element, { data: data, opened: false });
+                Helper.ToolBar.useSynchronousAnimations(toolBar);
+
+                var spacer = iframeDocument.createElement("DIV");
+                spacer.style.height = "100%";
+                iframeDocument.body.appendChild(spacer);
+
+                // PRECONDITION: Sanity check that our confiiguration gave us a scroll bar.
+                LiveUnit.Assert.isTrue(iframeDocument.documentElement.scrollHeight > iframeDocument.documentElement.clientHeight + 1,
+                    "Test Error: Test requires a vertical scroll bar.")
+
+                // PRECONDITION: Sanity check that the we give toolBar focus before we start. This ensures that ToolBar's call to 
+                // _ElementUtilities.maintainFocus() will cache the ToolBar as the activeElement when we open/close the ToolBar. 
+                toolBar.element.focus();
+                LiveUnit.Assert.areEqual(toolBar.element, iframeDocument.activeElement,
+                    "Test Error: Test Requires that the ToolBar recieve focus at the beginning")
+
+                // PRECONDITION: Sanity check that we are at the top of the page.
+                var scrollTop = 0;
+                LiveUnit.Assert.areEqual(scrollTop, iframeWindow.pageYOffset,
+                    "Test Error: Test should begin with <body> scrolled all the way to the top.");
+
+                toolBar.open();
+                LiveUnit.Assert.areEqual(scrollTop, iframeWindow.pageYOffset,
+                    "Opening the ToolBar should not cause ancestors to scroll.");
+
+                toolBar.close();
+                LiveUnit.Assert.areEqual(scrollTop, iframeWindow.pageYOffset,
+                    "Closing the ToolBar should not cause ancestors to scroll.");
+
+                complete();
+            };
+            this._element.appendChild(iframe);
         }
     }
 }
