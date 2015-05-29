@@ -1,0 +1,507 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+@import "base.less";
+
+//
+// Main body and html styles
+//
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    cursor: default;
+    -moz-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    -ms-scroll-translation: vertical-to-horizontal;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+html {
+    overflow: hidden;
+    direction: ltr;
+    .RTL({direction: rtl;});
+}
+
+body {
+    -ms-content-zooming: none;
+    .win-type-body();
+}
+
+iframe {
+    border: 0;
+}
+
+// Define basic font fallback list
+body,
+.win-type-header,
+.win-type-subheader,
+.win-type-title,
+.win-type-subtitle,
+.win-type-base,
+.win-type-body,
+.win-type-caption,
+.win-h1,
+.win-h2,
+.win-h3,
+.win-h4,
+.win-h5,
+.win-h6,
+button,
+select,
+input,
+a,
+textarea {
+    .win-font-family-list();
+}
+
+
+//
+// Text input
+//
+input:not([type]),
+input[type=""], 
+input[type=text], 
+input[type=password], 
+input[type=email], 
+input[type=number], 
+input[type=tel],
+input[type=url],
+input[type=search],
+textarea,
+.win-textarea {
+    -ms-user-select: element;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 0;
+    margin: 8px 0px;
+    width: 296px;
+    min-width: 64px;
+    min-height: 28px;
+    background-clip: border-box;
+    box-sizing: border-box;
+    padding: 3px 6px 5px 10px;
+    outline: 0;
+    ._win-type-body();
+}
+
+input::-ms-value {
+    margin: 0;
+    padding: 0;
+}
+
+input::-ms-clear,
+input::-ms-reveal {
+    padding-right: 2px;
+    margin-right: -8px;
+    margin-left: 2px;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    width: 30px;
+    height: 32px;
+}
+input {
+    .RTL({
+        &::-ms-clear,
+        &::-ms-reveal {
+            margin-left: -8px;
+            margin-right: 2px;
+        }
+    });
+}
+
+textarea {
+    resize: none;
+    overflow-y: auto;
+}
+
+//
+// Radio and check
+//
+input[type=radio],
+input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+
+    .RTL({
+        margin-left: 8px;
+        margin-right: 0px;
+    });
+}
+input[type=radio]::-ms-check,
+input[type=checkbox]::-ms-check {
+    border-style: solid;
+    display: inline-block;
+    border-width: 2px;
+    background-clip: border-box;
+}
+
+
+//
+// Button
+//
+button {
+    border-style: solid;
+    margin: 0px;
+    min-height: 32px;
+    min-width: 120px;
+    padding: 4px 8px;
+    border-width: 2px;
+    background-clip: border-box;
+    border-radius: 0;
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    ._win-type-body();
+}
+
+//
+// File upload control.
+//
+input[type=file] {
+    border: none;
+    min-width: 100px;
+    min-height: 20px;
+    width: 340px;
+    height: 32px;
+    padding: 0px;
+    margin: 7px 8px 21px 8px;
+    background-clip: padding-box;
+
+    &::-ms-value {
+        margin: 0;
+        border-width: 2px;
+        border-style: solid;
+        border-right-style: none;
+        border-radius: 0;
+        background-clip: border-box;
+        ._win-type-body();
+    }
+
+    .RTL({
+        &::-ms-value {
+            border-left-style: none;
+            border-right-style: solid;
+        }
+    });
+
+    &::-ms-browse {
+        margin: 0;
+        padding: 0 18px;
+        border-width: 2px;
+        border-style: solid;
+        background-clip: padding-box;
+        ._win-type-body();
+    }
+}
+
+//
+// Dropdown
+//
+select {
+    min-width: 56px;
+    max-width: 368px;
+    min-height: 32px;
+    margin: 8px 0;
+    border-style: solid;
+    border-width: 2px;
+    background-clip: border-box;
+    background-image: none;
+    box-sizing: border-box;
+    border-radius: 0;
+    ._win-type-body();
+
+    &::-ms-value {
+        padding: 5px 12px 7px 12px;
+        margin: 0;
+    }
+
+    &::-ms-expand {
+        border: none;
+        margin-right: 5px;
+        margin-left: 3px;
+        margin-bottom: -2px; // 5px total with padding
+        font-size: 20px;
+    }
+
+}
+
+select[multiple] {
+    padding: 0 0 0 12px;
+    vertical-align: bottom;
+}
+
+option {
+    ._win-type-body();
+}
+
+//
+// Progress
+//
+progress {
+    width: 180px;
+    height: 4px;
+    -webkit-appearance: none;
+
+    &:not(:indeterminate) {
+        border-style: none;
+    }
+
+    &::-ms-fill {
+        border-style: none;
+    }
+
+    &.win-medium {
+        width: 296px;
+    }
+
+    &.win-large {
+        width: 100%;
+    }
+
+    &:indeterminate::-webkit-progress-value {
+        position: relative;
+        -webkit-animation: win-progress-indeterminate 3s linear infinite;
+    }
+
+    &.win-paused:not(:indeterminate) {
+        animation-name: win-progress-fade-out;
+        animation-duration: 3s;
+        animation-timing-function: cubic-bezier(0.03, 0.76, 0.31, 1.0);
+        opacity: 0.5;
+    }
+
+    &.win-error::-ms-fill {
+        opacity: 0;
+    }
+
+    &.win-ring {
+        width: 20px;
+        height: 20px;
+    }
+
+    &.win-ring:indeterminate::-ms-fill {
+        animation-name: -ms-ring;
+    }
+
+    &.win-ring.win-medium {
+        width: 40px;
+        height: 40px;
+    }
+
+    &.win-ring.win-large {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@-webkit-keyframes win-progress-indeterminate {
+    0% {left: 0; width: 25%;}
+    50% {left: calc(75%); width: 25%;}
+    75% {left: calc(100%); width: 0%;}
+    75.1% {left: 0; width: 0%;}
+    100% {left: 0; width: 25%;}
+}
+
+@keyframes win-progress-fade-out {
+    from {
+        opacity: 1.0;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+
+//
+// Horizontal slider
+//
+input[type=range] {
+    -webkit-appearance: none;
+
+    width: 280px;
+    height: 22px; // Leave enough room for tick marks
+    padding-top: 17px;
+    padding-bottom: 32px;
+
+    .track() {
+        height: 2px;
+        border-style: none;
+    }
+
+    .thumb() {
+        width: 24px;
+        height: 8px;
+        border-radius: 4px;
+        border-style: none;
+    }
+
+    &::-ms-track {.track();}
+    &::-webkit-slider-runnable-track {.track();}
+    &::-moz-range-track {.track();}
+    &::-ms-thumb {.thumb();}
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        margin-top: -4px;
+        .thumb();
+    }
+    &::-moz-range-thumb {.thumb();}
+}
+
+//
+// Vertical slider
+//
+input[type=range].win-vertical {
+    writing-mode: bt-lr;
+
+    width: 22px; // Leave enough room for tick marks
+    height: 280px;
+
+    &::-ms-track {
+        width: 2px;
+        height: auto;
+    }
+    &::-ms-thumb {
+        width: 8px;
+        height: 24px;
+    }
+
+    .RTL({
+        writing-mode: bt-rl;
+    });
+}
+
+//
+// Link
+//
+a {
+    text-decoration: underline;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+//
+// Image		
+//		
+img {		
+    border-style: none;		
+}		
+		
+//		
+// Form		
+//		
+form {		
+    margin: 0px;		
+    padding: 0px;		
+}		
+		
+//		
+// Legend		
+//		
+legend {		
+    margin: 0px 0px 10px 0px;		
+    padding: 0px;		
+    color: inherit;		
+    .win-type-body();		
+}
+
+//
+// Code tags
+//
+code, pre, samp {
+    font-family: "Consolas", "Menlo", "Monaco", "Courier New", monospace;
+    ._win-type-body();
+}
+
+//		
+// Caption		
+//		
+caption, figcaption, small {		
+    .win-type-caption();		
+}
+
+//
+// Ellipsis
+//
+.win-type-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+h1.win-type-ellipsis,
+.win-type-header.win-type-ellipsis {
+    line-height: 1.4286;
+}
+
+h2.win-type-ellipsis,
+.win-type-subheader.win-type-ellipsis {
+    line-height: 1.5;
+}
+
+//		
+// Description list and other things		
+//		
+dt, th {		
+    // Not using a win-type mixin because this is a unique combination of		
+    // font size, weight, and line height that is not covered.		
+    font-size: 11px;		
+    font-weight: 700;		
+    line-height: 1.3636;		
+}		
+abbr, acronym, address, blockquote, cite, dl, dd, li, ol, p, q, td, tr {		
+    font-weight: 300;		
+}		
+b, strong {		
+    font-weight: 700;		
+}		
+em {		
+    font-style: italic;		
+}
+
+.win-scrollview {
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 400px;
+    width: 100%;
+}
+
+//
+// Headers and other type tweaks
+//
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+h1 {		
+    .win-type-header();		
+}		
+h2 {	
+    .win-type-subheader();		
+}		
+h3 {		
+    .win-type-title();		
+}		
+h4 {		
+    .win-type-subtitle();		
+}		
+h5 {		
+    .win-type-base();		
+}		
+h6 {		
+    .win-type-body();		
+}
+
+.win-type-body p,
+p.win-type-body {
+    font-weight: 300;
+}

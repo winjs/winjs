@@ -33,8 +33,8 @@ define([
 
     // Edge-specific color rule
     _Accents.createAccentRule(
-        ".win-textbox::-ms-clear:hover,\
-         .win-textbox::-ms-reveal:hover",
+        ".win-textbox::-ms-clear:hover:not(:active),\
+         .win-textbox::-ms-reveal:hover:not(:active)",
         [{ name: "color", value: _Accents.ColorTypes.accent }], true);
 
     // Edge-specific background-color rule
