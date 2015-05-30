@@ -214,6 +214,13 @@ module SplitViewTests {
                 togglePaneState: function (splitViewPaneToggle, splitView) {
                     var ariaExpanded = splitViewPaneToggle.element.getAttribute("aria-expanded") === "true";
                     splitViewPaneToggle.element.setAttribute("aria-expanded", ariaExpanded ? "false" : "true");
+                    // Mutation observers notify asynchronously. Simulate synchronous notification
+                    // so the test can be synchronous.
+                    splitViewPaneToggle._onAriaExpandedPropertyChanged([{
+                        type: "attributes",
+                        target: splitViewPaneToggle.element,
+                        attributeName: "aria-expanded"
+                    }]);
                 }
             });
         }

@@ -17,6 +17,11 @@ interface IOpenCloseMachine {
     _state: { name: string; }
 }
 
+interface IMutationRecordShim {
+    type: string;
+    target: HTMLElement;
+    attributeName: string;
+}
 
 declare module WinJS {
 
@@ -286,6 +291,7 @@ declare module WinJS {
                 splitViewPaneToggle: string;
             }
             
+            _onAriaExpandedPropertyChanged(mutations: IMutationRecordShim[]): void;
             _invoked(): void;
             _disposed: boolean;
         }

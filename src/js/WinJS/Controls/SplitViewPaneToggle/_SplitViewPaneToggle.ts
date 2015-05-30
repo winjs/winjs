@@ -267,6 +267,7 @@ export class SplitViewPaneToggle {
         }
     }
     
+    // Called by tests.
     private _onAriaExpandedPropertyChanged(mutations: _ElementUtilities.IMutationRecordShim[]) {
         var ariaExpanded = this._dom.root.getAttribute("aria-expanded") === "true";
         this._opened = ariaExpanded;
