@@ -735,6 +735,67 @@ define([
             _isShim: true
         }
     );
+    
+    // The MutationObserverShim only supports the following configuration:
+    //  attributes
+    //  attributeFilter
+    var MutationObserverSyncShim = _Base.Class.define(
+        function MutationObserverShim_ctor(callback) {
+            this._callback = callback;
+            this._observers = [];
+        },
+        {
+            observe: function MutationObserverShim_observe(element, configuration) {
+                if (configuration.attributes && configuration.attributeFilter) {
+                    var initialState = {};
+                    configuration.attributes.forEach(function (attr) {
+                        initialState[attr] = element.getAttribute(attr);
+                    });
+                    
+                    var entry;
+                    this._observers.forEach(function (e) {
+                        if (e.element === element) {
+                            entry = e;
+                        }
+                    });
+                    if (entry) {
+                        entry.initialState = initialState;
+                    } else {
+                        this._observers.push({
+                            element: element,
+                            initialState: initialState
+                        });
+                    }
+                } else {
+                    throw new Error("Synchronous MutationObserver Shim requires both 'attributes' and 'atttributeFilter' to be specified");
+                }
+            },
+            disconnect: function MutationObserverShim_disconnect() {
+                this._observers = [];
+            },
+            _handleCallback: function MutationObserverShim_handleCallback(evt) {
+                var changes  = [];
+                
+                this._observers.forEach(function (obs) {
+                    Object.keys(obs.initialState).forEach(function (attr) {
+                        var before = obs.initialState[attr];
+                        var after = obs.element.getAttribute(attr);
+                        if (before !== after) {
+                            changes.push({
+                                type: 'attributes',
+                                target: obs.element,
+                                attributeName: attr
+                            })
+                        }
+                    });
+                });
+                
+                if (changes.length > 0) {
+                    this._callback(changes);
+                }
+            }
+        }
+    );
 
     var _MutationObserver = _Global.MutationObserver || MutationObserverShim;
 

@@ -24,6 +24,12 @@ module SplitViewTests {
         }
         return createSplitViewPaneToggle;
     }
+    
+    function assertPaneOpened(splitView: WinJS.UI.PrivateSplitView, splitViewPaneToggle: WinJS.UI.PrivateSplitViewPaneToggle): void {
+        LiveUnit.Assert.isTrue(splitView.paneOpened, "SplitView pane should be open");
+        LiveUnit.Assert.areEqual("true", splitViewPaneToggle.element.getAttribute("aria-expanded"),
+            "SplitViewPaneToggle should have aria-expanded='true'");
+    }
 
     function assertHasClass(element: HTMLElement, className: string, msg: string): void {
         LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(element, className), msg);
@@ -45,6 +51,54 @@ module SplitViewTests {
 
         splitViewPaneToggle._invoked();
         LiveUnit.Assert.areEqual(2, counter, "after click: wrong number of events fired");
+    }
+    
+    //
+    // Things the SplitViewPaneToggle keeps in sync:
+    //  - SplitView's paneOpened
+    //  - SplitViewPaneToggle's aria-expanded
+    // Inputs
+    //  - SplitViewPaneToggle is invoked
+    //  - SplitView's paneOpened property changes
+    //  - SplitViewPaneToggle's aria-expanded attribute changes
+    //
+    
+    function testChangingPaneToggleState(args: { firesInvokedEvent: boolean; togglePaneState: (splitViewPaneToggle: WinJS.UI.PrivateSplitViewPaneToggle, splitView: WinJS.UI.PrivateSplitView) => void; }) {
+        var invokedFired = false;
+        var onInvoked = () => {
+            invokedFired = true;
+        };
+        var verifyInvokedEvent = () => {
+            if (args.firesInvokedEvent) {
+                LiveUnit.Assert.isTrue(invokedFired, "SplitViewPaneToggle's invoked event should have fired");
+            } else {
+                LiveUnit.Assert.isFalse(invokedFired, "SplitViewPaneToggle's invoked event should not have fired");
+            }
+        };
+        
+        var splitView = Utils.useSynchronousAnimations(createSplitView());
+        var splitViewPaneToggle = createSplitViewPaneToggle(null, {
+            splitView: splitView.element,
+            oninvoked: onInvoked
+        });
+        
+        LiveUnit.Assert.isFalse(splitView.paneOpened, "Test expected SplitView to start out closed");
+        LiveUnit.Assert.areEqual("false", splitViewPaneToggle.element.getAttribute("aria-expanded"),
+            "Test expected SplitViewPaneToggle's aria-expanded attribute to start out 'false'");
+        
+        invokedFired = false;
+        args.togglePaneState(splitViewPaneToggle, splitView);
+        verifyInvokedEvent();
+        LiveUnit.Assert.isTrue(splitView.paneOpened, "SplitView should have been opened by SplitViewPaneToggle");
+        LiveUnit.Assert.areEqual("true", splitViewPaneToggle.element.getAttribute("aria-expanded"),
+            "SplitViewPaneToggle's aria-expanded attribute should be 'true'");
+        
+        invokedFired = false;
+        args.togglePaneState(splitViewPaneToggle, splitView);
+        verifyInvokedEvent();
+        LiveUnit.Assert.isFalse(splitView.paneOpened, "SplitView should have been closed by SplitViewPaneToggle");
+        LiveUnit.Assert.areEqual("false", splitViewPaneToggle.element.getAttribute("aria-expanded"),
+            "SplitViewPaneToggle's aria-expanded attribute should be 'false'");
     }
 
     export class SplitViewPaneToggleTests {
@@ -82,6 +136,8 @@ module SplitViewTests {
             
             LiveUnit.Assert.areEqual("BUTTON", splitViewPaneToggle.element.tagName, "SplitViewPaneToggle's element should be a button");
             assertHasClass(splitViewPaneToggle.element, SplitViewPaneToggle._ClassNames.splitViewPaneToggle, "splitViewPaneToggle.element is missing class");
+            LiveUnit.Assert.isFalse(splitViewPaneToggle.element.hasAttribute("aria-controls"), "SplitViewPaneToggle shouldn't have aria-controls attribute");
+            LiveUnit.Assert.isFalse(splitViewPaneToggle.element.hasAttribute("aria-expanded"), "SplitViewPaneToggle shouldn't have aria-expanded attribute");
         }
 
         // Verify that if we pass an element containing markup to the SplitViewPaneToggle's constructor, it correctly
@@ -95,6 +151,8 @@ module SplitViewTests {
             LiveUnit.Assert.areEqual("BUTTON", element.tagName, "SplitViewPaneToggle's element should be a button");
             assertHasClass(element, SplitViewPaneToggle._ClassNames.splitViewPaneToggle, "splitViewPaneToggle.element is missing class");
             assertHasClass(element, "myCustomClass", "splitViewPaneToggle.element is missing class");
+            LiveUnit.Assert.isFalse(element.hasAttribute("aria-controls"), "SplitViewPaneToggle shouldn't have aria-controls attribute");
+            LiveUnit.Assert.isFalse(element.hasAttribute("aria-expanded"), "SplitViewPaneToggle shouldn't have aria-expanded attribute");
         }
 
         testInitializingProperties() {
@@ -104,6 +162,8 @@ module SplitViewTests {
             });
             
             LiveUnit.Assert.areEqual(splitView.element, splitViewPaneToggle.splitView, "splitView property has wrong value after initialization");
+            LiveUnit.Assert.areEqual(splitView.element.id, splitViewPaneToggle.element.getAttribute("aria-controls"),
+                "SplitViewPaneToggle has wrong value for aria-controls attribute");
         }
 
         testChangingProperties() {
@@ -112,31 +172,59 @@ module SplitViewTests {
             
             splitViewPaneToggle.splitView = splitView.element;
             LiveUnit.Assert.areEqual(splitView.element, splitViewPaneToggle.splitView, "splitView property has wrong value after setting it");
+            LiveUnit.Assert.areEqual(splitView.element.id, splitViewPaneToggle.element.getAttribute("aria-controls"),
+                "SplitViewPaneToggle has wrong value for aria-controls attribute");
         }
-
-        testTogglingPane() {
-            var invokedFired = false;
-            var onInvoked = () => {
-                invokedFired = true;
-            };
+        
+        // Verify that the SplitViewPaneToggle correctly syncs with the SplitView when the
+        // SplitViewPaneToggle is created before the SplitView. This may happen during
+        // WinJS.UI.processAll because instantiation order depends on the order in which
+        // the controls appear in the DOM.
+        testInitializingSplitViewPaneToggleBeforeSplitView() {
+            var splitViewElement = document.createElement("div");
+            testRoot.appendChild(splitViewElement);
             
-            var splitView = Utils.useSynchronousAnimations(createSplitView());
             var splitViewPaneToggle = createSplitViewPaneToggle(null, {
-                splitView: splitView.element,
-                oninvoked: onInvoked
+                splitView: splitViewElement
             });
+            var splitView = Utils.useSynchronousAnimations(new SplitView(splitViewElement, {
+                paneOpened: true
+            }));
             
-            LiveUnit.Assert.isFalse(splitView.paneOpened, "Test expected SplitView to start out closed");
+            LiveUnit.Assert.isTrue(splitView.paneOpened, "SplitView should have started out as open");
             
-            invokedFired = false;
-            splitViewPaneToggle._invoked();
-            LiveUnit.Assert.isTrue(invokedFired, "SplitViewPaneToggle's invoked event should have fired");
-            LiveUnit.Assert.isTrue(splitView.paneOpened, "SplitView should have been opened by SplitViewPaneToggle");
-            
-            invokedFired = false;
-            splitViewPaneToggle._invoked();
-            LiveUnit.Assert.isTrue(invokedFired, "SplitViewPaneToggle's invoked event should have fired");
-            LiveUnit.Assert.isFalse(splitView.paneOpened, "SplitView should have been closed by SplitViewPaneToggle");
+            LiveUnit.Assert.areEqual("true", splitViewPaneToggle.element.getAttribute("aria-expanded"),
+                "SplitViewPaneToggle's aria-expanded attribute should be 'true'");
+            LiveUnit.Assert.areEqual(splitView.element.id, splitViewPaneToggle.element.getAttribute("aria-controls"),
+                "SplitViewPaneToggle has wrong value for aria-controls attribute");
+        }
+        
+        testInvoking() {
+            testChangingPaneToggleState({
+                firesInvokedEvent: true,
+                togglePaneState: function (splitViewPaneToggle, splitView) {
+                    splitViewPaneToggle._invoked();
+                }
+            });
+        }
+        
+        testMutatingAriaExpanded() {
+            testChangingPaneToggleState({
+                firesInvokedEvent: false,
+                togglePaneState: function (splitViewPaneToggle, splitView) {
+                    var ariaExpanded = splitViewPaneToggle.element.getAttribute("aria-expanded") === "true";
+                    splitViewPaneToggle.element.setAttribute("aria-expanded", ariaExpanded ? "false" : "true");
+                }
+            });
+        }
+        
+        testMutatingSplitView() {
+            testChangingPaneToggleState({
+                firesInvokedEvent: false,
+                togglePaneState: function (splitViewPaneToggle, splitView) {
+                    splitView.paneOpened = !splitView.paneOpened;
+                }
+            });
         }
         
         testDispose() {
