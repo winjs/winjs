@@ -147,7 +147,7 @@ _BaseUtils.ready().then(() => {
     isDarkTheme = theme === "0";
     tag.parentElement.removeChild(tag);
 
-    if (_WinRT.Windows.UI.ViewManagement.UISettings) {
+    if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
         UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
         UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
         handleColorsChanged();
