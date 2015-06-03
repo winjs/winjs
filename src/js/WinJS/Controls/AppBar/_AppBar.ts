@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../Core.d.ts" />
-import Animations = require("../../Animations");
 import _Base = require("../../Core/_Base");
-import _BaseUtils = require("../../Core/_BaseUtils");
 import BindingList = require("../../BindingList");
 import ControlProcessor = require("../../ControlProcessor");
 import _Constants = require("../AppBar/_Constants");
@@ -16,15 +14,12 @@ import _ErrorFromName = require("../../Core/_ErrorFromName");
 import _Events = require('../../Core/_Events');
 import _Flyout = require("../../Controls/Flyout");
 import _Global = require("../../Core/_Global");
-import _Hoverable = require("../../Utilities/_Hoverable");
-import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
 import _KeyboardInfo = require('../../Utilities/_KeyboardInfo');
 import _LightDismissService = require('../../_LightDismissService');
 import Menu = require("../../Controls/Menu");
 import _MenuCommand = require("../Menu/_Command");
 import Promise = require('../../Promise');
 import _Resources = require("../../Core/_Resources");
-import Scheduler = require("../../Scheduler");
 import _OpenCloseMachine = require('../../Utilities/_OpenCloseMachine');
 import _Signal = require('../../_Signal');
 import _WinRT = require('../../Core/_WinRT');
