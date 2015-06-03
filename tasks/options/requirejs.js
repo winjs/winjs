@@ -119,7 +119,6 @@
         return "\n" +
 "        require(['" + name + "'], function () {\n" +
 "        });\n" +
-"        return globalObject.WinJS;\n" +
 "    }));\n" +
 "}());\n" +
 "\n";
@@ -180,7 +179,7 @@
         }),
         intrinsics: defaults('intrinsics', {
             options: {
-                cssOutputSuffix: "-global",
+                cssOutputSuffix: "-intrinsics",
                 wrap: {
                     start: header("intrinsics", []),
                     end: footerWithoutExport("intrinsics")

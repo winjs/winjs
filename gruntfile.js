@@ -51,7 +51,6 @@
         });
 
         // Tasks that drop things in bin/ (should have "_postProcess" as the last task)
-        grunt.registerTask("intrinsics", ["_copyToTsBuild", "requirejs:intrinsics"]);
         grunt.registerTask("storePackage", ["configureStore", "default"]);
         grunt.registerTask("quick", ["clean", "ts:src", "less", "concat", "onefile:base", "requirejs:ui", "requirejs:intrinsics", "copy:fonts", "_postProcess"]);
         grunt.registerTask("default", ["_preBuild", "onefile:base", "requirejs:ui", "requirejs:intrinsics", "_copyFinal", "replace", "_postProcess"]);

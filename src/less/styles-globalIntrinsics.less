@@ -1,59 +1,49 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
-@import "base.less";
+@import "color-definitions.less";
+@import "font-definitions.less";
+
+// RTL mixin definition
+.RTL(@rules) {
+    &:lang(ar),
+    &:lang(dv),
+    &:lang(fa),
+    &:lang(he),
+    &:lang(ku-Arab),
+    &:lang(pa-Arab),
+    &:lang(prs),
+    &:lang(ps),
+    &:lang(sd-Arab),
+    &:lang(syr),
+    &:lang(ug),
+    &:lang(ur),
+    &:lang(qps-plocm) {
+        @rules();
+    }
+}
 
 //
 // Main body and html styles
 //
 html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    cursor: default;
     -moz-user-select: none;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -ms-user-select: none;
-    -ms-scroll-translation: vertical-to-horizontal;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-html {
-    overflow: hidden;
-    direction: ltr;
-    .RTL({direction: rtl;});
 }
 
 body {
-    -ms-content-zooming: none;
-    .win-type-body();
-}
-
-iframe {
-    border: 0;
+    ._win-type-body();
 }
 
 // Define basic font fallback list
 body,
-.win-type-header,
-.win-type-subheader,
-.win-type-title,
-.win-type-subtitle,
-.win-type-base,
-.win-type-body,
-.win-type-caption,
-.win-h1,
-.win-h2,
-.win-h3,
-.win-h4,
-.win-h5,
-.win-h6,
+input,
+textarea,
 button,
 select,
-input,
-a,
-textarea {
+option {
     .win-font-family-list();
 }
 
@@ -133,8 +123,7 @@ input[type=checkbox] {
         margin-right: 0px;
     });
 }
-input[type=radio]::-ms-check,
-input[type=checkbox]::-ms-check {
+input::-ms-check {
     border-style: solid;
     display: inline-block;
     border-width: 2px;
@@ -145,7 +134,11 @@ input[type=checkbox]::-ms-check {
 //
 // Button
 //
-button {
+button,
+input[type=button],
+input[type=reset],
+input[type=submit],
+button[type=submit] {
     border-style: solid;
     margin: 0px;
     min-height: 32px;
@@ -299,23 +292,6 @@ progress {
     }
 }
 
-@-webkit-keyframes win-progress-indeterminate {
-    0% {left: 0; width: 25%;}
-    50% {left: calc(75%); width: 25%;}
-    75% {left: calc(100%); width: 0%;}
-    75.1% {left: 0; width: 0%;}
-    100% {left: 0; width: 25%;}
-}
-
-@keyframes win-progress-fade-out {
-    from {
-        opacity: 1.0;
-    }
-    to {
-        opacity: 0.5;
-    }
-}
-
 //
 // Horizontal slider
 //
@@ -405,7 +381,7 @@ legend {
     margin: 0px 0px 10px 0px;		
     padding: 0px;		
     color: inherit;		
-    .win-type-body();		
+    ._win-type-body();		
 }
 
 //
@@ -420,7 +396,7 @@ code, pre, samp {
 // Caption		
 //		
 caption, figcaption, small {		
-    .win-type-caption();		
+    ._win-type-caption();		
 }
 
 //
@@ -483,25 +459,20 @@ h6 {
 }
 
 h1 {		
-    .win-type-header();		
+    ._win-type-header();		
 }		
 h2 {	
-    .win-type-subheader();		
+    ._win-type-subheader();		
 }		
 h3 {		
-    .win-type-title();		
+    ._win-type-title();		
 }		
 h4 {		
-    .win-type-subtitle();		
+    ._win-type-subtitle();		
 }		
 h5 {		
-    .win-type-base();		
+    ._win-type-base();		
 }		
 h6 {		
-    .win-type-body();		
-}
-
-.win-type-body p,
-p.win-type-body {
-    font-weight: 300;
+    ._win-type-body();		
 }
