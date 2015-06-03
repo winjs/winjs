@@ -115,6 +115,15 @@
 "\n";
     }
 
+    function footerWithoutExport(name) {
+        return "\n" +
+"        require(['" + name + "'], function () {\n" +
+"        });\n" +
+"    }));\n" +
+"}());\n" +
+"\n";
+    }
+
     function defaults(key, buildConfig) {
         buildConfig = buildConfig || {};
         var options = buildConfig.options = buildConfig.options || {};
@@ -151,7 +160,7 @@
             var target = options.target || options.name;
             var name = options.name;
             options.out = outputBase + target + ".js";
-            options.wrap = {
+            options.wrap = options.wrap || {
                 start: header(target, options.exclude || []),
                 end: footer(name),
             };
@@ -166,6 +175,15 @@
         ui: defaults('ui', {
             options: {
                 exclude: ['./base']
+            }
+        }),
+        intrinsics: defaults('intrinsics', {
+            options: {
+                cssOutputSuffix: "-intrinsics",
+                wrap: {
+                    start: header("intrinsics", []),
+                    end: footerWithoutExport("intrinsics")
+                }
             }
         })
     };
