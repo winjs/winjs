@@ -94,7 +94,7 @@ function scheduleWriteRules() {
             }
             return css;
         }).join("\n");
-        _Global.document.head.insertBefore(style, _Global.document.head.firstChild);
+        _Global.document.head.appendChild(style);
     });
 }
 

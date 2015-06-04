@@ -33,9 +33,9 @@ define([
 
     // Edge-specific color rule
     _Accents.createAccentRule(
-        ".win-textbox::-ms-clear:hover,\
-         .win-textbox::-ms-reveal:hover",
-        [{ name: "color", value: _Accents.ColorTypes.accent }], true);
+        ".win-textbox::-ms-clear:hover:not(:active),\
+         .win-textbox::-ms-reveal:hover:not(:active)",
+        [{ name: "color", value: _Accents.ColorTypes.accent }]);
 
     // Edge-specific background-color rule
     _Accents.createAccentRule(
@@ -63,20 +63,25 @@ define([
         ".win-checkbox:indeterminate::-ms-check,\
          .win-checkbox:hover:indeterminate::-ms-check,\
          .win-radio:checked::-ms-check",
-        [{ name: "border-color", value: _Accents.ColorTypes.accent }], true);
+        [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
+
 
     // Note the use of background instead of background-color
     // FF slider styling doesn't work with background-color
     // so using background for everything here for consistency
+
+    // Edge-specific background rule
     _Accents.createAccentRule(
         ".win-slider::-ms-thumb,\
          .win-slider::-ms-fill-lower", /* Fill-Lower only supported in IE */
         [{ name: "background", value: _Accents.ColorTypes.accent }]);
 
+    // Webkit-specific background rule
     _Accents.createAccentRule(
         ".win-slider::-webkit-slider-thumb",
         [{ name: "background", value: _Accents.ColorTypes.accent }]);
 
+    // Mozilla-specific background rule
     _Accents.createAccentRule(
         ".win-slider::-moz-range-thumb",
         [{ name: "background", value: _Accents.ColorTypes.accent }]);
