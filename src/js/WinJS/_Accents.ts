@@ -4,7 +4,6 @@ import _WinRT = require("./Core/_WinRT");
 
 import _Base = require("./Core/_Base");
 import _BaseUtils = require("./Core/_BaseUtils");
-import Promise = require("./Promise");
 
 var Constants = {
     accentStyleId: "WinJSAccentsStyle",
@@ -21,9 +20,10 @@ var UISettings: _WinRT.Windows.UI.ViewManagement.UISettings = null;
 var colors: string[] = [];
 var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; }[] = [];
-var writeRulesPromise: Promise<any> = null;
+var writeRulesTOHandle = -1;
 
-var initializeColorsPromise = _BaseUtils.ready().then(initializeColors);
+// Public APIs
+//
 
 // Enum values align with the colors array indices
 export enum ColorTypes {
@@ -37,19 +37,23 @@ export enum ColorTypes {
 }
 
 export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[]) {
-    rules.push({ selector: selector, props: props });
-    scheduleWriteRules();
+    initializeColorsPromise.then(() => {
+        rules.push({ selector: selector, props: props });
+        scheduleWriteRules();
+    });
 }
 
+// Private helpers
+//  Note that the private heplers won't be ready to be called until initializeColorsPromise
+//  is complete.
+//
+
 function scheduleWriteRules() {
-    if (rules.length === 0 || writeRulesPromise) {
+    if (rules.length === 0 || writeRulesTOHandle !== -1) {
         return;
     }
-    writeRulesPromise = Promise.join([
-        initializeColorsPromise, // Wait for the Accent color system to be initialized
-        Promise.timeout() // Force asynchrony so multiple calls to scheduleWriteRules are batched
-    ]).then(() => {
-        writeRulesPromise = null;
+    writeRulesTOHandle = _BaseUtils._setImmediate(() => {
+        writeRulesTOHandle = -1;
         cleanup();
 
         var inverseThemeSelector = isDarkTheme ? Constants.lightThemeSelector : Constants.darkThemeSelector;
@@ -104,6 +108,29 @@ function scheduleWriteRules() {
     });
 }
 
+function handleColorsChanged() {
+    var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
+    var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
+    var accent = colorToString(uiColor, 1);
+    if (colors[0] === accent) {
+        return;
+    }
+
+    // Establish colors
+    // The order of the colors align with the ColorTypes enum values
+    colors.length = 0;
+    colors.push(
+        accent,
+        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)),
+        colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)),
+        colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)),
+        colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)),
+        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)),
+        colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
+
+    scheduleWriteRules();
+}
+
 function colorToString(color: _WinRT.Windows.UI.Color, alpha: number) {
     return "rgba(" + color.r + "," + color.g + "," + color.b + "," + alpha + ")";
 }
@@ -122,30 +149,10 @@ function _reset() {
     cleanup();
 }
 
-function initializeColors() {
-    var handleColorsChanged = () => {
-        var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
-        var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
-        var accent = colorToString(uiColor, 1);
-        if (colors[0] === accent) {
-            return;
-        }
-    
-        // Establish colors
-        // The order of the colors align with the ColorTypes enum values
-        colors.length = 0;
-        colors.push(
-            accent,
-            colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)),
-            colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)),
-            colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)),
-            colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)),
-            colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)),
-            colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
-    
-        scheduleWriteRules();
-    };
-    
+// Module initialization
+//
+
+var initializeColorsPromise = _BaseUtils.ready().then(() => {    
     // Figure out color theme
     var tag = _Global.document.createElement(Constants.themeDetectionTag);
     _Global.document.body.appendChild(tag);
@@ -169,7 +176,7 @@ function initializeColors() {
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
     }
-}
+});
 
 // Publish to WinJS namespace
 var toPublish = {
