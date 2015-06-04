@@ -1,9 +1,10 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 import _Global = require("./Core/_Global");
-import _WinRT = require("./Core/_WinRT")
+import _WinRT = require("./Core/_WinRT");
 
 import _Base = require("./Core/_Base");
 import _BaseUtils = require("./Core/_BaseUtils");
+import Promise = require("./Promise");
 
 var Constants = {
     accentStyleId: "WinJSAccentsStyle",
@@ -20,7 +21,9 @@ var UISettings: _WinRT.Windows.UI.ViewManagement.UISettings = null;
 var colors: string[] = [];
 var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; }[] = [];
-var writeRulesTOHandle = -1;
+var writeRulesPromise: Promise<any> = null;
+
+var initializeColorsPromise = _BaseUtils.ready().then(initializeColors);
 
 // Enum values align with the colors array indices
 export enum ColorTypes {
@@ -39,11 +42,14 @@ export function createAccentRule(selector: string, props: { name: string; value:
 }
 
 function scheduleWriteRules() {
-    if (rules.length === 0 || writeRulesTOHandle !== -1) {
+    if (rules.length === 0 || writeRulesPromise) {
         return;
     }
-    writeRulesTOHandle = _BaseUtils._setImmediate(() => {
-        writeRulesTOHandle = -1;
+    writeRulesPromise = Promise.join([
+        initializeColorsPromise, // Wait for the Accent color system to be initialized
+        Promise.timeout() // Force asynchrony so multiple calls to scheduleWriteRules are batched
+    ]).then(() => {
+        writeRulesPromise = null;
         cleanup();
 
         var inverseThemeSelector = isDarkTheme ? Constants.lightThemeSelector : Constants.darkThemeSelector;
@@ -98,29 +104,6 @@ function scheduleWriteRules() {
     });
 }
 
-function handleColorsChanged() {
-    var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
-    var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
-    var accent = colorToString(uiColor, 1);
-    if (colors[0] === accent) {
-        return;
-    }
-
-    // Establish colors
-    // The order of the colors align with the ColorTypes enum values
-    colors.length = 0;
-    colors.push(
-        accent,
-        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)),
-        colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)),
-        colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)),
-        colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)),
-        colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)),
-        colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
-
-    scheduleWriteRules();
-}
-
 function colorToString(color: _WinRT.Windows.UI.Color, alpha: number) {
     return "rgba(" + color.r + "," + color.g + "," + color.b + "," + alpha + ")";
 }
@@ -139,7 +122,30 @@ function _reset() {
     cleanup();
 }
 
-_BaseUtils.ready().then(() => {
+function initializeColors() {
+    var handleColorsChanged = () => {
+        var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
+        var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
+        var accent = colorToString(uiColor, 1);
+        if (colors[0] === accent) {
+            return;
+        }
+    
+        // Establish colors
+        // The order of the colors align with the ColorTypes enum values
+        colors.length = 0;
+        colors.push(
+            accent,
+            colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)),
+            colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)),
+            colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)),
+            colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)),
+            colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)),
+            colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
+    
+        scheduleWriteRules();
+    };
+    
     // Figure out color theme
     var tag = _Global.document.createElement(Constants.themeDetectionTag);
     _Global.document.body.appendChild(tag);
@@ -163,7 +169,7 @@ _BaseUtils.ready().then(() => {
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
             "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
     }
-});
+}
 
 // Publish to WinJS namespace
 var toPublish = {
