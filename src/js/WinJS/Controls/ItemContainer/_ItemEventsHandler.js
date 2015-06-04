@@ -500,6 +500,10 @@ define([
                     }
 
                     function applyDownVisual(transform) {
+                        if (that._site.isInSelectionMode()) {
+                            return;
+                        }
+
                         if (that._site.animatedElement.style[transformNames.scriptName] === "") {
                             that._site.animatedElement.style[transformNames.scriptName] = transform;
                             that._site.animatedElementScaleTransform = that._site.animatedElement.style[transformNames.scriptName];

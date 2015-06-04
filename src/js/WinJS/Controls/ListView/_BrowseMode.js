@@ -108,6 +108,9 @@ define([
                         },
                         selectRange: function (firstIndex, lastIndex, additive) {
                             return that._selectRange(firstIndex, lastIndex, additive);
+                        },
+                        isInSelectionMode: function () {
+                            return site._isInSelectionMode();
                         }
                     }, {
                         pressedEntity: {
