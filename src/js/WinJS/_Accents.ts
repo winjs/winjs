@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 import _Global = require("./Core/_Global");
-import _WinRT = require("./Core/_WinRT")
+import _WinRT = require("./Core/_WinRT");
 
 import _Base = require("./Core/_Base");
 import _BaseUtils = require("./Core/_BaseUtils");
@@ -22,6 +22,9 @@ var isDarkTheme = false;
 var rules: { selector: string; props: { name: string; value: ColorTypes; }[]; }[] = [];
 var writeRulesTOHandle = -1;
 
+// Public APIs
+//
+
 // Enum values align with the colors array indices
 export enum ColorTypes {
     accent = 0,
@@ -37,6 +40,9 @@ export function createAccentRule(selector: string, props: { name: string; value:
     rules.push({ selector: selector, props: props });
     scheduleWriteRules();
 }
+
+// Private helpers
+//
 
 function scheduleWriteRules() {
     if (rules.length === 0 || writeRulesTOHandle !== -1) {
@@ -139,38 +145,41 @@ function _reset() {
     cleanup();
 }
 
-_BaseUtils.ready().then(() => {
-    // Figure out color theme
-    var tag = _Global.document.createElement(Constants.themeDetectionTag);
-    _Global.document.body.appendChild(tag);
-    var theme = _Global.getComputedStyle(tag).opacity;
-    isDarkTheme = theme === "0";
-    tag.parentElement.removeChild(tag);
+// Module initialization
+//
+    
+// Figure out color theme
+var tag = _Global.document.createElement(Constants.themeDetectionTag);
+_Global.document.head.appendChild(tag);
+var theme = _Global.getComputedStyle(tag).opacity;
+isDarkTheme = theme === "0";
+tag.parentElement.removeChild(tag);
 
-    if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
-        UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
-        UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
-        handleColorsChanged();
-    } else {
-        // No WinRT - use hardcoded blue accent color
-        // The order of the colors align with the ColorTypes enum values
-        colors.push(
-            "rgb(0, 120, 215)",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.8" : "0.6") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.9" : "0.7") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.4" : "0.6") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
-    }
-});
+if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
+    UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
+    UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
+    handleColorsChanged();
+} else {
+    // No WinRT - use hardcoded blue accent color
+    // The order of the colors align with the ColorTypes enum values
+    colors.push(
+        "rgb(0, 120, 215)",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.8" : "0.6") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.9" : "0.7") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.4" : "0.6") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
+}
 
 // Publish to WinJS namespace
 var toPublish = {
     ColorTypes: ColorTypes,
     createAccentRule: createAccentRule,
-
+    
+    // Exposed for tests    
     _colors: colors,
-    _reset: _reset
+    _reset: _reset,
+    _isDarkTheme: isDarkTheme
 };
 _Base.Namespace.define("WinJS.UI._Accents", toPublish);
