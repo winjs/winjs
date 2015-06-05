@@ -37,15 +37,11 @@ export enum ColorTypes {
 }
 
 export function createAccentRule(selector: string, props: { name: string; value: ColorTypes; }[]) {
-    initializeColorsPromise.then(() => {
-        rules.push({ selector: selector, props: props });
-        scheduleWriteRules();
-    });
+    rules.push({ selector: selector, props: props });
+    scheduleWriteRules();
 }
 
 // Private helpers
-//  Note that the private heplers won't be ready to be called until initializeColorsPromise
-//  is complete.
 //
 
 function scheduleWriteRules() {
@@ -151,32 +147,30 @@ function _reset() {
 
 // Module initialization
 //
+    
+// Figure out color theme
+var tag = _Global.document.createElement(Constants.themeDetectionTag);
+_Global.document.head.appendChild(tag);
+var theme = _Global.getComputedStyle(tag).opacity;
+isDarkTheme = theme === "0";
+tag.parentElement.removeChild(tag);
 
-var initializeColorsPromise = _BaseUtils.ready().then(() => {    
-    // Figure out color theme
-    var tag = _Global.document.createElement(Constants.themeDetectionTag);
-    _Global.document.body.appendChild(tag);
-    var theme = _Global.getComputedStyle(tag).opacity;
-    isDarkTheme = theme === "0";
-    tag.parentElement.removeChild(tag);
-
-    if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
-        UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
-        UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
-        handleColorsChanged();
-    } else {
-        // No WinRT - use hardcoded blue accent color
-        // The order of the colors align with the ColorTypes enum values
-        colors.push(
-            "rgb(0, 120, 215)",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.8" : "0.6") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.9" : "0.7") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.4" : "0.6") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
-            "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
-    }
-});
+if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
+    UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
+    UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
+    handleColorsChanged();
+} else {
+    // No WinRT - use hardcoded blue accent color
+    // The order of the colors align with the ColorTypes enum values
+    colors.push(
+        "rgb(0, 120, 215)",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.4") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.8" : "0.6") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.9" : "0.7") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.4" : "0.6") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.6" : "0.8") + ")",
+        "rgba(0, 120, 215, " + (isDarkTheme ? "0.7" : "0.9") + ")");
+}
 
 // Publish to WinJS namespace
 var toPublish = {
