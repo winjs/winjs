@@ -602,7 +602,7 @@ declare module WinJS {
         }
 
         class PrivateFlyout extends Flyout {
-            _disposed;
+            _disposed: boolean;
 
             static _cascadeManager;
         }
