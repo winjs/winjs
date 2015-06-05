@@ -176,8 +176,10 @@ if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _W
 var toPublish = {
     ColorTypes: ColorTypes,
     createAccentRule: createAccentRule,
-
+    
+    // Exposed for tests    
     _colors: colors,
-    _reset: _reset
+    _reset: _reset,
+    _isDarkTheme: isDarkTheme
 };
 _Base.Namespace.define("WinJS.UI._Accents", toPublish);

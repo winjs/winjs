@@ -200,6 +200,7 @@ declare module WinJS {
 
             export var _colors: string[];
             export function _reset();
+            export var _isDarkTheme: boolean;
         }
 
         class _ParallelWorkQueue {

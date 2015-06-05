@@ -190,6 +190,46 @@ module CorsicaTests {
                 complete();
             });
         }
+        
+        verifyThemeDetection(args: {
+            iframeSrc: string;
+            verify(iframeWinJS: typeof WinJS): void;
+            complete(): void;
+        }) {
+            var iframe = document.createElement("iframe");
+            iframe.src = args.iframeSrc;
+            iframe.width = "500";
+            iframe.height = "500";
+            iframe.onload = function () {
+                var iframeGlobal = iframe.contentWindow;
+                var iframeWinJS = <typeof WinJS>(<any>iframe.contentWindow).WinJS;
+                args.verify(iframeWinJS);
+                args.complete();
+            };
+            testElement.appendChild(iframe);
+        }
+        
+        testThemeDetectionUiDark(complete) {
+            this.verifyThemeDetection({
+                iframeSrc: "$(TESTDATA)/WinJSSandbox.html",
+                verify: (iframeWinJS) => {
+                    LiveUnit.Assert.isTrue(iframeWinJS.UI._Accents._isDarkTheme,
+                        "Accent color system should have detected the dark stylesheet theme");
+                },
+                complete: complete
+            });
+        }
+        
+        testThemeDetectionUiLight(complete) {
+            this.verifyThemeDetection({
+                iframeSrc: "$(TESTDATA)/WinJSSandboxLight.html",
+                verify: (iframeWinJS) => {
+                    LiveUnit.Assert.isFalse(iframeWinJS.UI._Accents._isDarkTheme,
+                        "Accent color system should have detected the light stylesheet theme");
+                },
+                complete: complete
+            });
+        }
     }
 }
     LiveUnit.registerTestClass("CorsicaTests.AccentTests");
