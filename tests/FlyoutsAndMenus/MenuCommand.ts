@@ -233,14 +233,20 @@ module CorsicaTests {
 
         // Tests for dispose members and requirements
         testMenuCommandDispose = function () {
+
+            var menu = new Menu();
+            LiveUnit.Assert.isFalse(menu._disposed);
+
             var button = document.createElement("button");
-            var mc = <WinJS.UI.PrivateMenuCommand>new MenuCommand(button);
+            var mc = <WinJS.UI.PrivateMenuCommand>new MenuCommand(button, { type: 'flyout', flyout: menu });
             LiveUnit.Assert.isTrue(mc.dispose);
             LiveUnit.Assert.isTrue(mc.element.classList.contains("win-disposable"));
             LiveUnit.Assert.isFalse(mc._disposed);
 
             mc.dispose();
             LiveUnit.Assert.isTrue(mc._disposed);
+            LiveUnit.Assert.isFalse(menu._disposed,
+                "MenuCommands do not instantiate the flyout and are not responsible for disposing it.");
             mc.dispose();
         }
 
