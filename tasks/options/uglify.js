@@ -15,6 +15,10 @@
         ui: {
             src: [config.desktopOutput + "js/ui.js"],
             dest: config.desktopOutput + "js/ui.min.js"
+        },
+        intrinsics: {
+            src: [config.desktopOutput + "js/intrinsics.js"],
+            dest: config.desktopOutput + "js/intrinsics.min.js"
         }
     };
 })();

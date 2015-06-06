@@ -1,0 +1,371 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+
+    //
+    // Body
+    //
+    .bodyStyle(@theme) {
+        .colorDefinitions(@theme);
+        background-color: @altHigh;
+        color: @baseHigh;
+    }
+
+    body {
+        .bodyStyle(@theme);
+    }
+
+    // These classes reverse the colors on the subtree to which they are applied.
+    // Ensure that the opposite color scheme always comes after the rule that is for the current color scheme.
+    // This ensures that an author using <div class="win-ui-dark win-ui-light"> will always get the rule for the
+    // inverted scheme to match last and win.
+    & when (@theme = dark) {
+        .win-ui-dark { .bodyStyle(dark); }
+        .win-ui-light { .bodyStyle(light); }
+
+        // Theme detection
+        winjs-themedetection-tag {
+            opacity: 0;
+        }
+    }
+    & when (@theme = light) {
+        .win-ui-light { .bodyStyle(light); }
+        .win-ui-dark { .bodyStyle(dark); }
+    }
+
+    //
+    // Text selection
+    //
+    ::selection {
+        color: #fff;
+    }
+
+    //
+    // Link
+    //
+    a {
+        &:hover {
+            color: @baseMid;
+        }
+
+        &:active {
+            color: @baseMediumMid;
+        }
+
+        &[disabled] {
+            color: @baseLow;
+        }
+    }
+
+    //
+    // Radio and Checkbox
+    //
+    input[type=checkbox] {
+        &::-ms-check {
+            color: @baseHigh;
+            border-color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:indeterminate::-ms-check {
+            color: @baseMediumHigh;
+        }
+
+        &:checked::-ms-check {
+            color: #fff;
+            border-color: transparent;
+        }
+
+        &:hover::-ms-check {
+            border-color: @baseHigh;
+        }
+
+        &:hover:indeterminate::-ms-check {
+            color: @baseHigh;
+        }
+
+        &:active::-ms-check {
+            border-color: transparent;
+            background-color: @baseMid;
+        }
+
+        &:indeterminate:active::-ms-check {
+            color: @baseMid;
+            border-color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:disabled::-ms-check, &:indeterminate:disabled::-ms-check {
+            color: @baseLow;
+            border-color: @baseLow;
+            background-color: transparent;
+        }
+    }
+
+    input[type=radio] {
+        &::-ms-check {
+            color: @baseMediumHigh;
+            border-color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:hover::-ms-check {
+            border-color: @baseHigh;
+        }
+
+        &:hover::-ms-check {
+            color: @baseHigh;
+        }
+
+        &:active::-ms-check {
+            color: @baseMid;
+            border-color: @baseMid;
+        }
+
+        &:disabled::-ms-check {
+            color: @baseLow;
+            border-color: @baseLow;
+        }
+    }
+
+    //
+    // Progress
+    //
+    progress {
+      // Main colors
+
+      // Only style background color in determinate mode to leave
+      // indeterminate background transparent and preserve firefox's
+      // default animation
+      &:not(:indeterminate) {
+        background-color: @baseLow;
+      }
+
+      // This is a weird webkit issue where the background color
+      // of the progress seems to overlay with this background color,
+      // but neither one on its own seems to work correctly. Really we just
+      // want the regular progress bg color, but it doesn't seem to take it
+      // unless we specify some color here.
+      &::-webkit-progress-bar {
+        background-color: transparent;
+      }
+
+      // Ring		
+      &.win-ring {		
+        background-color: transparent;		
+      }
+    }
+
+    //
+    // Push button
+    //
+    button,
+    input[type=button],  
+    input[type=reset],
+    input[type=submit],
+    button[type=submit] {
+        color: @baseHigh;
+        background-color: @baseLow;
+        border-color: transparent;
+
+        &:hover {
+            border-color: @baseMediumMid;
+        }
+
+        &:active {
+            background-color: @baseMediumMid;
+        }
+
+        &:disabled {
+            color: @baseLow;
+            background-color: @baseLow;
+            border-color: transparent;
+        }
+    }
+
+    input[type=submit],
+    button[type=submit] {
+        color: #fff;
+    }
+
+    //
+    // Select
+    //
+    select {
+        color: @baseHigh;
+        background-color: @baseLow;
+        border-color: @baseMediumMid;
+
+        &::-ms-expand {
+            color: @baseMediumHigh;
+            background-color: transparent;
+        }
+
+        &:hover {
+            background-color: @chromeMediumMid;
+            border-color: @baseMid;
+        }
+
+        &:disabled {
+            color: @baseLow;
+            background-color: @baseLow;
+        }
+        &:disabled::-ms-expand {
+            color: @baseLow;
+            border-color: @baseLow;
+        }
+    }
+
+    option {
+        color: @baseHigh;
+        background-color: @chromeMediumMid;
+
+        &:checked {
+            color: @baseWhite;
+        }
+        &:hover, &:active {
+            background-color: fade(@baseBlack, 20%);
+            color: @baseHigh;
+        }
+    }
+
+    optgroup {
+        color: @baseHigh;
+        background-color: @chromeMediumMid;
+    }
+    optgroup:disabled {
+        color: @baseLow;
+    }
+
+    select[multiple] {
+        border: none;
+        background-color: @chromeMediumMid;
+
+        option {
+            color: @baseHigh;
+        }
+        option:hover {
+            color: @baseHigh;
+        }
+        option:checked {
+            color: @baseWhite;
+        }
+    }
+
+    //
+    // Slider
+    //
+    input[type=range] {
+        background-color: transparent;
+
+        .thumbHover() {
+            background: @sliderThumbHover;
+        }
+        .thumbActive() {
+            background: @chromeHigh;
+        }
+        .thumbDisabled() {
+            background: @sliderThumbDisabled;
+        }
+        .upperFill() {
+            background: @baseMediumMid;
+        }
+        .upperFillHover() {
+            background: @baseMid;
+        }
+        .fillDisabled() {
+            background: @baseLow;
+        }
+
+        // We can't use :extend() to shrink the CSS output here since rules with
+        // mixed browser pseudo selectors will get thrown out
+
+        // Thumb
+        &:hover::-ms-thumb {.thumbHover();}
+        &:hover::-webkit-slider-thumb {.thumbHover();}
+        &:hover::-moz-range-thumb {.thumbHover();}
+        &:active::-ms-thumb {.thumbActive();}
+        &:active::-webkit-slider-thumb {.thumbActive();}
+        &:active::-moz-range-thumb {.thumbActive();}
+        &:disabled::-ms-thumb {.thumbDisabled();}
+        &:disabled::-webkit-slider-thumb {.thumbDisabled();}
+        &:disabled::-moz-range-thumb {.thumbDisabled();}
+
+        // Lower fill (only supported in IE)
+        &:disabled::-ms-fill-lower {.fillDisabled();}
+
+        // Upper fill / track
+        &::-ms-fill-upper {.upperFill();}
+        &::-webkit-slider-runnable-track {.upperFill();}
+        &::-moz-range-track {.upperFill();}
+        &:hover::-ms-fill-upper {.upperFillHover();}
+        &:hover::-webkit-slider-runnable-track {.upperFillHover();}
+        &:hover::-moz-range-track {.upperFillHover();}
+        &:active::-ms-fill-upper {.upperFill();}
+        &:active::-webkit-slider-runnable-track {.upperFill();}
+        &:active::-moz-range-track {.upperFill();}
+        &:disabled::-ms-fill-upper {.fillDisabled();}
+        &:disabled::-webkit-slider-runnable-track {.fillDisabled();}
+        &:disabled::-moz-range-track {.fillDisabled();}
+
+        // IE specific stuff
+        &::-ms-track {
+            color: transparent;
+            background-color: transparent;
+        }
+        &::-ms-ticks-before, &::-ms-ticks-after {
+            color: @baseMediumMid;
+        }
+    }
+
+    //
+    // Text box
+    //
+    input:not([type]),
+    input[type=""], 		
+    input[type=text],		
+    input[type=password],		
+    input[type=email],		
+    input[type=number],		
+    input[type=tel],		
+    input[type=url],		
+    input[type=search],		
+    textarea {
+        color: @baseHigh;
+        background-color: @altMediumMid;
+        border-color: @baseMediumMid;
+
+        // Hint text color
+        // Single colon on -ms not a typo
+        &:-ms-input-placeholder {color: @baseMid;}
+        &::-webkit-input-placeholder {color: @baseMid;}
+        &::-moz-input-placeholder {color: @baseMid;}
+
+        &:hover {
+            background-color: @altMid;
+            border-color: @baseMid;
+        }
+
+        &:focus {
+            color: @baseBlack;
+            background-color: @baseWhite;
+        }
+    }
+
+    //
+    // Clear/Reveal buttons
+    //
+    input::-ms-clear,
+    input::-ms-reveal {
+        display: block;
+        color: fade(@baseBlack, 60%); // Equivalent to altMid in dark and baseMid in light
+
+        &:active {
+            color: @baseWhite;
+        }
+    }
+
+    .win-xbox :focus {
+        outline: 2px solid white;
+    }
+}

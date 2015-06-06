@@ -200,6 +200,7 @@ declare module WinJS {
 
             export var _colors: string[];
             export function _reset();
+            export var _isDarkTheme: boolean;
         }
 
         class _ParallelWorkQueue {
@@ -602,7 +603,7 @@ declare module WinJS {
         }
 
         class PrivateFlyout extends Flyout {
-            _disposed;
+            _disposed: boolean;
 
             static _cascadeManager;
         }

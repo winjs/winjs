@@ -8,6 +8,7 @@ module CorsicaTests {
 
     var PrivateLegacyAppBar = <typeof WinJS.UI.PrivateLegacyAppBar>WinJS.UI._LegacyAppBar;
     var AppBarCommand = <typeof WinJS.UI.PrivateCommand>WinJS.UI.AppBarCommand;
+    var Flyout = <typeof WinJS.UI.PrivateFlyout>WinJS.UI.Flyout;
     var _Constants = Helper.require("WinJS/Controls/_LegacyAppBar/_Constants");
 
     export class AppBarCommandTests {
@@ -251,8 +252,11 @@ module CorsicaTests {
 
         // Tests for dispose members and requirements
         testAppBarCommandDispose = function () {
+            var flyout = new Flyout();
+            LiveUnit.Assert.isFalse(flyout._disposed);
+
             var button = document.createElement("button");
-            var abc = new AppBarCommand(button);
+            var abc = new AppBarCommand(button, { type: "flyout", flyout: flyout });
             LiveUnit.Assert.isTrue(abc.dispose);
             LiveUnit.Assert.isTrue(abc.element.classList.contains("win-disposable"));
             LiveUnit.Assert.isFalse(abc._disposed);
@@ -274,6 +278,8 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(sentinel.disposed);
             LiveUnit.Assert.isTrue(abc._disposed);
             LiveUnit.Assert.isTrue(abc._tooltipControl._disposed);
+            LiveUnit.Assert.isFalse(flyout._disposed,
+                "AppBarCommands do not instantiate the flyout and are not responsible for disposing it.");
             abc.dispose();
         };
 

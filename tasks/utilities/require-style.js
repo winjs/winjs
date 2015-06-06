@@ -122,7 +122,7 @@ define(['require'], function (req) {
 
             // Write css to file
             var cssText = tree.toCSS(lessConfig);
-            fs.writeFileSync(path.join(outputFilePath, 'ui-' + theme + '.css'), cssText, 'utf8');
+            fs.writeFileSync(path.join(outputFilePath, 'ui-' + theme + (configData.cssOutputSuffix || "") + '.css'), cssText, 'utf8');
         });
     }
 

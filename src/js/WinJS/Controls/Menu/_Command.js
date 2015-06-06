@@ -357,10 +357,6 @@ define([
                         return;
                     }
                     this._disposed = true;
-
-                    if (this._flyout) {
-                        this._flyout.dispose();
-                    }
                 },
 
                 addEventListener: function (type, listener, useCapture) {
