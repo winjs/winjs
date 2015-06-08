@@ -155,11 +155,11 @@ var theme = _Global.getComputedStyle(tag).opacity;
 isDarkTheme = theme === "0";
 tag.parentElement.removeChild(tag);
 
-if (_WinRT.Windows.UI.ViewManagement.UISettings && ("oncolorvalueschanged" in _WinRT.Windows.UI.ViewManagement.UISettings.prototype)) {
+try {
     UISettings = new _WinRT.Windows.UI.ViewManagement.UISettings();
     UISettings.addEventListener("colorvalueschanged", handleColorsChanged);
     handleColorsChanged();
-} else {
+} catch (e) {
     // No WinRT - use hardcoded blue accent color
     // The order of the colors align with the ColorTypes enum values
     colors.push(
