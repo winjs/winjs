@@ -1016,7 +1016,8 @@ export declare module _inputPaneListener {
     export function removeEventListener(element: HTMLElement, event: string, handler: (ev: any) => any): void;
 }
 
-
+export declare function _setActiveFirstFocusableElement(element: HTMLElement): any;
+export declare function _elementsFromPoint(x: number, y: number): NodeList;
 export declare function _addInsertedNotifier(element: HTMLElement): void;
 export declare function _inDom(element: HTMLElement): Promise<any>;
 export declare function _reparentChildren(originalParent: HTMLElement, destinationParent: HTMLElement): void;
@@ -1027,6 +1028,7 @@ export declare function _removeEventListener(element: HTMLElement, type: string,
 export declare function _removeEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _maintainFocus(callback: Function): void;
 export declare function _setActive(element: HTMLElement, scroller?: HTMLElement): boolean;
+export declare function _syncRenderer(renderFunc: Function): (dataContext: any, element: HTMLElement) => void;
 export declare function _tryFocusOnAnyElement(elem: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _trySetActiveOnAnyElement(elem: HTMLElement, scroller?: HTMLElement): boolean;
 export declare function _tryFocus(elem: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
@@ -1046,3 +1048,8 @@ export declare var _MutationObserver: {
     prototype: IMutationObserverShim;
     new(callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
 };
+
+export declare module _MSPointerEvent {
+    export var MSPOINTER_TYPE_MOUSE: string;
+    export var MSPOINTER_TYPE_TOUCH: string;
+}

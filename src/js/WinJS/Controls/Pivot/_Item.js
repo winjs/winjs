@@ -117,7 +117,7 @@ define([
                 _parentPivot: {
                     get: function () {
                         var el = this._element;
-                        while (el && !_ElementUtilities.hasClass(el, _Constants._ClassName.pivot)) {
+                        while (el && !_ElementUtilities.hasClass(el, _Constants._ClassNames.pivot)) {
                             el = el.parentNode;
                         }
                         return el && el.winControl;
