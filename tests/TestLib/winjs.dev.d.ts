@@ -681,9 +681,7 @@ declare module WinJS {
         }
 
         class PrivatePivot extends Pivot {
-            _slideHeadersAnimation: Promise<any>;
-            _disposed: boolean;
-            _rtl: boolean;
+
             _viewportElement;
             _goNext;
             _goPrevious;

@@ -153,8 +153,8 @@
     }
 
     .win-pivot-surface {
-        /* 49 before, 1 current, 50 after */
-        width: 10000%;
+        /* Surface is 3x of viewport to allow panning. */
+        width: 300%;
         height: 100%;
         position: relative;
     }
@@ -187,8 +187,10 @@ html.win-hoverable .win-pivot {
     position: absolute;
     top: 0px;
     bottom: 0;
-    /* Since the surface is 100x in width, 1% here means the size of the viewport. */
-    width: 1%;
+    /* Since the surface is 3x in width, 33% here means the size of the viewport. */
+    width: 33%;
+    left: 33%;
+    transition: opacity 500ms linear;
 }
 
 .win-pivot-item .win-pivot-item-content {

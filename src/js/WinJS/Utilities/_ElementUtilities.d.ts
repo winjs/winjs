@@ -820,6 +820,13 @@ export declare function getRelativeLeft(element: HTMLElement, parent: HTMLElemen
 export declare function getRelativeTop(element: HTMLElement, parent: HTMLElement): number;
 
 /**
+    * Gets the scroll position of the element, taking RTL into consideration.
+    * @param element The element.
+    * @returns An object with left and top scroll positions.
+**/
+export declare function getScrollPosition(element: HTMLElement): { scrollLeft: number; scrollTop: number; }
+
+/**
     * Gets the height of the element, including its margins.
     * @param element The element.
     * @returns The height of the element including margins.
@@ -938,6 +945,13 @@ export declare function setOuterHTML(element: HTMLElement, text: string): void;
 export declare function setOuterHTMLUnsafe(element: HTMLElement, text: string): void;
 
 /**
+    * Sets the scroll position of the element, taking RTL into consideration.
+    * @param element The element.
+    * @param position The scroll position.
+**/
+export declare function setScrollPosition(element: HTMLElement, position: { scrollLeft?: number; scrollTop?: number; }): void;
+
+/**
     * Configures a logger that writes messages containing the specified tags to the JavaScript console.
     * @param options The tags for messages to log. Multiple tags should be separated by spaces. May contain type, tags, excludeTags and action properties.
 **/
@@ -1048,6 +1062,8 @@ export declare var _MutationObserver: {
     prototype: IMutationObserverShim;
     new(callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
 };
+export declare var _supportsSnapPoints: boolean;
+export declare var _supportsTouchDetection: boolean;
 
 export declare module _MSPointerEvent {
     export var MSPOINTER_TYPE_MOUSE: string;
