@@ -4875,6 +4875,11 @@ declare module WinJS.UI {
          * Gets or sets the default anchor to be used for this Flyout.
         **/
         anchor: HTMLElement;
+        
+        /**
+         * Gets or sets a value that indicates whether the Flyout is disabled.
+        **/
+        disabled: boolean;
 
         /**
          * Gets the DOM element that hosts the Flyout.
@@ -6880,6 +6885,11 @@ declare module WinJS.UI {
          * Sets the MenuCommand objects that appear in the menu.
         **/
         commands: MenuCommand[];
+        
+        /**
+         * Gets or sets a value that indicates whether the Menu is disabled.
+        **/
+        disabled: boolean;
 
         /**
          * Gets the DOM element that hosts the Menu.
