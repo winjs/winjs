@@ -445,24 +445,20 @@ export class Pivot {
         };
         this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
 
-        this._loadPromise.then(() => {
+        this._loadPromise = this._loadPromise.then(() => {
             this._loadPromise = Promise.join([newItem._process(), this._hidePivotItemAnimation]).then(() => {
                 if (this._disposed) {
                     return;
                 }
                 this._recenterUI();
-
                 this._showPivotItem(newItem.element, goPrev).then(() => {
                     if (this._disposed) {
                         return;
                     }
-                    this._fireEvent(_EventNames.itemAnimationEnd, true);
+                    this._fireEvent(_EventNames.itemAnimationEnd, true, false, null);
                 });
             });
         });
-    }
-
-    _fireEvent(a: any, b: any, c?: any, d?: any) {
     }
 
     _recenterUI() {
@@ -470,6 +466,13 @@ export class Pivot {
     }
 
     // Utility Methods
+    _fireEvent(type: string, canBubble: boolean, cancelable: boolean, detail: any) {
+        // Returns true if ev.preventDefault() was not called
+        var event = <CustomEvent>_Global.document.createEvent("CustomEvent");
+        event.initCustomEvent(type, !!canBubble, !!cancelable, detail);
+        return this.element.dispatchEvent(event);
+    }
+
     _getHeaderItemsWidth() {
         if (!this._headerItemsElWidth) {
             this._headerItemsElWidth = parseFloat(_Global.getComputedStyle(this._headerItemsElement).width);
@@ -762,8 +765,18 @@ export class Pivot {
     }
 
     _hidePivotItem(element: HTMLElement, goPrevious: boolean) {
-        element.style.visibility = "hidden";
-        element.style.opacity = "0";
+        this._hidePivotItemAnimation = _TransitionAnimation.executeTransition(element, {
+            property: "opacity",
+            delay: 0,
+            duration: 83,
+            timing: "linear",
+            from: "",
+            to: "0",
+        })
+            .then(() => {
+                element.style.visibility = "hidden";
+            });
+        return this._hidePivotItemAnimation;
     }
 
     _MSManipulationStateChangedHandler(e: MSManipulationEvent) {
@@ -794,8 +807,27 @@ export class Pivot {
     }
 
     _showPivotItem(element: HTMLElement, goPrevious: boolean) {
+        this._fireEvent(_EventNames.itemAnimationStart, true, false, null);
+
         element.style.visibility = "";
-        element.style.opacity = "";
+        this._showPivotItemAnimation = Promise.join([
+            _TransitionAnimation.executeTransition(element, {
+                property: "opacity",
+                delay: 0,
+                duration: 167,
+                timing: "linear",
+                from: "0",
+                to: "",
+            }),
+            _TransitionAnimation.executeTransition(element, {
+                property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
+                delay: 0,
+                duration: 167,
+                timing: "linear",
+                from: "translateX(" + (goPrevious ? "-20px" : "20px") + ")",
+                to: "",
+            })
+        ]);
         return this._showPivotItemAnimation;
     }
 }

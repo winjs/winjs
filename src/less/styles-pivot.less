@@ -185,12 +185,20 @@ html.win-hoverable .win-pivot {
 */
 .win-pivot-item {
     position: absolute;
-    top: 0px;
+    top: 0;
     bottom: 0;
     /* Since the surface is 3x in width, 33% here means the size of the viewport. */
     width: 33%;
     left: 33%;
-    transition: opacity 500ms linear;
+}
+
+.win-pivot-item {
+    .RTL( {
+        left: auto;
+        right: 33%;
+    }
+
+    );
 }
 
 .win-pivot-item .win-pivot-item-content {
