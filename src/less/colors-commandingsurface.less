@@ -3,24 +3,25 @@
 #win-commandingsurface {
     .variableDefs(@theme) when not (@theme = highcontrast) {
         .colorDefinitions(@theme);
-        
+
         @backgroundColor: @chromeMid;
         @textColorActive: @baseHigh;
         @commandFocusBorderColor: @baseHigh;
-        
+
         @overflowButtonEllipsisHoverColor: @baseHigh;
         @overflowButtonEllipsisColor: @baseHigh;
         @overflowButtonBackground: transparent;
         @overflowButtonActiveBackground: @listPress;
-        
+
         @overflowAreaBackgroundColor: @chromeMediumMid;
         @overflowAreaCommandHoverBackground: @listHover;
         @overflowAreaCommandActiveBackground: @listPress;
     }
 
     .variableDefs(highcontrast) {
-        @backgroundColor:ButtonFace;
-        @textColorActive: ButtonFace;
+
+        @backgroundColor: ButtonFace;
+        @textColorActive: ButtonText;
         @commandFocusBorderColor: ButtonText;
 
         @overflowButtonEllipsisColor: ButtonText;
@@ -28,15 +29,15 @@
         @overflowButtonBackground: ButtonFace;
         @overflowButtonActiveBackground: Highlight;
 
-        @overflowAreaBackgroundColor:ButtonFace;
+        @overflowAreaBackgroundColor: ButtonFace;
         @overflowAreaCommandHoverBackground: Highlight;
-        @overflowAreaCommandActiveBackground: ButtonText;
+        @overflowAreaCommandActiveBackground: Highlight;
     }
 
     .stylesForTheme(@theme) {
         &.win-commandingsurface, .win-commandingsurface {
-
             #win-commandingsurface > .variableDefs(@theme);
+
             .win-commandingsurface-actionarea {
                 background-color: @backgroundColor;
             }
@@ -78,7 +79,6 @@
 
     .stylesForThemeHover(@theme) {
         &.win-commandingsurface, .win-commandingsurface {
-
             #win-commandingsurface > .variableDefs(@theme);
 
             button.win-commandingsurface-overflowbutton:hover,
@@ -103,6 +103,29 @@
 
 .HighContrast() {
     #win-commandingsurface > .stylesForTheme(highcontrast);
+
+    .win-commandingsurface {
+        &.win-commandingsurface-opened .win-commandingsurface-insetoutline {
+            display: block;
+            
+            /* The element is only used to draw a border inside of the edges of its parent element without displacing content. */
+            border: solid 1px ButtonText;
+            pointer-events: none;
+            background-color: transparent;
+            z-index: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: ~"calc(100% - 2px)";
+            width: ~"calc(100% - 2px)";
+        }
+
+        &.win-commandingsurface-closed, &.win-commandingsurface-closing, &.win-commandingsurface-opening {
+            .win-commandingsurface-insetoutline {
+                display: none;
+            }
+        }
+    }
 }
 
 .HighContrastHover() {

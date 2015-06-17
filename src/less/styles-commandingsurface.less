@@ -115,6 +115,11 @@
         }
     }
 
+    .win-commandingsurface-insetoutline {
+        /* Display none except in High Contrast scenarios */
+        display:none;
+    }
+
     .win-commandingsurface-overflowareacontainer {
         position: absolute;
         overflow: hidden;
@@ -161,6 +166,7 @@
     }
     .win-commandingsurface-actionareacontainer {
         overflow: hidden;
+        position: relative;
     }
 
     // Hide the commands (or just command labels, where appropriate) when animating closed, but use opacity: 0 instead of display: none so the layout doesn't

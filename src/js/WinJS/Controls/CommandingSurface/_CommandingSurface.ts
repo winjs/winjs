@@ -401,6 +401,7 @@ export class _CommandingSurface {
         var that = this;
         return {
             execute(): Promise<any> {
+                _ElementUtilities.addClass(that.element, _Constants.ClassNames.openingClass);
                 var boundingRects = that.getBoundingRects();
                 // The overflowAreaContainer has no size by default. Measure the overflowArea's size and apply it to the overflowAreaContainer before animating
                 that._dom.overflowAreaContainer.style.width = boundingRects.overflowArea.width + "px";
@@ -415,6 +416,7 @@ export class _CommandingSurface {
                     overflowAreaHeight: boundingRects.overflowArea.height,
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
+                    _ElementUtilities.removeClass(that.element, _Constants.ClassNames.openingClass);
                     that._clearAnimation();
                 });
             }
@@ -481,9 +483,13 @@ export class _CommandingSurface {
         var actionArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionArea, _Constants.ClassNames.actionAreaCssClass);
         _ElementUtilities._reparentChildren(root, actionArea);
+        var actionAreaInsetOutline = document.createElement("DIV");
+        _ElementUtilities.addClass(actionAreaInsetOutline, _Constants.ClassNames.insetOutlineClass);
         var actionAreaContainer = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionAreaContainer, _Constants.ClassNames.actionAreaContainerCssClass);
+
         actionAreaContainer.appendChild(actionArea);
+        actionAreaContainer.appendChild(actionAreaInsetOutline);
         root.appendChild(actionAreaContainer);
 
         var spacer = _Global.document.createElement("div");
@@ -502,9 +508,13 @@ export class _CommandingSurface {
         var overflowArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.overflowAreaCssClass);
         _ElementUtilities.addClass(overflowArea, _Constants.ClassNames.menuCssClass);
+        var overflowInsetOutline = _Global.document.createElement("DIV");
+        _ElementUtilities.addClass(overflowInsetOutline, _Constants.ClassNames.insetOutlineClass);
         var overflowAreaContainer = _Global.document.createElement("div");
         _ElementUtilities.addClass(overflowAreaContainer, _Constants.ClassNames.overflowAreaContainerCssClass);
+
         overflowAreaContainer.appendChild(overflowArea);
+        overflowAreaContainer.appendChild(overflowInsetOutline);
         root.appendChild(overflowAreaContainer);
 
         this._dom = {

@@ -15,6 +15,8 @@ export var ClassNames = {
     emptyCommandingSurfaceCssClass: "win-commandingsurface-empty",
     menuCssClass: "win-menu",
     menuContainsToggleCommandClass: "win-menu-containstogglecommand",
+    insetOutlineClass: "win-commandingsurface-insetoutline",
+    openingClass: "win-commandingsurface-opening",
     openedClass: "win-commandingsurface-opened",
     closingClass: "win-commandingsurface-closing",
     closedClass: "win-commandingsurface-closed",

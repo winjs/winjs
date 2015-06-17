@@ -31,16 +31,16 @@
         @borderColor: ButtonText;
         @textColor: ButtonText;
         @textColorDisabled: GrayText;
-        @textColorActive: ButtonFace;
-        @textColorSelected: ButtonFace;
+        @textColorActive: ButtonText;
+        @textColorSelected: ButtonText;
         @textColorHover: HighlightText;
         @separatorBackgroundColor: ButtonText;
         @appbarBackgroundColor: ButtonFace;
         @appbarBorderColor: Highlight;
         @commandHoverBackgroundColor: Highlight;
-        @commandActiveBackgroundColor: ButtonText;
+        @commandActiveBackgroundColor: Highlight;
         @flyoutBackgroundColor: ButtonFace;
-        @menuCommandActiveBackgroundColor: ButtonText;
+        @menuCommandActiveBackgroundColor: Highlight;
         @menuCommandHoverBackgroundColor: Highlight;
         @menuCommandDisabledColor: GrayText;
         @settingsFlyoutBackgroundColor: ButtonFace;
@@ -94,9 +94,9 @@
         button:disabled:active .win-commandimage {
             color: @textColorDisabled;
         }
-        
+
         button .win-label {
-            color: @baseHigh;
+            color: @textColor;
         }
 
         button[aria-checked=true]:enabled .win-label,
@@ -113,16 +113,15 @@
             position: absolute;
             height: 100%;
             width: 100%;
-            opacity:@accentColorDefaultOpacity;
+            opacity: @accentColorDefaultOpacity;
             box-sizing: content-box;
             content: "";
             /* We want this pseudo element to cover the border of its parent. */
             /* Put a 1px border on this element to make it larger and then set its top/left to -1px.*/
             border-width: 1px;
             border-style: solid;
-            top:-1px;
-            left:-1px;
-
+            top: -1px;
+            left: -1px;
         }
 
         button.win-command:enabled:-ms-keyboard-active {
@@ -297,11 +296,11 @@
         }
 
         button:enabled[aria-checked=true].win-command:hover:before {
-            opacity:@accentColorHoverOpacity;
+            opacity: @accentColorHoverOpacity;
         }
 
         button:enabled[aria-checked=true].win-command:hover:active:before {
-            opacity:@accentColorActiveOpacity;
+            opacity: @accentColorActiveOpacity;
         }
     }
 }
@@ -316,6 +315,11 @@
 
 .HighContrast() {
     #win-overlay > .stylesForTheme(highcontrast);
+
+    button[aria-checked=true].win-command:before {
+        border-color: @commandActiveBackgroundColor;
+        background-color: @commandActiveBackgroundColor;
+    }
 }
 
 .HighContrastHover() {
