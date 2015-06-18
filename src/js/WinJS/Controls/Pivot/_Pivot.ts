@@ -79,7 +79,6 @@ export class Pivot {
     _viewportElement: HTMLElement;
 
     _animateToPrevious: boolean;
-    _cachedRTL: boolean;
     _disposed = false;
     _elementPointerDownPoint: { x: number; y: number; type: string; inHeaders: boolean; time: number; };
     _firstLoad = true;
@@ -94,7 +93,7 @@ export class Pivot {
     _pendingItems: BindingList.List<_PivotItem.PivotItem>;
     _pendingRefresh = false;
     _pointerType = PT_MOUSE;
-    _rtl = false;
+    _rtl: boolean;
     _selectedIndex = 0;
     _showPivotItemAnimation = Promise.wrap<any>();
     _slideHeadersAnimation = Promise.wrap<any>();
@@ -107,6 +106,31 @@ export class Pivot {
     /// </field>
     get element() {
         return this._element;
+    }
+
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customLeftHeader" helpKeyword="WinJS.UI.Pivot.customLeftHeader">
+    /// Gets or sets the left custom header.
+    /// </field>
+    get customLeftHeader() {
+        return <HTMLElement>this._customLeftHeader.firstElementChild;
+    }
+    set customLeftHeader(value: HTMLElement) {
+        _ElementUtilities.empty(this._customLeftHeader);
+        value && this._customLeftHeader.appendChild(value);
+        this.forceLayout();
+    }
+
+    /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.Pivot.customRightHeader" helpKeyword="WinJS.UI.Pivot.customRightHeader">
+    /// Gets or sets the right custom header.
+    /// </field>
+    get customRightHeader() {
+        return <HTMLElement>this._customRightHeader.firstElementChild;
+    }
+    set customRightHeader(value: HTMLElement) {
+        _ElementUtilities.empty(this._customRightHeader);
+        value && this._customRightHeader.appendChild(value);
+        this.forceLayout();
+
     }
 
     /// <field type="Boolean" locid="WinJS.UI.Pivot.locked" helpKeyword="WinJS.UI.Pivot.locked">
@@ -135,6 +159,22 @@ export class Pivot {
         var resetScrollPosition = !this._pendingItems;
         this._pendingItems = value;
         this._refresh();
+    }
+
+    /// <field type="String" locid="WinJS.UI.Pivot.title" helpKeyword="WinJS.UI.Pivot.title">
+    /// Gets or sets the title of the Pivot.
+    /// </field>
+    get title() {
+        return this._titleElement.textContent;
+    }
+    set title(value: string) {
+        if (value) {
+            this._titleElement.style.display = "block";
+            this._titleElement.textContent = value;
+        } else {
+            this._titleElement.style.display = "none";
+            this._titleElement.textContent = "";
+        }
     }
 
     /// <field type="Number" integer="true" locid="WinJS.UI.Pivot.selectedIndex" helpKeyword="WinJS.UI.Pivot.selectedIndex">
@@ -294,6 +334,43 @@ export class Pivot {
         this._writeProfilerMark("constructor,StopTM");
     }
 
+    // Public Methods
+    dispose() {
+        /// <signature helpKeyword="WinJS.UI.Pivot.dispose">
+        /// <summary locid="WinJS.UI.Pivot.dispose">
+        /// Disposes this control.
+        /// </summary>
+        /// </signature>
+        if (this._disposed) {
+            return;
+        }
+        this._disposed = true;
+
+        this._updateEvents(this._items, null);
+        _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandler);
+        this._headersState.exit();
+
+        _Dispose._disposeElement(this._headersContainerElement);
+
+        for (var i = 0, len = this.items.length; i < len; i++) {
+            this.items.getAt(i).dispose();
+        }
+    }
+
+    forceLayout() {
+        /// <signature helpKeyword="WinJS.UI.Pivot.forceLayout">
+        /// <summary locid="WinJS.UI.Pivot.forceLayout">
+        /// Forces the control to relayout its content. This function is expected to be called
+        /// when the pivot element is manually resized.
+        /// </summary>
+        /// </signature>
+        if (this._disposed) {
+            return;
+        }
+        this._resizeHandler();
+    }
+
+
     // Lifecycle Methods
     _applyProperties() {
         if (this._disposed) {
@@ -314,7 +391,7 @@ export class Pivot {
 
         attachItems(this);
 
-        this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
+        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
         this._headersState.refreshHeadersState(true);
         this._pendingRefresh = false;
         if (this._firstLoad) {
@@ -323,7 +400,7 @@ export class Pivot {
 
         this.selectedIndex = this._selectedIndex;
         this._firstLoad = false;
-        this._recenterUI();
+        this._recenterViewport();
 
         function attachItems(pivot: Pivot) {
             for (var i = 0, len = pivot.items.length; i < len; i++) {
@@ -333,8 +410,7 @@ export class Pivot {
                     throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
                 }
 
-                item.element.style.visibility = "hidden";
-                item.element.style.opacity = "0";
+                item.element.style.display = "none";
 
                 pivot._surfaceElement.appendChild(item.element);
             }
@@ -392,7 +468,7 @@ export class Pivot {
             this._showPivotItemAnimation && this._showPivotItemAnimation.cancel();
             this._slideHeadersAnimation && this._slideHeadersAnimation.cancel();
 
-            this._recenterUI();
+            this._recenterViewport();
             this._headersState.handleResize();
         } else {
             _Log.log && _Log.log('_resizeHandler worthless resize');
@@ -433,7 +509,7 @@ export class Pivot {
     }
 
     _loadItem(index: number) {
-        this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
+        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
         this._hidePivotItemAnimation.cancel();
         this._showPivotItemAnimation.cancel();
         this._slideHeadersAnimation.cancel();
@@ -458,7 +534,8 @@ export class Pivot {
                 if (this._disposed || this._loadPromise !== thisLoadPromise) {
                     return;
                 }
-                this._recenterUI();
+                newItem.element.style[this._getDirectionAccessor()] = this._getViewportWidth() + "px";
+                this._recenterViewport();
                 return this._showPivotItem(newItem.element, goPrev).then(() => {
                     if (this._disposed || this._loadPromise !== thisLoadPromise) {
                         return;
@@ -470,7 +547,7 @@ export class Pivot {
         });
     }
 
-    _recenterUI() {
+    _recenterViewport() {
         _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._getViewportWidth() });
     }
 
@@ -480,6 +557,10 @@ export class Pivot {
         var event = <CustomEvent>_Global.document.createEvent("CustomEvent");
         event.initCustomEvent(type, !!canBubble, !!cancelable, detail);
         return this.element.dispatchEvent(event);
+    }
+
+    _getDirectionAccessor() {
+        return this._rtl ? "right" : "left";
     }
 
     _getHeaderItemsWidth() {
@@ -543,8 +624,7 @@ export class Pivot {
                 throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
             }
 
-            newItem.element.style.visibility = "hidden";
-            newItem.element.style.opacity = 0;
+            newItem.element.style.display = "none";
 
             this._surfaceElement.insertBefore(newItem.element, oldItem.element);
             this._surfaceElement.removeChild(oldItem.element);
@@ -571,8 +651,7 @@ export class Pivot {
             throw new _ErrorFromName("WinJS.UI.Pivot.DuplicateItem", strings.duplicateItem);
         }
 
-        item.element.style.visibility = "hidden";
-        item.element.style.opacity = 0;
+        item.element.style.display = "none";
 
         if (index < this.items.length - 1) {
             this._surfaceElement.insertBefore(item.element, this.items.getAt(index + 1).element);
@@ -783,7 +862,7 @@ export class Pivot {
             to: "0",
         })
             .then(() => {
-                element.style.visibility = "hidden";
+                element.style.display = "none";
             });
         return this._hidePivotItemAnimation;
     }
@@ -805,7 +884,19 @@ export class Pivot {
     }
 
     _updatePointerType(e: PointerEvent) {
+        if (this._pointerType === e.pointerType || PT_MOUSE) {
+            return;
+        }
+
         this._pointerType = e.pointerType || PT_MOUSE;
+        if (this._pointerType === PT_TOUCH) {
+            _ElementUtilities.removeClass(this.element, _Constants._ClassNames.pivotInputTypeMouse);
+            _ElementUtilities.addClass(this.element, _Constants._ClassNames.pivotInputTypeTouch);
+            this._hideNavButtons();
+        } else {
+            _ElementUtilities.removeClass(this.element, _Constants._ClassNames.pivotInputTypeTouch);
+            _ElementUtilities.addClass(this.element, _Constants._ClassNames.pivotInputTypeMouse);
+        }
     }
 
     _showNavButtons(e: PointerEvent) {
@@ -818,7 +909,7 @@ export class Pivot {
     _showPivotItem(element: HTMLElement, goPrevious: boolean) {
         this._fireEvent(_EventNames.itemAnimationStart, true, false, null);
 
-        element.style.visibility = "";
+        element.style.display = "";
         this._showPivotItemAnimation = Promise.join([
             _TransitionAnimation.executeTransition(element, {
                 property: "opacity",
