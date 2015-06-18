@@ -753,6 +753,16 @@ module CorsicaTests {
                 WinJS.validation = false;
             }
         }
+
+        testRemoveIFrameBeforeLoadDoesNotCrashTTS() {
+            // The issue here is that an iframe is added and removed before it loaded, resulting
+            // in the scenario where when it does fire its 'load' event, its contentWindow member is null.
+            var iframe = document.createElement("iframe");
+            document.body.appendChild(iframe);
+            WinJS.Application._applicationListener.addEventListener(document.body, "requestingfocusonkeyboardinput", () => {
+            });
+            document.body.removeChild(iframe);
+        }
     }
 }
 

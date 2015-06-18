@@ -128,6 +128,7 @@ declare module WinJS {
     }
 
     module Application {
+        var _applicationListener: any;
         var _terminateApp: (data: any, e: any) => void;
         function _dispatchEvent(eventRecord: any): void;
         function _loadState(e: any);

@@ -72,6 +72,12 @@ define([
         },
 
         _updateKeydownCaptureListeners: function Application_TypeToSearch_updateKeydownCaptureListeners(win, add) {
+            if (!win) {
+                // This occurs when this handler gets called from an IFrame event that is no longer in the DOM
+                // and therefore does not have a valid contentWindow object.
+                return;
+            }
+
             // Register for child frame keydown events in order to support FocusOnKeyboardInput
             // when focus is in a child frame.  Also register for child frame load events so
             // it still works after frame navigations.
