@@ -65,6 +65,8 @@ function pivotDefaultHeaderTemplate(item: { header: any }) {
 
 export class Pivot {
     static supportedForProcessing = true;
+    static _ClassNames = _Constants._ClassNames;
+    static _EventNames = _EventNames;
 
     _customLeftHeader: HTMLElement;
     _customRightHeader: HTMLElement;
@@ -83,7 +85,6 @@ export class Pivot {
     _elementPointerDownPoint: { x: number; y: number; type: string; inHeaders: boolean; time: number; };
     _firstLoad = true;
     _headerItemsElWidth: number;
-    _headerItemsWidth: number;
     private _headersState: HeaderStateBase;
     _hidePivotItemAnimation = Promise.wrap<any>();
     _id: string;
@@ -92,7 +93,7 @@ export class Pivot {
     _navigationHandled: boolean;
     _pendingItems: BindingList.List<_PivotItem.PivotItem>;
     _pendingRefresh = false;
-    _pointerType = PT_MOUSE;
+    _pointerType: string;
     _rtl: boolean;
     _selectedIndex = 0;
     _showPivotItemAnimation = Promise.wrap<any>();
@@ -276,10 +277,10 @@ export class Pivot {
         this._headersContainerElement.tabIndex = 0;
         _ElementUtilities.addClass(this._headersContainerElement, _Constants._ClassNames.pivotHeaders);
         this._headersContainerElement.addEventListener("keydown", this._headersKeyDown.bind(this));
-        this._headerItemsElement.appendChild(this._headersContainerElement);
-        this._element.addEventListener("click", this._elementClickedHandler.bind(this));
         _ElementUtilities._addEventListener(this._headersContainerElement, "pointerenter", this._showNavButtons.bind(this));
         _ElementUtilities._addEventListener(this._headersContainerElement, "pointerout", this._hideNavButtons.bind(this));
+        this._headerItemsElement.appendChild(this._headersContainerElement);
+        this._element.addEventListener("click", this._elementClickedHandler.bind(this));
         this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
         this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
@@ -394,7 +395,7 @@ export class Pivot {
         this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
         this._headersState.refreshHeadersState(true);
         this._pendingRefresh = false;
-        if (this._firstLoad) {
+        if (this._firstLoad && this.items.length) {
             this._headersState.handleNavigation(false, this._selectedIndex, this._selectedIndex);
         }
 
@@ -534,14 +535,13 @@ export class Pivot {
                 if (this._disposed || this._loadPromise !== thisLoadPromise) {
                     return;
                 }
-                newItem.element.style[this._getDirectionAccessor()] = this._getViewportWidth() + "px";
                 this._recenterViewport();
                 return this._showPivotItem(newItem.element, goPrev).then(() => {
                     if (this._disposed || this._loadPromise !== thisLoadPromise) {
                         return;
                     }
-                    this._fireEvent(_EventNames.itemAnimationEnd, true, false, null);
                     this._loadPromise = Promise.wrap<any>();
+                    this._fireEvent(_EventNames.itemAnimationEnd, true, false, null);
                 });
             });
         });
@@ -549,6 +549,9 @@ export class Pivot {
 
     _recenterViewport() {
         _ElementUtilities.setScrollPosition(this._viewportElement, { scrollLeft: this._getViewportWidth() });
+        if (this.selectedItem) {
+            this.selectedItem.element.style[this._getDirectionAccessor()] = this._getViewportWidth() + "px";
+        }
     }
 
     // Utility Methods
@@ -848,7 +851,12 @@ export class Pivot {
         }
     }
 
-    _hideNavButtons() {
+    _hideNavButtons(e?: PointerEvent) {
+        if (e && this._headersContainerElement.contains(<HTMLElement>e.relatedTarget)) {
+            // Don't hide the nav button if the pointerout event is being fired from going
+            // from one element to another within the header track.
+            return;
+        }
         _ElementUtilities.removeClass(this._headersContainerElement, _Constants._ClassNames.pivotShowNavButtons);
     }
 
@@ -884,7 +892,12 @@ export class Pivot {
     }
 
     _updatePointerType(e: PointerEvent) {
-        if (this._pointerType === e.pointerType || PT_MOUSE) {
+        if (this._pointerType === (e.pointerType || PT_MOUSE)) {
+            return;
+        }
+        if (this._headersContainerElement.contains(<HTMLElement>e.relatedTarget)) {
+            // Don't hide the nav button if the pointerout event is being fired from going
+            // from one element to another within the header track.
             return;
         }
 
@@ -909,6 +922,11 @@ export class Pivot {
     _showPivotItem(element: HTMLElement, goPrevious: boolean) {
         this._fireEvent(_EventNames.itemAnimationStart, true, false, null);
 
+        var backwards = goPrevious;
+        if (this._rtl) {
+            backwards = !backwards;
+        }
+
         element.style.display = "";
         this._showPivotItemAnimation = Promise.join([
             _TransitionAnimation.executeTransition(element, {
@@ -924,7 +942,7 @@ export class Pivot {
                 delay: 0,
                 duration: 767,
                 timing: "cubic-bezier(0.1,0.9,0.2,1)",
-                from: "translateX(" + (goPrevious ? "-20px" : "20px") + ")",
+                from: "translateX(" + (backwards ? "-20px" : "20px") + ")",
                 to: "",
             })
         ]);
@@ -1152,7 +1170,7 @@ class HeaderStateStatic extends HeaderStateBase {
     activateHeader(headerElement: HTMLElement) {
         var currentActiveHeader = <HTMLElement>this.pivot._headersContainerElement.children[this.pivot.selectedIndex];
         this.setActiveHeader(headerElement);
-        this.pivot._animateToPrevious = headerElement["pivotItemIndex"] < this.pivot.selectedIndex;
+        this.pivot._animateToPrevious = headerElement["_pivotItemIndex"] < this.pivot.selectedIndex;
         this.pivot.selectedIndex = headerElement["_pivotItemIndex"];
     }
 
@@ -1263,7 +1281,7 @@ class HeaderStateOverflow extends HeaderStateBase {
             // When going backwards, we render 2 additional headers, the first one as usual, and the second one for
             // fading out the previous last header.
             var numberOfHeadersToRender = pivot._items.length + (goPrevious ? 2 : 1);
-            var maxHeaderWidth = pivot._headerItemsWidth * 0.8;
+            var maxHeaderWidth = pivot._getHeaderItemsWidth() * 0.8;
             var indexToRender = pivot.selectedIndex - 1;
 
             if (pivot._viewportElement.style.overflow) {

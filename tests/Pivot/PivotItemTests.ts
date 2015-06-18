@@ -48,11 +48,11 @@ module WinJSTests {
 
             pivot.items.push(pivotItem);
             pivot.addEventListener("itemanimationend", function () {
-                var header = pivot.element.querySelector("." + Pivot._ClassName.pivotHeaderSelected);
+                var header = pivot.element.querySelector("." + Pivot._ClassNames.pivotHeaderSelected);
                 LiveUnit.Assert.areEqual('foo1', header.textContent);
 
                 pivotItem.header = 'foo2';
-                header = pivot.element.querySelector("." + Pivot._ClassName.pivotHeaderSelected);
+                header = pivot.element.querySelector("." + Pivot._ClassNames.pivotHeaderSelected);
                 LiveUnit.Assert.areEqual('foo2', header.textContent);
 
                 complete();
