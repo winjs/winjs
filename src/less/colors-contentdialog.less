@@ -1,24 +1,58 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
+#win-contentdialog {
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
+        
+        @textColor: @baseHigh;
+        @dialogBackgroundColor: @chromeMediumMid;
+        
+        // Overlay background color is expressed with an opacity rather than as a
+        // background color with an alpha value because this is probably what
+        // developers expect for the styling story.
+        // Consequently, the overlay background color is altHigh with an opacity
+        // rather than altMid.
+        @overlayBackgroundColor: @altHigh;
+        @overlayOpacity: 0.6;
+    }
+    
+    .variableDefs(highcontrast) {
+        .colorDefinitions(@theme);
+        
+        @textColor: WindowText;
+        @dialogBackgroundColor: Window;
+        
+        @overlayBackgroundColor: Window;
+        @overlayOpacity: 0.6;
+    }
+    
+    .stylesForTheme(@theme) {
+        #win-contentdialog > .variableDefs(@theme);
+        
+        .win-contentdialog-dialog {
+            background-color: @dialogBackgroundColor;
+        }
+    
+        .win-contentdialog-title {
+            color: @textColor;
+        }
+    
+        .win-contentdialog-content {
+            color: @textColor;
+        }
+    
+        
+        .win-contentdialog-backgroundoverlay {
+            background-color: @overlayBackgroundColor;
+            opacity: @overlayOpacity;
+        }
+    }
+}
+
 .Colors(@theme) {
-    .colorDefinitions(@theme);
+    #win-contentdialog > .stylesForTheme(@theme);
+}
 
-    .win-contentdialog-dialog {
-        background-color: @chromeMediumMid;
-    }
-
-    .win-contentdialog-title {
-        color: @baseHigh;
-    }
-
-    .win-contentdialog-content {
-        color: @baseHigh;
-    }
-
-    // This is @altMid but developers probably expect this to have an opacity
-    // rather than a background color with an alpha value.
-    .win-contentdialog-backgroundoverlay {
-        background-color: @altHigh;
-        opacity: 0.6;
-    }
+.HighContrast() {
+    #win-contentdialog > .stylesForTheme(highcontrast);
 }
