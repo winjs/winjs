@@ -64,6 +64,16 @@ module CorsicaTests {
         };
     }
 
+    function disposeAndRemoveElement(element: HTMLElement) {
+        if (element.winControl) {
+            element.winControl.dispose();
+        }
+        WinJS.Utilities.disposeSubTree(element);
+        if (element.parentElement) {
+            element.parentElement.removeChild(element);
+        }
+    }
+
     export class AppBarTests {
         "use strict";
 
@@ -81,13 +91,7 @@ module CorsicaTests {
 
         tearDown() {
             if (this._element) {
-                if (this._element.winControl) {
-                    this._element.winControl.dispose();
-                }
-                WinJS.Utilities.disposeSubTree(this._element);
-                if (this._element.parentElement) {
-                    this._element.parentElement.removeChild(this._element);
-                }
+                disposeAndRemoveElement(this._element)
                 this._element = null;
             }
         }
@@ -374,37 +378,89 @@ module CorsicaTests {
         }
 
         testResizeHandler() {
-            // Verify that the resize handler knows how to correctly update commands layout if the AppBar width has changed.
+            // Verify that the resize handler knows how to correctly re-layout commands if the CommandingSurface width has changed.
+            // - while the control is closed.
+            // - while the control is opened.
             // Typically the resizeHandler is only called by the window resize event.
 
-            // Make sure everything fits.
-            this._element.style.width = "1000px";
+            // Test all closedDisplayModes https://github.com/winjs/winjs/issues/1183
+            Object.keys(AppBar.ClosedDisplayMode).forEach((mode) => {
 
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
-                new Command(null, { type: _Constants.typeButton, label: "opt 2" }),
-                new Command(null, { type: _Constants.typeButton, label: "sec opt 1", section: _Constants.secondaryCommandSection })
-            ]);
-            var appBar = new AppBar(this._element, {
-                data: data
+                var prefix = "closedDisplayMode: " + mode + ", ";
+
+                // ClosedDisplayMode: "none" can't measure or layout commands while closed because element.style.display is none.
+                // ClosedDisplayMode: "minimal" can't layout commands correctly while closed because all commands are display: "none".
+                var doesModeSupportVisibleCommandsWhileClosed = (mode === AppBar.ClosedDisplayMode.compact || mode === AppBar.ClosedDisplayMode.full);
+
+                // Make sure everything will fit.
+                var appBarElement = document.createElement("DIV");
+                appBarElement.style.width = "1000px";
+                this._element.appendChild(appBarElement);
+
+                var data = new WinJS.Binding.List([
+                    new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
+                    new Command(null, { type: _Constants.typeButton, label: "opt 2" }),
+                    new Command(null, { type: _Constants.typeButton, label: "sec opt 1", section: _Constants.secondaryCommandSection })
+                ]);
+                var appBar = new AppBar(appBarElement, {
+                    data: data,
+                    opened: false,
+                    closedDisplayMode: mode,
+                });
+                Helper.AppBar.useSynchronousAnimations(appBar);
+
+                if (doesModeSupportVisibleCommandsWhileClosed) {
+                    LiveUnit.Assert.areEqual(2,
+                        Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length,
+                        "TEST ERROR: " + prefix + "Test expects actionarea should have 2 commands at start");
+                    LiveUnit.Assert.areEqual(1,
+                        Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                        "TEST ERROR: " + prefix + "Test expects overflowarea should have 1 command at start");
+                }
+
+                // Decrease the width of our control to fit exactly 1 command + the overflow button in the actionarea.
+                var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
+                    numStandardCommands: 1,
+                    visibleOverflowButton: true,
+                };
+                Helper._CommandingSurface.sizeForCommands(appBar.element, args);
+
+                // Ensure that the resizeHandler will have overflowed all but one primary command into the overflowarea
+                WinJS.Utilities._resizeNotifier._handleResize();
+
+                if (doesModeSupportVisibleCommandsWhileClosed) {
+                    // Verify commands laid our correctly while closed.
+                    LiveUnit.Assert.areEqual(1,
+                        Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length,
+                        prefix + "closed actionarea should have 1 command after width decrease");
+                    LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */,
+                        Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                        prefix + "closed overflowarea should have 3 commands after width decrease");
+                }
+
+                // Verify commands are laid out correctly, the first time the control is opened following a resize.
+                appBar.open();
+                LiveUnit.Assert.areEqual(1,
+                    Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length,
+                    prefix + "actionarea should have 1 command after opening");
+                LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */,
+                    Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                    prefix + "overflowarea should have 3 commands after opening");
+
+                // Increase element size while opened, and verify the resizeHandler has reflowed all primary commands
+                // back into the action area.
+                appBarElement.style.width = "1000px";
+                WinJS.Utilities._resizeNotifier._handleResize();
+
+                LiveUnit.Assert.areEqual(2,
+                    Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length,
+                    prefix + "opened actionarea should have 2 commands after width increase");
+                LiveUnit.Assert.areEqual(1,
+                    Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length,
+                    prefix + "opened overflowarea should have 1 command after width increase");
+
+                disposeAndRemoveElement(appBar.element);
             });
-
-            LiveUnit.Assert.areEqual(2, appBar._commandingSurface._primaryCommands.length, "Primary commands array has an invalid length");
-            LiveUnit.Assert.areEqual(1, appBar._commandingSurface._secondaryCommands.length, "Secondary commands array has an invalid length");
-            LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length, "actionarea should have 2 commands");
-            LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length, "overflowarea should have 1 command");
-
-            // Decrease the width of our control to fit exactly 1 command + the overflow button in the actionarea.
-            var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 1,
-                visibleOverflowButton: true,
-            };
-            Helper._CommandingSurface.sizeForCommands(this._element, args);
-
-            // Ensure that the resizeHandler will overflow one primary command into the overflowarea.
-            WinJS.Utilities._resizeNotifier._handleResize();
-            LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.actionArea).length, "actionarea should have 1 command");
-            LiveUnit.Assert.areEqual(3 /* 1 primary command + 1 separator + 1 secondary command */, Helper._CommandingSurface.getVisibleCommandsInElement(appBar._commandingSurface._dom.overflowArea).length, "overflowarea should have 3 commands");
         }
 
         testSeparatorAddedBetweenPrimaryAndSecondary() {
@@ -1819,7 +1875,7 @@ module CorsicaTests {
 
         testGetCommandById() {
             var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous"})
+                new Command(null, { type: _Constants.typeButton, label: "A", id: "extraneous" })
             ]);
 
             this._element.style.width = "10px";
@@ -1931,15 +1987,15 @@ module CorsicaTests {
 
             }).done(complete);
         }
-        
+
         private _testLightDismissWithTrigger(dismissAppBar) {
             var button = document.createElement("button");
             button.textContent = "Initially Focused";
             var element = document.createElement("div");
-            
+
             this._element.appendChild(button);
             this._element.appendChild(element);
-            
+
             var appBar = new AppBar(element, {
                 data: new WinJS.Binding.List([
                     new Command(null, { type: _Constants.typeButton, icon: 'add', label: "add" }),
@@ -1950,26 +2006,26 @@ module CorsicaTests {
                 ])
             });
             Helper.AppBar.useSynchronousAnimations(appBar);
-            
+
             return Helper.focus(button).then(() => {
                 LiveUnit.Assert.areEqual(button, document.activeElement, "Button should have focus initially");
-                
+
                 return Helper.waitForFocusWithin(appBar.element, () => { appBar.open(); });
             }).then(() => {
-                LiveUnit.Assert.areEqual(appBar.data.getAt(0).element, document.activeElement,
-                    "AppBar's leftmost primary command should have focus after opening");
-                LiveUnit.Assert.isTrue(_LightDismissService.isTopmost(appBar._dismissable),
-                    "AppBar should be the topmost light dismissable");
-                
-                return Helper.waitForFocus(button, () => { dismissAppBar(appBar); });
-            }).then(() => {
-                LiveUnit.Assert.areEqual(button, document.activeElement,
-                    "Focus should have been restored to the button");
-                LiveUnit.Assert.isFalse(_LightDismissService.isShown(appBar._dismissable),
-                    "AppBar should not be in the light dismissable stack");
-            });
+                    LiveUnit.Assert.areEqual(appBar.data.getAt(0).element, document.activeElement,
+                        "AppBar's leftmost primary command should have focus after opening");
+                    LiveUnit.Assert.isTrue(_LightDismissService.isTopmost(appBar._dismissable),
+                        "AppBar should be the topmost light dismissable");
+
+                    return Helper.waitForFocus(button, () => { dismissAppBar(appBar); });
+                }).then(() => {
+                    LiveUnit.Assert.areEqual(button, document.activeElement,
+                        "Focus should have been restored to the button");
+                    LiveUnit.Assert.isFalse(_LightDismissService.isShown(appBar._dismissable),
+                        "AppBar should not be in the light dismissable stack");
+                });
         }
-        
+
         testLightDismissWithClose(complete) {
             this._testLightDismissWithTrigger((appBar) => { appBar.close(); }).then(complete);
         }
@@ -1977,7 +2033,7 @@ module CorsicaTests {
             this._testLightDismissWithTrigger((appBar) => { appBar.dispose(); }).then(complete);
         }
         testLightDismissWithTap(complete) {
-            this._testLightDismissWithTrigger((appBar) => {  _LightDismissService._clickEaterTapped(); }).then(complete);
+            this._testLightDismissWithTrigger((appBar) => { _LightDismissService._clickEaterTapped(); }).then(complete);
         }
     }
 }

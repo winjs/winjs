@@ -547,7 +547,7 @@ export class AppBar {
             rendered.adjustedOffsets.bottom = this._adjustedOffsets.bottom;
         }
 
-        this._commandingSurface.updateDomImpl();
+        this._commandingSurface.updateDom();
     }
     private _getClosedHeight(): number {
         if (this._cachedClosedHeight === null) {

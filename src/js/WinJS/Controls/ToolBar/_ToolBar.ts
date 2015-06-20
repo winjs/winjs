@@ -419,7 +419,7 @@ export class ToolBar {
             rendered.closedDisplayMode = this.closedDisplayMode;
         }
 
-        this._commandingSurface.updateDomImpl();
+        this._commandingSurface.updateDom();
     }
 
     private _getClosedHeight(): number {

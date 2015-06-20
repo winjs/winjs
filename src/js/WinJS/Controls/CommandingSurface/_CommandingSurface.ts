@@ -56,18 +56,25 @@ interface IDataChangeInfo {
     affected: HTMLElement[];
 }
 
+
+interface ICommandingSurface_UpdateDomImpl {
+    renderedState: {
+        closedDisplayMode: string;
+        isOpenedMode: boolean;
+        overflowDirection: string;
+        overflowAlignmentOffset: number;
+    };
+    update(): void;
+    dataDirty(): void;
+    measurementsDirty(): void;
+    layoutDirty(): void;
+};
+
 var strings = {
     get overflowButtonAriaLabel() { return _Resources._getWinJSString("ui/commandingSurfaceOverflowButtonAriaLabel").value; },
     get badData() { return "Invalid argument: The data property must an instance of a WinJS.Binding.List"; },
     get mustContainCommands() { return "The commandingSurface can only contain WinJS.UI.Command or WinJS.UI.AppBarCommand controls"; },
     get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
-};
-
-var CommandLayoutPipeline = {
-    newDataStage: 3,
-    measuringStage: 2,
-    layoutStage: 1,
-    idle: 0,
 };
 
 var OverflowDirection = {
@@ -129,7 +136,6 @@ export class _CommandingSurface {
     private _refreshPending: boolean;
     private _rtl: boolean;
     private _disposed: boolean;
-    private _nextLayoutStage: number;
     private _initializedSignal: _Signal<any>;
     private _isOpenedMode: boolean;
     private _overflowAlignmentOffset: number;
@@ -251,7 +257,7 @@ export class _CommandingSurface {
                 return Promise.wrap();
             },
             onUpdateDom: () => {
-                this.updateDomImpl();
+                this._updateDomImpl.update();
             },
             onUpdateDomWithIsOpened: (isOpened: boolean) => {
                 if (isOpened) {
@@ -272,7 +278,6 @@ export class _CommandingSurface {
         this._refreshPending = false;
         this._rtl = false;
         this._initializedSignal = new _Signal();
-        this._nextLayoutStage = CommandLayoutPipeline.idle;
         this._isOpenedMode = _Constants.defaultOpened;
         this._menuCommandProjections = [];
 
@@ -346,7 +351,7 @@ export class _CommandingSurface {
     forceLayout(): void {
         /// Forces the CommandingSurface to update its layout. Use this function when the window did not change 
         /// size, but the container of the CommandingSurface changed size.
-        this._meaurementsDirty();
+        this._updateDomImpl.measurementsDirty();
         this._machine.updateDom();
     }
 
@@ -395,7 +400,7 @@ export class _CommandingSurface {
         // to call createOpenAnimation() before it opens the surface, then open the commanding surface, then call .execute() to start the animation.
         // This function is overridden by our unit tests.
         if (_Log.log) {
-            this._updateDomImpl_renderedState.isOpenedMode &&
+            this._updateDomImpl.renderedState.isOpenedMode &&
             _Log.log("The CommandingSurface should only attempt to create an open animation when it's not already opened");
         }
         var that = this;
@@ -417,8 +422,8 @@ export class _CommandingSurface {
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
                     _ElementUtilities.removeClass(that.element, _Constants.ClassNames.openingClass);
-                    that._clearAnimation();
-                });
+                        that._clearAnimation();
+                    });
             }
         };
     }
@@ -429,7 +434,7 @@ export class _CommandingSurface {
         // should close the commanding surface.
         // This function is overridden by our unit tests.
         if (_Log.log) {
-            !this._updateDomImpl_renderedState.isOpenedMode &&
+            !this._updateDomImpl.renderedState.isOpenedMode &&
             _Log.log("The CommandingSurface should only attempt to create an closed animation when it's not already closed");
         }
         var openedHeight = this.getBoundingRects().commandingSurface.height,
@@ -449,9 +454,9 @@ export class _CommandingSurface {
                     overflowAreaHeight: overflowAreaOpenedHeight,
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
-                    _ElementUtilities.removeClass(that.element, _Constants.ClassNames.closingClass);
-                    that._clearAnimation();
-                });
+                        _ElementUtilities.removeClass(that.element, _Constants.ClassNames.closingClass);
+                        that._clearAnimation();
+                    });
             }
         };
     }
@@ -565,7 +570,7 @@ export class _CommandingSurface {
                 }
             });
         }
-        this._dataDirty();
+        this._updateDomImpl.dataDirty();
         this._machine.updateDom();
     }
 
@@ -699,34 +704,33 @@ export class _CommandingSurface {
         return new BindingList.List(commands);
     }
 
+    private _canMeasure() {
+        return (this._updateDomImpl.renderedState.isOpenedMode ||
+            this._updateDomImpl.renderedState.closedDisplayMode === ClosedDisplayMode.compact ||
+            this._updateDomImpl.renderedState.closedDisplayMode === ClosedDisplayMode.full) &&
+            _Global.document.body.contains(this._dom.root) && this._dom.actionArea.offsetWidth > 0;
+    }
+
     private _resizeHandler() {
-        if (this._dom.root.offsetWidth) {
+        if (this._canMeasure()) {
             var currentActionAreaWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea);
             if (this._cachedMeasurements && this._cachedMeasurements.actionAreaContentBoxWidth !== currentActionAreaWidth) {
                 this._cachedMeasurements.actionAreaContentBoxWidth = currentActionAreaWidth
-                this._layoutDirty();
+                this._updateDomImpl.layoutDirty();
                 this._machine.updateDom();
             }
+        } else {
+            this._updateDomImpl.measurementsDirty();
         }
-    }
-
-    private _dataDirty(): void {
-        this._nextLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, this._nextLayoutStage);
-    }
-    private _meaurementsDirty(): void {
-        this._nextLayoutStage = Math.max(CommandLayoutPipeline.measuringStage, this._nextLayoutStage);
-    }
-    private _layoutDirty(): void {
-        this._nextLayoutStage = Math.max(CommandLayoutPipeline.layoutStage, this._nextLayoutStage);
     }
 
     synchronousOpen(): void {
 
         this._overflowAlignmentOffset = 0;
         this._isOpenedMode = true;
-        this.updateDomImpl();
+        this._updateDomImpl.update();
         this._overflowAlignmentOffset = this._computeAdjustedOverflowAreaOffset();
-        this.updateDomImpl();
+        this._updateDomImpl.update();
     }
 
     private _computeAdjustedOverflowAreaOffset(): number {
@@ -734,13 +738,13 @@ export class _CommandingSurface {
         // This function should only be called when CommandingSurface has been rendered in the opened state with
         // an overflowAlignmentOffset of 0.
         if (_Log.log) {
-            !this._updateDomImpl_renderedState.isOpenedMode &&
+            !this._updateDomImpl.renderedState.isOpenedMode &&
             _Log.log("The CommandingSurface should only attempt to compute adjusted overflowArea offset " +
                 " when it has been rendered opened");
 
-            this._updateDomImpl_renderedState.overflowAlignmentOffset !== 0 &&
+            this._updateDomImpl.renderedState.overflowAlignmentOffset !== 0 &&
             _Log.log("The CommandingSurface should only attempt to compute adjusted overflowArea offset " +
-            " when it has been rendered with an overflowAlignementOffset of 0");
+                " when it has been rendered with an overflowAlignementOffset of 0");
         }
 
         var overflowArea = this._dom.overflowArea,
@@ -764,98 +768,140 @@ export class _CommandingSurface {
 
     synchronousClose(): void {
         this._isOpenedMode = false;
-        this.updateDomImpl();
+        this._updateDomImpl.update();
     }
 
-    updateDomImpl(): void {
-        this._updateDomImpl_renderDisplayMode();
-        this._updateDomImpl_updateCommands();
+    updateDom(): void {
+        this._updateDomImpl.update();
     }
 
-    // State private to _updateDomImpl_renderDisplayMode. No other method should make use of it.
-    //
-    // Nothing has been rendered yet so these are all initialized to undefined. Because
-    // they are undefined, the first time _updateDomImpl is called, they will all be
-    // rendered.
-    private _updateDomImpl_renderedState = {
-        closedDisplayMode: <string>undefined,
-        isOpenedMode: <boolean>undefined,
-        overflowDirection: <string>undefined,
-        overflowAlignmentOffset: <number>undefined,
-    };
-    private _updateDomImpl_renderDisplayMode(): void {
-        var rendered = this._updateDomImpl_renderedState;
+    private _updateDomImpl: ICommandingSurface_UpdateDomImpl = (() => {
+        // Self executing function returns a JavaScript Object literal that
+        // implements the ICommandingSurface_UpdateDomImpl Inteface.
 
+        // State private to _renderDisplayMode. No other method should make use of it.
+        //
+        // Nothing has been rendered yet so these are all initialized to undefined. Because
+        // they are undefined, the first time _updateDomImpl.update is called, they will all be
+        // rendered.
+        var _renderedState = {
+            closedDisplayMode: <string>undefined,
+            isOpenedMode: <boolean>undefined,
+            overflowDirection: <string>undefined,
+            overflowAlignmentOffset: <number>undefined,
+        };
 
-        if (rendered.isOpenedMode !== this._isOpenedMode) {
-            if (this._isOpenedMode) {
-                // Render opened
-                removeClass(this._dom.root, _Constants.ClassNames.closedClass);
-                addClass(this._dom.root, _Constants.ClassNames.openedClass);
-            } else {
-                // Render closed
-                removeClass(this._dom.root, _Constants.ClassNames.openedClass);
-                addClass(this._dom.root, _Constants.ClassNames.closedClass);
-            }
-            rendered.isOpenedMode = this._isOpenedMode;
-        }
+        var _renderDisplayMode = () => {
+            var rendered = _renderedState;
 
-        if (rendered.closedDisplayMode !== this.closedDisplayMode) {
-            removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
-            addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
-            rendered.closedDisplayMode = this.closedDisplayMode;
-        }
-
-        if (rendered.overflowDirection !== this.overflowDirection) {
-            removeClass(this._dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
-            addClass(this._dom.root, overflowDirectionClassMap[this.overflowDirection]);
-            rendered.overflowDirection = this.overflowDirection;
-        }
-
-        if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
-            var offsetProperty = (this._rtl ? "left" : "right");
-            var offsetTextValue = this._overflowAlignmentOffset + "px";
-            this._dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
-        }
-    }
-
-    private _updateDomImpl_updateCommands(): void {
-        this._writeProfilerMark("_updateDomImpl_updateCommands,info");
-
-        var nextStage = this._nextLayoutStage;
-        // The flow of stages in the CommandLayoutPipeline is defined as:
-        //      newDataStage -> measuringStage -> layoutStage -> idle
-        while (nextStage !== CommandLayoutPipeline.idle) {
-            var currentStage = nextStage;
-            var okToProceed = false;
-            switch (currentStage) {
-                case CommandLayoutPipeline.newDataStage:
-                    nextStage = CommandLayoutPipeline.measuringStage;
-                    okToProceed = this._processNewData();
-                    break;
-                case CommandLayoutPipeline.measuringStage:
-                    nextStage = CommandLayoutPipeline.layoutStage;
-                    okToProceed = this._measure();
-                    break;
-                case CommandLayoutPipeline.layoutStage:
-                    nextStage = CommandLayoutPipeline.idle;
-                    okToProceed = this._layoutCommands();
-                    break;
+            if (rendered.isOpenedMode !== this._isOpenedMode) {
+                if (this._isOpenedMode) {
+                    // Render opened
+                    removeClass(this._dom.root, _Constants.ClassNames.closedClass);
+                    addClass(this._dom.root, _Constants.ClassNames.openedClass);
+                } else {
+                    // Render closed
+                    removeClass(this._dom.root, _Constants.ClassNames.openedClass);
+                    addClass(this._dom.root, _Constants.ClassNames.closedClass);
+                }
+                rendered.isOpenedMode = this._isOpenedMode;
             }
 
-            if (!okToProceed) {
-                // If a stage fails, exit the loop and track that stage
-                // to be restarted the next time _updateCommands is run.
-                nextStage = currentStage;
-                break;
+            if (rendered.closedDisplayMode !== this.closedDisplayMode) {
+                removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
+                addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
+                rendered.closedDisplayMode = this.closedDisplayMode;
             }
+
+            if (rendered.overflowDirection !== this.overflowDirection) {
+                removeClass(this._dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
+                addClass(this._dom.root, overflowDirectionClassMap[this.overflowDirection]);
+                rendered.overflowDirection = this.overflowDirection;
+            }
+
+            if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
+                var offsetProperty = (this._rtl ? "left" : "right");
+                var offsetTextValue = this._overflowAlignmentOffset + "px";
+                this._dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
+            }
+        };
+
+        var CommandLayoutPipeline = {
+            newDataStage: 3,
+            measuringStage: 2,
+            layoutStage: 1,
+            idle: 0,
+        };
+
+        var _currentLayoutStage = CommandLayoutPipeline.idle;
+
+        var _updateCommands = () => {
+            this._writeProfilerMark("_updateDomImpl_updateCommands,info");
+
+            var currentStage = _currentLayoutStage;
+            // The flow of stages in the CommandLayoutPipeline is defined as:
+            //      newDataStage -> measuringStage -> layoutStage -> idle
+            while (currentStage !== CommandLayoutPipeline.idle) {
+                var prevStage = currentStage;
+                var okToProceed = false;
+                switch (currentStage) {
+                    case CommandLayoutPipeline.newDataStage:
+                        currentStage = CommandLayoutPipeline.measuringStage;
+                        okToProceed = this._processNewData();
+                        break;
+                    case CommandLayoutPipeline.measuringStage:
+                        currentStage = CommandLayoutPipeline.layoutStage;
+                        okToProceed = this._measure();
+                        break;
+                    case CommandLayoutPipeline.layoutStage:
+                        currentStage = CommandLayoutPipeline.idle;
+                        okToProceed = this._layoutCommands();
+                        break;
+                }
+
+                if (!okToProceed) {
+                    // If a stage fails, exit the loop and track that stage
+                    // to be restarted the next time _updateCommands is run.
+                    currentStage = prevStage;
+                    break;
+                }
+            }
+            _currentLayoutStage = currentStage;
+            if (currentStage === CommandLayoutPipeline.idle) {
+                // Callback for unit tests.
+                this._layoutCompleteCallback && this._layoutCompleteCallback();
+            }
+        };
+
+        return {
+            get renderedState() {
+                return {
+                    get closedDisplayMode() { return _renderedState.closedDisplayMode },
+                    get isOpenedMode() { return _renderedState.isOpenedMode },
+                    get overflowDirection() { return _renderedState.overflowDirection },
+                    get overflowAlignmentOffset() { return _renderedState.overflowAlignmentOffset },
+                };
+            },
+            update(): void {
+                _renderDisplayMode();
+                _updateCommands()
+            },
+            dataDirty: () => {
+                _currentLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, _currentLayoutStage);
+            },
+            measurementsDirty: () => {
+                _currentLayoutStage = Math.max(CommandLayoutPipeline.measuringStage, _currentLayoutStage);
+            },
+            layoutDirty: () => {
+                _currentLayoutStage = Math.max(CommandLayoutPipeline.layoutStage, _currentLayoutStage);
+            },
+            get _currentLayoutStage() {
+                // Expose this for its usefulness in F12 debugging.
+                return _currentLayoutStage;
+            },
         }
-        this._nextLayoutStage = nextStage;
-        if (nextStage === CommandLayoutPipeline.idle) {
-            // Callback for unit tests.
-            this._layoutCompleteCallback && this._layoutCompleteCallback();
-        }
-    }
+
+    })();
 
     private _getDataChangeInfo(): IDataChangeInfo {
         var i = 0, len = 0;
@@ -954,8 +1000,7 @@ export class _CommandingSurface {
 
     private _measure(): boolean {
         this._writeProfilerMark("_measure,info");
-        var canMeasure = (_Global.document.body.contains(this._dom.root) && this._dom.actionArea.offsetWidth > 0);
-        if (canMeasure) {
+        if (this._canMeasure()) {
             var overflowButtonWidth = _ElementUtilities._getPreciseTotalWidth(this._dom.overflowButton),
                 actionAreaContentBoxWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea),
                 separatorWidth = 0,
@@ -1063,7 +1108,7 @@ export class _CommandingSurface {
         this._menuCommandProjections.map((menuCommand: _MenuCommand.MenuCommand) => {
             menuCommand.dispose();
         });
-        
+
         var hasToggleCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
