@@ -107,11 +107,11 @@ export interface IRect {
  * Gets the mapping object that maps keycodes to XYFocus actions.
 **/
 export var keyCodeMap = {
-    left: [Keys.GamepadLeftThumbstickLeft, Keys.GamepadDPadLeft, Keys.NavigationLeft],
-    right: [Keys.GamepadLeftThumbstickRight, Keys.GamepadDPadRight, Keys.NavigationRight],
-    up: [Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp],
-    down: [Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown],
-    accept: [Keys.GamepadA, Keys.NavigationAccept],
+    left: <number[]>[],
+    right: <number[]>[],
+    up: <number[]>[],
+    down: <number[]>[],
+    accept: <number[]>[],
 };
 
 /**
@@ -577,88 +577,97 @@ function _handleKeyEvent(e: KeyboardEvent): void {
     }
 }
 
-_Global.addEventListener("message", (e: MessageEvent): void => {
-    if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
-        return;
-    }
+if (_Global.document) {
+    // Note: This module is not supported in WebWorker
 
-    var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
-    switch (data.type) {
-        case CrossDomainMessageConstants.register:
-            _afEnabledFrames.push(e.source);
-            break;
+    // Default mappings
+    keyCodeMap.left.push(Keys.GamepadLeftThumbstickLeft, Keys.GamepadDPadLeft, Keys.NavigationLeft);
+    keyCodeMap.right.push(Keys.GamepadLeftThumbstickRight, Keys.GamepadDPadRight, Keys.NavigationRight);
+    keyCodeMap.up.push(Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp);
+    keyCodeMap.down.push(Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown);
+    keyCodeMap.accept.push(Keys.GamepadA, Keys.NavigationAccept);
 
-        case CrossDomainMessageConstants.unregister:
-            var index = _afEnabledFrames.indexOf(e.source);
-            if (index >= 0) {
-                _afEnabledFrames.splice(index, 1);
-            }
-            break;
-
-        case CrossDomainMessageConstants.dFocusEnter:
-            // The coordinates stored in data.refRect are already in this frame's coordinate system.
-            // When we get this message we will force-enable XYFocus to support scenarios where
-            // websites running WinJS are put into an IFRAME and the parent frame has XYFocus enabled.
-            _xyFocus(data.direction, -1, data.referenceRect);
-            break;
-
-        case CrossDomainMessageConstants.dFocusExit:
-            var iframe = _getIFrameFromWindow(e.source);
-            if (_Global.document.activeElement !== iframe) {
-                // Since postMessage is async, by the time we get this message, the user may have
-                // manually moved the focus elsewhere, if so, ignore this message.
-                break;
-            }
-
-            // The coordinates stored in data.refRect are in the IFRAME's coordinate system,
-            // so we must first transform them into this frame's coordinate system.
-            var refRect: IRect = data.referenceRect;
-            refRect.left += iframe.offsetLeft;
-            refRect.top += iframe.offsetTop;
-            _xyFocus(data.direction, -1, refRect);
-            break;
-    }
-});
-
-_BaseUtils.ready().then(() => {
-    if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
-        _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
-    }
-
-    _Global.document.addEventListener("keydown", _handleKeyEvent);
-
-    // If we are running within an iframe, we send a registration message to the parent window
-    if (_Global.top !== _Global.window) {
-        var message = {};
-        message[CrossDomainMessageConstants.messageDataProperty] = {
-            type: CrossDomainMessageConstants.register,
-            version: 1.0
-        };
-        _Global.parent.postMessage(message, "*");
-    }
-});
-
-
-// Publish to WinJS namespace
-var toPublish = {
-    focusRoot: {
-        get: function () {
-            return focusRoot;
-        },
-        set: function (value: HTMLElement) {
-            focusRoot = value;
+    _Global.addEventListener("message", (e: MessageEvent): void => {
+        if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
+            return;
         }
-    },
 
-    findNextFocusElement: findNextFocusElement,
-    keyCodeMap: keyCodeMap,
-    moveFocus: moveFocus,
-    onfocuschanged: _Events._createEventProperty(EventNames.focusChanged),
-    onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
+        var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
+        switch (data.type) {
+            case CrossDomainMessageConstants.register:
+                _afEnabledFrames.push(e.source);
+                break;
 
-    _xyFocus: _xyFocus
-};
-toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
-toPublish["_listeners"] = {};
-var eventSrc = <_Events.eventMixin><any>toPublish;
-_Base.Namespace.define("WinJS.UI.XYFocus", toPublish);
+            case CrossDomainMessageConstants.unregister:
+                var index = _afEnabledFrames.indexOf(e.source);
+                if (index >= 0) {
+                    _afEnabledFrames.splice(index, 1);
+                }
+                break;
+
+            case CrossDomainMessageConstants.dFocusEnter:
+                // The coordinates stored in data.refRect are already in this frame's coordinate system.
+                _xyFocus(data.direction, -1, data.referenceRect);
+                break;
+
+            case CrossDomainMessageConstants.dFocusExit:
+                var iframe = _getIFrameFromWindow(e.source);
+                if (_Global.document.activeElement !== iframe) {
+                    // Since postMessage is async, by the time we get this message, the user may have
+                    // manually moved the focus elsewhere, if so, ignore this message.
+                    break;
+                }
+
+                // The coordinates stored in data.refRect are in the IFRAME's coordinate system,
+                // so we must first transform them into this frame's coordinate system.
+                var refRect: IRect = data.referenceRect;
+                refRect.left += iframe.offsetLeft;
+                refRect.top += iframe.offsetTop;
+                _xyFocus(data.direction, -1, refRect);
+                break;
+        }
+    });
+
+    _BaseUtils.ready().then(() => {
+        if (_ElementUtilities.hasWinRT && _Global["Windows"] && _Global["Windows"]["Xbox"]) {
+            _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
+        }
+
+        _Global.document.addEventListener("keydown", _handleKeyEvent);
+
+        // If we are running within an iframe, we send a registration message to the parent window
+        if (_Global.top !== _Global.window) {
+            var message = {};
+            message[CrossDomainMessageConstants.messageDataProperty] = {
+                type: CrossDomainMessageConstants.register,
+                version: 1.0
+            };
+            _Global.parent.postMessage(message, "*");
+        }
+    });
+
+
+    // Publish to WinJS namespace
+    var toPublish = {
+        focusRoot: {
+            get: function () {
+                return focusRoot;
+            },
+            set: function (value: HTMLElement) {
+                focusRoot = value;
+            }
+        },
+
+        findNextFocusElement: findNextFocusElement,
+        keyCodeMap: keyCodeMap,
+        moveFocus: moveFocus,
+        onfocuschanged: _Events._createEventProperty(EventNames.focusChanged),
+        onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
+
+        _xyFocus: _xyFocus
+    };
+    toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
+    toPublish["_listeners"] = {};
+    var eventSrc = <_Events.eventMixin><any>toPublish;
+    _Base.Namespace.define("WinJS.UI.XYFocus", toPublish);
+}
