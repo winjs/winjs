@@ -5918,11 +5918,6 @@ declare module WinJS.UI {
         element: HTMLElement;
 
         /**
-         * Gets or sets the HTML element that contains the footer.
-        **/
-        footer: HTMLElement;
-
-        /**
          * Gets or sets the data source that contains the groups for the items in the itemDataSource.
         **/
         groupDataSource: IListDataSource<T>;
@@ -5936,11 +5931,6 @@ declare module WinJS.UI {
          * Gets or sets the Template or function that creates the DOM elements for each group header in the groupDataSource. Each group header can contain multiple elements, but it must have a single root element.
         **/
         groupHeaderTemplate: any;
-
-        /**
-         * Gets or sets the HTML element that contains the header.
-        **/
-        header: HTMLElement;
 
         /**
          * Gets or sets the first visible item.
