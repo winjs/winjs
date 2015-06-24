@@ -311,9 +311,7 @@ select[multiple].win-dropdown {
     -webkit-appearance: none;
 
     width: 280px;
-    height: 22px; // Leave enough room for tick marks
-    padding-top: 17px;
-    padding-bottom: 32px;
+    height: 44px;
 
     .track() {
         height: 2px;
@@ -321,8 +319,8 @@ select[multiple].win-dropdown {
     }
 
     .thumb() {
-        width: 24px;
-        height: 8px;
+        width: 8px;
+        height: 24px;
         border-radius: 4px;
         border-style: none;
     }
@@ -330,13 +328,21 @@ select[multiple].win-dropdown {
     &::-ms-track {.track();}
     &::-webkit-slider-runnable-track {.track();}
     &::-moz-range-track {.track();}
-    &::-ms-thumb {.thumb();}
+    &::-moz-range-thumb {.thumb();}
+    
+    // The order of the following two styles is very important. On Chrome, the thumb is below the track
+    // so we style margin-top to pull the thumb up. The webkit-specific selector works on Edge where the
+    // thumb is already centered, this results in the thumb being above the track. We use an ms-specific
+    // selector rule with the same specificity AFTER the webkit rule to override and reset the margin.
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        margin-top: -4px;
+        margin-top: -11px;
         .thumb();
     }
-    &::-moz-range-thumb {.thumb();}
+    &::-ms-thumb {
+        margin-top: inherit;
+        .thumb();
+    }
 }
 
 //
@@ -345,7 +351,7 @@ select[multiple].win-dropdown {
 .win-slider.win-vertical {
     writing-mode: bt-lr;
 
-    width: 22px; // Leave enough room for tick marks
+    width: 44px;
     height: 280px;
 
     &::-ms-track {
@@ -353,8 +359,8 @@ select[multiple].win-dropdown {
         height: auto;
     }
     &::-ms-thumb {
-        width: 8px;
-        height: 24px;
+        width: 24px;
+        height: 8px;
     }
 
     .RTL({
