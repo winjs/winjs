@@ -109,7 +109,7 @@ define([
                         }
                     }
                 },
-                
+
                 keyDown: function _LightDismissableLayer_keyDown(client /*: ILightDismissable */, eventObject) {
                     _LightDismissService.keyDown(this, eventObject);
                 },
@@ -241,31 +241,32 @@ define([
             },
             {
                 appendFlyout: function _CascadeManager_appendFlyout(flyoutToAdd) {
-                    // PRECONDITION: flyoutToAdd must not already be in the cascade.
-                    _Log.log && this.indexOf(flyoutToAdd) >= 0 && _Log.log('_CascadeManager is attempting to append a Flyout that is already in the cascade.', "winjs _CascadeManager", "error");
                     // PRECONDITION: this.reentrancyLock must be false. appendFlyout should only be called from baseFlyoutShow() which is the function responsible for preventing reentrancy.
                     _Log.log && this.reentrancyLock && _Log.log('_CascadeManager is attempting to append a Flyout through reentrancy.', "winjs _CascadeManager", "error");
 
-                    // IF the anchor element for flyoutToAdd is contained within another flyout,
-                    // && that flyout is currently in the cascadingStack, consider that flyout to be the parent of flyoutToAdd:
-                    //  Remove from the cascadingStack, any subflyout descendants of the parent flyout.
-                    // ELSE flyoutToAdd isn't anchored to any of the Flyouts in the existing cascade
-                    //  Collapse the entire cascadingStack to start a new cascade.
-                    // FINALLY:
-                    //  add flyoutToAdd to the end of the cascading stack. Monitor it for events.
-                    var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._currentAnchor);
-                    if (indexOfParentFlyout >= 0) {
-                        this.collapseFlyout(this.getAt(indexOfParentFlyout + 1));
-                    } else {
-                        this.collapseAll();
-                    }
+                    if (this.indexOf(flyoutToAdd) < 0) {
+                        // IF the anchor element for flyoutToAdd is contained within another flyout,
+                        // && that flyout is currently in the cascadingStack, consider that flyout to be the parent of flyoutToAdd:
+                        //  Remove from the cascadingStack, any subflyout descendants of the parent flyout.
+                        // ELSE flyoutToAdd isn't anchored to any of the Flyouts in the existing cascade
+                        //  Collapse the entire cascadingStack to start a new cascade.
+                        // FINALLY:
+                        //  add flyoutToAdd to the end of the cascading stack. Monitor it for events.
+                        var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._currentAnchor);
+                        if (indexOfParentFlyout >= 0) {
+                            this.collapseFlyout(this.getAt(indexOfParentFlyout + 1));
+                        } else {
+                            this.collapseAll();
+                        }
 
-                    flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
-                    this._cascadingStack.push(flyoutToAdd);
-                    this._dismissableLayer.shown(flyoutToAdd._dismissable);
+                        flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
+                        this._cascadingStack.push(flyoutToAdd);
+                    }
                 },
                 collapseFlyout: function _CascadeManager_collapseFlyout(flyout) {
-                    // Removes flyout param and its subflyout descendants from the _cascadingStack.
+                    // Synchronously removes flyout param and its subflyout descendants from the _cascadingStack.
+                    // Synchronously calls hide on all removed flyouts.
+
                     if (!this.reentrancyLock && flyout && this.indexOf(flyout) >= 0) {
                         this.reentrancyLock = true;
                         var signal = new _Signal();
@@ -288,6 +289,9 @@ define([
                         this.unlocked = null;
                         signal.complete();
                     }
+                },
+                flyoutShown: function _CascadeManager_flyoutShown(flyout) {
+                    this._dismissableLayer.shown(flyout._dismissable);
                 },
                 flyoutHiding: function _CascadeManager_flyoutHiding(flyout) {
                     this._dismissableLayer.hiding(flyout._dismissable);
@@ -663,8 +667,12 @@ define([
                         this._currentAlignment = alignment;
                     }
 
-                    // If we're animating (eg baseShow is going to fail), or the cascadeManager is in the middle of a updating the cascade,
-                    // then don't mess up our current state.
+                    // Add this flyout to the correct position in the cascadingStack, first collapsing flyouts 
+                    // in the current stack that are not anchored ancestors to this flyout.
+                    Flyout._cascadeManager.appendFlyout(this);
+
+                    // If we're animating (eg baseShow is going to fail), or the cascadeManager is in the 
+                    // middle of updating the cascade, then we have to try again later.
                     if (this._element.winAnimating) {
                         this._reuseCurrent = true;
                         // Queue us up to wait for the current animation to finish.
@@ -708,7 +716,7 @@ define([
                                 finalDiv.tabIndex = _ElementUtilities._getHighestTabIndexInList(_elms);
                             }
 
-                            Flyout._cascadeManager.appendFlyout(this);
+                            Flyout._cascadeManager.flyoutShown(this);
                         }
                     }
                 },
@@ -999,7 +1007,7 @@ define([
                                 }
                             }
                             break;
-                        case "_cascade": 
+                        case "_cascade":
                             // Align vertically
                             // PREFERRED: When there is enough room to align a subMenu to either the top or the bottom of its
                             // anchor element, the subMenu prefers to be top aligned.

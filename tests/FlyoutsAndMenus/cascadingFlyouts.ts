@@ -51,7 +51,7 @@ module CorsicaTests {
             return []; // Appease the compiler.
         }
 
-        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
+        chainFlyouts(parentFlyout: WinJS.UI.PrivateFlyout, subFlyout: WinJS.UI.PrivateFlyout): void {
             this.abstractMethodFail();
         }
 
@@ -109,6 +109,7 @@ module CorsicaTests {
         }
 
         verifyCascade(expectedCascade: Array<WinJS.UI.PrivateFlyout>): void {
+
             // Verifies that the Flyouts currently in the cascade and the Flyouts that are currently visible line up with the chain of flyouts we are expecting.
             var msg = "The Flyouts in the cascade should match the chain of Flyouts we were expecting.";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
@@ -191,6 +192,9 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(cascadeManager.length, 1);
 
                 flyout.hide();
+                var msg = "Flyouts should be removed from the cascade synchronously when hide() is called.";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.areEqual(0, cascadeManager.length, msg);
             };
             function checkAfterHide() {
                 flyout.removeEventListener("afterhide", checkAfterHide, false);
@@ -212,12 +216,15 @@ module CorsicaTests {
 
             var msg = "The cascade should be empty when no flyouts are showing";
             LiveUnit.LoggingCore.logComment("Test: " + msg);
-            LiveUnit.Assert.areEqual(cascadeManager.length, 0, msg);
+            LiveUnit.Assert.areEqual(0, cascadeManager.length, msg);
 
             flyout.addEventListener("aftershow", checkAfterShow, false);
             flyout.addEventListener("afterhide", checkAfterHide, false);
 
             flyout.show();
+            var msg = "Flyouts should be added to the cascade synchronously when show() is called.";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(1, cascadeManager.length, msg);
         }
 
         testChainedFlyoutsWillAppendToTheCascadeWhenShownInOrder = function (complete) {
@@ -507,6 +514,82 @@ module CorsicaTests {
                     complete();
                 });
         }
+
+        testCascadeDoesNotLoseTrackOfShowingFlyouts1 = function (complete) {
+            // Regression test for https://github.com/winjs/winjs/issues/1256
+            // Verifies that synchronously showing, hiding, and showing a flyout
+            // will not invalidate the cascadeManager's model of the cascade.
+
+            var flyout = this.generateFlyoutChain(1)[0];
+
+            var afterShow = () => {
+                flyout.removeEventListener("aftershow", afterShow, false);
+                this.verifyCascade([flyout]);
+                complete();
+            };
+
+            flyout.addEventListener("aftershow", afterShow, false);
+
+            var msg = "The cascade should be empty when no flyouts are showing";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(0, cascadeManager.length, msg);
+
+            flyout.show();
+            flyout.hide();
+            flyout.show();
+        }
+
+        testCascadeDoesNotLoseTrackOfShowingFlyouts2 = function (complete) {
+            // Regression test for https://github.com/winjs/winjs/issues/1256
+            // Verifies that synchronously showing and hiding various flyouts in the 
+            // cascade will not invalidate the cascadeManager's model of the cascade.
+
+            var requiredSize = 2;
+
+            var flyoutChain = this.generateFlyoutChain();
+
+            if (flyoutChain.length < requiredSize) {
+                LiveUnit.Assert.fail("TEST ERROR: test requires a minimum flyout chain size of " + requiredSize);
+            }
+
+            var msg = "The cascade should be empty when no flyouts are showing";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.areEqual(0, cascadeManager.length, msg);
+
+            // Begin by showing the entire chain except for the last flyout.
+            this.showFlyoutChain(flyoutChain, flyoutChain[flyoutChain.length - 2]).then(() => {
+
+                var headFlyout = flyoutChain[0];
+                var tailFlyout = flyoutChain[flyoutChain.length - 1];
+
+                var afterShow = () => {
+                    tailFlyout.removeEventListener("aftershow", afterShow, false);
+                    // Verify tailFlyout is the lone flyout in the cascade.
+                    this.verifyCascade([tailFlyout]); 
+                    complete();
+                };
+
+                tailFlyout.addEventListener("aftershow", afterShow, false);
+
+                // (1) This will synchronously add the tailFlyout to the end of the cascadingStack and start its 
+                // asynchronous show animation.
+                tailFlyout.show(); 
+                
+                // (2) This will synchronously remove the headFlyout and all its subFlyouts from the cascadingStack
+                // and call hide() on each of them them. All of the flyouts except for the tail flyout were already
+                // visible, so they will begin an asynchronous hide animation. The tail flyout is still doing a show
+                // animation, so it will set its _doNext operation to "hide", which will be resolved asynchronously 
+                // after the tail flyout's current animation completes. 
+                headFlyout.hide(); 
+                
+                // (3) This will synchronously add the tail flyout into the cascade. Tail flyout is still doing the
+                // original show animation from (1), so this will override the _doNext operation from "hide" to "show", 
+                // which will be resolved asynchronously after the tail flyout's current animation completes. In the
+                // case that the tail flyout is already shown, the resolution of _checkDoNext will nop.
+                tailFlyout.show(); 
+
+            });
+        }
     }
 
     // Test Class for Cascading Flyout unit tests.
@@ -543,9 +626,9 @@ module CorsicaTests {
         }
 
         // Implementation of Abstract chainFlyouts Method.
-        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
-            // Chain the tail Flyout to the head Flyout.
-            tail.anchor = head.element;
+        chainFlyouts(parentFlyout: WinJS.UI.PrivateFlyout, subFlyout: WinJS.UI.PrivateFlyout): void {
+            // Chain the subFlyout to the parentFlyout.
+            subFlyout.anchor = parentFlyout.element;
         }
     }
 
@@ -627,10 +710,11 @@ module CorsicaTests {
         }
 
         // Implementation of Abstract chainFlyouts Method.
-        chainFlyouts(head: WinJS.UI.PrivateFlyout, tail: WinJS.UI.PrivateFlyout): void {
-            // Chain the tail Menu to the head Menu.
-            var menuCommand = head.element.querySelector("#" + this.secondCommandId).winControl;
-            menuCommand.flyout = tail;
+        chainFlyouts(parentMenu: WinJS.UI.PrivateFlyout, subMenu: WinJS.UI.PrivateFlyout): void {
+            // Chain the subMenu to the parentMenu. 
+            var commandInParentMenu = parentMenu.element.querySelector("#" + this.secondCommandId).winControl;
+            subMenu.anchor = commandInParentMenu;
+            commandInParentMenu.flyout = subMenu;
         }
 
         //
