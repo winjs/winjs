@@ -151,8 +151,8 @@ function _reset() {
 // Figure out color theme
 var tag = _Global.document.createElement(Constants.themeDetectionTag);
 _Global.document.head.appendChild(tag);
-var theme = _Global.getComputedStyle(tag).opacity;
-isDarkTheme = theme === "0";
+var cs = _Global.getComputedStyle(tag);
+isDarkTheme = cs && cs.opacity === "0";
 tag.parentElement.removeChild(tag);
 
 try {

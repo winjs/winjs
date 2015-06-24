@@ -230,6 +230,17 @@ module CorsicaTests {
                 complete: complete
             });
         }
+
+        testAccentsInDisplayNoneIFrameDoesNotCrash(complete) {
+            var iframe = document.createElement("iframe");
+            iframe.style.display = "none";
+            iframe.src = "$(TESTDATA)/WinJSSandbox.html";
+            document.body.appendChild(iframe);
+            iframe.contentWindow.onerror = () => {
+                LiveUnit.Assert.fail("Exception in loading WinJS in a display:none iframe");
+            };
+            iframe.onload = complete;
+        }
     }
 }
     LiveUnit.registerTestClass("CorsicaTests.AccentTests");
