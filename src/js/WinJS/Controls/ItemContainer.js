@@ -154,6 +154,9 @@ define([
                     changeFocus: function () { },
                     selectRange: function (firstIndex, lastIndex) {
                         return that._selection.set({ firstIndex: firstIndex, lastIndex: lastIndex });
+                    },
+                    disablePressAnimation: function () {
+                        return false;
                     }
                 }, {
                     pressedEntity: {
