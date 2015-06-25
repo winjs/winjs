@@ -653,6 +653,8 @@ declare module WinJS {
             sections: WinJS.Binding.List<PrivateHubSection>;
             _viewportElement;
 
+            _isInteractive(element: Element): boolean;
+
             static _EventName;
             static _ClassName;
             static LoadingState;

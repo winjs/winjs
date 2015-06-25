@@ -624,6 +624,13 @@ module WinJSTests {
                 complete();
             });
         }
+
+        testHubCrashesWithSVGHeaders() {
+            var svgCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+
+            var hub = <WinJS.UI.PrivateHub>new WinJS.UI.Hub();
+            hub._isInteractive(svgCircle);
+        }
     }
 
     if (WinJS.UI.isAnimationEnabled()) {
