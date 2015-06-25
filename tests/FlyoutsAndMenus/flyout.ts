@@ -16,6 +16,8 @@ module CorsicaTests {
 
     var Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout;
 
+    interface IMarginBox { top: number; bottom: number; left: number; right: number; };
+
     export class FlyoutTests {
 
         setUp() {
@@ -178,22 +180,22 @@ module CorsicaTests {
 
 
     testHiddenProperty = function (complete) {
-        var flyout = new WinJS.UI.Flyout(_element);
-        flyout.anchor = document.body;
+            var flyout = new WinJS.UI.Flyout(_element);
+            flyout.anchor = document.body;
 
-        flyout.addEventListener("aftershow", function () {
-            LiveUnit.Assert.isFalse(flyout.hidden);
-            flyout.hidden = true;
-            LiveUnit.Assert.isTrue(flyout.hidden);
-            flyout.addEventListener("afterhide", function () {
+            flyout.addEventListener("aftershow", function () {
+                LiveUnit.Assert.isFalse(flyout.hidden);
+                flyout.hidden = true;
                 LiveUnit.Assert.isTrue(flyout.hidden);
-                complete();
+                flyout.addEventListener("afterhide", function () {
+                    LiveUnit.Assert.isTrue(flyout.hidden);
+                    complete();
+                });
             });
-        });
-        LiveUnit.Assert.isTrue(flyout.hidden);
-        flyout.hidden = false;
-        LiveUnit.Assert.isFalse(flyout.hidden);
-    }
+            LiveUnit.Assert.isTrue(flyout.hidden);
+            flyout.hidden = false;
+            LiveUnit.Assert.isFalse(flyout.hidden);
+        }
 
 
     testFlyoutDispose = function () {
@@ -549,6 +551,159 @@ module CorsicaTests {
                 msg = "Flyout.hide should move focus before the 'afterhide' event";
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 return OverlayHelpers.hide(flyout);
+            });
+        }
+
+        testShowAt(complete) {
+            // Verifies that calling Flyout.showAt(point) with an "in bounds point" will align the flyout borderbox with the point specified.
+            // An "in bounds point" is defined as a point where the borderbox of the flyout can be positioned such that no edge of the flyout's 
+            // marginbox overruns any edge of the visual viewport. 
+
+            var flyout = new Flyout(_element, { anchor: document.body });
+
+            var requiredWindowDimension = 100;
+            // For this test to be valid, the Flyout's MarginBox must fit within the confines of the visual.
+            // viewport after we've aligned the top / left of the Flyout's borderbox to the specified point.
+            // Otherwise its considered an out of bounds point and is handled in a later test case.
+            LiveUnit.Assert.isTrue(window.innerWidth >= requiredWindowDimension, "TEST ERROR: test expects visual viewport width >= " + requiredWindowDimension + "px");
+            LiveUnit.Assert.isTrue(window.innerHeight >= requiredWindowDimension, "TEST ERROR: test expects visual viewport height >= " + requiredWindowDimension + "px");
+
+            // Find a valid "in bounds point" within the window to pass to Flyout.showAt()
+            var style = flyout.element.style;
+            var contentSize = 50;
+            var margins = WinJS.Utilities._getPreciseMargins(flyout.element);
+
+            style.width = contentSize + "px";
+            style.minWidth = contentSize + "px";
+            style.maxWidth = contentSize + "px";
+            style.height = contentSize + "px";
+            style.maxHeight = contentSize + "px";
+            style.minHeight = contentSize + "px";
+
+            // Make sure the point we choose for the top/left of the borderbox also leaves the marginbox clear of the viewport top/left edge.
+            var testX = 2 + margins.left;
+            var testY = 2 + margins.top;
+
+            function testShowAt_WithCoordinates(): WinJS.Promise<any> {
+                var coordinates = { x: testX, y: testY };
+                return verifyPositionOnScreen(coordinates, "Coordinates");
+            }
+
+            function testShowAt_WithMouseEvent(): WinJS.Promise<any> {
+                // API requires clientX and clientY properties. 
+                var mouseEventObjectShim = { clientX: testX, clientY: testY };
+                return verifyPositionOnScreen(mouseEventObjectShim, "MouseEventObj");
+            }
+
+            function verifyPositionOnScreen(testParameter, testParameterType): WinJS.Promise<any> {
+                // Verify that the flyout is positioned with the top left corner of its border box located at
+                // the location specified by the testParameter.
+                return new WinJS.Promise(function (completePromise) {
+                    flyout.onaftershow = () => {
+                        flyout.onaftershow = null;
+                        var flyoutRect = flyout.element.getBoundingClientRect();
+
+                        LiveUnit.Assert.areEqual(testY, flyoutRect.top,
+                            testParameterType + ": Flyout borderbox should be top aligned with the y coordinate");
+                        LiveUnit.Assert.areEqual(testX, flyoutRect.left,
+                            testParameterType + ": Flyout borderbox should be left aligned with the x coordinate");
+
+                        flyout.onafterhide = function () {
+                            flyout.onafterhide = null;
+                            completePromise();
+                        }
+                        flyout.hide();
+                    };
+
+                    flyout.showAt(testParameter);
+                });
+            }
+
+            testShowAt_WithCoordinates()
+                .then(testShowAt_WithMouseEvent)
+                .then(complete);
+        }
+
+        testShowAt_Boundaries(complete) {
+            // Verify that when showAt is called:
+            // if any edge of the flyout's marginbox would clip through the corresponding edge of the visual viewport, 
+            // then: the flyout's margin box is repositioned such that the clipping edge is instead pinned to the 
+            // corresponding viewport edge.
+
+            function getLocation(flyout: WinJS.UI.PrivateFlyout): IMarginBox {
+                // Returns locaton of the Flyout's margin box.
+                var margins = WinJS.Utilities._getPreciseMargins(flyout.element);
+                var borderBox = flyout.element.getBoundingClientRect();
+                return {
+                    top: borderBox.top - margins.top,
+                    right: borderBox.right + margins.right,
+                    bottom: borderBox.bottom + margins.bottom,
+                    left: borderBox.left - margins.left,
+                }
+            }
+
+            function asyncShowAt(flyout: WinJS.UI.PrivateFlyout, options: { x: number; y: number; }) {
+                return new WinJS.Promise((completePromise) => {
+
+                    flyout.addEventListener("aftershow", function afterShow() {
+                        flyout.removeEventListener("aftershow", afterShow, false);
+                        completePromise();
+                    }, false);
+
+                    if (flyout.hidden) {
+                        flyout.showAt(options);
+                    } else {
+                        flyout.addEventListener("afterhide", function afterHide() {
+                            flyout.removeEventListener("afterhide", afterHide, false);
+                            flyout.showAt(options);
+                        }, false);
+
+                        flyout.hide();
+                    }
+                });
+            }
+
+            var flyout = new Flyout(_element, { anchor: document.body });
+            var marginBox: IMarginBox;
+
+            // Test Cases: 
+            var overrunTopLeft = { x: -2, y: -2 };
+            var overrunTopRight = { x: window.innerWidth, y: -2 };
+            var overrunBottomLeft = { x: -2, y: window.innerHeight };
+            var overrunBottomRight = { x: window.innerWidth, y: window.innerHeight };
+
+            var msg = "Top left boundary: ";
+            asyncShowAt(flyout, overrunTopLeft)
+                .then(() => {
+                    marginBox = getLocation(flyout);
+                    Helper.Assert.areFloatsEqual(0, marginBox.left, msg + "flyout should not overrun left edge", 1);
+                    Helper.Assert.areFloatsEqual(0, marginBox.top, msg + "flyout should not overrun top edge", 1);
+
+                    msg = "Top right boundary: ";
+                    return asyncShowAt(flyout, overrunTopRight);
+                })
+                .then(() => {
+                    marginBox = getLocation(flyout);
+                    Helper.Assert.areFloatsEqual(window.innerWidth, marginBox.right, msg + "flyout should not overrun right edge", 1);
+                    Helper.Assert.areFloatsEqual(0, marginBox.top, msg + "flyout should not overrun top edge", 1);
+
+                    msg = "Bottom left boundary: ";
+                    return asyncShowAt(flyout, overrunBottomLeft)
+                })
+                .then(() => {
+                    marginBox = getLocation(flyout);
+                    Helper.Assert.areFloatsEqual(0, marginBox.left, msg + "flyout should not overrun left edge", 1);
+                    Helper.Assert.areFloatsEqual(window.innerHeight, marginBox.bottom, msg + "flyout should not overrun bottom edge", 1);
+
+                    msg = "Bottom right boundary: ";
+                    return asyncShowAt(flyout, overrunBottomRight)
+                })
+                .done(() => {
+                    marginBox = getLocation(flyout);
+                    Helper.Assert.areFloatsEqual(window.innerWidth, marginBox.right, msg + "flyout should not overrun right edge", 1);
+                    Helper.Assert.areFloatsEqual(window.innerHeight, marginBox.bottom, msg + "flyout should not overrun bottom edge", 1);
+
+                    complete();
                 });
         }
     }

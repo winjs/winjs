@@ -30,7 +30,7 @@ define([
          .win-menu-containsflyoutcommand button.win-command-flyout-activated:before", [
         { name: "background-color", value: _Accents.ColorTypes.accent },
         { name: "border-color", value: _Accents.ColorTypes.accent },
-    ]);
+         ]);
 
     _Accents.createAccentRule(".win-flyout, .win-settingsflyout", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
 
@@ -298,9 +298,9 @@ define([
                     set: function (hidden) {
                         var currentlyHidden = this.hidden;
                         if (!hidden && currentlyHidden) {
-                            this._show();
+                            this.show();
                         } else if (hidden && !currentlyHidden) {
-                            this._hide();
+                            this.hide();
                         }
                     }
                 },
@@ -352,11 +352,14 @@ define([
                             this._queuedToHide = [];
                         }
 
+                        // Do our derived classes show stuff 
+                        this._beforeShow()
+
                         // Send our "beforeShow" event
                         this._sendEvent(_Overlay.beforeShow);
 
                         // Need to measure
-                        this._findPosition();
+                        this._ensurePosition();
 
                         // Make sure it's visible, and fully opaque.
                         // Do the popup thing, sending event afterward.
@@ -372,8 +375,13 @@ define([
                     return false;
                 },
 
+                _beforeShow: function _Overlay_beforeShow() {
+                    // Nothing by default
+                },
+
                 // Flyout in particular will need to measure our positioning.
-                _findPosition: function _Overlay_findPosition() {
+                _ensurePosition: function _Overlay_ensurePosition() {
+                    // Nothing by default
                 },
 
                 _baseEndShow: function _Overlay_baseEndShow() {
@@ -386,9 +394,6 @@ define([
 
                     this._element.winAnimating = "";
 
-                    // Do our derived classes show stuff
-                    this._endShow();
-
                     // We're shown now
                     if (this._doNext === "show") {
                         this._doNext = "";
@@ -400,11 +405,6 @@ define([
 
                     // If we had something queued, do that
                     Scheduler.schedule(this._checkDoNext, Scheduler.Priority.normal, this, "WinJS.UI._Overlay._checkDoNext");
-
-                },
-
-                _endShow: function _Overlay_endShow() {
-                    // Nothing by default
                 },
 
                 _baseHide: function _Overlay_baseHide() {
@@ -475,6 +475,9 @@ define([
                         this._doNext = "";
                     }
 
+                    // Do our derived classes hide stuff
+                    this._afterHide();
+
                     // After hiding, send our "afterHide" event
                     this._sendEvent(_Overlay.afterHide);
                     this._writeProfilerMark("hide,StopTM"); // Overlay writes the stop profiler mark for all of its derived classes.
@@ -493,6 +496,10 @@ define([
                 // focus move events. _beforeEndHide is a good hook for the Overlay to move focus
                 // elsewhere before its DOM element gets hidden.
                 _beforeEndHide: function _Overlay_beforeEndHide() {
+                    // Nothing by default
+                },
+
+                _afterHide: function _Overlay_afterHide() {
                     // Nothing by default
                 },
 

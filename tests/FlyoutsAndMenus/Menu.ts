@@ -14,6 +14,8 @@ module CorsicaTests {
         Menu = <typeof WinJS.UI.PrivateMenu> WinJS.UI.Menu,
         Flyout = <typeof WinJS.UI.PrivateFlyout> WinJS.UI.Flyout;
 
+    interface IMarginBox { top: number; bottom: number; left: number; right: number; };
+
     function verifyAllCommandsDeactivated(commands: Array<WinJS.UI.PrivateMenuCommand>, msg: string = "") {
         commands.forEach((command) => {
             OverlayHelpers.Assert.verifyMenuFlyoutCommandDeactivated(command, msg);
@@ -662,10 +664,10 @@ module CorsicaTests {
                     c1.element.focus();
                 });
         };
-        
+
         testAdaptiveSpacing = function (complete) {
             var InputTypes = WinJS.UI._InputTypes;
-            
+
             function test(inputType, expectedClass) {
                 var menuElement = document.createElement('div');
                 document.body.appendChild(menuElement);
@@ -676,8 +678,8 @@ module CorsicaTests {
                         new MenuCommand(null, { id: 'c2', type: 'button' }),
                         new MenuCommand(null, { id: 'c3', type: 'button' })
                     ]
-                });                
-                
+                });
+
                 WinJS.UI._lastInputType = inputType;
                 return OverlayHelpers.show(menu).then(() => {
                     LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, expectedClass),
@@ -685,21 +687,21 @@ module CorsicaTests {
                     OverlayHelpers.disposeAndRemove(menuElement);
                 });
             }
-            
+
             WinJS.Promise.as().then(() => {
                 return test(InputTypes.mouse, _Constants.menuMouseSpacingClass);
             }).then(() => {
-                return test(InputTypes.keyboard, _Constants.menuMouseSpacingClass);
-            }).then(() => {
-                return test(InputTypes.touch, _Constants.menuTouchSpacingClass);
-            }).then(() => {
-                return test(InputTypes.pen, _Constants.menuTouchSpacingClass);
-            }).then(complete);
+                    return test(InputTypes.keyboard, _Constants.menuMouseSpacingClass);
+                }).then(() => {
+                    return test(InputTypes.touch, _Constants.menuTouchSpacingClass);
+                }).then(() => {
+                    return test(InputTypes.pen, _Constants.menuTouchSpacingClass);
+                }).then(complete);
         }
-        
+
         testAdaptiveSpacingDoesntChangeWhileShown = function (complete) {
             var InputTypes = WinJS.UI._InputTypes;
-            
+
             var menuElement = document.createElement('div');
             document.body.appendChild(menuElement);
             var menu = new Menu(menuElement, {
@@ -709,26 +711,26 @@ module CorsicaTests {
                     new MenuCommand(null, { id: 'c2', type: 'button' }),
                     new MenuCommand(null, { id: 'c3', type: 'button' })
                 ]
-            });                
-            
+            });
+
             WinJS.UI._lastInputType = InputTypes.mouse;
             return OverlayHelpers.show(menu).then(() => {
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
                     "Menu should use mouse spacing when last input type was mouse");
-                    
+
                 WinJS.UI._lastInputType = InputTypes.touch
                 menu.show(document.body);
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
                     "Menu shouldn't have switched spacing while it was shown");
                 OverlayHelpers.disposeAndRemove(menuElement);
-                
+
                 complete();
             });
         }
-        
+
         testAdaptiveSpacingRecomputedWhenShowing = function (complete) {
             var InputTypes = WinJS.UI._InputTypes;
-            
+
             var menuElement = document.createElement('div');
             document.body.appendChild(menuElement);
             var menu = new Menu(menuElement, {
@@ -738,28 +740,28 @@ module CorsicaTests {
                     new MenuCommand(null, { id: 'c2', type: 'button' }),
                     new MenuCommand(null, { id: 'c3', type: 'button' })
                 ]
-            });                
-            
+            });
+
             WinJS.UI._lastInputType = InputTypes.mouse;
             return OverlayHelpers.show(menu).then(() => {
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
                     "Menu should use mouse spacing when last input type was mouse");
-                
+
                 return OverlayHelpers.hide(menu);
             }).then(() => {
-                WinJS.UI._lastInputType = InputTypes.touch;
-                return OverlayHelpers.show(menu);
-            }).then(() => {
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuTouchSpacingClass),
-                    "Menu should use touch spacing when reshowing and last input type was touch");
-                OverlayHelpers.disposeAndRemove(menuElement);
-                complete();
-            });
+                    WinJS.UI._lastInputType = InputTypes.touch;
+                    return OverlayHelpers.show(menu);
+                }).then(() => {
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuTouchSpacingClass),
+                        "Menu should use touch spacing when reshowing and last input type was touch");
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    complete();
+                });
         }
-        
+
         testAdaptiveSpacingConsistentInCascade = function (complete) {
             var InputTypes = WinJS.UI._InputTypes;
-            
+
             var menuElement = document.createElement('div');
             document.body.appendChild(menuElement);
             var commands = [
@@ -780,25 +782,188 @@ module CorsicaTests {
                     new MenuCommand(null, { id: 'c2', type: 'button' }),
                     new MenuCommand(null, { id: 'c3', type: 'button' })
                 ]
-            }); 
-                
+            });
+
             WinJS.UI._lastInputType = InputTypes.mouse;
             return OverlayHelpers.show(menu).then(() => {
                 LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
                     "Menu should use mouse spacing when last input type was mouse");
-                
+
                 WinJS.UI._lastInputType = InputTypes.touch;
                 OverlayHelpers.show(subMenu);
             }).then(() => {
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
-                    "Menu shouldn't have switched spacing while it was shown");
-                LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(subMenuElement, _Constants.menuMouseSpacingClass),
-                    "Sub menu should use mouse spacing because that is what the rest of the cascade is using");
-                
-                OverlayHelpers.disposeAndRemove(menuElement);
-                OverlayHelpers.disposeAndRemove(subMenuElement);
-                complete();
-            });
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(menuElement, _Constants.menuMouseSpacingClass),
+                        "Menu shouldn't have switched spacing while it was shown");
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(subMenuElement, _Constants.menuMouseSpacingClass),
+                        "Sub menu should use mouse spacing because that is what the rest of the cascade is using");
+
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    OverlayHelpers.disposeAndRemove(subMenuElement);
+                    complete();
+                });
+        }
+
+        testShowAt(complete) {
+
+            // Verifies that calling Menu.showAt(point) with an "in bounds point" will align the menu borderbox with the point specified.
+            // An "in bounds point" is defined as a point where the borderbox of the menu can be positioned such that no edge of the menu's 
+            // marginbox overruns any edge of the visual viewport. 
+
+            var menuElement = document.createElement('div');
+            document.body.appendChild(menuElement);
+            var menu = new Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
+
+            var requiredWindowDimension = 100;
+            // For this test to be valid, the Menu's MarginBox must fit within the confines of the visual.
+            // viewport after we've aligned the top / left of the Menu's borderbox to the specified point.
+            // Otherwise its considered an out of bounds point and is handled in a later test case.
+            LiveUnit.Assert.isTrue(window.innerWidth >= requiredWindowDimension, "TEST ERROR: test expects visual viewport width >= " + requiredWindowDimension + "px");
+            LiveUnit.Assert.isTrue(window.innerHeight >= requiredWindowDimension, "TEST ERROR: test expects visual viewport height >= " + requiredWindowDimension + "px");
+
+            // Find a valid "in bounds point" within the window to pass to Menu.showAt()
+            var style = menu.element.style;
+            var contentSize = 50;
+            var margins = WinJS.Utilities._getPreciseMargins(menu.element);
+
+            style.width = contentSize + "px";
+            style.minWidth = contentSize + "px";
+            style.maxWidth = contentSize + "px";
+            style.height = contentSize + "px";
+            style.maxHeight = contentSize + "px";
+            style.minHeight = contentSize + "px";
+
+            // Make sure the point we choose for the top/left of the borderbox also leaves the marginbox clear of the viewport top/left edge.
+            var testX = 2 + margins.left;
+            var testY = 2 + margins.top;
+
+            function testShowAt_WithCoordinates(): WinJS.Promise<any> {
+                var coordinates = { x: testX, y: testY };
+                return verifyPositionOnScreen(coordinates, "Coordinates");
+            }
+
+            function testShowAt_WithMouseEvent(): WinJS.Promise<any> {
+                // API requires clientX and clientY properties. 
+                var pointerEventObjectShim = { clientX: testX, clientY: testY };
+                return verifyPositionOnScreen(pointerEventObjectShim, "MouseEventObj");
+            }
+
+            function verifyPositionOnScreen(testParameter, testParameterType): WinJS.Promise<any> {
+                // Verify that the menu is positioned with the top left corner of its border box located at
+                // the location specified by the testParameter.
+                return new WinJS.Promise(function (completePromise) {
+                    menu.onaftershow = () => {
+                        menu.onaftershow = null;
+                        var menuRect = menu.element.getBoundingClientRect();
+
+                        LiveUnit.Assert.areEqual(testY, menuRect.top,
+                            testParameterType + ": Menu should be top aligned with the y coordinate");
+                        LiveUnit.Assert.areEqual(testX, menuRect.left,
+                            testParameterType + ": Menu should be left aligned with the x coordinate");
+
+                        menu.onafterhide = function () {
+                            menu.onafterhide = null;
+                            completePromise();
+                        }
+                        menu.hide();
+                    };
+
+                    menu.showAt(testParameter);
+                });
+            }
+
+            testShowAt_WithCoordinates()
+                .then(testShowAt_WithMouseEvent)
+                .done(() => {
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    complete();
+                });
+        }
+
+        testShowAt_Boundaries(complete) {
+            // Verify that when showAt is called:
+            // if any edge of the menu would clip through the corresponding edge of the visual viewport, 
+            // then: the menu is repositioned such that the clipping edge is instead pinned to the 
+            // corresponding viewport edge.
+
+
+            function getLocation(menu: WinJS.UI.PrivateMenu): IMarginBox {
+                // Returns locaton of the Menu's margin box.
+                var margins = WinJS.Utilities._getPreciseMargins(menu.element);
+                var borderBox = menu.element.getBoundingClientRect();
+                return {
+                    top: borderBox.top - margins.top,
+                    right: borderBox.right + margins.right,
+                    bottom: borderBox.bottom + margins.bottom,
+                    left: borderBox.left - margins.left,
+                }
+            }
+
+            function asyncShowAt(menu: WinJS.UI.PrivateMenu, options: { x: number; y: number; }) {
+                return new WinJS.Promise((completePromise) => {
+
+                    menu.addEventListener("aftershow", function afterShow() {
+                        menu.removeEventListener("aftershow", afterShow, false);
+                        completePromise();
+                    }, false);
+
+                    if (menu.hidden) {
+                        menu.showAt(options);
+                    } else {
+                        menu.addEventListener("afterhide", function afterHide() {
+                            menu.removeEventListener("afterhide", afterHide, false);
+                            menu.showAt(options);
+                        }, false);
+
+                        menu.hide();
+                    }
+                });
+            }
+
+            var menuElement = document.createElement('div');
+            document.body.appendChild(menuElement);
+            var menu = new Menu(menuElement, { commands: { type: 'separator', id: 'sep' } });
+            var marginBox: IMarginBox;
+
+            // Test Cases: 
+            var overrunTopLeft = { x: -2, y: -2 };
+            var overrunTopRight = { x: window.innerWidth, y: -2 };
+            var overrunBottomLeft = { x: -2, y: window.innerHeight };
+            var overrunBottomRight = { x: window.innerWidth, y: window.innerHeight };
+
+            var msg = "Top left boundary: ";
+            asyncShowAt(menu, overrunTopLeft)
+                .then(() => {
+                    marginBox = getLocation(menu);
+                    Helper.Assert.areFloatsEqual(0, marginBox.left, msg + "menu should not overrun left edge", 1);
+                    Helper.Assert.areFloatsEqual(0, marginBox.top, msg + "menu should not overrun top edge", 1);
+
+                    msg = "Top right boundary: ";
+                    return asyncShowAt(menu, overrunTopRight);
+                })
+                .then(() => {
+                    marginBox = getLocation(menu);
+                    Helper.Assert.areFloatsEqual(window.innerWidth, marginBox.right, msg + "menu should not overrun right edge", 1);
+                    Helper.Assert.areFloatsEqual(0, marginBox.top, msg + "menu should not overrun top edge", 1);
+
+                    msg = "Bottom left boundary: ";
+                    return asyncShowAt(menu, overrunBottomLeft)
+                })
+                .then(() => {
+                    marginBox = getLocation(menu);
+                    Helper.Assert.areFloatsEqual(0, marginBox.left, msg + "menu should not overrun left edge", 1);
+                    Helper.Assert.areFloatsEqual(window.innerHeight, marginBox.bottom, msg + "menu should not overrun bottom edge", 1);
+
+                    msg = "Bottom right boundary: ";
+                    return asyncShowAt(menu, overrunBottomRight)
+                })
+                .done(() => {
+                    marginBox = getLocation(menu);
+                    Helper.Assert.areFloatsEqual(window.innerWidth, marginBox.right, msg + "menu should not overrun right edge", 1);
+                    Helper.Assert.areFloatsEqual(window.innerHeight, marginBox.bottom, msg + "menu should not overrun bottom edge", 1);
+
+                    OverlayHelpers.disposeAndRemove(menuElement);
+                    complete();
+                });
         }
     }
 }

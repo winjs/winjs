@@ -224,30 +224,20 @@ define([
                     this._showOnlyCommands(commands, true);
                 },
 
-                show: function (anchor, placement, alignment) {
-                    /// <signature helpKeyword="WinJS.UI.Menu.show">
-                    /// <summary locid="WinJS.UI.Menu.show">
-                    /// Shows the Menu, if hidden, regardless of other states.
-                    /// </summary>
-                    /// <param name="anchor" type="HTMLElement" domElement="true" locid="WinJS.UI.Menu.show_p:anchor">
-                    /// The DOM element, or ID of a DOM element,  to anchor the Menu. This parameter overrides the anchor property for this method call only.
-                    /// </param>
-                    /// <param name="placement" type="object" domElement="false" locid="WinJS.UI.Menu.show_p:placement">
-                    /// The placement of the Menu to the anchor: 'auto' (default), 'autohorizontal', 'autovertical', 'top', 'bottom', 'left', or 'right'. This parameter overrides the placement
-                    /// property for this method call only.
-                    /// </param>
-                    /// <param name="alignment" type="object" domElement="false" locid="WinJS.UI.Menu.show_p:alignment">
-                    /// For 'top' or 'bottom' placement, the alignment of the Menu to the anchor's edge: 'center' (default), 'left', or 'right'. This parameter
-                    /// overrides the alignment property for this method call only.
-                    /// </param>
-                    /// <compatibleWith platform="Windows" minVersion="8.0"/>
-                    /// </signature>
-                    // Just call private version to make appbar flags happy
-                    this._writeProfilerMark("show,StartTM"); // The corresponding "stop" profiler mark is handled in _Overlay._baseEndShow().
-                    this._show(anchor, placement, alignment);
+                _hide: function Menu_hide() {
+                    if (this._hoverPromise) {
+                        this._hoverPromise.cancel();
+                    }
+                    Flyout.Flyout.prototype._hide.call(this);
+                },
+                
+                _afterHide: function Menu_afterHide() {
+                    _ElementUtilities.removeClass(this.element, _Constants.menuMouseSpacingClass);
+                    _ElementUtilities.removeClass(this.element, _Constants.menuTouchSpacingClass);
                 },
 
-                _show: function Menu_show(anchor, placement, alignment) {
+                _beforeShow: function Menu_beforeShow() {
+                    // Make sure menu commands display correctly
                     if (!_ElementUtilities.hasClass(this.element, _Constants.menuMouseSpacingClass) && !_ElementUtilities.hasClass(this.element, _Constants.menuTouchSpacingClass)) {
                         // The Menu's spacing shouldn't change while it is already shown. Only
                         // add a spacing class if it doesn't already have one. It will get
@@ -259,26 +249,8 @@ define([
                                 _Constants.menuTouchSpacingClass
                         );
                     }
-                    // Call flyout show 
-                    this._baseFlyoutShow(anchor, placement, alignment);
 
-                    // Menu will need to adjust MenuCommand layouts based on the various 
-                    // types of commands visible in our Menu, but only after we send the beforeshow
-                    // event, so the developer has a chance to show or hide more commands.
-                    // Flyout's _findPosition will make that call.
-                },
-
-                _hide: function Menu_hide() {
-                    if (this._hoverPromise) {
-                        this._hoverPromise.cancel();
-                    }
-                    Flyout.Flyout.prototype._hide.call(this);
-                },
-                
-                _beforeEndHide: function Menu_beforeEndHide() {
-                    _ElementUtilities.removeClass(this.element, _Constants.menuMouseSpacingClass);
-                    _ElementUtilities.removeClass(this.element, _Constants.menuTouchSpacingClass);
-                    Flyout.Flyout.prototype._beforeEndHide.call(this);
+                    this._checkMenuCommands();
                 },
 
                 _addCommand: function Menu_addCommand(command) {
@@ -313,8 +285,10 @@ define([
                     }
                 },
 
-                // Called when we show/hide commands or by flyout's _findPosition when the Menu is showing.
                 _checkMenuCommands: function Menu_checkMenuCommands() {
+                    // Make sure menu commands display correctly.
+                    // Called when we show/hide commands or by _beforeShow() when the Menu is showing
+
                     var menuCommands = this._element.querySelectorAll(".win-command"),
                         hasToggleCommands = false,
                         hasFlyoutCommands = false;
@@ -331,7 +305,7 @@ define([
                             }
                         }
                     }
-
+                    
                     _ElementUtilities[hasToggleCommands ? 'addClass' : 'removeClass'](this._element, _Constants.menuContainsToggleCommandClass);
                     _ElementUtilities[hasFlyoutCommands ? 'addClass' : 'removeClass'](this._element, _Constants.menuContainsFlyoutCommandClass);
                 },
