@@ -34,39 +34,48 @@
     display: inline-block;
 }
 .win-hub-vertical .win-hub-surface {
-    width: 100%;
+    width: ~"calc(100% - 24px)";
     padding: 0px 12px 8px 12px;
+    margin-top: -24px; /* Keep in sync w/ hub-section padding-top */
 }
 .win-hub-horizontal .win-hub-surface {
     height: 100%;
-    padding: 0px 0px 0px 12px;
+    padding-left: 12px;
+    
+    .RTL({
+        padding-left: 0;
+        padding-right: 12px;
+    });
 }
 .win-hub-section {
     display: inline-block;
-    padding: 0px 24px 0px 0px;
     vertical-align: top;
     white-space: normal;
 }
-.win-hub-horizontal {
+.win-hub-horizontal {    
     .win-hub-section {
         height: 100%;
+        padding-right: 24px;
+        
+        .RTL({
+            padding-right: 0;
+            padding-left: 24px;
+        });
     }
-
+    
     .win-hub-section-header {
-        margin-top: 44px;
+        // Put margin-top on header instead of section to enable full height hero sections
+        margin-top: 62px;
     }
 }
-.win-hub-vertical {
+.win-hub-vertical {    
     .win-hub-section {
-        width: ~"calc(100% - 24px)";
-    }
-
-    .win-hub-section-header {
-        margin-top: 16px;
+        width: 100%;
+        padding-top: 24px; /* Keep in sync w/ hub-surface margin-top */
     }
 }
 .win-hub-section-header {
-    margin: 4px 0px 9px 0px;
+    margin-bottom: 9px;
     height: 28px;
 }
 
@@ -102,15 +111,13 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
     outline: none;
 }
 .win-hub-section-header-content {
-    ._win-type-subtitle();
+    ._win-type-subtitle(1.5);
     #flex > .flex(@grow: 1);
     text-align: left;
     vertical-align: bottom;
-    padding-top: 1px;
     overflow: hidden;
     text-overflow: clip;
     white-space: nowrap;
-    line-height: 1.5;
 
     .RTL({
         text-align: right;
@@ -135,8 +142,8 @@ button.win-hub-section-header-tabstop:-ms-keyboard-active {
     });
 }
 .win-hub-horizontal .win-hub-section-content {
-    // 81px represents the 44px of margin above section header + 9px below + 28px of height of section header
-    height: ~"calc(100% - 81px)";
+    // 99px represents total height of section header
+    height: ~"calc(100% - 99px)";
 }
 .win-hub-vertical .win-hub-section-content {
     width: 100%;
