@@ -353,7 +353,7 @@ define([
                         }
 
                         // Do our derived classes show stuff 
-                        this._beforeShow()
+                        this._beforeShow();
 
                         // Send our "beforeShow" event
                         this._sendEvent(_Overlay.beforeShow);

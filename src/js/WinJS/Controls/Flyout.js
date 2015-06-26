@@ -267,16 +267,16 @@ define([
                         // FINALLY:
                         //  add flyoutToAdd to the end of the cascading stack. Monitor it for events.
 
-                    var collapseFn = this.collapseAll;
-                    if (flyoutToAdd._positionRequest instanceof PositionRequests.AnchorPositioning) {
-                        var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._positionRequest.anchor);
-                        if (indexOfParentFlyout >= 0) {
-                            collapseFn = function collapseFn() {
-                                this.collapseFlyout(this.getAt(indexOfParentFlyout + 1));
-                            };
+                        var collapseFn = this.collapseAll;
+                        if (flyoutToAdd._positionRequest instanceof PositionRequests.AnchorPositioning) {
+                            var indexOfParentFlyout = this.indexOfElement(flyoutToAdd._positionRequest.anchor);
+                            if (indexOfParentFlyout >= 0) {
+                                collapseFn = function collapseFn() {
+                                    this.collapseFlyout(this.getAt(indexOfParentFlyout + 1));
+                                };
+                            }
                         }
-                    }
-                    collapseFn.call(this);
+                        collapseFn.call(this);
 
                         flyoutToAdd.element.addEventListener("keydown", this._handleKeyDownInCascade_bound, false);
                         this._cascadingStack.push(flyoutToAdd);
@@ -402,7 +402,7 @@ define([
             };
 
             var PositionRequests = {
-                AnchorPositioning: WinJS.Class.define(function AnchorPositioning_ctor(anchor, placement, alignment) {
+                AnchorPositioning: _Base.Class.define(function AnchorPositioning_ctor(anchor, placement, alignment) {
 
                     // We want to position relative to an anchor element. Anchor element is required.
 
@@ -697,7 +697,7 @@ define([
                         };
                     },
                 }),
-                CoordinatePositioning: WinJS.Class.define(function CoordinatePositioning_ctor(coordinates) {
+                CoordinatePositioning: _Base.Class.define(function CoordinatePositioning_ctor(coordinates) {
                     // Normalize coordinates since they could be a mouse/pointer event object or an {x,y} pair.
                     if (coordinates.clientX === +coordinates.clientX &&
                         coordinates.clientY === +coordinates.clientY) {
@@ -707,7 +707,7 @@ define([
                         coordinates = {
                             x: temp.clientX,
                             y: temp.clientY,
-                        }
+                        };
 
                     } else if (coordinates.x !== +coordinates.x ||
                         coordinates.y !== +coordinates.y) {
@@ -755,10 +755,10 @@ define([
                             contentHeight: nextContentHeight,
                             doesScroll: false,
                             animOffset: AnimationOffsets.top,
-                        }
+                        };
                     },
                 }),
-            }
+            };
 
             var Flyout = _Base.Class.derive(_Overlay._Overlay, function Flyout_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.Flyout.Flyout">
@@ -1175,8 +1175,6 @@ define([
                         case "right":
                             _ElementUtilities.addClass(this._element, "win-rightalign");
                             break;
-                        case "center":
-                        case "none":
                         default:
                             break;
                     }
