@@ -13,8 +13,9 @@ define([
     ],
     function toggleInit(_Global, _Base, _BaseUtils, _Events, _Resources, _Accents, _Control, _ElementUtilities) {
         "use strict";
-
-        _Accents.createAccentRule(".win-toggleswitch-on .win-toggleswitch-track", [{ name: "border-color", value: _Accents.ColorTypes.accent }]);
+        
+        _Accents.createAccentRule(".win-toggleswitch-on .win-toggleswitch-track", [{ name: "background-color", value: _Accents.ColorTypes.accent }]);
+        _Accents.createAccentRule("html.win-hoverable .win-toggleswitch-on:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) .win-toggleswitch-clickregion:hover .win-toggleswitch-track", [{ name: "background-color", value: _Accents.ColorTypes.listSelectPress }]);
 
         _Base.Namespace.define("WinJS.UI", {
             /// <field>

@@ -3,7 +3,8 @@
 .Colors(@theme) {
     .colorDefinitions(@theme);
 
-    // Rest styles
+    /// Off Styles
+    // Rest
     .win-toggleswitch-header {
         color: @baseHigh;
     }
@@ -17,15 +18,16 @@
         border-color: @baseMediumHigh;
     }
 
-    // Active styles
+    // Active
     .win-toggleswitch-pressed .win-toggleswitch-track {
-        border-color: @baseMid;
-    }
-    .win-toggleswitch-pressed .win-toggleswitch-thumb {
+        border-color: transparent;
         background-color: @baseMid;
     }
+    .win-toggleswitch-pressed .win-toggleswitch-thumb {
+        background-color: @baseWhite;
+    }
 
-    // Disabled styles
+    // Disabled
     .win-toggleswitch-disabled .win-toggleswitch-track {
         border-color: @baseLow;
     }
@@ -35,6 +37,31 @@
     .win-toggleswitch-disabled .win-toggleswitch-header,
     .win-toggleswitch-disabled .win-toggleswitch-value {
         color: @baseLow;
+    }
+
+
+    /// On styles
+    .win-toggleswitch-on {
+        // Rest
+        .win-toggleswitch-track {
+            border-color: transparent;
+        }
+        .win-toggleswitch-thumb {
+            background-color: @baseWhite;
+        }
+
+        // Active
+        &.win-toggleswitch-pressed .win-toggleswitch-track {
+            background-color: @baseMid;
+        }
+
+        // Disabled
+        &.win-toggleswitch-disabled .win-toggleswitch-track {
+            background-color: @baseLow;
+        }
+        &.win-toggleswitch-disabled .win-toggleswitch-thumb {
+            background-color: @baseLow;
+        }
     }
 }
 
@@ -49,8 +76,14 @@
     }
 
     .win-toggleswitch:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
+        // Off
         .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
             background-color: @baseHigh;
+        }
+
+        // On
+        &.win-toggleswitch-on .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
+            background-color: @baseWhite;
         }
     }
 
