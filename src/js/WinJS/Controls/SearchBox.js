@@ -284,8 +284,13 @@ define([
                     /// <param name="url" type="string" locid="WinJS.UI.SearchBox.SearchBox_createResultSuggestionImage_p:url">
                     /// The url of the image.
                     /// </param>
+                    /// <deprecated type="deprecate">
+                    /// SearchBox is deprecated and may not be available in future releases. Instead use AutoSuggestBox.
+                    /// </deprecated>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
+                    _ElementUtilities._deprecated(strings.searchBoxDeprecated);
+
                     if (_WinRT.Windows.Foundation.Uri && _WinRT.Windows.Storage.Streams.RandomAccessStreamReference) {
                         return _WinRT.Windows.Storage.Streams.RandomAccessStreamReference.createFromUri(new _WinRT.Windows.Foundation.Uri(url));
                     }
