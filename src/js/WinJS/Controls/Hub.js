@@ -885,7 +885,7 @@ define([
                     // Helper method to skip keyboarding and clicks
 
                     while (element && element !== _Global.document.body) {
-                        if (element.classList.contains("win-interactive")) {
+                        if (element.classList && element.classList.contains("win-interactive")) {
                             return true;
                         }
                         element = element.parentElement;
