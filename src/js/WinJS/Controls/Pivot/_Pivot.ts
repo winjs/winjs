@@ -28,7 +28,8 @@ import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 import _Constants = require("./_Constants");
 import _PivotItem = require("./_Item");
 
-// Force-load PivotItem
+// Force-load Dependencies
+_Hoverable.isHoverable;
 _PivotItem.PivotItem;
 
 require(["require-style!less/styles-pivot"]);
@@ -50,7 +51,7 @@ var strings = {
     get pivotViewportAriaLabel() { return _Resources._getWinJSString("ui/pivotViewportAriaLabel").value; }
 };
 
-var supportsSnap = !!(_ElementUtilities._supportsSnapPoints && _Global["HTMLElement"].prototype.msZoomTo);
+var supportsSnap = !!(_ElementUtilities._supportsSnapPoints && "inertiaDestinationX" in _Global["MSManipulationEvent"].prototype);
 var PT_MOUSE = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_MOUSE || "mouse";
 var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
 var Keys = _ElementUtilities.Key;
@@ -85,7 +86,7 @@ export class Pivot {
     _elementPointerDownPoint: { x: number; y: number; type: string; inHeaders: boolean; time: number; };
     _firstLoad = true;
     _headerItemsElWidth: number;
-    private _headersState: HeaderStateBase;
+    private _headersState: HeaderStateBase; // Must be private since HeaderStateBase type is not exported
     _hidePivotItemAnimation = Promise.wrap<any>();
     _id: string;
     _items: BindingList.List<_PivotItem.PivotItem>;
@@ -157,7 +158,6 @@ export class Pivot {
         return this._items;
     }
     set items(value: BindingList.List<_PivotItem.PivotItem>) {
-        var resetScrollPosition = !this._pendingItems;
         this._pendingItems = value;
         this._refresh();
     }
@@ -242,6 +242,7 @@ export class Pivot {
         this._updatePointerType = this._updatePointerType.bind(this);
 
         this._id = element.id || _ElementUtilities._uniqueID(element);
+        this._writeProfilerMark("constructor,StartTM");
 
         // Attaching JS control to DOM element
         element["winControl"] = this;
@@ -395,12 +396,11 @@ export class Pivot {
         this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
         this._headersState.refreshHeadersState(true);
         this._pendingRefresh = false;
-        if (this._firstLoad && this.items.length) {
-            this._headersState.handleNavigation(false, this._selectedIndex, this._selectedIndex);
-        }
 
+        this._firstLoad = true;
         this.selectedIndex = this._selectedIndex;
         this._firstLoad = false;
+
         this._recenterViewport();
 
         function attachItems(pivot: Pivot) {
@@ -446,10 +446,7 @@ export class Pivot {
 
         // This is to coalesce property setting operations such as items and scrollPosition.
         this._pendingRefresh = true;
-
-        this._loadPromise.then(() => {
-            Scheduler.schedule(this._applyProperties.bind(this), Scheduler.Priority.high);
-        });
+        Scheduler.schedule(this._applyProperties.bind(this), Scheduler.Priority.high);
     }
 
     _resizeHandler() {
@@ -524,23 +521,28 @@ export class Pivot {
             item: newItem
         };
         this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
+        var skipAnimation = this._firstLoad;
 
         var thisLoadPromise = this._loadPromise = this._loadPromise.then(() => {
             var oldItem = this._items.getAt(this.selectedIndex);
-            oldItem && this._hidePivotItem(oldItem.element, goPrev);
-            this._headersState.handleNavigation(goPrev, index, this._selectedIndex);
+            oldItem && this._hidePivotItem(oldItem.element, goPrev, skipAnimation);
+            var oldIndex = this._selectedIndex;
             this._selectedIndex = index;
+            this._headersState.handleNavigation(goPrev, index, oldIndex);
 
-            return Promise.join([newItem._process(), this._hidePivotItemAnimation, Promise.timeout(100)]).then(() => {
+            // Note: Adding Promise.timeout to force asynchrony so that thisLoadPromise
+            // is set before handler executes and compares thisLoadPromise.
+            return Promise.join([newItem._process(), this._hidePivotItemAnimation, Promise.timeout()]).then(() => {
                 if (this._disposed || this._loadPromise !== thisLoadPromise) {
                     return;
                 }
                 this._recenterViewport();
-                return this._showPivotItem(newItem.element, goPrev).then(() => {
+                return this._showPivotItem(newItem.element, goPrev, skipAnimation).then(() => {
                     if (this._disposed || this._loadPromise !== thisLoadPromise) {
                         return;
                     }
                     this._loadPromise = Promise.wrap<any>();
+                    this._writeProfilerMark("itemAnimationStop,info");
                     this._fireEvent(_EventNames.itemAnimationEnd, true, false, null);
                 });
             });
@@ -860,7 +862,13 @@ export class Pivot {
         _ElementUtilities.removeClass(this._headersContainerElement, _Constants._ClassNames.pivotShowNavButtons);
     }
 
-    _hidePivotItem(element: HTMLElement, goPrevious: boolean) {
+    _hidePivotItem(element: HTMLElement, goPrevious: boolean, skipAnimation: boolean) {
+        if (skipAnimation || !_TransitionAnimation.isAnimationEnabled()) {
+            element.style.display = "none";
+            this._hidePivotItemAnimation = Promise.wrap();
+            return this._hidePivotItemAnimation;
+        }
+
         this._hidePivotItemAnimation = _TransitionAnimation.executeTransition(element, {
             property: "opacity",
             delay: 0,
@@ -881,7 +889,7 @@ export class Pivot {
             return;
         }
 
-        if (e.currentState === 2 /* Inertia */) {
+        if (e.currentState === _ElementUtilities._MSManipulationEvent.MS_MANIPULATION_STATE_INERTIA) {
             var delta = e["inertiaDestinationX"] - this._getViewportWidth();
             if (delta > 0) {
                 this._goNext();
@@ -893,11 +901,6 @@ export class Pivot {
 
     _updatePointerType(e: PointerEvent) {
         if (this._pointerType === (e.pointerType || PT_MOUSE)) {
-            return;
-        }
-        if (this._headersContainerElement.contains(<HTMLElement>e.relatedTarget)) {
-            // Don't hide the nav button if the pointerout event is being fired from going
-            // from one element to another within the header track.
             return;
         }
 
@@ -919,15 +922,36 @@ export class Pivot {
         _ElementUtilities.addClass(this._headersContainerElement, _Constants._ClassNames.pivotShowNavButtons);
     }
 
-    _showPivotItem(element: HTMLElement, goPrevious: boolean) {
+    _showPivotItem(element: HTMLElement, goPrevious: boolean, skipAnimation: boolean) {
+        this._writeProfilerMark("itemAnimationStart,info");
         this._fireEvent(_EventNames.itemAnimationStart, true, false, null);
 
-        var backwards = goPrevious;
-        if (this._rtl) {
-            backwards = !backwards;
+        element.style.display = "";
+        if (skipAnimation || !_TransitionAnimation.isAnimationEnabled()) {
+            element.style.opacity = "";
+            this._showPivotItemAnimation = Promise.wrap();
+            return this._showPivotItemAnimation;
         }
 
-        element.style.display = "";
+        var negativeTransform = this._rtl ? !goPrevious : goPrevious;
+
+        // Find the elements to slide in
+        function filterOnScreen(element: Element) {
+            var elementBoundingClientRect = element.getBoundingClientRect();
+            // Can't check left/right since it might be scrolled off.
+            return elementBoundingClientRect.top < viewportBoundingClientRect.bottom &&
+                elementBoundingClientRect.bottom > viewportBoundingClientRect.top;
+        }
+        var viewportBoundingClientRect = this._viewportElement.getBoundingClientRect();
+        var slideGroup1Els = element.querySelectorAll(".win-pivot-slide1");
+        var slideGroup2Els = element.querySelectorAll(".win-pivot-slide2");
+        var slideGroup3Els = element.querySelectorAll(".win-pivot-slide3");
+
+        //Filter the slide groups to the elements actually on screen to avoid animating extra elements
+        slideGroup1Els = Array.prototype.filter.call(slideGroup1Els, filterOnScreen);
+        slideGroup2Els = Array.prototype.filter.call(slideGroup2Els, filterOnScreen);
+        slideGroup3Els = Array.prototype.filter.call(slideGroup3Els, filterOnScreen);
+
         this._showPivotItemAnimation = Promise.join([
             _TransitionAnimation.executeTransition(element, {
                 property: "opacity",
@@ -942,9 +966,10 @@ export class Pivot {
                 delay: 0,
                 duration: 767,
                 timing: "cubic-bezier(0.1,0.9,0.2,1)",
-                from: "translateX(" + (backwards ? "-20px" : "20px") + ")",
+                from: "translateX(" + (negativeTransform ? "-20px" : "20px") + ")",
                 to: "",
-            })
+            }),
+            Animations[negativeTransform ? "slideRightIn" : "slideLeftIn"](null, slideGroup1Els, slideGroup2Els, slideGroup3Els)
         ]);
         return this._showPivotItemAnimation;
     }
@@ -1127,6 +1152,8 @@ class HeaderStateStatic extends HeaderStateBase {
                     timing: "ease-out",
                     to: ""
                 });
+        } else {
+            this.render();
         }
     }
 
@@ -1168,7 +1195,6 @@ class HeaderStateStatic extends HeaderStateBase {
     }
 
     activateHeader(headerElement: HTMLElement) {
-        var currentActiveHeader = <HTMLElement>this.pivot._headersContainerElement.children[this.pivot.selectedIndex];
         this.setActiveHeader(headerElement);
         this.pivot._animateToPrevious = headerElement["_pivotItemIndex"] < this.pivot.selectedIndex;
         this.pivot.selectedIndex = headerElement["_pivotItemIndex"];
@@ -1202,7 +1228,6 @@ class HeaderStateOverflow extends HeaderStateBase {
     constructor(pivot: Pivot) {
         super(pivot);
 
-        this._blocked = false;
         pivot._slideHeadersAnimation = Promise.wrap();
 
         if (pivot._headersContainerElement.children.length && _TransitionAnimation.isAnimationEnabled()) {
@@ -1248,6 +1273,8 @@ class HeaderStateOverflow extends HeaderStateBase {
                     timing: "ease-out",
                     to: "translateX(" + offset + "px)"
                 }).then(done, done);
+        } else {
+            this.render();
         }
     }
 

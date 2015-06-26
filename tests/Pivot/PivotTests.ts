@@ -1461,6 +1461,27 @@ module WinJSTests {
                 complete();
             });
         };
+
+        testSettingCustomContentHeaderToNullDoesNotCrash = function (complete) {
+            var left = document.createElement("div");
+            var right = document.createElement("div");
+            left.style.width = right.style.width = "50px";
+
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+                customLeftHeader: left,
+                customRightHeader: right,
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                pivot.customLeftHeader = null;
+                pivot.customRightHeader = null;
+                LiveUnit.Assert.isNull(document.querySelector(".win-pivot-header-leftcustom").firstElementChild);
+                LiveUnit.Assert.isNull(document.querySelector(".win-pivot-header-rightcustom").firstElementChild);
+                complete();
+            });
+        };
     }
 
     Object.keys(PivotTests).forEach(function (key) {
