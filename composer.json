@@ -1,6 +1,7 @@
 {
   "name": "winjs/winjs",
   "type": "library",
+  "version" : "4.0.1",
   "description": "WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology.",
   "keywords": [
     "css",
@@ -20,5 +21,10 @@
   "support": {
     "issues": "https://github.com/winjs/winjs/issues"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "extra": {
+    "branch-alias": {
+      "dev-master": "4.0.x-dev"
+    }
+  },
 }
