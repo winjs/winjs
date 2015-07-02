@@ -19,7 +19,6 @@ module WinJSTests {
 
     export class NavBarCommandTests {
 
-
         setUp = function () {
             LiveUnit.LoggingCore.logComment("In setup");
             var newNode = document.createElement("div");

@@ -1,0 +1,79 @@
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+
+    // The desired visual design is to stack 3 elements on top of each other and have
+    // their colors blend together by making the upper elements transparent. For example:
+    // 1. SplitView Pane: defines its own background color
+    // 2. NavBar Command Button: semi-transparent background color
+    // 3. NavBar Command Button Overlay (not used in actual implementation)
+    //   - rest state: no background color
+    //   - hover/pressed state: semi-transparent background color
+    // Instead of creating an extra element just for the purpose of this color blending,
+    // we get rid of element (3), blend the colors of (2) and (3) in LESS, and then apply
+    // the blended color to (2).
+    @splitViewCommandRest: @listHover;
+    @splitViewCommandHover: overlay(@listHover, @listHover);
+    @splitViewCommandPress: overlay(@listPress, @listHover);
+
+    .win-splitviewcommand-button {
+        background-color: @splitViewCommandRest;
+        color: @baseHigh;
+
+        &.win-pressed {
+            background-color: @splitViewCommandPress;
+        }
+    }
+
+    .win-splitviewcommand-button.win-keyboard:focus::before {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        box-sizing: border-box;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        border: 1px dotted @baseHigh;
+    }
+}
+.ColorsHover(@theme) {
+    .colorDefinitions(@theme);
+
+    .win-splitviewcommand-button:hover {
+        background-color: @splitViewCommandHover;
+
+        &.win-pressed {
+            background-color: @splitViewCommandPress;
+        }
+    }
+}
+
+@media (-ms-high-contrast) {
+    /*
+        SplitViewCommand colors.
+    */
+    .win-splitviewcommand-button {
+        background-color: ButtonFace;
+        color: ButtonText;
+    }
+    .win-splitviewcommand-button:after {
+        position: absolute;
+        top: 0;
+        left:0;
+        border: 2px solid ButtonText;
+        content: "";
+        width: ~"calc(100% - 3px)";
+        height: ~"calc(100% - 3px)";
+        pointer-events: none;
+    }
+    html.win-hoverable .win-splitviewcommand-button:hover {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    .win-splitviewcommand-button.win-pressed,
+    html.win-hoverable .win-splitviewcommand-button.win-pressed:hover {
+        background-color: ButtonText;
+        color: ButtonFace;
+    }
+}

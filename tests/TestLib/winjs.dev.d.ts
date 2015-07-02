@@ -298,6 +298,15 @@ declare module WinJS {
             _disposed: boolean;
         }
 
+        class PrivateSplitViewCommand extends SplitViewCommand {
+            _buttonEl:  HTMLElement;
+            _disposed: boolean;
+            static _EventName: {
+                _invoked: string;
+                _splitToggle: string;
+            };
+        }
+
         interface ISelect {
             value;
             index: number;

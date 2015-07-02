@@ -4,100 +4,11 @@ define([
     '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
-    '../../Core/_Resources',
-    '../../ControlProcessor',
-    '../../Navigation',
-    '../../Utilities/_Control',
-    '../../Utilities/_ElementUtilities',
-    '../AppBar/_Icon'
-    ], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
+    '../SplitView/Command',
+], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, SplitViewCommand) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
-        _WinPressed: _Base.Namespace._lazy(function () {
-            var WinPressed = _Base.Class.define(function _WinPressed_ctor(element) {
-                // WinPressed is the combination of :hover:active
-                // :hover is delayed by trident for touch by 300ms so if you want :hover:active to work quickly you need to
-                // use this behavior.
-                // :active does not bubble to its parent like :hover does so this is also useful for that scenario.
-                this._element = element;
-                _ElementUtilities._addEventListener(this._element, "pointerdown", this._MSPointerDownButtonHandler.bind(this));
-            }, {
-                _MSPointerDownButtonHandler: function _WinPressed_MSPointerDownButtonHandler(ev) {
-                    if (!this._pointerUpBound) {
-                        this._pointerUpBound = this._MSPointerUpHandler.bind(this);
-                        this._pointerCancelBound = this._MSPointerCancelHandler.bind(this);
-                        this._pointerOverBound = this._MSPointerOverHandler.bind(this);
-                        this._pointerOutBound = this._MSPointerOutHandler.bind(this);
-                    }
-
-                    if (ev.isPrimary) {
-                        if (this._pointerId) {
-                            this._resetPointer();
-                        }
-
-                        if (!_ElementUtilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
-                            this._pointerId = ev.pointerId;
-
-                            _ElementUtilities._addEventListener(_Global, "pointerup", this._pointerUpBound, true);
-                            _ElementUtilities._addEventListener(_Global, "pointercancel", this._pointerCancelBound), true;
-                            _ElementUtilities._addEventListener(this._element, "pointerover", this._pointerOverBound, true);
-                            _ElementUtilities._addEventListener(this._element, "pointerout", this._pointerOutBound, true);
-
-                            _ElementUtilities.addClass(this._element, WinPressed.winPressed);
-                        }
-                    }
-                },
-
-                _MSPointerOverHandler: function _WinPressed_MSPointerOverHandler(ev) {
-                    if (this._pointerId === ev.pointerId) {
-                        _ElementUtilities.addClass(this._element, WinPressed.winPressed);
-                    }
-                },
-
-                _MSPointerOutHandler: function _WinPressed_MSPointerOutHandler(ev) {
-                    if (this._pointerId === ev.pointerId) {
-                        _ElementUtilities.removeClass(this._element, WinPressed.winPressed);
-                    }
-                },
-
-                _MSPointerCancelHandler: function _WinPressed_MSPointerCancelHandler(ev) {
-                    if (this._pointerId === ev.pointerId) {
-                        this._resetPointer();
-                    }
-                },
-
-                _MSPointerUpHandler: function _WinPressed_MSPointerUpHandler(ev) {
-                    if (this._pointerId === ev.pointerId) {
-                        this._resetPointer();
-                    }
-                },
-
-                _resetPointer: function _WinPressed_resetPointer() {
-                    this._pointerId = null;
-
-                    _ElementUtilities._removeEventListener(_Global, "pointerup", this._pointerUpBound, true);
-                    _ElementUtilities._removeEventListener(_Global, "pointercancel", this._pointerCancelBound, true);
-                    _ElementUtilities._removeEventListener(this._element, "pointerover", this._pointerOverBound, true);
-                    _ElementUtilities._removeEventListener(this._element, "pointerout", this._pointerOutBound, true);
-
-                    _ElementUtilities.removeClass(this._element, WinPressed.winPressed);
-                },
-
-                dispose: function _WinPressed_dispose() {
-                    if (this._disposed) {
-                        return;
-                    }
-                    this._disposed = true;
-
-                    this._resetPointer();
-                }
-            }, {
-                winPressed: "win-pressed"
-            });
-
-            return WinPressed;
-        }),
         /// <field>
         /// <summary locid="WinJS.UI.NavBarCommand">
         /// Represents a navigation command in an NavBarContainer.
@@ -115,13 +26,24 @@ define([
         /// <resource type="javascript" src="//$(TARGET_DESTINATION)/js/WinJS.js" shared="true" />
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         NavBarCommand: _Base.Namespace._lazy(function () {
-            var Key = _ElementUtilities.Key;
 
             var strings = {
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
             };
 
-            var NavBarCommand = _Base.Class.define(function NavBarCommand_ctor(element, options) {
+            var ClassNames = {
+                command: "win-navbarcommand",
+                commandButton: "win-navbarcommand-button",
+                commandButtonContent: "win-navbarcommand-button-content",
+                commandSplitButton: "win-navbarcommand-splitbutton",
+                commandSplitButtonOpened: "win-navbarcommand-splitbutton-opened",
+                commandIcon: "win-navbarcommand-icon",
+                commandLabel: "win-navbarcommand-label"
+            };
+
+            var superClass = SplitViewCommand.SplitViewCommand.prototype;
+
+            var NavBarCommand = _Base.Class.derive(SplitViewCommand.SplitViewCommand, function NavBarCommand_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.NavBarCommand.NavBarCommand">
                 /// <summary locid="WinJS.UI.NavBarCommand.constructor">
                 /// Creates a new NavBarCommand.
@@ -146,94 +68,55 @@ define([
                     throw new _ErrorFromName("WinJS.UI.NavBarCommand.DuplicateConstruction", strings.duplicateConstruction);
                 }
 
-                // Attaching JS control to DOM element
-                element.winControl = this;
-                this._element = element;
-                _ElementUtilities.addClass(this.element, NavBarCommand._ClassName.navbarcommand);
-                _ElementUtilities.addClass(this.element, "win-disposable");
+                this._baseConstructor(element, options, ClassNames);
 
-                this._tooltip = null;
-                this._splitOpened = false;
-                this._buildDom();
-                element.addEventListener('keydown', this._keydownHandler.bind(this));
-
-                _Control.setOptions(this, options);
-            }, {
+            },
+            {
                 /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.NavBarCommand.element" helpKeyword="WinJS.UI.NavBarCommand.element">
                 /// Gets the DOM element that hosts the NavBarCommand.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 element: {
                     get: function () {
-                        return this._element;
+                        return Object.getOwnPropertyDescriptor(superClass, "element").get.call(this);
                     }
                 },
-
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.label" helpKeyword="WinJS.UI.NavBarCommand.label">
                 /// Gets or sets the label of the NavBarCommand.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 label: {
                     get: function () {
-                        return this._label;
+                        return Object.getOwnPropertyDescriptor(superClass, "label").get.call(this);
                     },
                     set: function (value) {
-                        this._label = value;
-                        this._labelEl.textContent = value;
+                        return Object.getOwnPropertyDescriptor(superClass, "label").set.call(this, value);
                     }
                 },
-
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.tooltip" helpKeyword="WinJS.UI.NavBarCommand.tooltip">
                 /// Gets or sets the tooltip of the NavBarCommand.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 tooltip: {
                     get: function () {
-                        return this._tooltip;
+                        return Object.getOwnPropertyDescriptor(superClass, "tooltip").get.call(this);
                     },
                     set: function (value) {
-                        this._tooltip = value;
-                        if (this._tooltip || this._tooltip === "") {
-                            this._element.setAttribute('title', this._tooltip);
-                        } else {
-                            this._element.removeAttribute('title');
-                        }
+                        return Object.getOwnPropertyDescriptor(superClass, "tooltip").set.call(this, value);
                     }
                 },
-
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.icon" helpKeyword="WinJS.UI.NavBarCommand.icon">
                 /// Gets or sets the icon of the NavBarCommand. This value is either one of the values of the AppBarIcon enumeration or the path of a custom PNG file.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </field>
                 icon: {
                     get: function () {
-                        return this._icon;
+                        return Object.getOwnPropertyDescriptor(superClass, "icon").get.call(this);
                     },
                     set: function (value) {
-                        this._icon = (_Icon[value] || value);
-
-                        // If the icon's a single character, presume a glyph
-                        if (this._icon && this._icon.length === 1) {
-                            // Set the glyph
-                            this._imageSpan.textContent = this._icon;
-                            this._imageSpan.style.backgroundImage = "";
-                            this._imageSpan.style.msHighContrastAdjust = "";
-                            this._imageSpan.style.display = "";
-                        } else if (this._icon && this._icon.length > 1) {
-                            // Must be an image, set that
-                            this._imageSpan.textContent = "";
-                            this._imageSpan.style.backgroundImage = this._icon;
-                            this._imageSpan.style.msHighContrastAdjust = "none";
-                            this._imageSpan.style.display = "";
-                        } else {
-                            this._imageSpan.textContent = "";
-                            this._imageSpan.style.backgroundImage = "";
-                            this._imageSpan.style.msHighContrastAdjust = "";
-                            this._imageSpan.style.display = "none";
-                        }
+                        return Object.getOwnPropertyDescriptor(superClass, "icon").set.call(this, value);
                     }
                 },
-
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.location" helpKeyword="WinJS.UI.NavBarCommand.location">
                 /// Gets or sets the command's target location.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
@@ -293,130 +176,6 @@ define([
                     }
                 },
 
-                _toggleSplit: function NavBarCommand_toggleSplit() {
-                    this._splitOpened = !this._splitOpened;
-                    if (this._splitOpened) {
-                        _ElementUtilities.addClass(this._splitButtonEl, NavBarCommand._ClassName.navbarcommandsplitbuttonopened);
-                        this._splitButtonEl.setAttribute("aria-expanded", "true");
-                    } else {
-                        _ElementUtilities.removeClass(this._splitButtonEl, NavBarCommand._ClassName.navbarcommandsplitbuttonopened);
-                        this._splitButtonEl.setAttribute("aria-expanded", "false");
-                    }
-                    this._fireEvent(NavBarCommand._EventName._splitToggle);
-                },
-
-                _rtl: {
-                    get: function () {
-                        return _Global.getComputedStyle(this.element).direction === "rtl";
-                    }
-                },
-
-                _keydownHandler: function NavBarCommand_keydownHandler(ev) {
-                    if (_ElementUtilities._matchesSelector(ev.target, ".win-interactive, .win-interactive *")) {
-                        return;
-                    }
-
-                    var leftStr = this._rtl ? Key.rightArrow : Key.leftArrow;
-                    var rightStr = this._rtl ? Key.leftArrow : Key.rightArrow;
-
-                    if (!ev.altKey && (ev.keyCode === leftStr || ev.keyCode === Key.home || ev.keyCode === Key.end) && ev.target === this._splitButtonEl) {
-                        _ElementUtilities._setActive(this._buttonEl);
-                        if (ev.keyCode === leftStr) {
-                            ev.stopPropagation();
-                        }
-                        ev.preventDefault();
-                    } else if (!ev.altKey && ev.keyCode === rightStr && this.splitButton && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
-                        _ElementUtilities._setActive(this._splitButtonEl);
-                        if (ev.keyCode === rightStr) {
-                            ev.stopPropagation();
-                        }
-                        ev.preventDefault();
-                    } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
-                        if (this.location) {
-                            Navigation.navigate(this.location, this.state);
-                        }
-                        this._fireEvent(NavBarCommand._EventName._invoked);
-                    } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && ev.target === this._splitButtonEl) {
-                        this._toggleSplit();
-                    }
-                },
-
-                _getFocusInto: function NavBarCommand_getFocusInto(keyCode) {
-                    var leftStr = this._rtl ? Key.rightArrow : Key.leftArrow;
-                    if ((keyCode === leftStr) && this.splitButton) {
-                        return this._splitButtonEl;
-                    } else {
-                        return this._buttonEl;
-                    }
-                },
-
-                _buildDom: function NavBarCommand_buildDom() {
-                    var markup =
-                        '<div tabindex="0" role="button" class="' + NavBarCommand._ClassName.navbarcommandbutton + '">' +
-                            '<div class="' + NavBarCommand._ClassName.navbarcommandbuttoncontent + '">' +
-                                '<div class="' + NavBarCommand._ClassName.navbarcommandicon + '"></div>' +
-                                '<div class="' + NavBarCommand._ClassName.navbarcommandlabel + '"></div>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div tabindex="-1" aria-expanded="false" class="' + NavBarCommand._ClassName.navbarcommandsplitbutton + '"></div>';
-                    this.element.insertAdjacentHTML("afterBegin", markup);
-
-                    this._buttonEl = this.element.firstElementChild;
-                    this._buttonPressedBehavior = new exports._WinPressed(this._buttonEl);
-                    this._contentEl = this._buttonEl.firstElementChild;
-                    this._imageSpan = this._contentEl.firstElementChild;
-                    this._imageSpan.style.display = "none";
-                    this._labelEl = this._imageSpan.nextElementSibling;
-                    this._splitButtonEl = this._buttonEl.nextElementSibling;
-                    this._splitButtonPressedBehavior = new exports._WinPressed(this._splitButtonEl);
-                    this._splitButtonEl.style.display = "none";
-
-                    _ElementUtilities._ensureId(this._buttonEl);
-                    this._splitButtonEl.setAttribute("aria-labelledby", this._buttonEl.id);
-
-                    this._buttonEl.addEventListener("click", this._handleButtonClick.bind(this));
-
-                    var mutationObserver = new _ElementUtilities._MutationObserver(this._splitButtonAriaExpandedPropertyChangeHandler.bind(this));
-                    mutationObserver.observe(this._splitButtonEl, { attributes: true, attributeFilter: ["aria-expanded"] });
-                    this._splitButtonEl.addEventListener("click", this._handleSplitButtonClick.bind(this));
-
-                    // reparent any other elements.
-                    var tempEl = this._splitButtonEl.nextSibling;
-                    while (tempEl) {
-                        this._buttonEl.insertBefore(tempEl, this._contentEl);
-                        if (tempEl.nodeName !== "#text") {
-                            ControlProcessor.processAll(tempEl);
-                        }
-                        tempEl = this._splitButtonEl.nextSibling;
-                    }
-                },
-
-                _handleButtonClick: function NavBarCommand_handleButtonClick(ev) {
-                    var srcElement = ev.target;
-                    if (!_ElementUtilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
-                        if (this.location) {
-                            Navigation.navigate(this.location, this.state);
-                        }
-                        this._fireEvent(NavBarCommand._EventName._invoked);
-                    }
-                },
-
-                _splitButtonAriaExpandedPropertyChangeHandler: function NavBarCommand_splitButtonAriaExpandedPropertyChangeHandler() {
-                    if ((this._splitButtonEl.getAttribute("aria-expanded") === "true") !== this._splitOpened) {
-                        this._toggleSplit();
-                    }
-                },
-
-                _handleSplitButtonClick: function NavBarCommand_handleSplitButtonClick() {
-                    this._toggleSplit();
-                },
-
-                _fireEvent: function NavBarCommand_fireEvent(type, detail) {
-                    var event = _Global.document.createEvent("CustomEvent");
-                    event.initCustomEvent(type, true, false, detail);
-                    this.element.dispatchEvent(event);
-                },
-
                 dispose: function NavBarCommand_dispose() {
                     /// <signature helpKeyword="WinJS.UI.NavBarCommand.dispose">
                     /// <summary locid="WinJS.UI.NavBarCommand.dispose">
@@ -424,30 +183,13 @@ define([
                     /// </summary>
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
-                    if (this._disposed) {
-                        return;
-                    }
-                    this._disposed = true;
-
-                    this._buttonPressedBehavior.dispose();
-                    this._splitButtonPressedBehavior.dispose();
+                    superClass.dispose.call(this);
                 }
-            }, {
-                _ClassName: {
-                    navbarcommand: "win-navbarcommand",
-                    navbarcommandbutton: "win-navbarcommand-button",
-                    navbarcommandbuttoncontent: "win-navbarcommand-button-content",
-                    navbarcommandsplitbutton: "win-navbarcommand-splitbutton",
-                    navbarcommandsplitbuttonopened: "win-navbarcommand-splitbutton-opened",
-                    navbarcommandicon: "win-navbarcommand-icon",
-                    navbarcommandlabel: "win-navbarcommand-label"
-                },
-                _EventName: {
-                    _invoked: "_invoked",
-                    _splitToggle: "_splittoggle"
-                }
+            },
+            {
+                _ClassName: ClassNames,
+                _EventName: SplitViewCommand.SplitViewCommand._EventName,
             });
-            _Base.Class.mix(NavBarCommand, _Control.DOMEventMixin);
             return NavBarCommand;
         })
     });

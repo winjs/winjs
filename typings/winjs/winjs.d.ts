@@ -4873,7 +4873,7 @@ declare module WinJS.UI {
          * @param mouseEventObj Required. The MouseEvent Object specifying where to show the Flyout.
         **/
         showAt(mouseEventObj: MouseEvent): void;
-        
+
         //#endregion Methods
 
         //#region Properties
@@ -4887,7 +4887,7 @@ declare module WinJS.UI {
          * Gets or sets the default anchor to be used for this Flyout.
         **/
         anchor: HTMLElement;
-        
+
         /**
          * Gets or sets a value that indicates whether the Flyout is disabled.
         **/
@@ -6910,7 +6910,7 @@ declare module WinJS.UI {
          * Sets the MenuCommand objects that appear in the menu.
         **/
         commands: MenuCommand[];
-        
+
         /**
          * Gets or sets a value that indicates whether the Menu is disabled.
         **/
@@ -8161,7 +8161,7 @@ declare module WinJS.UI {
         **/
         onafterclose(eventInfo: Event): void;
     }
-    
+
     /**
      * Displays a button which is used for opening and closing a SplitView's pane.
     **/
@@ -8178,7 +8178,7 @@ declare module WinJS.UI {
          * Gets the DOM element that hosts the SplitViewPaneToggle control.
         **/
         element: HTMLButtonElement;
-        
+
         /**
          * Gets or sets the DOM element of the SplitView that is associated with the SplitViewPaneToggle control.
          * When the SplitViewPaneToggle is invoked, it'll toggle this SplitView's pane.
@@ -8219,6 +8219,81 @@ declare module WinJS.UI {
          * @param eventInfo An object that contains information about the event.
         **/
         oninvoked(eventInfo: Event): void;
+    }
+
+    /**
+    * Represents a command in the SplitView Pane.
+   **/
+    class SplitViewCommand {
+        //#region Constructors
+
+        /**
+         * Creates a new SplitViewCommand.
+         * @constructor
+         * @param element The DOM element hosts the new SplitViewCommand.
+         * @param options An object that contains one or more property/value pairs to apply to the new control. Each property of the options object corresponds to one of the control's properties or events.
+        **/
+        constructor(element?: HTMLElement, options?: any);
+
+        //#endregion Constructors
+
+        //#region Methods
+
+        /**
+         * Registers an event handler for the specified event.
+         * @param eventName The name of the event to handle. Note that you drop the "on" when specifying the event name. For example, instead of specifying "onclick", you specify "click".
+         * @param eventHandler The event handler function to associate with the event.
+         * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
+        **/
+        addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+
+        /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(type: string, eventProperties: any): boolean;
+
+        /**
+         * Releases resources held by this SplitViewCommand. Call this method when the SplitViewCommand is no longer needed. After calling this method, the SplitViewCommand becomes unusable.
+        **/
+        dispose(): void;
+
+        /**
+         * Removes an event handler that the addEventListener method registered.
+         * @param eventName The name of the event that the event handler is registered for.
+         * @param eventCallback The event handler function to remove.
+         * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+        **/
+        removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+
+        //#endregion Methods
+
+        //#region Properties
+
+        /**
+         * Gets the HTML element that hosts this SplitViewCommand.
+        **/
+        element: HTMLElement;
+
+        /**
+         * Gets or sets the command's icon.
+        **/
+        icon: string;
+
+        /**
+         * Gets or sets the label of the command.
+        **/
+        label: string;
+
+        /**
+         * Gets or sets the tooltip of the command.
+        **/
+        tooltip: any;
+
+        //#endregion Properties
+
     }
 
     /**

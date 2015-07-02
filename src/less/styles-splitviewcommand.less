@@ -1,0 +1,55 @@
+﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+@import "base.less";
+@import "mixins.less";
+
+/*
+    SplitViewCommand
+*/
+.win-splitviewcommand {
+    #flex > .display-flex();
+    #flex > .flex(none);
+    touch-action: manipulation;
+}
+
+.win-splitviewcommand-button {
+    #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
+    position: relative;
+}
+.win-splitviewcommand-button-content {
+    position: relative;
+    height: 48px;
+    padding-left: 16px;
+    padding-right: 16px;
+    #flex > .display-flex();
+}
+.win-splitviewcommand-button:focus {
+    z-index: 1;
+    outline: none;
+}
+.win-splitviewcommand-icon {
+    font-family: "Segoe MDL2 Assets", "Symbols";
+    height: 16px;
+    width: 16px;
+    font-size: 16px;
+    margin-left: 0;
+    margin-right: 16px;
+    margin-top: 14px; /* Center icon vertically */
+    line-height: 1; /* Ensure icon is exactly font-size */
+    #flex > .flex(none);
+}
+.win-splitviewcommand-icon {
+    .RTL({
+        margin-right: 0;
+        margin-left: 16px;
+    });
+}
+.win-splitviewcommand-label {
+    #flex > .flex(@grow: 1; @shrink: 1; @basis: 0%);
+    overflow: hidden;
+    white-space: nowrap;
+    ._win-type-body();
+    margin-top: 13px;
+    margin-bottom: 15px;
+}
+

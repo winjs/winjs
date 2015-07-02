@@ -26,6 +26,7 @@ define([
     'WinJS/Controls/ContentDialog',
     'WinJS/Controls/SplitView',
     'WinJS/Controls/SplitViewPaneToggle',
+    'WinJS/Controls/SplitView/Command',
     'WinJS/Controls/ToolBar',
     'WinJS/Controls/AppBar',
     ], function (_WinJS) {
