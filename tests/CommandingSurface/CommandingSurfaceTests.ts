@@ -55,6 +55,16 @@ module CorsicaTests {
         LiveUnit.Assert.isFalse(commandingSurface.opened, "after close: CommandingSurface should not be in opened state");
     }
 
+    function verifyTabIndices(commandingSurface: WinJS.UI.PrivateCommandingSurface, firstTabStopIndex: number, finalTabStopIndex: number) {
+        // first tab stop
+        LiveUnit.Assert.areEqual(firstTabStopIndex, commandingSurface._dom.firstTabStop.tabIndex,
+            "firstTabStop doesn't match expected tab index");
+
+        // last tab stop
+        LiveUnit.Assert.areEqual(finalTabStopIndex, commandingSurface._dom.finalTabStop.tabIndex,
+            "finalTabStop doesn't match expected tab index");
+    }
+
     function failEventHandler(eventName: string, msg?: string) {
         return function () {
             LiveUnit.Assert.fail("Failure, " + eventName + " dectected: " + msg);
@@ -1718,6 +1728,75 @@ module CorsicaTests {
             commandingSurface._dom.overflowButton.click()
             LiveUnit.Assert.isTrue(commandingSurface.opened)
             Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
+        }
+
+        testTabIndicesWhileClosed() {
+            // Commanding surface should not carousel tab key focus movement while closed.
+            // Verify that both the elements we use to trap focus have tabIndex === -1.
+
+            var innerHTML =
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'button\', id:\'button\'}" ></button>' +
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'toggle\', id:\'toggle\'}" ></button>' +
+                '<hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'separator\', id:\'separator\'}" \>' +
+                '<div id="contentCmd" data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'content\', id:\'content\'}" >' +
+                    '<input type="text" />' +
+                    '<input type ="range" / > ' +
+                '</div>' +
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: flyout, id:\'flyout\'}" ></button>';
+
+            this._element.innerHTML = innerHTML;
+            var commandingSurface = new _CommandingSurface(this._element, { opened: false });
+            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+
+            var firstTabStopIndex = -1;
+            var finalTabStopIndex = -1;
+            verifyTabIndices(commandingSurface, firstTabStopIndex, finalTabStopIndex);
+        }
+
+        testTabIndiciesWhileOpened() {
+            // Commanding surface should validate first and last tab stops while opened.
+            // This is what allows tab key focus movement to carousel instead of leaving the control.
+
+            var innerHTML =
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'button\', id:\'button\'}" ></button>' +
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'toggle\', id:\'toggle\'}" ></button>' +
+                '<hr data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'separator\', id:\'separator\'}" \>' +
+                '<div id="contentCmd" data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: \'content\', id:\'content\'}" >' +
+                    '<input type="text" />' +
+                    '<input type ="range" / > ' +
+                '</div>' +
+                '<button data-win-control="WinJS.UI.AppBarCommand" data-win-options="{type: flyout, id:\'flyout\'}" ></button>';
+
+            this._element.innerHTML = innerHTML;
+            var commandingSurface = new _CommandingSurface(this._element, { opened: false });
+            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+
+            commandingSurface.open();
+
+            LiveUnit.LoggingCore.logComment("Verify that first and last tabStop have tabIndex === 0, " +
+            "when the control is opened");
+            var firstTabStopIndex = 0;
+            var finalTabStopIndex = 0;
+            verifyTabIndices(commandingSurface, firstTabStopIndex, finalTabStopIndex);
+        }
+
+        testAriaFlowAttributes() {
+            var commandingSurface = new _CommandingSurface(this._element, { opened: false });
+            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+
+            LiveUnit.Assert.isFalse(commandingSurface._dom.firstTabStop.hasAttribute("x-ms-aria-flowfrom"),
+                "aria-flowfrom should not be set, while closed");
+            LiveUnit.Assert.isFalse(commandingSurface._dom.finalTabStop.hasAttribute("aria-flowto"),
+                "aria-flowto should not be set, while closed");
+
+            commandingSurface.opened = true;
+
+            LiveUnit.Assert.areEqual(commandingSurface._dom.finalTabStop.id,
+                commandingSurface._dom.firstTabStop.getAttribute("x-ms-aria-flowfrom"), 
+                "first tab stop should flow from final tab stop, while opened");
+            LiveUnit.Assert.areEqual(commandingSurface._dom.firstTabStop.id,
+                commandingSurface._dom.finalTabStop.getAttribute("aria-flowto"),
+                "final tab stop should flow to first tab stop, while opened");
         }
 
         testDomLevel0_OpenCloseEvents() {

@@ -1026,11 +1026,11 @@ export declare module _resizeNotifier {
 }
 
 export declare module _inputPaneListener {
-    export function addEventListener(element: HTMLElement, event: string,  handler: (ev: any) => any): void;
+    export function addEventListener(element: HTMLElement, event: string, handler: (ev: any) => any): void;
     export function removeEventListener(element: HTMLElement, event: string, handler: (ev: any) => any): void;
 }
 
-export declare function _setActiveFirstFocusableElement(element: HTMLElement): any;
+export declare function _getHighAndLowTabIndices(element: HTMLElement): { highest: number; lowest: number };
 export declare function _elementsFromPoint(x: number, y: number): NodeList;
 export declare function _addInsertedNotifier(element: HTMLElement): void;
 export declare function _inDom(element: HTMLElement): Promise<any>;
@@ -1042,12 +1042,14 @@ export declare function _removeEventListener(element: HTMLElement, type: string,
 export declare function _removeEventListener(element: Window, type: string, listener: EventListener, useCapture?: boolean): void;
 export declare function _maintainFocus(callback: Function): void;
 export declare function _setActive(element: HTMLElement, scroller?: HTMLElement): boolean;
+export declare function _setActiveFirstFocusableElement(element: HTMLElement): any;
 export declare function _syncRenderer(renderFunc: Function): (dataContext: any, element: HTMLElement) => void;
 export declare function _tryFocusOnAnyElement(elem: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _trySetActiveOnAnyElement(elem: HTMLElement, scroller?: HTMLElement): boolean;
 export declare function _tryFocus(elem: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _trySetActive(elem: HTMLElement, scroller?: HTMLElement): boolean;
 export declare function _focusFirstFocusableElement(rootEl: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
+export declare function _focusLastFocusableElement(rootEl: HTMLElement, useSetActive?: boolean, scroller?: HTMLElement): boolean;
 export declare function _setPointerCapture(element: HTMLElement, pointerId: number): void;
 export declare function _releasePointerCapture(element: HTMLElement, pointerId: number): void;
 export declare function _convertToPrecisePixels(value: string): number;
@@ -1060,7 +1062,7 @@ export declare function _ensureId(element: HTMLElement): void;
 export declare function _setAttribute(element: HTMLElement, attribute: string, value: string): void;
 export declare var _MutationObserver: {
     prototype: IMutationObserverShim;
-    new(callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
+    new (callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
 };
 export declare var _supportsSnapPoints: boolean;
 export declare var _supportsTouchDetection: boolean;

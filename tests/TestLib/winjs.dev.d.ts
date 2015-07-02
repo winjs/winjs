@@ -508,6 +508,8 @@ declare module WinJS {
                 overflowButton: HTMLButtonElement;
                 overflowArea: HTMLElement;
                 overflowAreaContainer: HTMLElement;
+                firstTabStop: HTMLElement;
+                finalTabStop: HTMLElement;
             };
             _machine: IOpenCloseMachine;
             _layoutCompleteCallback(): any;
