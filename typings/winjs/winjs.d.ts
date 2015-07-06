@@ -4351,6 +4351,11 @@ declare module WinJS.UI {
     }
 
     /**
+     * Represents a command to be displayed in an AppBar or ToolBar
+    **/ 
+    class Command extends AppBarCommand implements ICommand { }
+
+    /**
      * Displays a modal dialog which can display arbitrary HTML content.
     **/
     class ContentDialog {
@@ -5837,6 +5842,18 @@ declare module WinJS.UI {
         **/
         onselectionchanging(eventInfo: CustomEvent): void;
 
+        /**
+         * Raised when the layout header becomes visible or invisible.
+         * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
+        **/
+        onheadervisibilitychanged(eventInfo: CustomEvent): void;
+
+        /**
+         * Raised when the layout footer becomes visible or invisible.
+         * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
+        **/
+        onfootervisibilitychanged(eventInfo: CustomEvent): void;
+
         //#endregion Events
 
         //#region Methods
@@ -5982,12 +5999,12 @@ declare module WinJS.UI {
         /**
          * Gets or sets the footer of the ListView.
         **/
-        footer: HTMLDivElement;
+        footer: HTMLElement;
 
         /**
          * Gets or sets the header of the ListView.
         **/
-        header: HTMLDivElement;
+        header: HTMLElement;
 
         /**
          * Gets or sets a value that specifies how the ListView fetches items and adds and removes them to the DOM. Don't change the value of this property after the ListView has begun loading data.
@@ -6005,14 +6022,14 @@ declare module WinJS.UI {
         maxDeferredItemCleanup: number;
 
         /**
-         * Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
+         * Gets or sets the maximum number of pages to prefetch in the leading buffer for virtualization.
         **/
-        pagesToLoad: number;
+        maxLeadingPages: number;
 
         /**
-         * Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
+         * Gets or sets the maximum number of pages to prefetch in the trailing buffer for virtualization.
         **/
-        pagesToLoadThreshold: number;
+        maxTrailingPages: number;
 
         /**
          * Gets or sets the function that is called when the ListView discards or recycles the element representation of a group header.
@@ -6672,6 +6689,12 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
+         * Forces the control to relayout its content. This function is expected to be called
+         * when the pivot element is manually resized.
+        **/
+        forceLayout(): void;
+
+        /**
          * Removes an event handler that the addEventListener method registered.
          * @param eventName The name of the event that the event handler is registered for.
          * @param eventCallback The event handler function to remove.
@@ -7147,11 +7170,6 @@ declare module WinJS.UI {
         //#endregion Methods
 
         //#region Properties
-
-        /**
-         * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
-        **/
-        commands: AppBarCommand;
 
         /**
          * Gets the HTML element that hosts this NavBar.
@@ -7846,11 +7864,6 @@ declare module WinJS.UI {
          * Gets or a sets a value that specifies whether to display the SemanticZoom zoom out button.
         **/
         enableButton: boolean;
-
-        /**
-         * Determines whether any controls contained in a SemanticZoom should be processed separately. This property is always true, meaning that the SemanticZoom takes care of processing its own controls.
-        **/
-        isDeclarativeControlContainer: boolean;
 
         /**
          * Gets or sets a value that indicates whether SemanticZoom is locked and zooming between views is disabled.
