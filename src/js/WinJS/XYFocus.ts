@@ -18,6 +18,9 @@ var AttributeNames = {
 
 var ClassNames = {
     focusable: "win-focusable",
+    suspended: "win-xyfocus-suspended",
+    toggleMode: "win-xyfocus-togglemode",
+    toggleModeActive: "win-xyfocus-togglemode-active",
     xboxPlatform: "win-xbox",
 };
 
@@ -112,6 +115,7 @@ export var keyCodeMap = {
     up: <number[]>[],
     down: <number[]>[],
     accept: <number[]>[],
+    cancel: <number[]>[],
 };
 
 /**
@@ -193,6 +197,9 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         updateHistoryRect(direction, result);
         _lastTarget = result.target;
         _cachedLastTargetRect = result.targetRect;
+        if (_ElementUtilities.hasClass(result.target, ClassNames.toggleMode)) {
+            _ElementUtilities.removeClass(result.target, ClassNames.toggleModeActive);
+        }
 
         if (result.target.tagName === "IFRAME") {
             var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
@@ -360,7 +367,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
 
         var pixelOverlap = Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord);
         var shortEdge = Math.min(maxPotentialCoord - minPotentialCoord, maxReferenceCoord - minReferenceCoord);
-        return pixelOverlap / shortEdge;
+        return shortEdge === 0 ? 0 : (pixelOverlap / shortEdge);
     }
 
     function calculateScore(direction: string, maxDistance: number, historyRect: IRect, referenceRect: IRect, potentialRect: IRect) {
@@ -559,23 +566,99 @@ function _handleKeyEvent(e: KeyboardEvent): void {
         return;
     }
 
-    var keys = Object.keys(keyCodeMap);
-    for (var i = 0; i < keys.length; i++) {
-        // Note: key is 'left', 'right', 'up', 'down', or 'accept'
-        var key = keys[i];
-        var keyMappings = keyCodeMap[key];
-        if (keyMappings.indexOf(e.keyCode) >= 0) {
-            if (keyMappings === keyCodeMap.accept) {
-                _Global.document.activeElement && _Global.document.activeElement["click"] && _Global.document.activeElement["click"]();
+    var activeElement = <HTMLElement>_Global.document.activeElement;
+    var shouldPreventDefault: boolean;
+
+    var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
+    var toggleMode = _ElementUtilities.hasClass(activeElement, ClassNames.toggleMode);
+    var toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+
+    var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
+    if (suspended) {
+        stateHandler = KeyHandlerStates.SuspendedState;
+    } else {
+        if (toggleMode) {
+            if (toggleModeActive) {
+                stateHandler = KeyHandlerStates.ToggleModeActiveState;
             } else {
-                if (_xyFocus(key, e.keyCode)) {
-                    e.preventDefault();
-                }
+                stateHandler = KeyHandlerStates.ToggleModeRestState;
             }
-            return;
         }
     }
+
+    if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
+        shouldPreventDefault = stateHandler.accept(activeElement);
+    }
+    if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
+        shouldPreventDefault = stateHandler.cancel(activeElement);
+    }
+
+    var direction = "";
+    if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
+        direction = "up";
+    } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
+        direction = "down";
+    } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
+        direction = "left";
+    } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
+        direction = "right";
+    }
+    if (direction) {
+        shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
+    }
+
+    if (shouldPreventDefault) {
+        e.preventDefault();
+    }
 }
+
+module KeyHandlerStates {
+    export interface IKeyHandlerState {
+        accept(element: HTMLElement): boolean;
+        cancel(element: HTMLElement): boolean;
+        xyFocus(direction: string, keyCode: number): boolean;
+    }
+
+    export class RestState {
+        static accept = _clickElement;
+        static cancel = _nop;
+        static xyFocus = _xyFocus;
+    }
+
+    export class SuspendedState {
+        static accept = _nop;
+        static cancel = _nop;
+        static xyFocus = _nop;
+    }
+
+    export class ToggleModeRestState {
+        static accept(element: HTMLElement) {
+            _ElementUtilities.addClass(element, ClassNames.toggleModeActive);
+            return true;
+        }
+        static cancel = _nop;
+        static xyFocus = _xyFocus;
+    }
+
+    export class ToggleModeActiveState {
+        static accept = _clickElement;
+        static cancel(element: HTMLElement) {
+            _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
+            return true;
+        }
+        static xyFocus = _nop;
+    }
+
+    function _clickElement(element: HTMLElement) {
+        element && element.click && element.click();
+        return false;
+    }
+
+    function _nop(...args: any[]) {
+        return false;
+    }
+}
+
 
 if (_Global.document) {
     // Note: This module is not supported in WebWorker
@@ -586,6 +669,7 @@ if (_Global.document) {
     keyCodeMap.up.push(Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp);
     keyCodeMap.down.push(Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown);
     keyCodeMap.accept.push(Keys.GamepadA, Keys.NavigationAccept);
+    keyCodeMap.cancel.push(Keys.GamepadB, Keys.NavigationCancel);
 
     _Global.addEventListener("message", (e: MessageEvent): void => {
         if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
@@ -595,7 +679,11 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                _afEnabledFrames.push(e.source);
+                var index = _afEnabledFrames.push(e.source) - 1;
+                e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
+                    _afEnabledFrames.splice(index, 1);
+                    e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
+                });
                 break;
 
             case CrossDomainMessageConstants.unregister:
@@ -633,7 +721,7 @@ if (_Global.document) {
             _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
         }
 
-        _Global.document.addEventListener("keydown", _handleKeyEvent);
+        _Global.document.addEventListener("keydown", _handleKeyEvent, true);
 
         // If we are running within an iframe, we send a registration message to the parent window
         if (_Global.top !== _Global.window) {
