@@ -951,12 +951,22 @@ declare module WinJS.Binding {
         //#region Methods
 
         /**
-          * Binds values from the specified data context to elements that are descendants of the specified root element that have the declarative binding attributes specified (data-win-bind).
-          * @param dataContext The object to use for default data binding.
-          * @param container The element to which to add this rendered template. If this parameter is omitted, a new DIV is created.
-          * @returns A Promise that will be completed after binding has finished. The value is either container or the created DIV. promise that is completed after binding has finished.
+         * Binds values from the specified data context to elements that are descendants of the specified root element that have the declarative binding attributes specified (data-win-bind).
+         * @param dataContext The object to use for default data binding.
+         * @param container The element to which to add this rendered template. If this parameter is omitted, a new DIV is created.
+         * @returns A Promise that will be completed after binding has finished. The value is either container or the created DIV. promise that is completed after binding has finished.
         **/
         render(dataContext: any, container?: HTMLElement): Promise<HTMLElement>;
+
+        /**
+         * Renders an instance of this template bound to the data contained in item. If the recycled parameter is present, 
+         * and enableRecycling is true, then the template attempts to reuse the DOM elements from the recycled parameter.
+         * @param The object that contains the data to bind to. Only item.data is required.
+         * @param A previously-generated template instance.
+         * @returns The DOM element.
+        **/
+        renderItem: (item: {}, recycled: HTMLElement) => HTMLElement;
+
 
         /**
           * Renders a template based on the specified URI (static method).
@@ -7879,6 +7889,16 @@ declare module WinJS.UI {
          * Gets or sets a value that specifies how much the scaling the cross-fade animation performs when the SemanticZoom transitions between views.
         **/
         zoomFactor: number;
+
+        /**
+         * Gets or sets a mapping function which can be used to change the item that is targeted on zoom in.
+        **/
+        zoomedInItem: (any) => any;
+
+        /**
+         * Gets or sets a mapping function which can be used to change the item that is targeted on zoom out.
+        **/
+        zoomedOutItem: (any) => any;
 
         //#endregion Properties
 
