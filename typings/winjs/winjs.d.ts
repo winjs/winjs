@@ -959,16 +959,6 @@ declare module WinJS.Binding {
         render(dataContext: any, container?: HTMLElement): Promise<HTMLElement>;
 
         /**
-         * Renders an instance of this template bound to the data contained in item. If the recycled parameter is present, 
-         * and enableRecycling is true, then the template attempts to reuse the DOM elements from the recycled parameter.
-         * @param The object that contains the data to bind to. Only item.data is required.
-         * @param A previously-generated template instance.
-         * @returns The DOM element.
-        **/
-        renderItem: (item: {}, recycled: HTMLElement) => HTMLElement;
-
-
-        /**
           * Renders a template based on the specified URI (static method).
           * @param href The URI from which to load the template.
           * @param dataContext The object to use for default data binding.
