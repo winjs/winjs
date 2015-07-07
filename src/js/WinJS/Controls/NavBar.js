@@ -67,8 +67,14 @@ define([
                 /// <returns type="WinJS.UI.NavBar" locid="WinJS.UI.NavBar.constructor_returnValue">
                 /// The new NavBar control.
                 /// </returns>
+                /// <deprecated type="deprecate">
+                /// NavBar is deprecated and may not be available in future releases. 
+                /// Instead, use a WinJS SplitView to display navigation targets within the app.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+
+                _ElementUtilities._deprecated(strings.navBarIsDeprecated);
 
                 options = options || {};
 
@@ -204,6 +210,10 @@ define([
                     }
                 })
             });
+
+            var strings = {
+                get navBarIsDeprecated() { return "NavBar is deprecated and may not be available in future releases. Instead, use a WinJS SplitView to display navigation targets within the app."; }
+            };
 
             return NavBar;
         })

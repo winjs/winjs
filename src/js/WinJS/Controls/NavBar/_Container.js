@@ -73,7 +73,8 @@ define([
 
             var strings = {
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
-                get navBarContainerViewportAriaLabel() { return _Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; }
+                get navBarContainerViewportAriaLabel() { return _Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; },
+                get navBarContainerIsDeprecated() { return "NavBarContainer is deprecated and may not be available in future releases. Instead, use a WinJS SplitView to display navigation targets within the app."; }
             };
 
             var NavBarContainer = _Base.Class.define(function NavBarContainer_ctor(element, options) {
@@ -92,8 +93,14 @@ define([
                 /// <returns type="WinJS.UI.NavBarContainer" locid="WinJS.UI.NavBarContainer.constructor_returnValue">
                 /// The new NavBarContainer.
                 /// </returns>
+                /// <deprecated type="deprecate">
+                /// NavBarContainer is deprecated and may not be available in future releases. 
+                /// Instead, use a WinJS SplitView to display navigation targets within the app.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+
+                _ElementUtilities._deprecated(strings.navBarContainerIsDeprecated);
 
                 element = element || _Global.document.createElement("DIV");
                 this._id = element.id || _ElementUtilities._uniqueID(element);

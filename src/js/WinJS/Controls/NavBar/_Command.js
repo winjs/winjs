@@ -4,8 +4,9 @@ define([
     '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
+    '../../Utilities/_ElementUtilities',
     '../SplitView/Command',
-], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, SplitViewCommand) {
+], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, _ElementUtilities, SplitViewCommand) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -28,7 +29,8 @@ define([
         NavBarCommand: _Base.Namespace._lazy(function () {
 
             var strings = {
-                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get navBarCommandDeprecated() { return "NavBarCommand is deprecated and may not be available in future releases. If you were using a NavBarCommand inside of a SplitView, use SplitViewCommand instead."; }
             };
 
             var ClassNames = {
@@ -59,8 +61,14 @@ define([
                 /// <returns type="WinJS.UI.NavBarCommand" locid="WinJS.UI.NavBarCommand.constructor_returnValue">
                 /// The new NavBarCommand.
                 /// </returns>
+                /// <deprecated type="deprecate">
+                /// NavBarCommand is deprecated and may not be available in future releases. 
+                /// If you were using a NavBarCommand inside of a SplitView, use SplitViewCommand instead.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+                _ElementUtilities._deprecated(strings.navBarCommandDeprecated);
+
                 element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
