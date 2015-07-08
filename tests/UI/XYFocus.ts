@@ -663,6 +663,38 @@ module WinJSTests {
                     Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
                 });
         }
+
+        testIFrameRemovalUnregistersWithXYFocus(complete) {
+            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "iframe", 200, 200);
+            iframeEl.src = "XYFocusPage.html";
+            iframeEl.addEventListener("load", () => {
+                var that = this;
+                window.addEventListener("message", function windowMessage(e: MessageEvent) {
+                    if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
+                        LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                        window.removeEventListener("message", windowMessage);
+                        iframeEl.contentWindow.addEventListener("unload", () => {
+                            LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                            complete();
+                        });
+                        iframeEl.parentElement.removeChild(iframeEl);
+                    }
+                });
+            });
+        }
+
+        testXYFocusWorksWithElementsThatSpanTheCurrentViewport(complete) {
+            var layout: HTMLElement[] = [
+                this.rootContainer,
+                <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "button", 200, 200),
+                <HTMLIFrameElement>createAndAppendFocusableElement(300, -100, this.rootContainer, null, "button", 200, 100000)
+            ];
+            layout[1].focus();
+            LiveUnit.Assert.areEqual(layout[1], document.activeElement);
+
+            Helper.keydown(layout[1], Keys.GamepadDPadRight);
+            waitForFocus(window, layout[2]).done(complete);
+        }
     }
 }
 LiveUnit.registerTestClass("WinJSTests.XYFocusTests");

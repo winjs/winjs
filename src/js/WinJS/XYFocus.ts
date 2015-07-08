@@ -165,7 +165,7 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
 var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
-var _afEnabledFrames: Window[] = [];
+var _xyFocusEnabledIFrames: Window[] = [];
 function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
     // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
@@ -202,7 +202,7 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         }
 
         if (result.target.tagName === "IFRAME") {
-            var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
+            var index = _xyFocusEnabledIFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
             if (index >= 0) {
                 // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
                 // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
@@ -500,7 +500,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return false;
         }
 
-        if (elementTagName === "IFRAME" && _afEnabledFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
+        if (elementTagName === "IFRAME" && _xyFocusEnabledIFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
             // Skip IFRAMEs without compatible XYFocus implementation
             return false;
         }
@@ -679,17 +679,17 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                var index = _afEnabledFrames.push(e.source) - 1;
+                var index = _xyFocusEnabledIFrames.push(e.source) - 1;
                 e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
-                    _afEnabledFrames.splice(index, 1);
+                    _xyFocusEnabledIFrames.splice(index, 1);
                     e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
                 });
                 break;
 
             case CrossDomainMessageConstants.unregister:
-                var index = _afEnabledFrames.indexOf(e.source);
+                var index = _xyFocusEnabledIFrames.indexOf(e.source);
                 if (index >= 0) {
-                    _afEnabledFrames.splice(index, 1);
+                    _xyFocusEnabledIFrames.splice(index, 1);
                 }
                 break;
 
@@ -752,7 +752,8 @@ if (_Global.document) {
         onfocuschanged: _Events._createEventProperty(EventNames.focusChanged),
         onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
 
-        _xyFocus: _xyFocus
+        _xyFocus: _xyFocus,
+        _xyFocusEnabledIFrames: _xyFocusEnabledIFrames
     };
     toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
     toPublish["_listeners"] = {};
