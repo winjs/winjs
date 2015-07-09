@@ -999,7 +999,7 @@ declare module WinJS.Binding {
         /**
          * Determines whether the Template contains declarative controls that must be processed separately. This property is always true. The controls that belong to a Template object's children are instantiated when a Template instance is rendered.
         **/
-        isDeclarativeControlContainer: boolean;
+        static isDeclarativeControlContainer: boolean;
 
         //#endregion Properties
 
@@ -5843,13 +5843,13 @@ declare module WinJS.UI {
         onselectionchanging(eventInfo: CustomEvent): void;
 
         /**
-         * Raised when the layout header becomes visible or invisible.
+         * Raised when the header's visibility property changes. 
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
         **/
         onheadervisibilitychanged(eventInfo: CustomEvent): void;
 
         /**
-         * Raised when the layout footer becomes visible or invisible.
+         * Raised when the footer's visibility property changes. 
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
         **/
         onfootervisibilitychanged(eventInfo: CustomEvent): void;

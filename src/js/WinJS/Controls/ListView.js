@@ -139,8 +139,8 @@ define([
         /// <event name="itemdragleave" bubbles="true" locid="WinJS.UI.ListView_e:itemdragleave">Raised when the user drags outside of the ListView region.</event>
         /// <event name="itemdragchanged" bubbles="true" locid="WinJS.UI.ListView_e:itemdragchanged">Raised when the items being dragged are changed due to a datasource modification.</event>
         /// <event name="itemdragdrop" bubbles="true" locid="WinJS.UI.ListView_e:itemdragdrop">Raised when the user drops items into the ListView.</event>
-        /// <event name="headervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:headervisibilitychanged">Raised when the layout header becomes visible or invisible</event>
-        /// <event name="footervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:footervisibilitychanged">Raised when the layout footer becomes visible or invisible</event>
+        /// <event name="headervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:headervisibilitychanged">Raised when the header's visibility property changes. </event>
+        /// <event name="footervisibilitychanged" bubbles="true" locid="WinJS.UI.ListView_e:footervisibilitychanged">Raised when the footer's visibility property changes. </event>
         /// <event name="accessibilityannotationcomplete" bubbles="true" locid="WinJS.UI.ListView_e:accessibilityannotationcomplete">Raised when the accessibility attributes have been added to the ListView items.</event>
         /// <part name="listView" class="win-listview" locid="WinJS.UI.ListView_part:listView">The entire ListView control.</part>
         /// <part name="viewport" class="win-viewport" locid="WinJS.UI.ListView_part:viewport">The viewport of the ListView. </part>
