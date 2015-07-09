@@ -166,6 +166,13 @@ var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
 var _xyFocusEnabledIFrames: Window[] = [];
+
+/**
+ * Executes XYFocus algorithm with the given parameters. Returns true if focus was moved, false otherwise.
+ * @param direction The direction to move focus.
+ * @param keyCode The key code of the pressed key.
+ * @param (optional) A rectangle to use as the source coordinates for finding the next focusable element.
+**/
 function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
     // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
@@ -561,13 +568,20 @@ function _getIFrameFromWindow(win: Window) {
     return found.length ? found[0] : null;
 }
 
+function _unregisterIFrame(window: Window) {
+    var index = _xyFocusEnabledIFrames.indexOf(window);
+    if (index !== -1) {
+        _xyFocusEnabledIFrames.splice(index, 1);
+    }
+}
+
 function _handleKeyEvent(e: KeyboardEvent): void {
     if (e.defaultPrevented) {
         return;
     }
 
     var activeElement = <HTMLElement>_Global.document.activeElement;
-    var shouldPreventDefault: boolean;
+    var shouldPreventDefault = false;
 
     var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
     var toggleMode = _ElementUtilities.hasClass(activeElement, ClassNames.toggleMode);
@@ -588,23 +602,22 @@ function _handleKeyEvent(e: KeyboardEvent): void {
 
     if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.accept(activeElement);
-    }
-    if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
+    } else if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.cancel(activeElement);
-    }
-
-    var direction = "";
-    if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
-        direction = "up";
-    } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
-        direction = "down";
-    } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
-        direction = "left";
-    } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
-        direction = "right";
-    }
-    if (direction) {
-        shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
+    } else {
+        var direction = "";
+        if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
+            direction = "up";
+        } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
+            direction = "down";
+        } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
+            direction = "left";
+        } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
+            direction = "right";
+        }
+        if (direction) {
+            shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
+        }
     }
 
     if (shouldPreventDefault) {
@@ -619,27 +632,31 @@ module KeyHandlerStates {
         xyFocus(direction: string, keyCode: number): boolean;
     }
 
+    // Element is not suspended and does not use toggle mode.
     export class RestState {
         static accept = _clickElement;
         static cancel = _nop;
-        static xyFocus = _xyFocus;
+        static xyFocus = _xyFocus; // Prevent default when XYFocus moves focus
     }
 
+    // Element has opted out of XYFocus.
     export class SuspendedState {
         static accept = _nop;
         static cancel = _nop;
         static xyFocus = _nop;
     }
 
+    // Element uses toggle mode but is not toggled nor opted out of XYFocus.
     export class ToggleModeRestState {
         static accept(element: HTMLElement) {
             _ElementUtilities.addClass(element, ClassNames.toggleModeActive);
             return true;
         }
         static cancel = _nop;
-        static xyFocus = _xyFocus;
+        static xyFocus = _xyFocus; // Prevent default when XYFocus moves focus
     }
 
+    // Element uses toggle mode and is toggled and did not opt out of XYFocus.
     export class ToggleModeActiveState {
         static accept = _clickElement;
         static cancel(element: HTMLElement) {
@@ -679,18 +696,15 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                var index = _xyFocusEnabledIFrames.push(e.source) - 1;
+                _xyFocusEnabledIFrames.push(e.source);
                 e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
-                    _xyFocusEnabledIFrames.splice(index, 1);
+                    _unregisterIFrame(e.source);
                     e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
                 });
                 break;
 
             case CrossDomainMessageConstants.unregister:
-                var index = _xyFocusEnabledIFrames.indexOf(e.source);
-                if (index >= 0) {
-                    _xyFocusEnabledIFrames.splice(index, 1);
-                }
+                _unregisterIFrame(e.source);
                 break;
 
             case CrossDomainMessageConstants.dFocusEnter:
@@ -721,6 +735,8 @@ if (_Global.document) {
             _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
         }
 
+        // Subscribe on capture phase to prevent this key event from interacting with
+        // the element/control if XYFocus handled it.
         _Global.document.addEventListener("keydown", _handleKeyEvent, true);
 
         // If we are running within an iframe, we send a registration message to the parent window

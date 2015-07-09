@@ -582,6 +582,7 @@ module WinJSTests {
             var completeTest = false;
             document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
                 LiveUnit.Assert.areEqual(expectDefaultPrevented, e.defaultPrevented);
+                LiveUnit.Assert.areEqual(expectedActiveElement, document.activeElement);
                 if (completeTest) {
                     document.removeEventListener("keydown", testSuspendedKeyDownHandler);
                     complete();
@@ -594,6 +595,7 @@ module WinJSTests {
             layout[2].focus();
             LiveUnit.Assert.areEqual(layout[2], document.activeElement);
 
+            var expectedActiveElement = layout[3];
             Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
             waitForFocus(window, layout[3]).done(() => {
                 expectDefaultPrevented = false;
@@ -605,6 +607,7 @@ module WinJSTests {
         testSuspendedContainer(complete) {
             document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
                 LiveUnit.Assert.isFalse(e.defaultPrevented);
+                LiveUnit.Assert.areEqual(expectedActiveElement, document.activeElement);
                 document.removeEventListener("keydown", testSuspendedKeyDownHandler);
                 complete();
             });
@@ -614,18 +617,46 @@ module WinJSTests {
 
             layout[2].focus();
             LiveUnit.Assert.areEqual(layout[2], document.activeElement);
+            var expectedActiveElement = layout[2];
             Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+        }
+
+        testSuspendedToggleMode(complete) {
+            var completeTest = false;
+            document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
+                LiveUnit.Assert.isFalse(e.defaultPrevented);
+                LiveUnit.Assert.isFalse(layout[2].classList.contains("win-xyfocus-togglemode-active"));
+                if (completeTest) {
+                    document.removeEventListener("keydown", testSuspendedKeyDownHandler);
+                    complete();
+                }
+            });
+
+            var layout = createCrossLayout(this.rootContainer);
+            layout[2].classList.add("win-xyfocus-togglemode");
+            layout[2].focus();
+            LiveUnit.Assert.areEqual(layout[2], document.activeElement);
+
+            // Assert that a suspended toggle mode element does not toggle
+            layout[2].classList.add("win-xyfocus-suspended");
+            Helper.keydown(document.activeElement, Keys.GamepadA);
+
+            // Assert that a toggle mode element in a suspended container does not toggle
+            layout[2].classList.remove("win-xyfocus-suspended");
+            layout[0].classList.add("win-xyfocus-suspended");
+            completeTest = true;
+            Helper.keydown(document.activeElement, Keys.GamepadA);
         }
 
         testToggleMode(complete) {
             var expectDefaultPrevented = true;
             var completeTest = false;
             var callbackSignal: WinJS._Signal<void> = null;
-            document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
+            document.addEventListener("keydown", function testToggleModeKeyDownHandler(e: KeyboardEvent) {
                 LiveUnit.Assert.areEqual(expectDefaultPrevented, e.defaultPrevented);
                 callbackSignal && callbackSignal.complete();
                 if (completeTest) {
-                    document.removeEventListener("keydown", testSuspendedKeyDownHandler);
+                    document.removeEventListener("keydown", testToggleModeKeyDownHandler);
                     complete();
                 }
             });
@@ -667,19 +698,17 @@ module WinJSTests {
         testIFrameRemovalUnregistersWithXYFocus(complete) {
             var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "iframe", 200, 200);
             iframeEl.src = "XYFocusPage.html";
-            iframeEl.addEventListener("load", () => {
-                var that = this;
-                window.addEventListener("message", function windowMessage(e: MessageEvent) {
-                    if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
-                        LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
-                        window.removeEventListener("message", windowMessage);
-                        iframeEl.contentWindow.addEventListener("unload", () => {
-                            LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
-                            complete();
-                        });
-                        iframeEl.parentElement.removeChild(iframeEl);
-                    }
-                });
+            var that = this;
+            window.addEventListener("message", function windowMessage(e: MessageEvent) {
+                if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
+                    LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                    window.removeEventListener("message", windowMessage);
+                    iframeEl.contentWindow.addEventListener("unload", () => {
+                        LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                        complete();
+                    });
+                    iframeEl.parentElement.removeChild(iframeEl);
+                }
             });
         }
 
