@@ -1,11 +1,16 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 (function () {
     "use strict";
-
+    
     var config = {};
     module.exports = config;
-
-    config.version = "4.0";
+    
+    var grunt = require('grunt');
+    var pkg = grunt.file.readJSON("package.json");
+    // package.json version contains <major>.<minor>.<patch>. We just want <major>.<minor>
+    var majorMinorVersion = pkg.version.split(".").splice(0, 2).join(".");
+    
+    config.version = majorMinorVersion;
     config.buildDate = new Date();
     config.month = config.buildDate.getMonth() + 1;
     config.buildDateString = config.buildDate.getFullYear() + "." + config.month + "." + config.buildDate.getDate();
@@ -38,6 +43,6 @@
         "environment": [],
         "results":  []
     };
-
-
+    
+    
 })();
