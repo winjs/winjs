@@ -1,9 +1,38 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
-.Colors(@theme) {
-    .colorDefinitions(@theme);
+#win-splitview {
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
+        
+        @paneBackgroundColor: @chromeLow;
+    }
+    
+    .variableDefs(highcontrast) {
+        @paneBackgroundColor: ButtonFace;
+    }
+    
+    .stylesForTheme(@theme) {
+        #win-splitview > .variableDefs(@theme);
+        
+        .win-splitview-pane {
+            background-color: @paneBackgroundColor;
+        }
+    }
+}
 
-    .win-splitview-pane {
-        background-color: @chromeLow;
+.Colors(@theme) {
+    #win-splitview > .stylesForTheme(@theme);
+}
+
+.HighContrast() {
+    #win-splitview > .stylesForTheme(highcontrast);
+    
+    .win-splitview.win-splitview-pane-opened .win-splitview-paneoutline {
+        display: block;
+        border-color: ButtonText;
+    }
+    
+    .win-splitview.win-splitview-animating .win-splitview-paneoutline {
+        display: none;
     }
 }

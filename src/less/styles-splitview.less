@@ -29,6 +29,18 @@
         #flex > .display-flex();
     }
     
+    .win-splitview-paneoutline {
+        display: none;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 1px solid transparent;
+        width: ~"calc(100% - 2px)";
+        height: ~"calc(100% - 2px)";
+        z-index: 1; // above win-splitview-pane
+    }
+    
     .win-splitview-pane {
         outline: none; // Don't render a focus visual
     }
