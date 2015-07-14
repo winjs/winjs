@@ -302,7 +302,7 @@ declare module WinJS {
             _buttonEl:  HTMLElement;
             _disposed: boolean;
             static _EventName: {
-                _invoked: string;
+                invoked: string;
                 _splitToggle: string;
             };
         }

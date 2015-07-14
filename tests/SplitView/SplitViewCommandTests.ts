@@ -195,9 +195,13 @@ module SplitViewTests {
             var splitViewCommand = <WinJS.UI.PrivateSplitViewCommand>new WinJS.UI.SplitViewCommand(document.getElementById("host"), { label: 'test invoke' });
 
             var invokeCalled = 0;
-            splitViewCommand.addEventListener((<typeof WinJS.UI.PrivateSplitViewCommand>WinJS.UI.SplitViewCommand)._EventName._invoked, function (ev) {
+            var handleInvoke = (ev) => {
                 invokeCalled++;
-            });
+            };
+
+            var invokedEvent = (<typeof WinJS.UI.PrivateSplitViewCommand>WinJS.UI.SplitViewCommand)._EventName.invoked;
+
+            splitViewCommand.addEventListener(invokedEvent, handleInvoke);
 
             LiveUnit.Assert.areEqual(0, invokeCalled);
 
@@ -212,6 +216,16 @@ module SplitViewTests {
 
             Helper.keydown(splitViewCommand._buttonEl, Key.space);
             LiveUnit.Assert.areEqual(4, invokeCalled);
+
+            splitViewCommand.removeEventListener(invokedEvent, handleInvoke);
+
+            splitViewCommand._buttonEl.click();
+            LiveUnit.Assert.areEqual(4, invokeCalled);
+
+            splitViewCommand.oninvoked = handleInvoke;
+            splitViewCommand._buttonEl.click();
+            LiveUnit.Assert.areEqual(5, invokeCalled);
+
         };
 
         testConstructTwice = function () {

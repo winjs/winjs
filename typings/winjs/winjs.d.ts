@@ -8292,6 +8292,12 @@ declare module WinJS.UI {
         **/
         tooltip: any;
 
+        /** 
+         * Raised when a SplitViewCommand has been invoked.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        oninvoked(eventInfo: CustomEvent): void;
+
         //#endregion Properties
 
     }

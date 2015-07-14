@@ -23,7 +23,7 @@ define([
     '../_LegacyAppBar/_Constants',
     '../Repeater',
     './_Command'
-], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, NavBarCommand) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -228,7 +228,7 @@ define([
                     }
 
                     // Create the NavBarCommand after calling render so that the reparenting in navbarCommand works.
-                    var navbarCommand = new _Command.NavBarCommand(navbarCommandEl, item);
+                    var navbarCommand = new NavBarCommand.NavBarCommand(navbarCommandEl, item);
                     return navbarCommand._element;
                 },
 
@@ -614,8 +614,8 @@ define([
                     _ElementUtilities.addClass(this._surfaceEl, NavBarContainer._ClassName.surface);
                     this._viewportEl.appendChild(this._surfaceEl);
 
-                    this._surfaceEl.addEventListener("_invoked", this._navbarCommandInvokedHandler.bind(this));
-                    this._surfaceEl.addEventListener("_splittoggle", this._navbarCommandSplitToggleHandler.bind(this));
+                    this._surfaceEl.addEventListener(NavBarCommand.NavBarCommand._EventName._invoked, this._navbarCommandInvokedHandler.bind(this));
+                    this._surfaceEl.addEventListener(NavBarCommand.NavBarCommand._EventName._splitToggle, this._navbarCommandSplitToggleHandler.bind(this));
                     _ElementUtilities._addEventListener(this._surfaceEl, "focusin", this._itemsFocusHandler.bind(this), false);
                     this._surfaceEl.addEventListener("keydown", this._keyDownHandler.bind(this));
 
