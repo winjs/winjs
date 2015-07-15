@@ -117,7 +117,7 @@
 
     .win-commandingsurface-insetoutline {
         /* Display none except in High Contrast scenarios */
-        display:none;
+        display: none;
     }
 
     .win-commandingsurface-overflowareacontainer {
@@ -126,11 +126,12 @@
         right: 0;
         left: auto;
 
-       .RTL({
-            left:0;
-            right:auto;
+        .RTL({
+            left: 0;
+            right: auto;
         });
     }
+
     .win-commandingsurface-overflowarea,
     .win-commandingsurface-overflowareacontainer {
         min-width: 160px;
@@ -138,6 +139,7 @@
         max-height: 50vh;
         padding: 0;
     }
+
     .win-commandingsurface-overflowarea {
         #flex > .display-flex();
         #flex > .flex-direction(column);
@@ -146,6 +148,12 @@
 
         &.win-menu {
             max-width: 480px; /* override max-width styles from WinJS.UI.Menu */
+        }
+
+        .win-commandingsurface-spacer {
+            /* Reserves space at the bottom of the overflow area */
+            visibility: hidden;
+            height: 24px;
         }
 
         button.win-command {
@@ -164,11 +172,11 @@
             margin: 6px 12px 4px 12px;
         }
     }
+
     .win-commandingsurface-actionareacontainer {
         overflow: hidden;
         position: relative;
     }
-
     // Hide the commands (or just command labels, where appropriate) when animating closed, but use opacity: 0 instead of display: none so the layout doesn't
     // get changed and invalidate measurements taken during the animation function.
     &.win-commandingsurface-closing.win-commandingsurface-closeddisplaycompact .win-command .win-label,
@@ -179,8 +187,7 @@
 }
 
 @media(max-width:480px) {
-    .win-commandingsurface .win-commandingsurface-overflowarea.win-menu{
-        width:100vw;
+    .win-commandingsurface .win-commandingsurface-overflowarea.win-menu {
+        width: 100vw;
     }
-
 }

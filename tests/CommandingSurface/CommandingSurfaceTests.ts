@@ -1387,8 +1387,8 @@ module CorsicaTests {
             commandingSurface.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(2, commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be children.");
-                LiveUnit.Assert.areEqual(0, commandingSurface._dom.overflowArea.children.length);
+                LiveUnit.Assert.areEqual(2, commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be present.");
+                LiveUnit.Assert.areEqual(1, commandingSurface._dom.overflowArea.children.length, "Only the spacer element should be present.");
 
                 LiveUnit.Assert.isTrue(menuCommandProjections.every(function (menuCommand) {
                     return menuCommand._disposed;
