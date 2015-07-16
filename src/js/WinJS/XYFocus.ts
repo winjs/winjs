@@ -568,6 +568,35 @@ function _getIFrameFromWindow(win: Window) {
     return found.length ? found[0] : null;
 }
 
+function _isToggleMode(element: HTMLElement) {
+    if (_ElementUtilities.hasClass(element, ClassNames.toggleMode)) {
+        return true;
+    }
+
+    if (element.tagName === "INPUT") {
+        var inputType = (<HTMLInputElement>element).type.toLowerCase();
+        if (inputType === "date" ||
+            inputType === "datetime" ||
+            inputType === "datetime-local" ||
+            inputType === "email" ||
+            inputType === "month" ||
+            inputType === "number" ||
+            inputType === "password" ||
+            inputType === "range" ||
+            inputType === "search" ||
+            inputType === "tel" ||
+            inputType === "text" ||
+            inputType === "time" ||
+            inputType === "url" ||
+            inputType === "week") {
+            return true;
+        }
+    } else if (element.tagName === "TEXTAREA") {
+        return true;
+    }
+    return false;
+}
+
 function _unregisterIFrame(window: Window) {
     var index = _xyFocusEnabledIFrames.indexOf(window);
     if (index !== -1) {
@@ -584,7 +613,7 @@ function _handleKeyEvent(e: KeyboardEvent): void {
     var shouldPreventDefault = false;
 
     var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
-    var toggleMode = _ElementUtilities.hasClass(activeElement, ClassNames.toggleMode);
+    var toggleMode = _isToggleMode(activeElement);
     var toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
 
     var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
