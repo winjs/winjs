@@ -30,7 +30,6 @@ import _PivotItem = require("./_Item");
 
 // Force-load Dependencies
 _Hoverable.isHoverable;
-_PivotItem.PivotItem;
 
 require(["require-style!less/styles-pivot"]);
 require(["require-style!less/colors-pivot"]);

@@ -3,6 +3,16 @@
 
 import _Base = require('../Core/_Base');
 import _Pivot = require('./Pivot/_Pivot');
+import _Item = require('./Pivot/_Item');
+
+// We need PivotItem to be added to the public WinJS.UI namespace immediately.
+// Force load the PivotItem module by accessing an undefined property on it.
+// We do this to prevent:
+//   1) the TypeScript compiler from optimizing it away since we don't use it 
+//      anywhere else in this file. 
+//   2) triggering a premature unwrap of the lazily loaded PivotItem module
+//      which would happen if we accessed the _Item.PivotItem getter now.
+_Item["touch"];
 
 var module: typeof _Pivot = null;
 
