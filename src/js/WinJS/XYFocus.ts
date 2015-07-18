@@ -696,11 +696,14 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                _xyFocusEnabledIFrames.push(e.source);
-                e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
-                    _unregisterIFrame(e.source);
-                    e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
-                });
+                // e.source may be undefined if the iframe is no longer in the DOM
+                if (e.source) {
+                    _xyFocusEnabledIFrames.push(e.source);
+                    e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
+                        _unregisterIFrame(e.source);
+                        e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
+                    });
+                }
                 break;
 
             case CrossDomainMessageConstants.unregister:

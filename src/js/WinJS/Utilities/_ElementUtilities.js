@@ -16,6 +16,24 @@ define([
     }
 
     var _zoomToDuration = 167;
+    
+    // Firefox's implementation of getComputedStyle returns null when called within
+    // an iframe that is display:none. This is a bug: https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+    // _getComputedStyle is a helper which is guaranteed to return an object whose keys
+    // map to strings.
+    var defaultComputedStyle = null;
+    function getDefaultComputedStyle() {
+        if (!defaultComputedStyle) {
+            defaultComputedStyle = {};
+            Object.keys(_Global.CSS2Properties.prototype).forEach(function (cssProperty) {
+                defaultComputedStyle[cssProperty] = "";
+            });
+        }
+        return defaultComputedStyle;
+    }
+    function _getComputedStyle(element, pseudoElement) {
+        return _Global.getComputedStyle(element, pseudoElement) || getDefaultComputedStyle();
+    }
 
     function removeEmpties(arr) {
         var len = arr.length;
@@ -1149,6 +1167,8 @@ define([
         },
 
         _MSPointerEvent: _MSPointerEvent,
+        
+        _getComputedStyle: _getComputedStyle,
 
         _zoomToDuration: _zoomToDuration,
 
