@@ -60,7 +60,7 @@ define([
                         }
                         if (dirChanged) {
                             that._cachedStyleDir = element.style.direction;
-                            that._pageManager._rtl = _Global.getComputedStyle(that._pageManager._flipperDiv, null).direction === "rtl";
+                            that._pageManager._rtl = _ElementUtilities._getComputedStyle(that._pageManager._flipperDiv, null).direction === "rtl";
                             that._pageManager.resized();
                         }
                     }
@@ -75,7 +75,7 @@ define([
                 this._panningDivContainer = panningDivContainer;
                 this._buttonVisibilityHandler = buttonVisibilityHandler;
                 this._currentPage = null;
-                this._rtl = _Global.getComputedStyle(this._flipperDiv, null).direction === "rtl";
+                this._rtl = _ElementUtilities._getComputedStyle(this._flipperDiv, null).direction === "rtl";
                 this._itemsManager = itemsManager;
                 this._itemSpacing = itemSpacing;
                 this._tabIndex = _ElementUtilities.getTabIndex(flipperDiv);

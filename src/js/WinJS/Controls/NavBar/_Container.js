@@ -699,8 +699,8 @@ define([
                     if (this._disposed) { return; }
                     if (!this._measured) { return; }
                     var viewportResized = this.layout === _UI.Orientation.horizontal
-                            ? this._sizes.viewportOffsetWidth !== parseFloat(_Global.getComputedStyle(this._viewportEl).width)
-                            : this._sizes.viewportOffsetHeight !== parseFloat(_Global.getComputedStyle(this._viewportEl).height);
+                            ? this._sizes.viewportOffsetWidth !== parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).width)
+                            : this._sizes.viewportOffsetHeight !== parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).height);
                     if (!viewportResized) { return; }
 
                     this._measured = false;
@@ -1034,7 +1034,7 @@ define([
 
                         var sizes = this._sizes;
 
-                        sizes.rtl = _Global.getComputedStyle(this._element).direction === "rtl";
+                        sizes.rtl = _ElementUtilities._getComputedStyle(this._element).direction === "rtl";
 
                         var itemCount = this._surfaceEl.children.length;
                         if (itemCount > 0) {
@@ -1045,15 +1045,15 @@ define([
                                 // Clear inline margins set by NavBarContainer before measuring.
                                 elementToMeasure.style.margin = "";
                                 elementToMeasure.style.width = "";
-                                var elementComputedStyle = _Global.getComputedStyle(elementToMeasure);
-                                sizes.itemOffsetWidth = parseFloat(_Global.getComputedStyle(elementToMeasure).width);
+                                var elementComputedStyle = _ElementUtilities._getComputedStyle(elementToMeasure);
+                                sizes.itemOffsetWidth = parseFloat(_ElementUtilities._getComputedStyle(elementToMeasure).width);
                                 if (elementToMeasure.offsetWidth === 0) {
                                     sizes.itemOffsetWidth = 0;
                                 }
                                 sizes.itemMarginLeft = parseFloat(elementComputedStyle.marginLeft);
                                 sizes.itemMarginRight = parseFloat(elementComputedStyle.marginRight);
                                 sizes.itemWidth = sizes.itemOffsetWidth + sizes.itemMarginLeft + sizes.itemMarginRight;
-                                sizes.itemOffsetHeight = parseFloat(_Global.getComputedStyle(elementToMeasure).height);
+                                sizes.itemOffsetHeight = parseFloat(_ElementUtilities._getComputedStyle(elementToMeasure).height);
                                 if (elementToMeasure.offsetHeight === 0) {
                                     sizes.itemOffsetHeight = 0;
                                 }
@@ -1066,11 +1066,11 @@ define([
                                 this._writeProfilerMark("measureItem,StopTM");
                             }
 
-                            sizes.viewportOffsetWidth = parseFloat(_Global.getComputedStyle(this._viewportEl).width);
+                            sizes.viewportOffsetWidth = parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).width);
                             if (this._viewportEl.offsetWidth === 0) {
                                 sizes.viewportOffsetWidth = 0;
                             }
-                            sizes.viewportOffsetHeight = parseFloat(_Global.getComputedStyle(this._viewportEl).height);
+                            sizes.viewportOffsetHeight = parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).height);
                             if (this._viewportEl.offsetHeight === 0) {
                                 sizes.viewportOffsetHeight = 0;
                             }
@@ -1084,7 +1084,7 @@ define([
                             if (this.layout === _UI.Orientation.horizontal) {
                                 this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportEl).scrollLeft;
 
-                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginRight);
+                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_ElementUtilities._getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_ElementUtilities._getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;
                                 sizes.maxColumns = sizes.itemWidth ? Math.max(1, Math.floor(usableSpace / sizes.itemWidth)) : 1;
                                 sizes.rowsPerPage = Math.min(this.maxRows, Math.ceil(itemCount / sizes.maxColumns));

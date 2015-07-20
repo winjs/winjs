@@ -949,7 +949,7 @@ define([
                         this._writeProfilerMark("measure,StartTM");
                         this._measured = true;
 
-                        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
+                        this._rtl = _ElementUtilities._getComputedStyle(this._element, null).direction === "rtl";
 
                         if (this.orientation === _UI.Orientation.vertical) {
                             this._names = verticalNames;
@@ -966,14 +966,14 @@ define([
                         this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportElement)[this._names.scrollPos];
                         this._scrollLength = this._viewportElement[this._names.scrollSize];
 
-                        var surfaceElementComputedStyle = _Global.getComputedStyle(this._surfaceElement);
+                        var surfaceElementComputedStyle = _ElementUtilities._getComputedStyle(this._surfaceElement);
                         this._startSpacer = parseFloat(surfaceElementComputedStyle[this._names.marginStart]) + parseFloat(surfaceElementComputedStyle[this._names.borderStart]) + parseFloat(surfaceElementComputedStyle[this._names.paddingStart]);
                         this._endSpacer = parseFloat(surfaceElementComputedStyle[this._names.marginEnd]) + parseFloat(surfaceElementComputedStyle[this._names.borderEnd]) + parseFloat(surfaceElementComputedStyle[this._names.paddingEnd]);
 
                         this._sectionSizes = [];
                         for (var i = 0; i < this.sections.length; i++) {
                             var section = this.sections.getAt(i);
-                            var computedSectionStyle = _Global.getComputedStyle(section.element);
+                            var computedSectionStyle = _ElementUtilities._getComputedStyle(section.element);
                             this._sectionSizes[i] = {
                                 offset: section.element[this._names.offsetPos],
                                 // Reminder: offsetWidth doesn't include margins and also rounds.

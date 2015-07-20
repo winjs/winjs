@@ -336,7 +336,7 @@ define([
                         // was closest to
                         var trackRect = this._trackElement.getBoundingClientRect();
                         var thumbRect = this._thumbElement.getBoundingClientRect();
-                        var isRTL = _Global.getComputedStyle(this._domElement).direction === 'rtl';
+                        var isRTL = _ElementUtilities._getComputedStyle(this._domElement).direction === 'rtl';
                         if (this._dragging) {
                             var maxX = trackRect.width - thumbRect.width;
                             this.checked = isRTL ? this._dragX < maxX / 2 : this._dragX >= maxX / 2;

@@ -4,6 +4,7 @@ import _WinRT = require("./Core/_WinRT");
 
 import _Base = require("./Core/_Base");
 import _BaseUtils = require("./Core/_BaseUtils");
+import _ElementUtilities = require('./Utilities/_ElementUtilities');
 
 var Constants = {
     accentStyleId: "WinJSAccentsStyle",
@@ -151,8 +152,8 @@ function _reset() {
 // Figure out color theme
 var tag = _Global.document.createElement(Constants.themeDetectionTag);
 _Global.document.head.appendChild(tag);
-var cs = _Global.getComputedStyle(tag);
-isDarkTheme = cs && cs.opacity === "0";
+var cs = _ElementUtilities._getComputedStyle(tag);
+isDarkTheme = cs.opacity === "0";
 tag.parentElement.removeChild(tag);
 
 try {

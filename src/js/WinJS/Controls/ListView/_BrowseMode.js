@@ -725,7 +725,7 @@ define([
                     }
                     catch (err) { }
 
-                    var computedStyle = _Global.getComputedStyle(element, null),
+                    var computedStyle = _ElementUtilities._getComputedStyle(element, null),
                         paddingLeft = parseInt(computedStyle["paddingLeft"]),
                         paddingTop = parseInt(computedStyle["paddingTop"]),
                         borderLeft = parseInt(computedStyle["borderLeftWidth"]),

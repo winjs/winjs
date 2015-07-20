@@ -444,7 +444,7 @@ export class ToolBar {
         var closedBorderBox = this._dom.root.getBoundingClientRect();
         var closedContentWidth = _ElementUtilities._getPreciseContentWidth(this._dom.root);
         var closedContentHeight = _ElementUtilities._getPreciseContentHeight(this._dom.root);
-        var closedStyle = getComputedStyle(this._dom.root);
+        var closedStyle = _ElementUtilities._getComputedStyle(this._dom.root);
         var closedPaddingTop = _ElementUtilities._convertToPrecisePixels(closedStyle.paddingTop);
         var closedBorderTop = _ElementUtilities._convertToPrecisePixels(closedStyle.borderTopWidth);
         var closedMargins = _ElementUtilities._getPreciseMargins(this._dom.root);

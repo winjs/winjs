@@ -1058,6 +1058,7 @@ export declare function _getPreciseTotalWidth(element: HTMLElement): number;
 export declare function _getPreciseContentHeight(element: HTMLElement): number;
 export declare function _getPreciseContentWidth(element: HTMLElement): number;
 export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number; };
+export declare function _getComputedStyle(element: Element, pseudoElement?: string): CSSStyleDeclaration; 
 export declare function _ensureId(element: HTMLElement): void;
 export declare function _setAttribute(element: HTMLElement, attribute: string, value: string): void;
 export declare var _MutationObserver: {

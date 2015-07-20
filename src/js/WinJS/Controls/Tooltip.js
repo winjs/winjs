@@ -421,7 +421,7 @@ define([
                     this._domElement.setAttribute("id", id);
 
                     // Set the direction of tooltip according to anchor element's
-                    var computedStyle = _Global.document.defaultView.getComputedStyle(this._anchorElement, null);
+                    var computedStyle = _ElementUtilities._getComputedStyle(this._anchorElement, null);
                     var elemStyle = this._domElement.style;
                     elemStyle.direction = computedStyle.direction;
                     elemStyle.writingMode = computedStyle["writing-mode"]; // must use CSS name, not JS name
@@ -453,7 +453,7 @@ define([
                     this._phantomDiv.setAttribute("tabindex", -1);
                     _Global.document.body.appendChild(this._phantomDiv);
                     _ElementUtilities.addClass(this._phantomDiv, msTooltipPhantom);
-                    var zIndex = _Global.document.defaultView.getComputedStyle(this._domElement, null).zIndex + 1;
+                    var zIndex = _ElementUtilities._getComputedStyle(this._domElement, null).zIndex + 1;
                     this._phantomDiv.style.zIndex = zIndex;
                 },
 
@@ -719,7 +719,7 @@ define([
 
                     viewport.width = _Global.document.documentElement.clientWidth;
                     viewport.height = _Global.document.documentElement.clientHeight;
-                    if (_Global.document.defaultView.getComputedStyle(_Global.document.body, null)["writing-mode"] === "tb-rl") {
+                    if (_ElementUtilities._getComputedStyle(_Global.document.body, null)["writing-mode"] === "tb-rl") {
                         viewport.width = _Global.document.documentElement.clientHeight;
                         viewport.height = _Global.document.documentElement.clientWidth;
                     }

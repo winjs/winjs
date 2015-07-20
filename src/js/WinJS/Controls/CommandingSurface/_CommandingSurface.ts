@@ -315,7 +315,7 @@ export class _CommandingSurface {
 
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
-            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._rtl = _ElementUtilities._getComputedStyle(this._dom.root).direction === 'rtl';
             if (!options.openCloseMachine) {
                 // We should only call exitInit on the machine when we own the machine.
                 this._machine.exitInit();
@@ -656,7 +656,7 @@ export class _CommandingSurface {
             } else {
                 // e.g. the overflow button
                 focusable = element.style.display !== "none" &&
-                getComputedStyle(element).visibility !== "hidden" &&
+                _ElementUtilities._getComputedStyle(element).visibility !== "hidden" &&
                 element.tabIndex >= 0;
             }
         }

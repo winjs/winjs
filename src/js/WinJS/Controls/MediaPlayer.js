@@ -181,7 +181,7 @@ define('WinJS/Controls/MediaPlayer', [
             function keyframeCallback(keyframe) {
                 var keyframeRtl = keyframe + "-rtl";
                 return function (i, elem) {
-                    return _Global.window.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
+                    return _ElementUtilities._getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
                 };
             }
 
@@ -190,7 +190,7 @@ define('WinJS/Controls/MediaPlayer', [
                 return function (i, elem) {
                     var offset = offsetArray.getOffset(i);
                     var left = offset.left;
-                    if (offset.rtlflip && _Global.window.getComputedStyle(elem).direction === "rtl") {
+                    if (offset.rtlflip && _ElementUtilities._getComputedStyle(elem).direction === "rtl") {
                         left = left.toString();
                         if (left.charAt(0) === "-") {
                             left = left.substring(1);
@@ -1671,7 +1671,7 @@ define('WinJS/Controls/MediaPlayer', [
                     var isButtonEnabledOrVisible = true;
 
                     if (button) {
-                        var style = _Global.getComputedStyle(button);
+                        var style = _ElementUtilities._getComputedStyle(button);
                         if ((button &&
                             button.disabled) ||
                             style.display === "none") {
@@ -1775,9 +1775,9 @@ define('WinJS/Controls/MediaPlayer', [
                     // If the chapter skip back and chapter skip forward buttons are not present or display: none then do not create the default chapter markers.
                     // Note: If the buttons are disabled, we should still create the chapter markers, because the buttons may just be temporarily disabled.
                     if ((!this._chapterSkipBackButton ||
-                        _Global.getComputedStyle(this._chapterSkipBackButton).display === "none") &&
+                        _ElementUtilities._getComputedStyle(this._chapterSkipBackButton).display === "none") &&
                         (!this._chapterSkipForwardButton ||
-                        _Global.getComputedStyle(this._chapterSkipForwardButton).display === "none")) {
+                        _ElementUtilities._getComputedStyle(this._chapterSkipForwardButton).display === "none")) {
                         return;
                     }
 

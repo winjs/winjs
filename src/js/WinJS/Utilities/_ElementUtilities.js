@@ -32,7 +32,9 @@ define([
         return defaultComputedStyle;
     }
     function _getComputedStyle(element, pseudoElement) {
+        // jscs:disable disallowDirectGetComputedStyle
         return _Global.getComputedStyle(element, pseudoElement) || getDefaultComputedStyle();
+        // jscs:enable disallowDirectGetComputedStyle
     }
 
     function removeEmpties(arr) {
@@ -291,17 +293,17 @@ define([
     }
 
     function getDimension(element, property) {
-        return convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
+        return convertToPixels(element, _getComputedStyle(element, null)[property]);
     }
 
     function _convertToPrecisePixels(value) {
         return parseFloat(value) || 0;
     }
     function _getPreciseDimension(element, property) {
-        return _convertToPrecisePixels(_Global.getComputedStyle(element, null)[property]);
+        return _convertToPrecisePixels(_getComputedStyle(element, null)[property]);
     }
     function _getPreciseMargins(element) {
-        var style = _Global.getComputedStyle(element);
+        var style = _getComputedStyle(element);
         return {
             top: _convertToPrecisePixels(style.marginTop),
             right: _convertToPrecisePixels(style.marginRight),
@@ -914,7 +916,7 @@ define([
     }
 
     function getAdjustedScrollPosition(element) {
-        var computedStyle = _Global.getComputedStyle(element),
+        var computedStyle = _getComputedStyle(element),
             scrollLeft = element.scrollLeft;
         if (computedStyle.direction === "rtl") {
             if (!determinedRTLEnvironment) {
@@ -934,7 +936,7 @@ define([
 
     function setAdjustedScrollPosition(element, scrollLeft, scrollTop) {
         if (scrollLeft !== undefined) {
-            var computedStyle = _Global.getComputedStyle(element);
+            var computedStyle = _getComputedStyle(element);
             if (computedStyle.direction === "rtl") {
                 if (!determinedRTLEnvironment) {
                     determineRTLEnvironment();
@@ -1183,7 +1185,7 @@ define([
                     var initialPos = getAdjustedScrollPosition(element);
                     var effectiveScrollLeft = (typeof element._zoomToDestX === "number" ? element._zoomToDestX : initialPos.scrollLeft);
                     var effectiveScrollTop = (typeof element._zoomToDestY === "number" ? element._zoomToDestY : initialPos.scrollTop);
-                    var cs = _Global.getComputedStyle(element);
+                    var cs = _getComputedStyle(element);
                     var scrollLimitX = element.scrollWidth - parseInt(cs.width, 10) - parseInt(cs.paddingLeft, 10) - parseInt(cs.paddingRight, 10);
                     var scrollLimitY = element.scrollHeight - parseInt(cs.height, 10) - parseInt(cs.paddingTop, 10) - parseInt(cs.paddingBottom, 10);
 
@@ -2402,7 +2404,7 @@ define([
                     element !== _Global.document.body &&
                     element !== _Global.document.documentElement) {
                 top -= element.scrollTop;
-                var dir = _Global.document.defaultView.getComputedStyle(element, null).direction;
+                var dir = _getComputedStyle(element, null).direction;
                 left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
 
                 if (element === offsetParent) {

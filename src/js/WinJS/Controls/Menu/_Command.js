@@ -463,7 +463,7 @@ define([
 
                 _handleKeyDown: function MenuCommand_handleKeyDown(event) {
                     var Key = _ElementUtilities.Key,
-                        rtl = _Global.getComputedStyle(this.element).direction === "rtl",
+                        rtl = _ElementUtilities._getComputedStyle(this.element).direction === "rtl",
                         rightKey = rtl ? Key.leftArrow : Key.rightArrow;
 
                     if (event.keyCode === rightKey && this.type === _Constants.typeFlyout) {

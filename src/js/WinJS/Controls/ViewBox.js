@@ -92,7 +92,7 @@ define([
 
                 _rtl: {
                     get: function () {
-                        return _Global.getComputedStyle(this.element).direction === "rtl";
+                        return _ElementUtilities._getComputedStyle(this.element).direction === "rtl";
                     }
                 },
 

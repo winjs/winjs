@@ -25,7 +25,7 @@ define([
     // When it runs into a tab contained area, it rejects anything except the childFocus element so that any potentially tabbable things that the TabContainer
     // doesn't want tabbed to get ignored.
     function tabbableElementsNodeFilter(node) {
-        var nodeStyle = _Global.getComputedStyle(node);
+        var nodeStyle = _ElementUtilities._getComputedStyle(node);
         if (nodeStyle.display === "none" || nodeStyle.visibility === "hidden") {
             return _Global.NodeFilter.FILTER_REJECT;
         }

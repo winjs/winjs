@@ -417,7 +417,7 @@ define([
 
                     // Align left vs right edge
                     var alignRight;
-                    if (_Global.getComputedStyle(this._flyoutElement).direction === "rtl") {
+                    if (_ElementUtilities._getComputedStyle(this._flyoutElement).direction === "rtl") {
                         // RTL: Align to the right edge if there is enough space to the left of the control's
                         // right edge, or if there is not enough space to fit the flyout aligned to either edge.
                         alignRight = ((inputRect.right - flyoutRect.width) >= 0) || ((inputRect.left + flyoutRect.width) > documentClientWidth);

@@ -81,7 +81,7 @@ define([
                     }
                     })) {
                         that._cachedStyleDir = that._flipviewDiv.style.direction;
-                        that._rtl = _Global.getComputedStyle(that._flipviewDiv, null).direction === "rtl";
+                        that._rtl = _ElementUtilities._getComputedStyle(that._flipviewDiv, null).direction === "rtl";
                         that._setupOrientation();
                     }
                 }
@@ -1145,7 +1145,7 @@ define([
                     if (this._isHorizontal) {
                         this._panningDivContainer.style["overflowX"] = (this._environmentSupportsTouch ? "scroll" : "hidden");
                         this._panningDivContainer.style["overflowY"] = "hidden";
-                        var rtl = _Global.getComputedStyle(this._flipviewDiv, null).direction === "rtl";
+                        var rtl = _ElementUtilities._getComputedStyle(this._flipviewDiv, null).direction === "rtl";
                         this._rtl = rtl;
                         if (rtl) {
                             this._prevButton.className = navButtonClass + " " + navButtonRightClass;

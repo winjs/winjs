@@ -517,7 +517,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return false;
         }
 
-        var style = getComputedStyle(element);
+        var style = _ElementUtilities._getComputedStyle(element);
         if (element.getAttribute("tabIndex") === "-1" || style.display === "none" || style.visibility === "hidden" || element.disabled) {
             // Skip elements that are hidden
             // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.

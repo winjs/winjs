@@ -276,7 +276,7 @@ export class SplitView {
 
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
-            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._rtl = _ElementUtilities._getComputedStyle(this._dom.root).direction === 'rtl';
             this._machine.exitInit();
         });
     }
@@ -448,7 +448,7 @@ export class SplitView {
     }
 
     private _measureElement(element: HTMLElement): IRect {
-        var style = getComputedStyle(element);
+        var style = _ElementUtilities._getComputedStyle(element);
         var position = _ElementUtilities._getPositionRelativeTo(element, this._dom.root);
         var marginLeft = parseInt(style.marginLeft, 10);
         var marginTop = parseInt(style.marginTop, 10);
