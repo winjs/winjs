@@ -1111,7 +1111,9 @@ define([
             if (mapping) {
                 switch (initType.toLowerCase()) {
                     case "pointer":
-                        arguments[2] = mapping.mspointer;
+                        if (!_Global.PointerEvent) {
+                            arguments[2] = mapping.mspointer;
+                        }
                         break;
 
                     default:
