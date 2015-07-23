@@ -83,8 +83,8 @@ export class ToolBar {
     private _disposed: boolean;
     private _commandingSurface: _ICommandingSurface._CommandingSurface;
     private _isOpenedMode: boolean;
-    private _handleShowingKeyboardBound: (ev: any) => void
-    private _dismissable: _LightDismissService.ILightDismissable;
+    private _handleShowingKeyboardBound: (ev: any) => void;
+    private _dismissable: _LightDismissService.LightDismissableElement;
     private _cachedClosedHeight: number;
 
     private _dom: {
@@ -204,6 +204,10 @@ export class ToolBar {
             tabIndex: this._dom.root.hasAttribute("tabIndex") ? this._dom.root.tabIndex : -1,
             onLightDismiss: () => {
                 this.close();
+            },
+            onTakeFocus: (useSetActive) => {
+                this._dismissable.restoreFocus() ||
+                this._commandingSurface.takeFocus(useSetActive);
             }
         });
 

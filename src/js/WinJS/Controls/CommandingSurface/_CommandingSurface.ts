@@ -306,12 +306,8 @@ export class _CommandingSurface {
         // Event handlers
         _ElementUtilities._resizeNotifier.subscribe(this._dom.root, this._resizeHandlerBound);
         this._dom.root.addEventListener('keydown', this._keyDownHandler.bind(this));
-        _ElementUtilities._addEventListener(this._dom.firstTabStop, "focusin", () => {
-            _ElementUtilities._focusLastFocusableElement(this._dom.content);
-        });
-        _ElementUtilities._addEventListener(this._dom.finalTabStop, "focusin", () => {
-            _ElementUtilities._focusFirstFocusableElement(this._dom.content);
-        });
+        _ElementUtilities._addEventListener(this._dom.firstTabStop, "focusin", () => { this._focusLastFocusableElementOrThis(false); });
+        _ElementUtilities._addEventListener(this._dom.finalTabStop, "focusin", () => { this._focusFirstFocusableElementOrThis(false); });
 
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
@@ -403,6 +399,20 @@ export class _CommandingSurface {
                 }
             }
         }
+    }
+
+    takeFocus(useSetActive: boolean): void {
+        this._focusFirstFocusableElementOrThis(useSetActive);
+    }
+
+    private _focusFirstFocusableElementOrThis(useSetActive: boolean): void {
+        _ElementUtilities._focusFirstFocusableElement(this._dom.content, useSetActive) ||
+        _ElementUtilities._tryFocusOnAnyElement(this.element, useSetActive);
+    }
+
+    private _focusLastFocusableElementOrThis(useSetActive: boolean): void {
+        _ElementUtilities._focusLastFocusableElement(this._dom.content, useSetActive) ||
+        _ElementUtilities._tryFocusOnAnyElement(this.element, useSetActive);
     }
 
     deferredDomUpate(): void {
@@ -1201,7 +1211,7 @@ export class _CommandingSurface {
             this._dom.overflowArea.appendChild(command.element);
         });
         this._menuCommandProjections = menuCommandProjections;
-        
+
         // Re-append spacer to the end of the oveflowarea
         this._dom.overflowArea.appendChild(this._dom.overflowAreaSpacer);
 
