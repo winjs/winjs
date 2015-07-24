@@ -185,6 +185,16 @@
                     end: footerWithoutExport("intrinsics")
                 }
             }
+        }),
+        tv: defaults('tv', {
+            options: {
+                cssOutputSuffix: "-tv",
+                exclude: ['./base', './ui'],
+                wrap: {
+                    start: header("tv", ['./base', './ui']),
+                    end: footerWithoutExport("tv")
+                }
+            }
         })
     };
 
