@@ -158,6 +158,7 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
             return result;
         }
     }
+    return null;
 }
 
 
@@ -341,7 +342,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
     for (var i = 0, length = allElements.length; i < length; i++) {
         var potentialElement = <HTMLElement>allElements[i];
 
-        if (refObj.element === potentialElement || !isFocusable(potentialElement)) {
+        if (refObj.element === potentialElement || !isFocusable(potentialElement) || _isInToggleModeContainer(potentialElement)) {
             continue;
         }
 
@@ -566,6 +567,14 @@ function _getIFrameFromWindow(win: Window) {
     var iframes = _Global.document.querySelectorAll("IFRAME");
     var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
     return found.length ? found[0] : null;
+}
+
+function _isInToggleModeContainer(element: HTMLElement) {
+    var toggleModeRoot = element.parentElement;
+    while (toggleModeRoot && !_isToggleMode(toggleModeRoot)) {
+        toggleModeRoot = toggleModeRoot.parentElement;
+    }
+    return toggleModeRoot;
 }
 
 function _isToggleMode(element: HTMLElement) {

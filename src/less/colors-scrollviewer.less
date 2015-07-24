@@ -1,0 +1,63 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+.Colors(@theme) {
+    .colorDefinitions(@theme);
+
+    .win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement {
+        border-color: fadeout(@TVVideoSafeInverseTheme, 100%);
+        background-color: @TVVideoSafeWhite;
+    }
+
+    body:not(.win-visiblebutnotfocused) .win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement:focus {
+        border-color: @TVVideoSafeInverseTheme;
+    }
+
+    .win-scrollviewer-scrollmode-text.win-scrollable .win-scrollviewer-contentelement:hover:not(:focus) {
+        border-color: @TVUi3;
+    }
+
+    .win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement:active {
+        background-color: fadeout(@TVVideoSafeWhite, 90%);
+        box-shadow: inset 0 0 0 10px @TVVideoSafeBlack;
+    }
+
+    .win-scrollviewer .win-overlay-scrollupindicator,
+    .win-scrollviewer .win-overlay-scrolldownindicator {
+        color: @TVUi3;
+    }
+
+    .win-scrollviewer-contentelement {
+        -ms-scrollbar-face-color: @TVVideoSafeInverseTheme;
+    }
+
+    body:not(.win-visiblebutnotfocused) .win-xyfocus-togglemode-active.win-scrollviewer-contentelement {
+        background-color: fadeout(@TVVideoSafeWhite, 90%);
+    }
+
+    .win-scrollviewer .win-scrollable-down .win-overlay-scrolldownindicator {
+        color: @TVVideoSafeWhite;
+    }
+
+    .win-scrollviewer .win-scrollable-up .win-overlay-scrollupindicator {
+        color: @TVVideoSafeWhite;
+    }
+
+    .win-scrollviewer .win-scrollable-up.win-scrollable-down .win-overlay-scrollupindicator,
+    .win-scrollviewer .win-scrollable-up.win-scrollable-down .win-overlay-scrolldownindicator {
+        color: @TVVideoSafeWhite;
+    }
+    /* Voice Styles */
+    .win-voice-voicemodeactive .win-scrollviewer.win-scrollable .win-scrollindicator .win-overlay-voiceindicators {
+        background-color: @TVVideoSafeBlack;
+    }
+
+    .win-overlay-scrollupindicator,
+    .win-overlay-scrolldownindicator {
+        color: @TVUi4;
+    }
+
+    .win-listpicker .win-overlay-scrollupindicator,
+    .win-listpicker .win-overlay-scrolldownindicator {
+        color: @TVUi3;
+    }
+}
