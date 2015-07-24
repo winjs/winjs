@@ -1,0 +1,196 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+@import "color-definitions.less";
+
+.win-scrollviewer .win-itemcontainer {
+    border-top: 8px;
+    border-bottom: 8px;
+    border-bottom-style: solid;
+    border-top-style: solid;
+    border-color: transparent;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+
+.win-scrollviewer .win-itemcontainer .win-tile-focusindicator {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    height: calc(100% - 16px);
+}
+
+.win-scrollviewer .win-itemcontainer .win-voice-host,
+.win-scrollviewer .win-itemcontainer .win-itemcontainer-captureproxy,
+.win-overlay-container .win-itemcontainer .win-voice-host,
+.win-overlay-container .win-itemcontainer .win-itemcontainer-captureproxy {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    height: calc(100% - 16px);
+}
+
+.win-scrollviewer {
+    display: -ms-grid;
+    -ms-grid-rows: 1fr 50px;
+    -ms-grid-columns: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+.win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement {
+    border-style: solid;
+    border-width: 4px;
+    padding-right: 24px;
+    padding-left: 0;
+    transition-duration: 100ms;
+    transition-timing-function: linear;
+    transition-property: border-color padding;
+}
+
+body:not(.win-visiblebutnotfocused) .win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement:focus {
+    transition-duration: 100ms;
+    padding-right: 12px;
+    padding-left: 12px;
+}
+
+.win-scrollviewer-scrollmode-text .win-scrollviewer-contentelement:active {
+    transition-duration: 0.467s;
+    transition-timing-function: cubic-bezier(0.84, 0, 1, 0.32);
+    transition-property: box-shadow;
+}
+
+.win-scrollviewer .win-scrollindicator {
+    -ms-grid-row: 2;
+    -ms-grid-row-align: end;
+    display: -ms-grid;
+    -ms-grid-rows: 50px 50px;
+    -ms-grid-columns: 16px 1fr 1fr 16px;
+}
+
+.win-scrollviewer .win-overlay-arrowindicators {
+    -ms-grid-row: 2;
+    -ms-grid-column: 2;
+    width: 100%;
+    height: 100%;
+    display: -ms-flexbox;
+    -ms-flex-direction: row;
+}
+
+/* If the text is not scrollable we don't show the arrows. */
+.win-scrollviewer .win-overlay-arrowindicators {
+    visibility: hidden;
+}
+
+/* But if there is scrollable content, then we do show the arrows. */
+.win-scrollable .win-scrollable-up .win-overlay-arrowindicators,
+.win-scrollable .win-scrollable-down .win-overlay-arrowindicators {
+    visibility: visible;
+}
+
+/* The ScrollViewer in list most does not show the scroll bars */
+.win-scrollviewer-scrollmode-list .win-scrollviewer-contentelement {
+    -ms-overflow-style: none;
+}
+
+/* Voice Styles */
+.win-overlay-voiceindicators {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+    -ms-grid-column-span: 4;
+    height: 100%;
+    display: none;
+}
+
+.win-scrollable .win-overlay-voiceindicators {
+    display: -ms-grid;
+    -ms-grid-columns: 1fr 0px 1fr;
+    -ms-grid-rows: 1fr;
+    height: 100%;
+}
+
+.win-scrollviewer.win-scrollable .win-overlay-voiceindicators {
+    -ms-grid-row-span: 2;
+}
+
+.win-overlay-voiceindicators .win-overlay-pageupindicator {
+    -ms-grid-column: 1;
+    -ms-grid-row: 1;
+    -ms-grid-row-align: center;
+}
+
+.win-overlay-voiceindicators .win-overlay-pagedownindicator {
+    -ms-grid-column: 3;
+    -ms-grid-column-align: end;
+    -ms-grid-row-align: center;
+}
+
+.win-scrollviewer .win-overlay-voice-command {
+    -ms-grid-row-align: end;
+    margin: 0 16px 0 16px;
+    line-height: 36px;
+    overflow: hidden;
+    white-space: normal;
+}
+
+.win-scrollviewer .win-scrollviewer-contentelement:focus {
+    outline: none;
+}
+
+.win-scrollviewer-contentelement {
+    -ms-grid-row: 1;
+    -ms-grid-column: 1;
+    height: auto;
+    width: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    -ms-touch-action: none;
+}
+
+/* When the ScrollViewer is in a hub, we want to set the pan direction to horizontal  
+    so that the user can pan horizontally on details pages if vertical scrolling is  
+    not required. */
+.win-hub-horizontal .win-scrollviewer-contentelement {
+    -ms-touch-action: pan-x;
+}
+
+.win-hub-vertical .win-scrollviewer-contentelement {
+    -ms-touch-action: pan-y;
+}
+
+.win-scrollable .win-scrollviewer-contentelement {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    -ms-touch-action: pan-y;
+    overflow-y: auto;
+}
+
+/* Ensures the VUI for ScrollViewers will be above the focus of the item containers. */
+.win-scrollindicator {
+    position: relative;
+    z-index: 1;
+}
+
+/* We need to give the divs a height otherwise they  
+   will not be voice enabled. We accomplish this by using  
+   a 1px border. */
+.win-overlay-dismissoverlay > .win-overlay-voice-command,
+.win-overlay-pageupindicator,
+.win-overlay-pagedownindicator {
+    border: 1px solid transparent;
+}
+
+.win-voice-voicemodeactive .win-overlay-scrollupindicator {
+    display: none;
+}
+
+.win-voice-voicemodeactive .win-overlay-scrolldownindicator {
+    display: none;
+}
+
+.win-overlay-scrollupindicator::before {
+    font-family: 'Segoe UI Symbol';
+    content: '\1F53C';
+}
+
+.win-overlay-scrolldownindicator::before {
+    font-family: 'Segoe UI Symbol';
+    content: '\1F53D';
+}

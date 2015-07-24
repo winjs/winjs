@@ -1,6 +1,13 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 .colorDefinitions(@theme) {
+    // TV colors
+    @TVUi3: rgb(107, 107, 107);
+    @TVUi4: rgb(194, 194, 194);
+    @TVVideoSafeWhite: rgb(235, 235, 235);
+    @TVVideoSafeBlack: rgb(16, 16, 16);
+
+
     // Primary theme colors
     .mixin(light) {
         @altHigh: rgb(255, 255, 255);
@@ -17,6 +24,10 @@
         // One off colors
         @sliderThumbHover: #1f1f1f;
         @sliderThumbDisabled: #ccc;
+
+        // TV colors
+        @TVVideoSafeTheme: @TVVideoSafeWhite;
+        @TVVideoSafeInverseTheme: @TVVideoSafeBlack;
     }
 
     .mixin(dark) {
@@ -26,7 +37,7 @@
         @chromeMid: #393939;
         @chromeMediumMid: #2b2b2b;
         @chromeLow: #171717;
-        
+
         @listSelectRestOpacity: .6;
         @listSelectHoverOpacity: .8;
         @listSelectPressOpacity: .9;
@@ -34,6 +45,10 @@
         // One off colors
         @sliderThumbHover: #f9f9f9;
         @sliderThumbDisabled: #333;
+
+        // TV colors
+        @TVVideoSafeTheme: @TVVideoSafeBlack;
+        @TVVideoSafeInverseTheme: @TVVideoSafeWhite;
     }
     .mixin(@theme);
 

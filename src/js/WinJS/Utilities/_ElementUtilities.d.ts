@@ -1061,6 +1061,7 @@ export declare function _getPreciseMargins(element: HTMLElement): { top: number;
 export declare function _getComputedStyle(element: Element, pseudoElement?: string): CSSStyleDeclaration; 
 export declare function _ensureId(element: HTMLElement): void;
 export declare function _setAttribute(element: HTMLElement, attribute: string, value: string): void;
+export declare function _zoomTo(element: HTMLElement, zoomToOptions: { contentX?: number; contentY?: number; viewportX?: number; viewportY?: number }): void;
 export declare var _MutationObserver: {
     prototype: IMutationObserverShim;
     new (callback: (mutations: IMutationRecordShim[]) => void): IMutationObserverShim;
