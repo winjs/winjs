@@ -542,7 +542,7 @@ define([
 
                 _rtl: function ItemContainer_rtl() {
                     if (typeof this._cachedRTL !== "boolean") {
-                        this._cachedRTL = _Global.getComputedStyle(this.element, null).direction === "rtl";
+                        this._cachedRTL = _ElementUtilities._getComputedStyle(this.element, null).direction === "rtl";
                     }
                     return this._cachedRTL;
                 },
@@ -552,7 +552,7 @@ define([
                 },
 
                 _forceLayout: function ItemContainer_forceLayout() {
-                    this._cachedRTL = _Global.getComputedStyle(this.element, null).direction === "rtl";
+                    this._cachedRTL = _ElementUtilities._getComputedStyle(this.element, null).direction === "rtl";
                     this._setDirectionClass();
                 },
 

@@ -4,8 +4,10 @@ define([
     '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
+    '../../Navigation',
+    '../../Utilities/_ElementUtilities',
     '../SplitView/Command',
-], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, SplitViewCommand) {
+], function NavBarCommandInit(exports, _Global, _Base, _ErrorFromName, Navigation, _ElementUtilities, SplitViewCommand) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -28,7 +30,8 @@ define([
         NavBarCommand: _Base.Namespace._lazy(function () {
 
             var strings = {
-                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; }
+                get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
+                get navBarCommandDeprecated() { return "NavBarCommand is deprecated and may not be available in future releases. If you were using a NavBarCommand inside of a SplitView, use SplitViewCommand instead."; }
             };
 
             var ClassNames = {
@@ -59,8 +62,14 @@ define([
                 /// <returns type="WinJS.UI.NavBarCommand" locid="WinJS.UI.NavBarCommand.constructor_returnValue">
                 /// The new NavBarCommand.
                 /// </returns>
+                /// <deprecated type="deprecate">
+                /// NavBarCommand is deprecated and may not be available in future releases. 
+                /// If you were using a NavBarCommand inside of a SplitView, use SplitViewCommand instead.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+                _ElementUtilities._deprecated(strings.navBarCommandDeprecated);
+
                 element = element || _Global.document.createElement("DIV");
                 options = options || {};
 
@@ -130,6 +139,17 @@ define([
                     }
                 },
 
+                /// <field type="Function" locid="WinJS.UI.NavBarCommand.oninvoked" helpKeyword="WinJS.UI.NavBar.oninvoked">
+                /// This API supports the Windows Library for JavaScript infrastructure and is not intended to be used directly from your code. 
+                /// </field>
+                oninvoked: {
+                    // Override this this property from our parent class to "un-inherit it".
+                    // NavBarCommand uses a private "_invoked" event to communicate with NavBarContainer.
+                    // NavBarContainer fires a public "invoked" event when one of its commands has been invoked.
+                    get: function () { return undefined; },
+                    enumerable: false
+                },
+
                 /// <field type="String" locid="WinJS.UI.NavBarCommand.state" helpKeyword="WinJS.UI.NavBarCommand.state">
                 /// Gets or sets the state value used for navigation. The command passes this object to the WinJS.Navigation.navigate function.
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
@@ -184,11 +204,21 @@ define([
                     /// <compatibleWith platform="Windows" minVersion="8.1"/>
                     /// </signature>
                     superClass.dispose.call(this);
-                }
+                },
+
+                _invoke: function NavBarCommand_invoke() {
+                    if (this.location) {
+                        Navigation.navigate(this.location, this.state);
+                    }
+                    this._fireEvent(NavBarCommand._EventName._invoked);
+                },
             },
             {
                 _ClassName: ClassNames,
-                _EventName: SplitViewCommand.SplitViewCommand._EventName,
+                _EventName: {
+                    _invoked: "_invoked",
+                    _splitToggle: "_splittoggle",
+                },
             });
             return NavBarCommand;
         })

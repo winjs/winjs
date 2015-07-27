@@ -18,6 +18,9 @@ var AttributeNames = {
 
 var ClassNames = {
     focusable: "win-focusable",
+    suspended: "win-xyfocus-suspended",
+    toggleMode: "win-xyfocus-togglemode",
+    toggleModeActive: "win-xyfocus-togglemode-active",
     xboxPlatform: "win-xbox",
 };
 
@@ -112,6 +115,7 @@ export var keyCodeMap = {
     up: <number[]>[],
     down: <number[]>[],
     accept: <number[]>[],
+    cancel: <number[]>[],
 };
 
 /**
@@ -161,7 +165,14 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
 var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
-var _afEnabledFrames: Window[] = [];
+var _xyFocusEnabledIFrames: Window[] = [];
+
+/**
+ * Executes XYFocus algorithm with the given parameters. Returns true if focus was moved, false otherwise.
+ * @param direction The direction to move focus.
+ * @param keyCode The key code of the pressed key.
+ * @param (optional) A rectangle to use as the source coordinates for finding the next focusable element.
+**/
 function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
     // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
@@ -193,9 +204,12 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         updateHistoryRect(direction, result);
         _lastTarget = result.target;
         _cachedLastTargetRect = result.targetRect;
+        if (_ElementUtilities.hasClass(result.target, ClassNames.toggleMode)) {
+            _ElementUtilities.removeClass(result.target, ClassNames.toggleModeActive);
+        }
 
         if (result.target.tagName === "IFRAME") {
-            var index = _afEnabledFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
+            var index = _xyFocusEnabledIFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
             if (index >= 0) {
                 // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
                 // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
@@ -360,7 +374,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
 
         var pixelOverlap = Math.min(maxReferenceCoord, maxPotentialCoord) - Math.max(minReferenceCoord, minPotentialCoord);
         var shortEdge = Math.min(maxPotentialCoord - minPotentialCoord, maxReferenceCoord - minReferenceCoord);
-        return pixelOverlap / shortEdge;
+        return shortEdge === 0 ? 0 : (pixelOverlap / shortEdge);
     }
 
     function calculateScore(direction: string, maxDistance: number, historyRect: IRect, referenceRect: IRect, potentialRect: IRect) {
@@ -493,7 +507,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return false;
         }
 
-        if (elementTagName === "IFRAME" && _afEnabledFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
+        if (elementTagName === "IFRAME" && _xyFocusEnabledIFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
             // Skip IFRAMEs without compatible XYFocus implementation
             return false;
         }
@@ -503,7 +517,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return false;
         }
 
-        var style = getComputedStyle(element);
+        var style = _ElementUtilities._getComputedStyle(element);
         if (element.getAttribute("tabIndex") === "-1" || style.display === "none" || style.visibility === "hidden" || element.disabled) {
             // Skip elements that are hidden
             // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.
@@ -554,28 +568,143 @@ function _getIFrameFromWindow(win: Window) {
     return found.length ? found[0] : null;
 }
 
+function _isToggleMode(element: HTMLElement) {
+    if (_ElementUtilities.hasClass(element, ClassNames.toggleMode)) {
+        return true;
+    }
+
+    if (element.tagName === "INPUT") {
+        var inputType = (<HTMLInputElement>element).type.toLowerCase();
+        if (inputType === "date" ||
+            inputType === "datetime" ||
+            inputType === "datetime-local" ||
+            inputType === "email" ||
+            inputType === "month" ||
+            inputType === "number" ||
+            inputType === "password" ||
+            inputType === "range" ||
+            inputType === "search" ||
+            inputType === "tel" ||
+            inputType === "text" ||
+            inputType === "time" ||
+            inputType === "url" ||
+            inputType === "week") {
+            return true;
+        }
+    } else if (element.tagName === "TEXTAREA") {
+        return true;
+    }
+    return false;
+}
+
+function _unregisterIFrame(window: Window) {
+    var index = _xyFocusEnabledIFrames.indexOf(window);
+    if (index !== -1) {
+        _xyFocusEnabledIFrames.splice(index, 1);
+    }
+}
+
 function _handleKeyEvent(e: KeyboardEvent): void {
     if (e.defaultPrevented) {
         return;
     }
 
-    var keys = Object.keys(keyCodeMap);
-    for (var i = 0; i < keys.length; i++) {
-        // Note: key is 'left', 'right', 'up', 'down', or 'accept'
-        var key = keys[i];
-        var keyMappings = keyCodeMap[key];
-        if (keyMappings.indexOf(e.keyCode) >= 0) {
-            if (keyMappings === keyCodeMap.accept) {
-                _Global.document.activeElement && _Global.document.activeElement["click"] && _Global.document.activeElement["click"]();
+    var activeElement = <HTMLElement>_Global.document.activeElement;
+    var shouldPreventDefault = false;
+
+    var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
+    var toggleMode = _isToggleMode(activeElement);
+    var toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+
+    var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
+    if (suspended) {
+        stateHandler = KeyHandlerStates.SuspendedState;
+    } else {
+        if (toggleMode) {
+            if (toggleModeActive) {
+                stateHandler = KeyHandlerStates.ToggleModeActiveState;
             } else {
-                if (_xyFocus(key, e.keyCode)) {
-                    e.preventDefault();
-                }
+                stateHandler = KeyHandlerStates.ToggleModeRestState;
             }
-            return;
         }
     }
+
+    if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
+        shouldPreventDefault = stateHandler.accept(activeElement);
+    } else if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
+        shouldPreventDefault = stateHandler.cancel(activeElement);
+    } else {
+        var direction = "";
+        if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
+            direction = "up";
+        } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
+            direction = "down";
+        } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
+            direction = "left";
+        } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
+            direction = "right";
+        }
+        if (direction) {
+            shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
+        }
+    }
+
+    if (shouldPreventDefault) {
+        e.preventDefault();
+    }
 }
+
+module KeyHandlerStates {
+    export interface IKeyHandlerState {
+        accept(element: HTMLElement): boolean;
+        cancel(element: HTMLElement): boolean;
+        xyFocus(direction: string, keyCode: number): boolean;
+    }
+
+    // Element is not suspended and does not use toggle mode.
+    export class RestState {
+        static accept = _clickElement;
+        static cancel = _nop;
+        static xyFocus = _xyFocus; // Prevent default when XYFocus moves focus
+    }
+
+    // Element has opted out of XYFocus.
+    export class SuspendedState {
+        static accept = _nop;
+        static cancel = _nop;
+        static xyFocus = _nop;
+    }
+
+    // Element uses toggle mode but is not toggled nor opted out of XYFocus.
+    export class ToggleModeRestState {
+        static accept(element: HTMLElement) {
+            _ElementUtilities.addClass(element, ClassNames.toggleModeActive);
+            return true;
+        }
+        static cancel = _nop;
+        static xyFocus = _xyFocus; // Prevent default when XYFocus moves focus
+    }
+
+    // Element uses toggle mode and is toggled and did not opt out of XYFocus.
+    export class ToggleModeActiveState {
+        static accept = _clickElement;
+        static cancel(element: HTMLElement) {
+            _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
+            return true;
+        }
+        static xyFocus = _nop;
+    }
+
+    function _clickElement(element: HTMLElement) {
+        element && element.click && element.click();
+        return false;
+    }
+
+    function _nop(...args: any[]) {
+        return false;
+    }
+}
+
 
 if (_Global.document) {
     // Note: This module is not supported in WebWorker
@@ -586,6 +715,7 @@ if (_Global.document) {
     keyCodeMap.up.push(Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp);
     keyCodeMap.down.push(Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown);
     keyCodeMap.accept.push(Keys.GamepadA, Keys.NavigationAccept);
+    keyCodeMap.cancel.push(Keys.GamepadB, Keys.NavigationCancel);
 
     _Global.addEventListener("message", (e: MessageEvent): void => {
         if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
@@ -595,14 +725,18 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                _afEnabledFrames.push(e.source);
+                // e.source may be undefined if the iframe is no longer in the DOM
+                if (e.source) {
+                    _xyFocusEnabledIFrames.push(e.source);
+                    e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
+                        _unregisterIFrame(e.source);
+                        e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
+                    });
+                }
                 break;
 
             case CrossDomainMessageConstants.unregister:
-                var index = _afEnabledFrames.indexOf(e.source);
-                if (index >= 0) {
-                    _afEnabledFrames.splice(index, 1);
-                }
+                _unregisterIFrame(e.source);
                 break;
 
             case CrossDomainMessageConstants.dFocusEnter:
@@ -633,7 +767,9 @@ if (_Global.document) {
             _ElementUtilities.addClass(_Global.document.body, ClassNames.xboxPlatform);
         }
 
-        _Global.document.addEventListener("keydown", _handleKeyEvent);
+        // Subscribe on capture phase to prevent this key event from interacting with
+        // the element/control if XYFocus handled it.
+        _Global.document.addEventListener("keydown", _handleKeyEvent, true);
 
         // If we are running within an iframe, we send a registration message to the parent window
         if (_Global.top !== _Global.window) {
@@ -664,7 +800,8 @@ if (_Global.document) {
         onfocuschanged: _Events._createEventProperty(EventNames.focusChanged),
         onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
 
-        _xyFocus: _xyFocus
+        _xyFocus: _xyFocus,
+        _xyFocusEnabledIFrames: _xyFocusEnabledIFrames
     };
     toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
     toPublish["_listeners"] = {};

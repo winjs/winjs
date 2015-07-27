@@ -717,6 +717,27 @@ module CorsicaTests {
             });
             LiveUnit.Assert.isFalse(doDefaultAction, "default should have been prevented");
         }
+        
+        // Verifies that WinJS.Utilities._getComputedStyle returns an object whose keys map to strings
+        // even when called within an iframe that is display:none.
+        testGetComputedStyleHelperInHiddenIframe(complete) {
+            var iframe = document.createElement("iframe");
+            iframe.style.display = "none";
+            iframe.src = "$(TESTDATA)/WinJSSandbox.html";
+            iframe.onload = function () {
+                var iframeGlobal = iframe.contentWindow;
+                var element = iframeGlobal.document.createElement("div");
+                iframeGlobal.document.body.appendChild(element);
+                var computedStyle = (<any>iframeGlobal).WinJS.Utilities._getComputedStyle(element);
+                LiveUnit.Assert.isNotNull(computedStyle, "getComputedStyle helper should return an object");
+                LiveUnit.Assert.isTrue(typeof computedStyle.color === "string",
+                    "getComputedStyle helper should return an object with a 'color' property that is a string ");
+                
+                document.body.removeChild(iframe);
+                complete();
+            };
+            document.body.appendChild(iframe);
+        }
     }
 
     // Verifies that *setActive* gives an element focus without causing its parent scroller to scroll.

@@ -38,7 +38,7 @@ define([
     }
 
     function resolveStyles(elem) {
-        _Global.getComputedStyle(elem, null).opacity;
+        _ElementUtilities._getComputedStyle(elem, null).opacity;
     }
 
     function copyWithEvaluation(iElem, elem) {

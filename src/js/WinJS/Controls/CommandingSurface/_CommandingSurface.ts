@@ -154,12 +154,16 @@ export class _CommandingSurface {
     // Dom elements
     private _dom: {
         root: HTMLElement;
+        content: HTMLElement;
         actionArea: HTMLElement;
         actionAreaContainer: HTMLElement;
-        spacer: HTMLDivElement;
+        actionAreaSpacer: HTMLElement;
         overflowButton: HTMLButtonElement;
         overflowArea: HTMLElement;
         overflowAreaContainer: HTMLElement;
+        overflowAreaSpacer: HTMLElement;
+        firstTabStop: HTMLElement;
+        finalTabStop: HTMLElement;
     };
 
     /// Display options for the actionarea when the _CommandingSurface is closed.
@@ -240,9 +244,20 @@ export class _CommandingSurface {
 
         this._writeProfilerMark("constructor,StartTM");
 
-        // Check to make sure we weren't duplicated
-        if (element && element["winControl"]) {
-            throw new _ErrorFromName("WinJS.UI._CommandingSurface.DuplicateConstruction", strings.duplicateConstruction);
+
+        if (element) {
+            // Check to make sure we weren't duplicated
+            if (element["winControl"]) {
+                throw new _ErrorFromName("WinJS.UI._CommandingSurface.DuplicateConstruction", strings.duplicateConstruction);
+            }
+
+            if (!options.data) {
+                // Shallow copy object so we can modify it.
+                options = _BaseUtils._shallowCopy(options);
+
+                // Get default data from any command defined in markup.
+                options.data = options.data || this._getDataFromDOMElements(element);
+            }
         }
 
         this._initializeDom(element || _Global.document.createElement("div"));
@@ -285,22 +300,18 @@ export class _CommandingSurface {
         this.overflowDirection = _Constants.defaultOverflowDirection;
         this.closedDisplayMode = _Constants.defaultClosedDisplayMode;
         this.opened = this._isOpenedMode;
-        if (!options.data) {
-            // Shallow copy object so we can modify it.
-            options = _BaseUtils._shallowCopy(options);
 
-            // Set default data
-            options.data = options.data || this._getDataFromDOMElements();
-        }
         _Control.setOptions(this, options);
 
         // Event handlers
         _ElementUtilities._resizeNotifier.subscribe(this._dom.root, this._resizeHandlerBound);
         this._dom.root.addEventListener('keydown', this._keyDownHandler.bind(this));
+        _ElementUtilities._addEventListener(this._dom.firstTabStop, "focusin", () => { this._focusLastFocusableElementOrThis(false); });
+        _ElementUtilities._addEventListener(this._dom.finalTabStop, "focusin", () => { this._focusFirstFocusableElementOrThis(false); });
 
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
-            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._rtl = _ElementUtilities._getComputedStyle(this._dom.root).direction === 'rtl';
             if (!options.openCloseMachine) {
                 // We should only call exitInit on the machine when we own the machine.
                 this._machine.exitInit();
@@ -390,6 +401,20 @@ export class _CommandingSurface {
         }
     }
 
+    takeFocus(useSetActive: boolean): void {
+        this._focusFirstFocusableElementOrThis(useSetActive);
+    }
+
+    private _focusFirstFocusableElementOrThis(useSetActive: boolean): void {
+        _ElementUtilities._focusFirstFocusableElement(this._dom.content, useSetActive) ||
+        _ElementUtilities._tryFocusOnAnyElement(this.element, useSetActive);
+    }
+
+    private _focusLastFocusableElementOrThis(useSetActive: boolean): void {
+        _ElementUtilities._focusLastFocusableElement(this._dom.content, useSetActive) ||
+        _ElementUtilities._tryFocusOnAnyElement(this.element, useSetActive);
+    }
+
     deferredDomUpate(): void {
         // Notify the machine that an update has been requested.
         this._machine.updateDom();
@@ -421,7 +446,7 @@ export class _CommandingSurface {
                     overflowAreaHeight: boundingRects.overflowArea.height,
                     menuPositionedAbove: (that.overflowDirection === OverflowDirection.top),
                 }).then(function () {
-                    _ElementUtilities.removeClass(that.element, _Constants.ClassNames.openingClass);
+                        _ElementUtilities.removeClass(that.element, _Constants.ClassNames.openingClass);
                         that._clearAnimation();
                     });
             }
@@ -485,21 +510,29 @@ export class _CommandingSurface {
         _ElementUtilities.addClass(root, _Constants.ClassNames.controlCssClass);
         _ElementUtilities.addClass(root, _Constants.ClassNames.disposableCssClass);
 
+        var content = _Global.document.createElement("div");
+        _ElementUtilities.addClass(content, _Constants.ClassNames.contentClass);
+        root.appendChild(content);
+
         var actionArea = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionArea, _Constants.ClassNames.actionAreaCssClass);
-        _ElementUtilities._reparentChildren(root, actionArea);
-        var actionAreaInsetOutline = document.createElement("DIV");
+        var actionAreaInsetOutline = document.createElement("div");
         _ElementUtilities.addClass(actionAreaInsetOutline, _Constants.ClassNames.insetOutlineClass);
         var actionAreaContainer = _Global.document.createElement("div");
         _ElementUtilities.addClass(actionAreaContainer, _Constants.ClassNames.actionAreaContainerCssClass);
 
         actionAreaContainer.appendChild(actionArea);
         actionAreaContainer.appendChild(actionAreaInsetOutline);
-        root.appendChild(actionAreaContainer);
+        content.appendChild(actionAreaContainer);
 
-        var spacer = _Global.document.createElement("div");
-        _ElementUtilities.addClass(spacer, _Constants.ClassNames.spacerCssClass);
-        actionArea.appendChild(spacer);
+        // This element helps us work around cross browser flexbox bugs. When there are no primary
+        // commands in the action area but there IS a visible overflow button, some browsers will:
+        //  1. Collapse the action area.
+        //  2. Push overflowbutton outside of the action area's clipping rect.
+        var actionAreaSpacer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(actionAreaSpacer, _Constants.ClassNames.spacerCssClass);
+        actionAreaSpacer.tabIndex = -1;
+        actionArea.appendChild(actionAreaSpacer);
 
         var overflowButton = _Global.document.createElement("button");
         overflowButton.tabIndex = 0;
@@ -520,16 +553,37 @@ export class _CommandingSurface {
 
         overflowAreaContainer.appendChild(overflowArea);
         overflowAreaContainer.appendChild(overflowInsetOutline);
-        root.appendChild(overflowAreaContainer);
+        content.appendChild(overflowAreaContainer);
+
+        // This element is always placed at the end of the overflow area and is used to provide a better
+        // "end of scrollable region" visual.
+        var overflowAreaSpacer = _Global.document.createElement("div");
+        _ElementUtilities.addClass(overflowAreaSpacer, _Constants.ClassNames.spacerCssClass);
+        overflowAreaSpacer.tabIndex = -1;
+        overflowArea.appendChild(overflowAreaSpacer);
+
+        var firstTabStop = _Global.document.createElement("div");
+        _ElementUtilities.addClass(firstTabStop, _Constants.ClassNames.tabStopClass);
+        _ElementUtilities._ensureId(firstTabStop);
+        root.insertBefore(firstTabStop, root.children[0]);
+
+        var finalTabStop = _Global.document.createElement("div");
+        _ElementUtilities.addClass(finalTabStop, _Constants.ClassNames.tabStopClass);
+        _ElementUtilities._ensureId(finalTabStop);
+        root.appendChild(finalTabStop);
 
         this._dom = {
             root: root,
+            content: content,
             actionArea: actionArea,
             actionAreaContainer: actionAreaContainer,
-            spacer: spacer,
+            actionAreaSpacer: actionAreaSpacer,
             overflowButton: overflowButton,
             overflowArea: overflowArea,
-            overflowAreaContainer: overflowAreaContainer
+            overflowAreaContainer: overflowAreaContainer,
+            overflowAreaSpacer: overflowAreaSpacer,
+            firstTabStop: firstTabStop,
+            finalTabStop: finalTabStop,
         };
     }
 
@@ -538,7 +592,6 @@ export class _CommandingSurface {
             elements: [],
             focusedIndex: -1
         };
-        var elementsInReach = Array.prototype.slice.call(this._dom.actionArea.children);
 
         var elementsInReach = Array.prototype.slice.call(this._dom.actionArea.children);
         if (this._dom.overflowArea.style.display !== "none") {
@@ -613,7 +666,7 @@ export class _CommandingSurface {
             } else {
                 // e.g. the overflow button
                 focusable = element.style.display !== "none" &&
-                getComputedStyle(element).visibility !== "hidden" &&
+                _ElementUtilities._getComputedStyle(element).visibility !== "hidden" &&
                 element.tabIndex >= 0;
             }
         }
@@ -685,19 +738,19 @@ export class _CommandingSurface {
         }
     }
 
-    private _getDataFromDOMElements(): BindingList.List<_Command.ICommand> {
+    private _getDataFromDOMElements(root: HTMLElement): BindingList.List<_Command.ICommand> {
         this._writeProfilerMark("_getDataFromDOMElements,info");
 
-        ControlProcessor.processAll(this._dom.actionArea, /*skip root*/ true);
+        ControlProcessor.processAll(root, /*skip root*/ true);
 
         var commands: _Command.ICommand[] = [];
-        var childrenLength = this._dom.actionArea.children.length;
+        var childrenLength = root.children.length;
         var child: Element;
         for (var i = 0; i < childrenLength; i++) {
-            child = this._dom.actionArea.children[i];
+            child = root.children[i];
             if (child["winControl"] && child["winControl"] instanceof _Command.AppBarCommand) {
                 commands.push(child["winControl"]);
-            } else if (child !== this._dom.overflowButton && child !== this._dom.spacer) {
+            } else {
                 throw new _ErrorFromName("WinJS.UI._CommandingSurface.MustContainCommands", strings.mustContainCommands);
             }
         }
@@ -793,36 +846,49 @@ export class _CommandingSurface {
 
         var _renderDisplayMode = () => {
             var rendered = _renderedState;
+            var dom = this._dom;
 
             if (rendered.isOpenedMode !== this._isOpenedMode) {
                 if (this._isOpenedMode) {
                     // Render opened
-                    removeClass(this._dom.root, _Constants.ClassNames.closedClass);
-                    addClass(this._dom.root, _Constants.ClassNames.openedClass);
+                    removeClass(dom.root, _Constants.ClassNames.closedClass);
+                    addClass(dom.root, _Constants.ClassNames.openedClass);
+
+                    // Focus should carousel between first and last tab stops while opened.
+                    dom.firstTabStop.tabIndex = 0;
+                    dom.finalTabStop.tabIndex = 0;
+                    dom.firstTabStop.setAttribute("x-ms-aria-flowfrom", dom.finalTabStop.id);
+                    dom.finalTabStop.setAttribute("aria-flowto", dom.firstTabStop.id);
                 } else {
                     // Render closed
-                    removeClass(this._dom.root, _Constants.ClassNames.openedClass);
-                    addClass(this._dom.root, _Constants.ClassNames.closedClass);
+                    removeClass(dom.root, _Constants.ClassNames.openedClass);
+                    addClass(dom.root, _Constants.ClassNames.closedClass);
+
+                    // Focus should not carousel between first and last tab stops while closed.
+                    dom.firstTabStop.tabIndex = -1;
+                    dom.finalTabStop.tabIndex = -1;
+                    dom.firstTabStop.removeAttribute("x-ms-aria-flowfrom");
+                    dom.finalTabStop.removeAttribute("aria-flowto");
                 }
                 rendered.isOpenedMode = this._isOpenedMode;
             }
 
             if (rendered.closedDisplayMode !== this.closedDisplayMode) {
-                removeClass(this._dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
-                addClass(this._dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
+                removeClass(dom.root, closedDisplayModeClassMap[rendered.closedDisplayMode]);
+                addClass(dom.root, closedDisplayModeClassMap[this.closedDisplayMode]);
                 rendered.closedDisplayMode = this.closedDisplayMode;
             }
 
             if (rendered.overflowDirection !== this.overflowDirection) {
-                removeClass(this._dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
-                addClass(this._dom.root, overflowDirectionClassMap[this.overflowDirection]);
+                removeClass(dom.root, overflowDirectionClassMap[rendered.overflowDirection]);
+                addClass(dom.root, overflowDirectionClassMap[this.overflowDirection]);
                 rendered.overflowDirection = this.overflowDirection;
             }
 
             if (this._overflowAlignmentOffset !== rendered.overflowAlignmentOffset) {
                 var offsetProperty = (this._rtl ? "left" : "right");
                 var offsetTextValue = this._overflowAlignmentOffset + "px";
-                this._dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
+                dom.overflowAreaContainer.style[offsetProperty] = offsetTextValue;
             }
         };
 
@@ -884,7 +950,7 @@ export class _CommandingSurface {
             },
             update(): void {
                 _renderDisplayMode();
-                _updateCommands()
+                _updateCommands();
             },
             dataDirty: () => {
                 _currentLayoutStage = Math.max(CommandLayoutPipeline.newDataStage, _currentLayoutStage);
@@ -1145,6 +1211,9 @@ export class _CommandingSurface {
             this._dom.overflowArea.appendChild(command.element);
         });
         this._menuCommandProjections = menuCommandProjections;
+
+        // Re-append spacer to the end of the oveflowarea
+        this._dom.overflowArea.appendChild(this._dom.overflowAreaSpacer);
 
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsToggleCommandClass);
 

@@ -130,7 +130,7 @@ declare module WinJS.Application {
          * Informs the application object that asynchronous work is being performed, and that this event handler should not be considered complete until the promise completes. This function can be set inside the handlers for all WinJS.Application events: onactivated oncheckpoint onerror onloaded onready onsettings onunload.
          * @param promise The promise that should complete before processing is complete.
         **/
-        setPromise(promise: IPromise<any>);
+        setPromise(promise: IPromise<any>): void;
     }
 
     /**
@@ -8315,6 +8315,12 @@ declare module WinJS.UI {
         **/
         tooltip: any;
 
+        /** 
+         * Raised when a SplitViewCommand has been invoked.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        oninvoked(eventInfo: CustomEvent): void;
+
         //#endregion Properties
 
     }
@@ -9132,14 +9138,14 @@ declare module WinJS.UI.XYFocus {
      * @param type The type (name) of the event.
      * @param listener The listener to invoke when the event gets raised.
     **/
-    export function addEventListener(type: string, handler: EventListener);
+    export function addEventListener(type: string, handler: EventListener): void;
 
     /**
      * Removes an event listener to XYFocus events.
      * @param type The type (name) of the event.
      * @param listener The listener to remove.
     **/
-    export function removeEventListener(type: string, handler: EventListener);
+    export function removeEventListener(type: string, handler: EventListener): void;
 
     /**
      * Returns the next focusable element from the current active element (or reference, if supplied) towards the specified direction.

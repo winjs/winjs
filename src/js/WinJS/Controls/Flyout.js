@@ -45,7 +45,7 @@ define([
             var Key = _ElementUtilities.Key;
 
             function getDimension(element, property) {
-                return _ElementUtilities.convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
+                return _ElementUtilities.convertToPixels(element, _ElementUtilities._getComputedStyle(element, null)[property]);
             }
 
             function measureElement(element) {
@@ -375,7 +375,7 @@ define([
                     }
                 },
                 _handleKeyDownInCascade: function _CascadeManager_handleKeyDownInCascade(event) {
-                    var rtl = _Global.getComputedStyle(event.target).direction === "rtl",
+                    var rtl = _ElementUtilities._getComputedStyle(event.target).direction === "rtl",
                         leftKey = rtl ? Key.rightArrow : Key.leftArrow,
                         target = event.target;
 
@@ -1105,7 +1105,7 @@ define([
 
                     // Set up the new position, and prep the offset for showPopup.
                     var flyoutMeasurements = measureElement(this._element);
-                    var isRtl = _Global.getComputedStyle(this._element).direction === "rtl";
+                    var isRtl = _ElementUtilities._getComputedStyle(this._element).direction === "rtl";
                     this._currentPosition = this._positionRequest.getTopLeft(flyoutMeasurements, isRtl);
 
                     // Adjust position

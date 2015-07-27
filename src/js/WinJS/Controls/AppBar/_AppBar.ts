@@ -113,7 +113,7 @@ export class AppBar {
     private _adjustedOffsets: { top: string; bottom: string };
     private _handleShowingKeyboardBound: (ev: any) => Promise<any>;
     private _handleHidingKeyboardBound: (ev: any) => any;
-    private _dismissable: _LightDismissService.ILightDismissable;
+    private _dismissable: _LightDismissService.LightDismissableElement;
     private _cachedClosedHeight: number;
 
     private _dom: {
@@ -291,6 +291,10 @@ export class AppBar {
             tabIndex: this._dom.root.hasAttribute("tabIndex") ? this._dom.root.tabIndex : -1,
             onLightDismiss: () => {
                 this.close();
+            },
+            onTakeFocus: (useSetActive) => {
+                this._dismissable.restoreFocus() ||
+                this._commandingSurface.takeFocus(useSetActive);
             }
         });
 

@@ -238,7 +238,7 @@ define([
                     if (_ElementUtilities._matchesSelector(event.target, ".win-interactive, .win-interactive *")) {
                         return; // Ignore left, right, home & end keys if focused element has win-interactive class.
                     }
-                    var rtl = _Global.getComputedStyle(this.appBarEl).direction === "rtl";
+                    var rtl = _ElementUtilities._getComputedStyle(this.appBarEl).direction === "rtl";
                     var leftKey = rtl ? Key.rightArrow : Key.leftArrow;
                     var rightKey = rtl ? Key.leftArrow : Key.rightArrow;
 
@@ -523,8 +523,8 @@ define([
                 element.style[transformNames.scriptName] = translate + "(" + -diff + "px)";
 
                 // Resolve styles
-                _Global.getComputedStyle(elementClipper).opacity;
-                _Global.getComputedStyle(element).opacity;
+                _ElementUtilities._getComputedStyle(elementClipper).opacity;
+                _ElementUtilities._getComputedStyle(element).opacity;
 
                 // Animate
                 var transition = {
@@ -549,8 +549,8 @@ define([
                 element.style[transformNames.scriptName] = "";
 
                 // Resolve styles
-                _Global.getComputedStyle(elementClipper).opacity;
-                _Global.getComputedStyle(element).opacity;
+                _ElementUtilities._getComputedStyle(elementClipper).opacity;
+                _ElementUtilities._getComputedStyle(element).opacity;
 
                 // Animate
                 var transition = {

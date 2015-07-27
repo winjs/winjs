@@ -232,7 +232,7 @@ define([
                         var newIndex = this.currentIndex;
                         var maxIndex = this._element.children.length - 1;
 
-                        var rtl = _Global.getComputedStyle(this._element).direction === "rtl";
+                        var rtl = _ElementUtilities._getComputedStyle(this._element).direction === "rtl";
                         var leftStr = rtl ? Key.rightArrow : Key.leftArrow;
                         var rightStr = rtl ? Key.leftArrow : Key.rightArrow;
 

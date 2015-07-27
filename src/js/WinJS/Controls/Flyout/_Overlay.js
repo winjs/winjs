@@ -528,14 +528,14 @@ define([
                     this._element.style.opacity = 0;
                     this._element.style.visibility = "visible";
                     // touch opacity so that IE fades from the 0 we just set to 1
-                    _Global.getComputedStyle(this._element, null).opacity;
+                    _ElementUtilities._getComputedStyle(this._element, null).opacity;
                     return Animations.fadeIn(this._element);
                 },
 
                 _baseAnimateOut: function _Overlay_baseAnimateOut() {
                     this._element.style.opacity = 1;
                     // touch opacity so that IE fades from the 1 we just set to 0
-                    _Global.getComputedStyle(this._element, null).opacity;
+                    _ElementUtilities._getComputedStyle(this._element, null).opacity;
                     return Animations.fadeOut(this._element);
                 },
 
@@ -764,7 +764,7 @@ define([
                     for (var count = 0, len = hideCommands.length; count < len; count++) {
                         // Need to fix our position
                         var rectangle = hideCommands[count].getBoundingClientRect(),
-                            style = _Global.getComputedStyle(hideCommands[count]);
+                            style = _ElementUtilities._getComputedStyle(hideCommands[count]);
 
                         // Use the bounding box, adjusting for margins
                         hideCommands[count].style.top = (rectangle.top - parseFloat(style.marginTop)) + "px";

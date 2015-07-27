@@ -21,7 +21,7 @@ module Helper._CommandingSurface {
     export function useSynchronousAnimations(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
         commandingSurface.createOpenAnimation = function () {
             return {
-                execute(): WinJS.Promise<any> { 
+                execute(): WinJS.Promise<any> {
                     return WinJS.Promise.wrap();
                 }
             };

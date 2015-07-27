@@ -1,24 +1,84 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
-.Colors(@theme) {
-    .colorDefinitions(@theme);
-    
-    button.win-splitviewpanetoggle {
-        color: @baseHigh;
+#win-splitviewpanetoggle {
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
+        
+        @color: @baseHigh;
+        @colorHover: @baseHigh;
+        @colorActive: @baseHigh;
+        @colorDisabled: @baseLow;
+        
+        @backgroundColor: transparent;
+        @backgroundColorHover: @listHover;
+        @backgroundColorActive: @listPress;
+        @backgroundColorDisabled: transparent;
+        
+        @borderColorKeyboardFocus: @baseHigh;
     }
     
-    button.win-splitviewpanetoggle:active,
-    button.win-splitviewpanetoggle.win-splitviewpanetoggle:active:hover {
-        background-color: @listPress;
+    .variableDefs(highcontrast) {
+        @color: ButtonText;
+        @colorHover: ButtonText;
+        @colorActive: ButtonText;
+        @colorDisabled: GrayText;
+        
+        @backgroundColor: transparent;
+        @backgroundColorHover: Highlight;
+        @backgroundColorActive: Highlight;
+        @backgroundColorDisabled: transparent;
+        
+        @borderColorKeyboardFocus: ButtonText;
     }
     
-    button.win-splitviewpanetoggle.win-keyboard:focus {
-        border-color: @baseHigh;
+    .stylesForTheme(@theme) {
+        #win-splitviewpanetoggle > .variableDefs(@theme);
+    
+        button.win-splitviewpanetoggle {
+            color: @color;
+            background-color: @backgroundColor;
+        }
+        
+        button.win-splitviewpanetoggle:active,
+        button.win-splitviewpanetoggle.win-splitviewpanetoggle:active:hover {
+            color: @colorActive;
+            background-color: @backgroundColorActive;
+        }
+        
+        button.win-splitviewpanetoggle.win-keyboard:focus {
+            border: 1px dotted @borderColorKeyboardFocus;
+        }
+        
+        button.win-splitviewpanetoggle:disabled,
+        button.win-splitviewpanetoggle:disabled:active,
+        button.win-splitviewpanetoggle.win-splitviewpanetoggle:disabled:hover {
+            color: @colorDisabled;
+            background-color: @backgroundColorDisabled;
+        }
+    }
+    
+    .stylesForThemeHover(@theme) {
+        #win-splitviewpanetoggle > .variableDefs(@theme);
+        
+        button.win-splitviewpanetoggle:hover {
+            color: @colorHover;
+            background-color: @backgroundColorHover;
+        }
     }
 }
 
+.Colors(@theme) {
+    #win-splitviewpanetoggle > .stylesForTheme(@theme);
+}
+
 .ColorsHover(@theme) {
-    button.win-splitviewpanetoggle:hover {
-        background-color: @listHover;
-    }
+    #win-splitviewpanetoggle > .stylesForThemeHover(@theme);
+}
+
+.HighContrast() {
+    #win-splitviewpanetoggle > .stylesForTheme(highcontrast);
+}
+
+.HighContrastHover() {
+    #win-splitviewpanetoggle > .stylesForThemeHover(highcontrast);
 }

@@ -12,6 +12,7 @@ export declare function _shallowCopy(obj: any): any;
 export declare function _merge(a: any, b: any): any;
 export declare function _mergeAll(list: any): any;
 export declare function _yieldForEvents(handler: Function): void;
+export declare function _throttledFunction(delay: number, fn: Function): Function;
 
 export interface IBrowserStyleEquivalent {
 	cssName: string;

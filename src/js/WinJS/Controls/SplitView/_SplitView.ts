@@ -48,8 +48,10 @@ var ClassNames = {
     paneOpened: "win-splitview-pane-opened",
 
     _panePlaceholder: "win-splitview-paneplaceholder",
+    _paneOutline: "win-splitview-paneoutline",
     _paneWrapper: "win-splitview-panewrapper",
     _contentWrapper: "win-splitview-contentwrapper",
+    _animating: "win-splitview-animating",
     // placement
     _placementLeft: "win-splitview-placementleft",
     _placementRight: "win-splitview-placementright",
@@ -183,6 +185,7 @@ export class SplitView {
     _dom: {
         root: HTMLElement;
         pane: HTMLElement;
+        paneOutline: HTMLElement;
         paneWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
         panePlaceholder: HTMLElement; // Shouldn't have any margin, padding, or border.
         content: HTMLElement;
@@ -226,11 +229,16 @@ export class SplitView {
 
                 this._isOpenedMode = true;
                 this._updateDomImpl();
-
-                return this._playShowAnimation(hiddenPaneThickness);
+                
+                _ElementUtilities.addClass(this._dom.root, ClassNames._animating);
+                return this._playShowAnimation(hiddenPaneThickness).then(() => {
+                    _ElementUtilities.removeClass(this._dom.root, ClassNames._animating);
+                });
             },
             onClose: () => {
+                _ElementUtilities.addClass(this._dom.root, ClassNames._animating);
                 return this._playHideAnimation(this._getHiddenPaneThickness()).then(() => {
+                    _ElementUtilities.removeClass(this._dom.root, ClassNames._animating);
                     this._isOpenedMode = false;
                     this._updateDomImpl();
                 });
@@ -268,7 +276,7 @@ export class SplitView {
 
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
-            this._rtl = _Global.getComputedStyle(this._dom.root).direction === 'rtl';
+            this._rtl = _ElementUtilities._getComputedStyle(this._dom.root).direction === 'rtl';
             this._machine.exitInit();
         });
     }
@@ -400,11 +408,16 @@ export class SplitView {
             contentEl.appendChild(child);
             child = sibling;
         }
+        
+        // paneOutline's purpose is to render an outline around the pane in high contrast mode
+        var paneOutlineEl = _Global.document.createElement("div");
+        paneOutlineEl.className = ClassNames._paneOutline;
 
         // paneWrapper's purpose is to clip the pane during the pane resize animation
         var paneWrapperEl = _Global.document.createElement("div");
         paneWrapperEl.className = ClassNames._paneWrapper;
         paneWrapperEl.appendChild(paneEl);
+        paneWrapperEl.appendChild(paneOutlineEl);
 
         var panePlaceholderEl = _Global.document.createElement("div");
         panePlaceholderEl.className = ClassNames._panePlaceholder;
@@ -426,6 +439,7 @@ export class SplitView {
         this._dom = {
             root: root,
             pane: paneEl,
+            paneOutline: paneOutlineEl,
             paneWrapper: paneWrapperEl,
             panePlaceholder: panePlaceholderEl,
             content: contentEl,
@@ -434,7 +448,7 @@ export class SplitView {
     }
 
     private _measureElement(element: HTMLElement): IRect {
-        var style = getComputedStyle(element);
+        var style = _ElementUtilities._getComputedStyle(element);
         var position = _ElementUtilities._getPositionRelativeTo(element, this._dom.root);
         var marginLeft = parseInt(style.marginLeft, 10);
         var marginTop = parseInt(style.marginTop, 10);

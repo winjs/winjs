@@ -555,9 +555,9 @@ define([
                     if (this._averageRating === 1) {
                         j = 1;
                     }
-                    var style = _Global.getComputedStyle(this._elements[j]);
+                    var style = _ElementUtilities._getComputedStyle(this._elements[j]);
                     this._elementWidth = style.width;
-                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
+                    if (_ElementUtilities._getComputedStyle(this._element).direction === "rtl") {
                         this._elementPadding = style.paddingRight;
                         this._elementBorder = style.borderRight;
                     } else {
@@ -674,7 +674,7 @@ define([
                         starNum = _ElementUtilities.data(star).msStarRating || 0;
                     } else {
                         var left = 0, right = this.maxRating;
-                        if (_Global.getComputedStyle(this._element).direction === "rtl") {
+                        if (_ElementUtilities._getComputedStyle(this._element).direction === "rtl") {
                             left = right;
                             right = 0;
                         }
@@ -762,7 +762,7 @@ define([
                 _onKeyDown: function (eventObject) {
                     var Key = _ElementUtilities.Key;
                     var keyCode = eventObject.keyCode;
-                    var rtlString = _Global.getComputedStyle(this._element).direction;
+                    var rtlString = _ElementUtilities._getComputedStyle(this._element).direction;
                     var handled = true;
                     switch (keyCode) {
                         case Key.enter: // Enter
@@ -884,7 +884,7 @@ define([
                     if (this._averageRatingElement.nextSibling !== null) {
                         _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, { grow: 1, shrink: 1 });
                         var style = this._averageRatingElement.nextSibling.style;
-                        var direction = _Global.getComputedStyle(this._element).direction;
+                        var direction = _ElementUtilities._getComputedStyle(this._element).direction;
                         if (prevState) {
                             if (direction === "rtl") {
                                 direction = "ltr";
@@ -969,7 +969,7 @@ define([
                 _updateAverageStar: function () {
                     var style = this._averageRatingElement.style;
                     var nextStyle = this._averageRatingElement.nextSibling.style;
-                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
+                    if (_ElementUtilities._getComputedStyle(this._element).direction === "rtl") {
                         style.backgroundPosition = "right";
                         style.paddingRight = this._elementPadding;
                         style.borderRight = this._elementBorder;
@@ -988,7 +988,7 @@ define([
                     _ElementUtilities._setFlexStyle(this._averageRatingElement, { grow: this._floatingValue, shrink: this._floatingValue });
                     style.width = this._resizeStringValue(this._elementWidth, this._floatingValue, style.width);
                     style.backgroundSize = (100 / this._floatingValue) + "% 100%";
-                    style.display = _Global.getComputedStyle(this._averageRatingElement.nextSibling).display;
+                    style.display = _ElementUtilities._getComputedStyle(this._averageRatingElement.nextSibling).display;
                     this._averageRatingHidden = false;
                     _ElementUtilities._setFlexStyle(this._averageRatingElement.nextSibling, { grow: 1 - this._floatingValue, shrink: 1 - this._floatingValue });
                     nextStyle.width = this._resizeStringValue(this._elementWidth, 1 - this._floatingValue, nextStyle.width);
@@ -1036,7 +1036,7 @@ define([
                     } else if (this._tentativeRating === 0) {
                         this._clearElement = _Global.document.createElement("div");
                         var distance = this._elements[0].offsetWidth + parseInt(this._elementPadding, 10);
-                        if (_Global.getComputedStyle(this._element).direction === "ltr") {
+                        if (_ElementUtilities._getComputedStyle(this._element).direction === "ltr") {
                             distance *= -1;
                         }
                         this._clearElement.style.cssText = "visiblity:hidden; position:absolute; width:0px; height:100%; left:" + distance + "px; top:0px;";
@@ -1108,10 +1108,10 @@ define([
                                     this._element.insertBefore(this._averageRatingElement, this._elements[i]);
 
                                     this._floatingValue = this._averageRating - i;
-                                    var elementStyle = _Global.getComputedStyle(this._elements[i]);
+                                    var elementStyle = _ElementUtilities._getComputedStyle(this._elements[i]);
                                     this._elementWidth = elementStyle.width;
 
-                                    if (_Global.getComputedStyle(this._element).direction === "rtl") {
+                                    if (_ElementUtilities._getComputedStyle(this._element).direction === "rtl") {
                                         this._elementPadding = elementStyle.paddingRight;
                                         this._elementBorder = elementStyle.borderRight;
                                     } else {

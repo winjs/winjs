@@ -107,7 +107,7 @@ define([
     }
 
     function getDimension(element, property) {
-        return _ElementUtilities.convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
+        return _ElementUtilities.convertToPixels(element, _ElementUtilities._getComputedStyle(element, null)[property]);
     }
 
     // Returns the sum of the margin, border, and padding for the side of the

@@ -302,7 +302,7 @@ declare module WinJS {
             _buttonEl:  HTMLElement;
             _disposed: boolean;
             static _EventName: {
-                _invoked: string;
+                invoked: string;
                 _splitToggle: string;
             };
         }
@@ -508,6 +508,8 @@ declare module WinJS {
                 overflowButton: HTMLButtonElement;
                 overflowArea: HTMLElement;
                 overflowAreaContainer: HTMLElement;
+                firstTabStop: HTMLElement;
+                finalTabStop: HTMLElement;
             };
             _machine: IOpenCloseMachine;
             _layoutCompleteCallback(): any;
@@ -812,6 +814,8 @@ declare module WinJS {
         var _AppBarCommandsLayout;
 
         module XYFocus {
+            var _xyFocusEnabledIFrames: Window[];
+
             function _xyFocus(direction: string, referenceRect?: IRect): void;
         }
 

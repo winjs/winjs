@@ -1406,8 +1406,8 @@ module CorsicaTests {
             toolBar.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(2, toolBar._commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be children.");
-                LiveUnit.Assert.areEqual(0, toolBar._commandingSurface._dom.overflowArea.children.length);
+                LiveUnit.Assert.areEqual(2, toolBar._commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be present.");
+                LiveUnit.Assert.areEqual(1, toolBar._commandingSurface._dom.overflowArea.children.length, "Only the spacer element should present.");
                 LiveUnit.Assert.isTrue(menuCommandProjections.every(function (menuCommand) {
                     return menuCommand._disposed;
                 }), "Setting new data should have disposed all previous overflowarea MenuCommand projections.");

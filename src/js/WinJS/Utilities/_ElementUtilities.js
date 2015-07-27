@@ -16,6 +16,26 @@ define([
     }
 
     var _zoomToDuration = 167;
+    
+    // Firefox's implementation of getComputedStyle returns null when called within
+    // an iframe that is display:none. This is a bug: https://bugzilla.mozilla.org/show_bug.cgi?id=548397
+    // _getComputedStyle is a helper which is guaranteed to return an object whose keys
+    // map to strings.
+    var defaultComputedStyle = null;
+    function getDefaultComputedStyle() {
+        if (!defaultComputedStyle) {
+            defaultComputedStyle = {};
+            Object.keys(_Global.CSS2Properties.prototype).forEach(function (cssProperty) {
+                defaultComputedStyle[cssProperty] = "";
+            });
+        }
+        return defaultComputedStyle;
+    }
+    function _getComputedStyle(element, pseudoElement) {
+        // jscs:disable disallowDirectGetComputedStyle
+        return _Global.getComputedStyle(element, pseudoElement) || getDefaultComputedStyle();
+        // jscs:enable disallowDirectGetComputedStyle
+    }
 
     function removeEmpties(arr) {
         var len = arr.length;
@@ -273,17 +293,17 @@ define([
     }
 
     function getDimension(element, property) {
-        return convertToPixels(element, _Global.getComputedStyle(element, null)[property]);
+        return convertToPixels(element, _getComputedStyle(element, null)[property]);
     }
 
     function _convertToPrecisePixels(value) {
         return parseFloat(value) || 0;
     }
     function _getPreciseDimension(element, property) {
-        return _convertToPrecisePixels(_Global.getComputedStyle(element, null)[property]);
+        return _convertToPrecisePixels(_getComputedStyle(element, null)[property]);
     }
     function _getPreciseMargins(element) {
-        var style = _Global.getComputedStyle(element);
+        var style = _getComputedStyle(element);
         return {
             top: _convertToPrecisePixels(style.marginTop),
             right: _convertToPrecisePixels(style.marginRight),
@@ -896,7 +916,7 @@ define([
     }
 
     function getAdjustedScrollPosition(element) {
-        var computedStyle = _Global.getComputedStyle(element),
+        var computedStyle = _getComputedStyle(element),
             scrollLeft = element.scrollLeft;
         if (computedStyle.direction === "rtl") {
             if (!determinedRTLEnvironment) {
@@ -916,7 +936,7 @@ define([
 
     function setAdjustedScrollPosition(element, scrollLeft, scrollTop) {
         if (scrollLeft !== undefined) {
-            var computedStyle = _Global.getComputedStyle(element);
+            var computedStyle = _getComputedStyle(element);
             if (computedStyle.direction === "rtl") {
                 if (!determinedRTLEnvironment) {
                     determineRTLEnvironment();
@@ -1111,7 +1131,9 @@ define([
             if (mapping) {
                 switch (initType.toLowerCase()) {
                     case "pointer":
-                        arguments[2] = mapping.mspointer;
+                        if (!_Global.PointerEvent) {
+                            arguments[2] = mapping.mspointer;
+                        }
                         break;
 
                     default:
@@ -1147,6 +1169,8 @@ define([
         },
 
         _MSPointerEvent: _MSPointerEvent,
+        
+        _getComputedStyle: _getComputedStyle,
 
         _zoomToDuration: _zoomToDuration,
 
@@ -1161,7 +1185,7 @@ define([
                     var initialPos = getAdjustedScrollPosition(element);
                     var effectiveScrollLeft = (typeof element._zoomToDestX === "number" ? element._zoomToDestX : initialPos.scrollLeft);
                     var effectiveScrollTop = (typeof element._zoomToDestY === "number" ? element._zoomToDestY : initialPos.scrollTop);
-                    var cs = _Global.getComputedStyle(element);
+                    var cs = _getComputedStyle(element);
                     var scrollLimitX = element.scrollWidth - parseInt(cs.width, 10) - parseInt(cs.paddingLeft, 10) - parseInt(cs.paddingRight, 10);
                     var scrollLimitY = element.scrollHeight - parseInt(cs.height, 10) - parseInt(cs.paddingTop, 10) - parseInt(cs.paddingBottom, 10);
 
@@ -2380,7 +2404,7 @@ define([
                     element !== _Global.document.body &&
                     element !== _Global.document.documentElement) {
                 top -= element.scrollTop;
-                var dir = _Global.document.defaultView.getComputedStyle(element, null).direction;
+                var dir = _getComputedStyle(element, null).direction;
                 left -= dir !== "rtl" ? element.scrollLeft : -getAdjustedScrollPosition(element).scrollLeft;
 
                 if (element === offsetParent) {

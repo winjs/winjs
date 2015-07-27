@@ -30,7 +30,6 @@ import _PivotItem = require("./_Item");
 
 // Force-load Dependencies
 _Hoverable.isHoverable;
-_PivotItem.PivotItem;
 
 require(["require-style!less/styles-pivot"]);
 require(["require-style!less/colors-pivot"]);
@@ -393,7 +392,7 @@ export class Pivot {
 
         attachItems(this);
 
-        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
+        this._rtl = _ElementUtilities._getComputedStyle(this._element, null).direction === "rtl";
         this._headersState.refreshHeadersState(true);
         this._pendingRefresh = false;
 
@@ -507,7 +506,7 @@ export class Pivot {
     }
 
     _loadItem(index: number) {
-        this._rtl = _Global.getComputedStyle(this._element, null).direction === "rtl";
+        this._rtl = _ElementUtilities._getComputedStyle(this._element, null).direction === "rtl";
         this._hidePivotItemAnimation.cancel();
         this._showPivotItemAnimation.cancel();
         this._slideHeadersAnimation.cancel();
@@ -570,14 +569,14 @@ export class Pivot {
 
     _getHeaderItemsWidth() {
         if (!this._headerItemsElWidth) {
-            this._headerItemsElWidth = parseFloat(_Global.getComputedStyle(this._headerItemsElement).width);
+            this._headerItemsElWidth = parseFloat(_ElementUtilities._getComputedStyle(this._headerItemsElement).width);
         }
         return this._headerItemsElWidth || _invalidMeasurement;
     }
 
     _getViewportWidth() {
         if (!this._viewportElWidth) {
-            this._viewportElWidth = parseFloat(_Global.getComputedStyle(this._viewportElement).width);
+            this._viewportElWidth = parseFloat(_ElementUtilities._getComputedStyle(this._viewportElement).width);
             if (supportsSnap) {
                 this._viewportElement.style[_BaseUtils._browserStyleEquivalents["scroll-snap-points-x"].scriptName] = "snapInterval(0%, " + Math.ceil(this._viewportElWidth) + "px)";
             }
@@ -1349,7 +1348,7 @@ class HeaderStateOverflow extends HeaderStateBase {
                 lastHeader.style.opacity = start;
                 var lastHeaderFadeInDuration = 0.167;
                 lastHeader.style[_BaseUtils._browserStyleEquivalents["transition"].scriptName] = "opacity " + _TransitionAnimation._animationTimeAdjustment(lastHeaderFadeInDuration) + "s";
-                _Global.getComputedStyle(lastHeader).opacity;
+                _ElementUtilities._getComputedStyle(lastHeader).opacity;
                 lastHeader.style.opacity = end;
             }
 

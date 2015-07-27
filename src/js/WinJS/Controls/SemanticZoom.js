@@ -581,7 +581,7 @@ define([
                             style.height = height + "px";
                         };
 
-                        var sezoComputedStyle = _Global.getComputedStyle(this._element, null),
+                        var sezoComputedStyle = _ElementUtilities._getComputedStyle(this._element, null),
                             computedWidth = parseFloat(sezoComputedStyle.width),
                             computedHeight = parseFloat(sezoComputedStyle.height),
                             sezoPaddingLeft = getDimension(this._element, sezoComputedStyle["paddingLeft"]),
@@ -1146,8 +1146,8 @@ define([
                     }
                     this._zoomingOut = zoomOut;
                     // Force style resolution
-                    _Global.getComputedStyle(this._canvasIn).opacity;
-                    _Global.getComputedStyle(this._canvasOut).opacity;
+                    _ElementUtilities._getComputedStyle(this._canvasIn).opacity;
+                    _ElementUtilities._getComputedStyle(this._canvasOut).opacity;
                     _WriteProfilerMark("WinJS.UI.SemanticZoom:prepareForZoom,StopTM");
                     this._startAnimations(zoomOut, customViewAnimationPromise);
                 },
@@ -1474,7 +1474,7 @@ define([
                     }
                     catch (err) { }  // an exception can be thrown if SeZoDiv is no longer available
 
-                    var sezoComputedStyle = _Global.getComputedStyle(this._element, null),
+                    var sezoComputedStyle = _ElementUtilities._getComputedStyle(this._element, null),
                         sezoPaddingLeft = getDimension(this._element, sezoComputedStyle["paddingLeft"]),
                         sezoPaddingTop = getDimension(this._element, sezoComputedStyle["paddingTop"]),
                         sezoBorderLeft = getDimension(this._element, sezoComputedStyle["borderLeftWidth"]);
@@ -1524,7 +1524,7 @@ define([
                 },
 
                 _rtl: function () {
-                    return _Global.getComputedStyle(this._element, null).direction === "rtl";
+                    return _ElementUtilities._getComputedStyle(this._element, null).direction === "rtl";
                 },
 
                 _pinching: {

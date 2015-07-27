@@ -5,6 +5,8 @@
 /// <deploy src="../TestData/" />
 
 module WinJSTests {
+    var Keys = WinJS.Utilities.Key;
+
     var highlightStyle = document.createElement("style");
     highlightStyle.innerHTML = "button:focus { background-color: red; }";
 
@@ -367,40 +369,40 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            doKeydown(layout[3], WinJS.Utilities.Key.GamepadLeftThumbstickUp, layout[1]);
+            doKeydown(layout[3], Keys.GamepadLeftThumbstickUp, layout[1]);
             waitForFocus(window, layout[1])
                 .then(() => {
-                    doKeydown(layout[1], WinJS.Utilities.Key.GamepadLeftThumbstickDown, layout[3]);
+                    doKeydown(layout[1], Keys.GamepadLeftThumbstickDown, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.GamepadLeftThumbstickLeft, layout[2]);
+                    doKeydown(layout[3], Keys.GamepadLeftThumbstickLeft, layout[2]);
                     return waitForFocus(window, layout[2]);
                 }).then(() => {
-                    doKeydown(layout[2], WinJS.Utilities.Key.GamepadLeftThumbstickRight, layout[3]);
+                    doKeydown(layout[2], Keys.GamepadLeftThumbstickRight, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.GamepadDPadUp, layout[1]);
+                    doKeydown(layout[3], Keys.GamepadDPadUp, layout[1]);
                     return waitForFocus(window, layout[1]);
                 }).then(() => {
-                    doKeydown(layout[1], WinJS.Utilities.Key.GamepadDPadDown, layout[3]);
+                    doKeydown(layout[1], Keys.GamepadDPadDown, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.GamepadDPadLeft, layout[2]);
+                    doKeydown(layout[3], Keys.GamepadDPadLeft, layout[2]);
                     return waitForFocus(window, layout[2]);
                 }).then(() => {
-                    doKeydown(layout[2], WinJS.Utilities.Key.GamepadDPadRight, layout[3]);
+                    doKeydown(layout[2], Keys.GamepadDPadRight, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.NavigationUp, layout[1]);
+                    doKeydown(layout[3], Keys.NavigationUp, layout[1]);
                     return waitForFocus(window, layout[1]);
                 }).then(() => {
-                    doKeydown(layout[1], WinJS.Utilities.Key.NavigationDown, layout[3]);
+                    doKeydown(layout[1], Keys.NavigationDown, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.NavigationLeft, layout[2]);
+                    doKeydown(layout[3], Keys.NavigationLeft, layout[2]);
                     return waitForFocus(window, layout[2]);
                 }).then(() => {
-                    doKeydown(layout[2], WinJS.Utilities.Key.NavigationRight, layout[3]);
+                    doKeydown(layout[2], Keys.NavigationRight, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).done(() => {
                     LiveUnit.Assert.areEqual(12, numEventsReceived);
@@ -424,25 +426,25 @@ module WinJSTests {
                 numEventsReceived++;
             });
 
-            WinJS.UI.XYFocus.keyCodeMap["up"].push(WinJS.Utilities.Key.w);
-            WinJS.UI.XYFocus.keyCodeMap["down"].push(WinJS.Utilities.Key.s);
-            WinJS.UI.XYFocus.keyCodeMap["left"].push(WinJS.Utilities.Key.a);
-            WinJS.UI.XYFocus.keyCodeMap["right"].push(WinJS.Utilities.Key.d);
+            WinJS.UI.XYFocus.keyCodeMap["up"].push(Keys.w);
+            WinJS.UI.XYFocus.keyCodeMap["down"].push(Keys.s);
+            WinJS.UI.XYFocus.keyCodeMap["left"].push(Keys.a);
+            WinJS.UI.XYFocus.keyCodeMap["right"].push(Keys.d);
             var layout = createCrossLayout(this.rootContainer);
 
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            doKeydown(layout[3], WinJS.Utilities.Key.w, layout[1]);
+            doKeydown(layout[3], Keys.w, layout[1]);
             waitForFocus(window, layout[1])
                 .then(() => {
-                    doKeydown(layout[1], WinJS.Utilities.Key.s, layout[3]);
+                    doKeydown(layout[1], Keys.s, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).then(() => {
-                    doKeydown(layout[3], WinJS.Utilities.Key.a, layout[2]);
+                    doKeydown(layout[3], Keys.a, layout[2]);
                     return waitForFocus(window, layout[2]);
                 }).then(() => {
-                    doKeydown(layout[2], WinJS.Utilities.Key.d, layout[3]);
+                    doKeydown(layout[2], Keys.d, layout[3]);
                     return waitForFocus(window, layout[3]);
                 }).done(() => {
                     LiveUnit.Assert.areEqual(4, numEventsReceived);
@@ -454,7 +456,7 @@ module WinJSTests {
             WinJS.UI.XYFocus.addEventListener("focuschanged", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(layout[3], e.detail.previousFocusElement);
                 LiveUnit.Assert.areEqual(layout[1], document.activeElement);
-                LiveUnit.Assert.areEqual(WinJS.Utilities.Key.GamepadDPadUp, e.detail.keyCode);
+                LiveUnit.Assert.areEqual(Keys.GamepadDPadUp, e.detail.keyCode);
                 complete();
             });
 
@@ -463,7 +465,7 @@ module WinJSTests {
             layout[3].focus();
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
 
-            Helper.keydown(layout[3], WinJS.Utilities.Key.GamepadDPadUp);
+            Helper.keydown(layout[3], Keys.GamepadDPadUp);
         }
 
         testXYFocusInIFrame(complete) {
@@ -573,6 +575,154 @@ module WinJSTests {
                         return waitForFocus(window, layout[1]);
                     }).done(complete);
             });
+        }
+
+        testSuspended(complete) {
+            var expectDefaultPrevented = true;
+            var completeTest = false;
+            document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
+                LiveUnit.Assert.areEqual(expectDefaultPrevented, e.defaultPrevented);
+                LiveUnit.Assert.areEqual(expectedActiveElement, document.activeElement);
+                if (completeTest) {
+                    document.removeEventListener("keydown", testSuspendedKeyDownHandler);
+                    complete();
+                }
+            });
+
+            var layout = createCrossLayout(this.rootContainer);
+            layout[3].classList.add("win-xyfocus-suspended");
+
+            layout[2].focus();
+            LiveUnit.Assert.areEqual(layout[2], document.activeElement);
+
+            var expectedActiveElement = layout[3];
+            Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+            waitForFocus(window, layout[3]).done(() => {
+                expectDefaultPrevented = false;
+                completeTest = true;
+                Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+            });
+        }
+
+        testSuspendedContainer(complete) {
+            document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
+                LiveUnit.Assert.isFalse(e.defaultPrevented);
+                LiveUnit.Assert.areEqual(expectedActiveElement, document.activeElement);
+                document.removeEventListener("keydown", testSuspendedKeyDownHandler);
+                complete();
+            });
+
+            var layout = createCrossLayout(this.rootContainer);
+            layout[0].classList.add("win-xyfocus-suspended");
+
+            layout[2].focus();
+            LiveUnit.Assert.areEqual(layout[2], document.activeElement);
+            var expectedActiveElement = layout[2];
+            Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+        }
+
+        testSuspendedToggleMode(complete) {
+            var completeTest = false;
+            document.addEventListener("keydown", function testSuspendedKeyDownHandler(e: KeyboardEvent) {
+                LiveUnit.Assert.isFalse(e.defaultPrevented);
+                LiveUnit.Assert.isFalse(layout[2].classList.contains("win-xyfocus-togglemode-active"));
+                if (completeTest) {
+                    document.removeEventListener("keydown", testSuspendedKeyDownHandler);
+                    complete();
+                }
+            });
+
+            var layout = createCrossLayout(this.rootContainer);
+            layout[2].classList.add("win-xyfocus-togglemode");
+            layout[2].focus();
+            LiveUnit.Assert.areEqual(layout[2], document.activeElement);
+
+            // Assert that a suspended toggle mode element does not toggle
+            layout[2].classList.add("win-xyfocus-suspended");
+            Helper.keydown(document.activeElement, Keys.GamepadA);
+
+            // Assert that a toggle mode element in a suspended container does not toggle
+            layout[2].classList.remove("win-xyfocus-suspended");
+            layout[0].classList.add("win-xyfocus-suspended");
+            completeTest = true;
+            Helper.keydown(document.activeElement, Keys.GamepadA);
+        }
+
+        testToggleMode(complete) {
+            var expectDefaultPrevented = true;
+            var completeTest = false;
+            var callbackSignal: WinJS._Signal<void> = null;
+            document.addEventListener("keydown", function testToggleModeKeyDownHandler(e: KeyboardEvent) {
+                LiveUnit.Assert.areEqual(expectDefaultPrevented, e.defaultPrevented);
+                callbackSignal && callbackSignal.complete();
+                if (completeTest) {
+                    document.removeEventListener("keydown", testToggleModeKeyDownHandler);
+                    complete();
+                }
+            });
+
+            var layout = createCrossLayout(this.rootContainer);
+            layout[3].classList.add("win-xyfocus-togglemode");
+
+            layout[3].focus();
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
+
+            Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+            waitForFocus(window, layout[4])
+                .then(() => {
+                    Helper.keydown(document.activeElement, Keys.GamepadDPadLeft);
+                    return waitForFocus(window, layout[3]);
+                }).then(() => {
+                    callbackSignal = new WinJS._Signal<void>();
+                    Helper.keydown(document.activeElement, Keys.GamepadA);
+                    return callbackSignal.promise;
+                }).then(() => {
+                    LiveUnit.Assert.isTrue(layout[3].classList.contains("win-xyfocus-togglemode-active"));
+                    expectDefaultPrevented = false;
+                    callbackSignal = new WinJS._Signal<void>();
+                    Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+                    return callbackSignal.promise;
+                }).then(() => {
+                    expectDefaultPrevented = true;
+                    callbackSignal = new WinJS._Signal<void>();
+                    Helper.keydown(document.activeElement, Keys.GamepadB);
+                    return callbackSignal.promise;
+                }).done(() => {
+                    completeTest = true;
+                    callbackSignal = null;
+                    LiveUnit.Assert.isFalse(layout[3].classList.contains("win-xyfocus-togglemode-active"));
+                    Helper.keydown(document.activeElement, Keys.GamepadDPadRight);
+                });
+        }
+
+        testIFrameRemovalUnregistersWithXYFocus(complete) {
+            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "iframe", 200, 200);
+            iframeEl.src = "XYFocusPage.html";
+            var that = this;
+            window.addEventListener("message", function windowMessage(e: MessageEvent) {
+                if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
+                    LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                    window.removeEventListener("message", windowMessage);
+                    iframeEl.contentWindow.addEventListener("unload", () => {
+                        LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                        complete();
+                    });
+                    iframeEl.parentElement.removeChild(iframeEl);
+                }
+            });
+        }
+
+        testXYFocusWorksWithElementsThatSpanTheCurrentViewport(complete) {
+            var layout: HTMLElement[] = [
+                this.rootContainer,
+                <HTMLIFrameElement>createAndAppendFocusableElement(100, 100, this.rootContainer, null, "button", 200, 200),
+                <HTMLIFrameElement>createAndAppendFocusableElement(300, -100, this.rootContainer, null, "button", 200, 100000)
+            ];
+            layout[1].focus();
+            LiveUnit.Assert.areEqual(layout[1], document.activeElement);
+
+            Helper.keydown(layout[1], Keys.GamepadDPadRight);
+            waitForFocus(window, layout[2]).done(complete);
         }
     }
 }

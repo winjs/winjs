@@ -3190,7 +3190,7 @@ define([
 
                 _rtl: function ListView_rtl() {
                     if (typeof this._cachedRTL !== "boolean") {
-                        this._cachedRTL = _Global.getComputedStyle(this._element, null).direction === "rtl";
+                        this._cachedRTL = _ElementUtilities._getComputedStyle(this._element, null).direction === "rtl";
                     }
                     return this._cachedRTL;
                 },

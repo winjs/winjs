@@ -5,10 +5,11 @@ define([
     './Core/_Base',
     './Core/_BaseUtils',
     './Core/_WriteProfilerMark',
+    './Utilities/_ElementUtilities',
     './Animations/_Constants',
     './Animations/_TransitionAnimation',
     './Promise'
-], function animationsInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _Constants, _TransitionAnimation, Promise) {
+], function animationsInit(exports, _Global, _Base, _BaseUtils, _WriteProfilerMark, _ElementUtilities, _Constants, _TransitionAnimation, Promise) {
     "use strict";
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
@@ -72,7 +73,7 @@ define([
     function keyframeCallback(keyframe) {
         var keyframeRtl = keyframe + "-rtl";
         return function (i, elem) {
-            return _Global.getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
+            return _ElementUtilities._getComputedStyle(elem).direction === "ltr" ? keyframe : keyframeRtl;
         };
     }
 
@@ -93,7 +94,7 @@ define([
                 top: elemArray[i].offsetTop,
                 left: elemArray[i].offsetLeft
             };
-            var matrix = _Global.getComputedStyle(elemArray[i], null)[transformNames.scriptName].split(",");
+            var matrix = _ElementUtilities._getComputedStyle(elemArray[i], null)[transformNames.scriptName].split(",");
             if (matrix.length === 6) {
                 offset.left += parseFloat(matrix[4]);
                 offset.top += parseFloat(matrix[5]);
@@ -195,7 +196,7 @@ define([
         elemArray = makeArray(elemArray);
         origins = makeArray(origins);
         for (var i = 0, len = elemArray.length; i < len; i++) {
-            var rtl = _Global.getComputedStyle(elemArray[i]).direction === "rtl";
+            var rtl = _ElementUtilities._getComputedStyle(elemArray[i]).direction === "rtl";
             elemArray[i].style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = origins[Math.min(origins.length - 1, i)][rtl ? "rtl" : "ltr"];
         }
         function onComplete() {
@@ -217,7 +218,7 @@ define([
         return function (i, elem) {
             var offset = offsetArray.getOffset(i);
             var left = offset.left;
-            if (offset.rtlflip && _Global.getComputedStyle(elem).direction === "rtl") {
+            if (offset.rtlflip && _ElementUtilities._getComputedStyle(elem).direction === "rtl") {
                 left = left.toString();
                 if (left.charAt(0) === "-") {
                     left = left.substring(1);
@@ -724,8 +725,8 @@ define([
         element.style[transformNames.scriptName] = translate + "(" + -start + "px)";
 
         // Resolve styles
-        _Global.getComputedStyle(elementClipper).opacity;
-        _Global.getComputedStyle(element).opacity;
+        _ElementUtilities._getComputedStyle(elementClipper).opacity;
+        _ElementUtilities._getComputedStyle(element).opacity;
 
         // Merge the transitions, but don't animate yet
         var clipperTransition = _BaseUtils._merge(transition, { to: translate + "(" + end + "px)" });
@@ -2715,7 +2716,7 @@ define([
             // and the actionArea that would appear were we to start these animations at separate times
             if (menuPositionedAbove) {
                 actionArea.style[transformNames.scriptName] = "translateY(" + deltaHeight + "px)";
-                _Global.getComputedStyle(actionArea).opacity;
+                _ElementUtilities._getComputedStyle(actionArea).opacity;
                 var transition = _BaseUtils._merge(transitionToUse, { to: "translateY(0px)" });
                 actionAreaAnimations.push({ element: actionArea, transition: transition });
             } else {
@@ -2739,8 +2740,8 @@ define([
             overflowArea.style[transformNames.scriptName] = "translateY(" + (menuPositionedAbove ? overflowAreaHeight : -overflowAreaHeight) + "px)";
 
             // Resolve styles on the overflowArea and overflowAreaClipper to prepare them for animation
-            _Global.getComputedStyle(overflowAreaClipper).opacity;
-            _Global.getComputedStyle(overflowArea).opacity;
+            _ElementUtilities._getComputedStyle(overflowAreaClipper).opacity;
+            _ElementUtilities._getComputedStyle(overflowArea).opacity;
 
             var animationPromises = [];
             for (var i = 0, len = actionAreaAnimations.length; i < len; i++) {
@@ -2770,7 +2771,7 @@ define([
             var transitionToUse = getResizeDefaultTransitions().defaultResizeShrinkTransition;
             if (menuPositionedAbove) {
                 actionArea.style[transformNames.scriptName] = "translateY(0px)";
-                _Global.getComputedStyle(actionArea).opacity;
+                _ElementUtilities._getComputedStyle(actionArea).opacity;
                 var transition = _BaseUtils._merge(transitionToUse, { to: "translateY(" + -deltaHeight + "px)" });
                 actionAreaAnimations.push({ element: actionArea, transition: transition });
             } else {
@@ -2787,8 +2788,8 @@ define([
             overflowArea.style[transformNames.scriptName] = "translateY(0px)";
 
             // Resolve styles on the overflowArea and overflowAreaClipper to prepare them for animation
-            _Global.getComputedStyle(overflowAreaClipper).opacity;
-            _Global.getComputedStyle(overflowArea).opacity;
+            _ElementUtilities._getComputedStyle(overflowAreaClipper).opacity;
+            _ElementUtilities._getComputedStyle(overflowArea).opacity;
 
             // Now that everything's set up, we can kick off all the animations in unision
             var animationPromises = [];

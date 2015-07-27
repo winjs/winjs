@@ -3,14 +3,14 @@ define(['exports',
     '../../Core/_Global',
     '../../Core/_Base',
     '../../Core/_ErrorFromName',
+    '../../Core/_Events',
     '../../ControlProcessor',
-    '../../Navigation',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../AppBar/_Icon',
     'require-style!less/styles-splitviewcommand',
     'require-style!less/colors-splitviewcommand'
-], function SplitViewCommandInit(exports, _Global, _Base, _ErrorFromName, ControlProcessor, Navigation, _Control, _ElementUtilities, _Icon) {
+], function SplitViewCommandInit(exports, _Global, _Base, _ErrorFromName, _Events, ControlProcessor, _Control, _ElementUtilities, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -127,6 +127,14 @@ define(['exports',
                 commandLabel: "win-splitviewcommand-label"
             };
 
+            var EventNames = {
+                invoked: "invoked",
+                _splitToggle: "_splittoggle",
+
+            };
+
+            var createEvent = _Events._createEventProperty;
+
             var SplitViewCommand = _Base.Class.define(function SplitViewCommand_ctor(element, options) {
                 /// <signature helpKeyword="WinJS.UI.SplitViewCommand.SplitViewCommand">
                 /// <summary locid="WinJS.UI.SplitViewCommand.constructor">
@@ -242,6 +250,11 @@ define(['exports',
                     }
                 },
 
+                /// <field type="Function" locid="WinJS.UI.SplitViewCommand.oninvoked" helpKeyword="WinJS.UI.SplitViewCommand.oninvoked">
+                /// Raised when a SplitViewCommand has been invoked.
+                /// </field>
+                oninvoked: createEvent(EventNames.invoked),
+
                 _toggleSplit: function SplitViewCommand_toggleSplit() {
                     this._splitOpened = !this._splitOpened;
                     if (this._splitOpened) {
@@ -256,7 +269,7 @@ define(['exports',
 
                 _rtl: {
                     get: function () {
-                        return _Global.getComputedStyle(this.element).direction === "rtl";
+                        return _ElementUtilities._getComputedStyle(this.element).direction === "rtl";
                     }
                 },
 
@@ -281,10 +294,7 @@ define(['exports',
                         }
                         ev.preventDefault();
                     } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && (ev.target === this._buttonEl || this._buttonEl.contains(ev.target))) {
-                        if (this.location) {
-                            Navigation.navigate(this.location, this.state);
-                        }
-                        this._fireEvent(SplitViewCommand._EventName._invoked);
+                        this._invoke();
                     } else if ((ev.keyCode === Key.space || ev.keyCode === Key.enter) && ev.target === this._splitButtonEl) {
                         this._toggleSplit();
                     }
@@ -343,10 +353,7 @@ define(['exports',
                 _handleButtonClick: function SplitViewCommand_handleButtonClick(ev) {
                     var srcElement = ev.target;
                     if (!_ElementUtilities._matchesSelector(srcElement, ".win-interactive, .win-interactive *")) {
-                        if (this.location) {
-                            Navigation.navigate(this.location, this.state);
-                        }
-                        this._fireEvent(SplitViewCommand._EventName._invoked);
+                        this._invoke();
                     }
                 },
 
@@ -358,6 +365,10 @@ define(['exports',
 
                 _handleSplitButtonClick: function SplitViewCommand_handleSplitButtonClick() {
                     this._toggleSplit();
+                },
+
+                _invoke: function SplitViewCommand_invoke() {
+                    this._fireEvent(SplitViewCommand._EventName.invoked);
                 },
 
                 _fireEvent: function SplitViewCommand_fireEvent(type, detail) {
@@ -382,10 +393,7 @@ define(['exports',
                 }
             }, {
                 _ClassName: ClassNames,
-                _EventName: {
-                    _invoked: "_invoked",
-                    _splitToggle: "_splittoggle"
-                }
+                _EventName: EventNames,
             });
             _Base.Class.mix(SplitViewCommand, _Control.DOMEventMixin);
             return SplitViewCommand;

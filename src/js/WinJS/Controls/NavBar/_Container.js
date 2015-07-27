@@ -23,7 +23,7 @@ define([
     '../_LegacyAppBar/_Constants',
     '../Repeater',
     './_Command'
-], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, _Command) {
+], function NavBarContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, ControlProcessor, Navigation, Promise, Scheduler, _Control, _ElementUtilities, _KeyboardBehavior, _UI, _Constants, Repeater, NavBarCommand) {
     "use strict";
 
     function nobodyHasFocus() {
@@ -73,7 +73,8 @@ define([
 
             var strings = {
                 get duplicateConstruction() { return "Invalid argument: Controls may only be instantiated one time for each DOM element"; },
-                get navBarContainerViewportAriaLabel() { return _Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; }
+                get navBarContainerViewportAriaLabel() { return _Resources._getWinJSString("ui/navBarContainerViewportAriaLabel").value; },
+                get navBarContainerIsDeprecated() { return "NavBarContainer is deprecated and may not be available in future releases. Instead, use a WinJS SplitView to display navigation targets within the app."; }
             };
 
             var NavBarContainer = _Base.Class.define(function NavBarContainer_ctor(element, options) {
@@ -92,8 +93,14 @@ define([
                 /// <returns type="WinJS.UI.NavBarContainer" locid="WinJS.UI.NavBarContainer.constructor_returnValue">
                 /// The new NavBarContainer.
                 /// </returns>
+                /// <deprecated type="deprecate">
+                /// NavBarContainer is deprecated and may not be available in future releases. 
+                /// Instead, use a WinJS SplitView to display navigation targets within the app.
+                /// </deprecated>
                 /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
+
+                _ElementUtilities._deprecated(strings.navBarContainerIsDeprecated);
 
                 element = element || _Global.document.createElement("DIV");
                 this._id = element.id || _ElementUtilities._uniqueID(element);
@@ -221,7 +228,7 @@ define([
                     }
 
                     // Create the NavBarCommand after calling render so that the reparenting in navbarCommand works.
-                    var navbarCommand = new _Command.NavBarCommand(navbarCommandEl, item);
+                    var navbarCommand = new NavBarCommand.NavBarCommand(navbarCommandEl, item);
                     return navbarCommand._element;
                 },
 
@@ -607,8 +614,8 @@ define([
                     _ElementUtilities.addClass(this._surfaceEl, NavBarContainer._ClassName.surface);
                     this._viewportEl.appendChild(this._surfaceEl);
 
-                    this._surfaceEl.addEventListener("_invoked", this._navbarCommandInvokedHandler.bind(this));
-                    this._surfaceEl.addEventListener("_splittoggle", this._navbarCommandSplitToggleHandler.bind(this));
+                    this._surfaceEl.addEventListener(NavBarCommand.NavBarCommand._EventName._invoked, this._navbarCommandInvokedHandler.bind(this));
+                    this._surfaceEl.addEventListener(NavBarCommand.NavBarCommand._EventName._splitToggle, this._navbarCommandSplitToggleHandler.bind(this));
                     _ElementUtilities._addEventListener(this._surfaceEl, "focusin", this._itemsFocusHandler.bind(this), false);
                     this._surfaceEl.addEventListener("keydown", this._keyDownHandler.bind(this));
 
@@ -692,8 +699,8 @@ define([
                     if (this._disposed) { return; }
                     if (!this._measured) { return; }
                     var viewportResized = this.layout === _UI.Orientation.horizontal
-                            ? this._sizes.viewportOffsetWidth !== parseFloat(_Global.getComputedStyle(this._viewportEl).width)
-                            : this._sizes.viewportOffsetHeight !== parseFloat(_Global.getComputedStyle(this._viewportEl).height);
+                            ? this._sizes.viewportOffsetWidth !== parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).width)
+                            : this._sizes.viewportOffsetHeight !== parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).height);
                     if (!viewportResized) { return; }
 
                     this._measured = false;
@@ -1027,7 +1034,7 @@ define([
 
                         var sizes = this._sizes;
 
-                        sizes.rtl = _Global.getComputedStyle(this._element).direction === "rtl";
+                        sizes.rtl = _ElementUtilities._getComputedStyle(this._element).direction === "rtl";
 
                         var itemCount = this._surfaceEl.children.length;
                         if (itemCount > 0) {
@@ -1038,15 +1045,15 @@ define([
                                 // Clear inline margins set by NavBarContainer before measuring.
                                 elementToMeasure.style.margin = "";
                                 elementToMeasure.style.width = "";
-                                var elementComputedStyle = _Global.getComputedStyle(elementToMeasure);
-                                sizes.itemOffsetWidth = parseFloat(_Global.getComputedStyle(elementToMeasure).width);
+                                var elementComputedStyle = _ElementUtilities._getComputedStyle(elementToMeasure);
+                                sizes.itemOffsetWidth = parseFloat(_ElementUtilities._getComputedStyle(elementToMeasure).width);
                                 if (elementToMeasure.offsetWidth === 0) {
                                     sizes.itemOffsetWidth = 0;
                                 }
                                 sizes.itemMarginLeft = parseFloat(elementComputedStyle.marginLeft);
                                 sizes.itemMarginRight = parseFloat(elementComputedStyle.marginRight);
                                 sizes.itemWidth = sizes.itemOffsetWidth + sizes.itemMarginLeft + sizes.itemMarginRight;
-                                sizes.itemOffsetHeight = parseFloat(_Global.getComputedStyle(elementToMeasure).height);
+                                sizes.itemOffsetHeight = parseFloat(_ElementUtilities._getComputedStyle(elementToMeasure).height);
                                 if (elementToMeasure.offsetHeight === 0) {
                                     sizes.itemOffsetHeight = 0;
                                 }
@@ -1059,11 +1066,11 @@ define([
                                 this._writeProfilerMark("measureItem,StopTM");
                             }
 
-                            sizes.viewportOffsetWidth = parseFloat(_Global.getComputedStyle(this._viewportEl).width);
+                            sizes.viewportOffsetWidth = parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).width);
                             if (this._viewportEl.offsetWidth === 0) {
                                 sizes.viewportOffsetWidth = 0;
                             }
-                            sizes.viewportOffsetHeight = parseFloat(_Global.getComputedStyle(this._viewportEl).height);
+                            sizes.viewportOffsetHeight = parseFloat(_ElementUtilities._getComputedStyle(this._viewportEl).height);
                             if (this._viewportEl.offsetHeight === 0) {
                                 sizes.viewportOffsetHeight = 0;
                             }
@@ -1077,7 +1084,7 @@ define([
                             if (this.layout === _UI.Orientation.horizontal) {
                                 this._scrollPosition = _ElementUtilities.getScrollPosition(this._viewportEl).scrollLeft;
 
-                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_Global.getComputedStyle(this._leftArrowEl).marginRight);
+                                sizes.leadingEdge = this._leftArrowEl.offsetWidth + parseInt(_ElementUtilities._getComputedStyle(this._leftArrowEl).marginLeft) + parseInt(_ElementUtilities._getComputedStyle(this._leftArrowEl).marginRight);
                                 var usableSpace = sizes.viewportOffsetWidth - sizes.leadingEdge * 2;
                                 sizes.maxColumns = sizes.itemWidth ? Math.max(1, Math.floor(usableSpace / sizes.itemWidth)) : 1;
                                 sizes.rowsPerPage = Math.min(this.maxRows, Math.ceil(itemCount / sizes.maxColumns));
