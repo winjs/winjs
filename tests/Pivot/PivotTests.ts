@@ -1482,6 +1482,24 @@ module WinJSTests {
                 complete();
             });
         };
+
+        testSelectionChangedEventFiresAfterSelectedIndexIsUpdated = function (complete) {
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                pivot.addEventListener("selectionchanged", () => {
+                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
+                    complete();
+                });
+
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                pivot.selectedIndex = 2;
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+            });
+        };
     }
 
     Object.keys(PivotTests).forEach(function (key) {

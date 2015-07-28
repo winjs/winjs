@@ -512,14 +512,7 @@ export class Pivot {
         this._slideHeadersAnimation.cancel();
 
         var goPrev = this._animateToPrevious;
-
         var newItem = this._items.getAt(index);
-        var selectionChangedDetail = {
-            index: index,
-            direction: goPrev ? "backwards" : "forward",
-            item: newItem
-        };
-        this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
         var skipAnimation = this._firstLoad;
 
         var thisLoadPromise = this._loadPromise = this._loadPromise.then(() => {
@@ -527,6 +520,14 @@ export class Pivot {
             oldItem && this._hidePivotItem(oldItem.element, goPrev, skipAnimation);
             var oldIndex = this._selectedIndex;
             this._selectedIndex = index;
+
+            var selectionChangedDetail = {
+                index: index,
+                direction: goPrev ? "backwards" : "forward",
+                item: newItem
+            };
+            this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
+
             this._headersState.handleNavigation(goPrev, index, oldIndex);
 
             // Note: Adding Promise.timeout to force asynchrony so that thisLoadPromise
