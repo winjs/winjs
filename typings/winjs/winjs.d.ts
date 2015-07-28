@@ -4977,6 +4977,14 @@ declare module WinJS.UI {
         addEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(eventName: string, eventProperties: any): boolean;
+
+        /**
          * Releases resources held by this object. Call this method when the object is no longer needed. After calling this method, the object becomes unusable.
         **/
         dispose(): void;
@@ -4985,14 +4993,6 @@ declare module WinJS.UI {
          * Hides the Flyout, if visible, regardless of other states.
         **/
         hide(): void;
-
-        /**
-         * Removes an event handler that the addEventListener method registered.
-         * @param type The event type to unregister. It must be beforeshow, beforehide, aftershow, or afterhide.
-         * @param listener The event handler function to remove.
-         * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
-        **/
-        removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         /**
          * Shows the Flyout, if hidden, regardless of other states.
@@ -5013,6 +5013,14 @@ declare module WinJS.UI {
          * @param mouseEventObj Required. The MouseEvent Object specifying where to show the Flyout.
         **/
         showAt(mouseEventObj: MouseEvent): void;
+
+        /**
+         * Removes an event handler that the addEventListener method registered.
+         * @param type The event type to unregister. It must be beforeshow, beforehide, aftershow, or afterhide.
+         * @param listener The event handler function to remove.
+         * @param useCapture Set to true to remove the capturing phase event handler; set to false to remove the bubbling phase event handler.
+        **/
+        removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         //#endregion Methods
 
@@ -5447,6 +5455,42 @@ declare module WinJS.UI {
          * Indicates that the object is compatibile with declarative processing.
         **/
         static supportedForProcessing: boolean;
+
+        /**
+         * Specifies whether the Hub animation is an entrance animation or a transition animation.
+        **/
+        static AnimationType: {
+            /**
+             * The animation plays when the Hub is first displayed.
+            **/
+            entrance: string;
+            /**
+             * The animation plays when the Hub is changing its content.
+            **/
+            contentTransition: string;
+            /**
+             * The animation plays when a section is inserted into the Hub.
+            **/
+            insert: string;
+            /**
+             * The animation plays when a section is removed into the Hub.
+            **/
+            remove: string;
+        }
+
+        /**
+         * Gets the current loading state of the Hub.
+        **/
+        LoadingState: {
+            /**
+             * The Hub is loading sections.
+            **/
+            loading: string;
+            /**
+             * All sections are loaded and animations are complete.
+            **/
+            complete: string;
+        }
 
         //#endregion Properties
 
@@ -5918,6 +5962,12 @@ declare module WinJS.UI {
         //#region Events
 
         /**
+         * Raised when the accessibility attributes have been added to the ListView items.
+         * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties detail.firstIndex, detail.lastIndex, detail.firstHeaderIndex, detail.lastHeaderIndex.
+        **/
+        onaccessibilityannotationcomplete(eventInfo: CustomEvent): void;
+
+        /**
          * Occurs when the ListView is about to play an entrance or contentTransition animation.
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.type, detail.setPromise.
         **/
@@ -6179,6 +6229,16 @@ declare module WinJS.UI {
          * Gets or sets the maximum number of realized items.
         **/
         maxDeferredItemCleanup: number;
+
+        /**
+         * Deprecated. Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
+        **/
+        pagesToLoad: number;
+
+        /**
+         * Deprecated. Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
+        **/
+        pagesToLoadThreshold: number;
 
         /**
          * Gets or sets the maximum number of pages to prefetch in the leading buffer for virtualization.
@@ -7006,6 +7066,14 @@ declare module WinJS.UI {
          * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
         **/
         addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+
+        /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(eventName: string, eventProperties: any): boolean;
 
         /**
          * Releases resources held by this Menu. Call this method when the Menu is no longer needed. After calling this method, the Menu becomes unusable.
