@@ -880,7 +880,7 @@ define([
         /// </field>
         onerror: createEvent(errorET),
         /// <field type="Function" locid="WinJS.Application.onbackclick" helpKeyword="WinJS.Application.onbackclick">
-        /// Raised when the users clicks the backbutton on a Windows Phone.
+        /// Raised when the users clicks the hardware back button.
         /// </field>
         onbackclick: createEvent(backClickET)
 

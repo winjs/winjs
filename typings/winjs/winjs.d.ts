@@ -175,6 +175,12 @@ declare module WinJS.Application {
     **/
     function onunload(eventInfo: IPromiseEvent): void;
 
+    /**
+     * Occurs whenever a user clicks the hardware backbutton.
+     * @param eventInfo An object that contains information about the event. The detail property of this object includes the following sub-properties: type
+    **/
+    function onbackclick(eventInfo: IPromiseEvent): void;
+
     //#endregion Events
 
 }
@@ -459,6 +465,11 @@ declare module WinJS.Binding {
          * Gets or sets the length of the list, which is an integer value one higher than the highest element defined in the list.
         **/
         length: number;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -959,11 +970,11 @@ declare module WinJS.Binding {
         render(dataContext: any, container?: HTMLElement): Promise<HTMLElement>;
 
         /**
-          * Renders a template based on the specified URI (static method).
-          * @param href The URI from which to load the template.
-          * @param dataContext The object to use for default data binding.
-          * @param container The element to which to add this rendered template. If this parameter is omitted, a new DIV is created.
-          * @returns A promise that is completed after binding has finished. The value is either the object in the container parameter or the created DIV.
+         * Renders a template based on the specified URI (static method).
+         * @param href The URI from which to load the template.
+         * @param dataContext The object to use for default data binding.
+         * @param container The element to which to add this rendered template. If this parameter is omitted, a new DIV is created.
+         * @returns A promise that is completed after binding has finished. The value is either the object in the container parameter or the created DIV.
         **/
         static render(href: string, dataContext: any, container?: HTMLElement): Promise<HTMLElement>;
 
@@ -997,9 +1008,20 @@ declare module WinJS.Binding {
         extractChild: boolean;
 
         /**
+         * Gets or sets the Number of milliseconds to delay instantiating declarative controls. Zero (0) will result in no delay, any negative number
+         * will result in a setImmediate delay, any positive number will be treated as the number of milliseconds.
+        **/
+        processTimeout: number;
+
+        /**
          * Determines whether the Template contains declarative controls that must be processed separately. This property is always true. The controls that belong to a Template object's children are instantiated when a Template instance is rendered.
         **/
         static isDeclarativeControlContainer: boolean;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -1210,6 +1232,15 @@ declare module WinJS {
         constructor(name: string, message?: string);
 
         //#endregion Constructors
+
+        //#region Properties
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        //#endregion Properties
 
     }
 
@@ -1451,6 +1482,15 @@ declare module WinJS {
         static wrapError<U>(error: U): IPromise<U>;
 
         //#endregion Methods
+
+        //#region Properties
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        //#endregion Properties
 
     }
 
@@ -1730,6 +1770,16 @@ declare module WinJS.UI.Animation {
     function createExpandAnimation(revealed: any, affected: any): IAnimationMethodResponse;
 
     /**
+     * Creates an exit and entrance animation to play for a page navigation given the current and incoming pages'
+     * animation preferences and whether the pages are navigating forwards or backwards.
+     * @param currentPreferredAnimation A value from WinJS.UI.PageNavigationAnimation describing the animation the current page prefers to use.
+     * @param nextPreferredAnimation WinJS.UI.PageNavigationAnimation describing the animation the incoming page prefers to use.
+     * @param movingBackwards Boolean value for whether the navigation is moving backwards.
+     * @returns an object containing the exit and entrance animations to play based on the parameters given.
+    **/
+    function createPageNavigationAnimations(currentPreferredAnimation: string, nextPreferredAnimation: string, movingBackwards: boolean): { exit: Function; entrance: Function };
+
+    /**
      * Creates an object that performs a peek animation.
      * @param element Element or elements involved in the peek.
      * @returns An object whose execute method is used to execute the animation. The execute method returns a Promise that completes when the animation is finished.
@@ -1782,6 +1832,34 @@ declare module WinJS.UI.Animation {
      * @returns An object that completes when the animation is finished.
     **/
     function dragSourceStart(dragSource: any, affected?: any): Promise<any>;
+
+    /**
+     * Execute the incoming phase of the drill in animation, scaling up the incoming page while fading it in.
+     * @param incomingPage Element to be scaled up and faded in.
+     * @returns Promise object that completes when the animation is complete.
+    **/
+    function drillInIncoming(incomingPage: HTMLElement): Promise<any>
+
+    /**
+     * Execute the outgoing phase of the drill in animation, scaling up the outgoing page while fading it out.
+     * @param incomingPage Element to be scaled up and faded out.
+     * @returns Promise object that completes when the animation is complete.
+    **/
+    function drillInOutgoin(outgoingPage: HTMLElement): Promise<any>
+
+    /**
+     * Execute the incoming phase of the drill out animation, scaling down the incoming page while fading it in.
+     * @param incomingPage Element to be scaled up and faded in.
+     * @returns Promise object that completes when the animation is complete.
+    **/
+    function drillOutIncoming(incomingPage: HTMLElement): Promise<any>
+
+    /**
+     * Execute the outgoing phase of the drill out animation, scaling down the outgoing page while fading it out.
+     * @param outgoingPage Element to be scaled down and faded out.
+     * @returns Promise object that completes when the animation is complete.
+    **/
+    function drillOutOutgoing(outgoingPage: HTMLElement): Promise<any>
 
     /**
      * Performs an animation that displays one or more elements on a page.
@@ -2256,7 +2334,8 @@ declare module WinJS.UI {
         threebars,
         fourbars,
         scan,
-        preview
+        preview,
+        hamburger
     }
 
     /**
@@ -2305,6 +2384,10 @@ declare module WinJS.UI {
          * The edit operation timed out.
         **/
         noResponse,
+        /**
+         * The edit operation was canceled.
+        **/
+        canceled,
         /**
          * The data source cannot be written to.
         **/
@@ -3732,42 +3815,6 @@ declare module WinJS.UI {
     **/
     class AppBar {
 
-        /** 
-         * Display options for the AppBar when closed.
-        **/
-        static ClosedDisplayMode: {
-            /**
-             * When the AppBar is closed, it is not visible and doesn't take up any space.
-            **/
-            none: string;
-            /**
-             * When the AppBar is closed, its height is reduced to the minimal height required to display only its overflowbutton. All other content in the AppBar is not displayed.
-            **/
-            minimal: string;
-            /**
-             * When the AppBar is closed, its height is reduced such that button commands are still visible, but their labels are hidden.
-            **/
-            compact: string;
-            /**
-             * When the AppBar is closed, its height is always sized to content.
-            **/
-            full: string;
-        };
-
-        /** 
-         * Display options for AppBar placement in relation to the main view.
-        */
-        static Placement: {
-            /**
-             * The AppBar appears at the top of the main view
-            **/
-            top: string;
-            /**
-             * The AppBar appears at the bottom of the main view
-            **/
-            bottom: string;
-        };
-
         //#region Constructors
 
         /**
@@ -3896,6 +3943,47 @@ declare module WinJS.UI {
         **/
         placement: string;
 
+        /** 
+         * Display options for the AppBar when closed.
+        **/
+        static ClosedDisplayMode: {
+            /**
+             * When the AppBar is closed, it is not visible and doesn't take up any space.
+            **/
+            none: string;
+            /**
+             * When the AppBar is closed, its height is reduced to the minimal height required to display only its overflowbutton. All other content in the AppBar is not displayed.
+            **/
+            minimal: string;
+            /**
+             * When the AppBar is closed, its height is reduced such that button commands are still visible, but their labels are hidden.
+            **/
+            compact: string;
+            /**
+             * When the AppBar is closed, its height is always sized to content.
+            **/
+            full: string;
+        };
+
+        /** 
+         * Display options for AppBar placement in relation to the main view.
+        */
+        static Placement: {
+            /**
+             * The AppBar appears at the top of the main view
+            **/
+            top: string;
+            /**
+             * The AppBar appears at the bottom of the main view
+            **/
+            bottom: string;
+        };
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -4023,6 +4111,11 @@ declare module WinJS.UI {
         **/
         priority: number;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -4102,6 +4195,13 @@ declare module WinJS.UI {
         **/
         removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
 
+        /**
+         * Specifies whether suggestions based on local files are automatically displayed in the input field, and defines the criteria that
+         * the system uses to locate and filter these suggestions.
+         * @param settings The new settings for local content suggestions.
+        **/
+        setLocalContentSuggestionSettings(settings: any): void
+
         //#endregion Methods
 
         //#region Properties
@@ -4140,6 +4240,11 @@ declare module WinJS.UI {
          * Gets or sets a value that specifies whether history is disabled.
         **/
         searchHistoryDisabled: boolean;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -4210,6 +4315,11 @@ declare module WinJS.UI {
          * Gets the HTML element that hosts this BackButton.
         **/
         element: HTMLElement;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -4329,6 +4439,11 @@ declare module WinJS.UI {
         **/
         orientation: WinJS.UI.Orientation;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -4352,8 +4467,13 @@ declare module WinJS.UI {
 
     /**
      * Represents a command to be displayed in an AppBar or ToolBar
-    **/ 
-    class Command extends AppBarCommand implements ICommand { }
+    **/
+    class Command extends AppBarCommand implements ICommand {
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+    }
 
     /**
      * Displays a modal dialog which can display arbitrary HTML content.
@@ -4376,6 +4496,11 @@ declare module WinJS.UI {
             **/
             secondary: string
         }
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Creates a new ContentDialog control.
@@ -4600,6 +4725,11 @@ declare module WinJS.UI {
         **/
         yearPattern: string;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -4783,6 +4913,11 @@ declare module WinJS.UI {
         **/
         orientation: string;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -4912,6 +5047,11 @@ declare module WinJS.UI {
          * Gets or sets the default placement to be used for this Flyout.
         **/
         placement: string;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -5171,6 +5311,11 @@ declare module WinJS.UI {
         **/
         orientation: WinJS.UI.Orientation;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -5298,6 +5443,11 @@ declare module WinJS.UI {
         **/
         zoomableView: IZoomableView<any>;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -5368,6 +5518,15 @@ declare module WinJS.UI {
         constructor(element?: HTMLElement, options?: any);
 
         //#endregion Constructors
+
+        //#region Properties
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        //#endregion Properties
 
     }
 
