@@ -1197,6 +1197,7 @@ class HeaderStateStatic extends HeaderStateBase {
         this.setActiveHeader(headerElement);
         this.pivot._animateToPrevious = headerElement["_pivotItemIndex"] < this.pivot.selectedIndex;
         this.pivot.selectedIndex = headerElement["_pivotItemIndex"];
+        this.pivot._animateToPrevious = false;
     }
 
     handleNavigation(goPrevious: boolean, index: number, oldIndex: number) {
