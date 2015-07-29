@@ -1,3 +1,5 @@
+// Note: ScrollViewer is currently only used on Xbox and therefore can leverage platform specific APIs and event names
+
 import _Global = require("../../Core/_Global");
 
 import _Control = require("../../Utilities/_Control");
@@ -87,7 +89,8 @@ export class ScrollViewer {
         options = options || {};
         this._element["winControl"] = this;
 
-        _ElementUtilities.addClass(this._element, "win-disposable win-scrollviewer");
+        _ElementUtilities.addClass(this._element, "win-disposable");
+        _ElementUtilities.addClass(this._element, "win-scrollviewer");
 
         this._handleFocus = this._handleFocus.bind(this);
         this._handleFocusOut = this._handleFocusOut.bind(this);
@@ -190,6 +193,55 @@ export class ScrollViewer {
         this._refreshVisuals();
     }
 
+    private _refreshScrollClassNames() {
+        if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
+            this._canScrollUp = true;
+        } else {
+            this._canScrollUp = false;
+        }
+        if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
+            this._canScrollDown = false;
+        } else {
+            this._canScrollDown = true;
+        }
+
+        // Note: We remove the classes in order so we can avoid labels flashing  
+        if (!this._canScrollUp && !this._canScrollDown) {
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
+
+            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        } else if (!this._canScrollUp && this._canScrollDown) {
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+        } else if (this._canScrollUp && !this._canScrollDown) {
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        } else {
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        }
+    }
+
     private _refreshVisuals() {
         // We call this function any time the size of the contents within the ScrollViewer changes. This function  
         // determines if we need to display the visual treatment for "more content".
@@ -201,51 +253,7 @@ export class ScrollViewer {
             // Set initial visibility for the arrow indicators if the contents of the scrollable region  
             // is bigger than the viewable area.  
             if (this._scrollingContainer.clientHeight < this._scrollingContainer.scrollHeight) {
-                if (this._scrollingContainer.scrollTop > 0) {
-                    this._canScrollUp = true;
-                } else {
-                    this._canScrollUp = false;
-                }
-                if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
-                    this._canScrollDown = false;
-                } else {
-                    this._canScrollDown = true;
-                }
-
-                if (!this._canScrollUp && !this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-                    _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
-                } else if (!this._canScrollUp && this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-                    _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                } else if (this._canScrollUp && !this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                } else {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                }
+                this._refreshScrollClassNames();
 
                 // We only make the ScrollViewer focusable if it has text content and the  
                 // text content does not fit on the screen. If the text content does fit  
@@ -410,51 +418,6 @@ export class ScrollViewer {
     }
 
     private _handleScroll(ev: MouseEvent) {
-        if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
-            this._canScrollUp = true;
-        } else {
-            this._canScrollUp = false;
-        }
-        if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
-            this._canScrollDown = false;
-        } else {
-            this._canScrollDown = true;
-        }
-
-        // Note: We remove the classes in order so we can avoid labels flashing  
-        if (!this._canScrollUp && !this._canScrollDown) {
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        } else if (!this._canScrollUp && this._canScrollDown) {
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-        } else if (this._canScrollUp && !this._canScrollDown) {
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        } else {
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        }
+        this._refreshScrollClassNames();
     }
 }

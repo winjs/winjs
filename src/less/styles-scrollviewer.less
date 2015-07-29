@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
+// Note: ScrollViewer is currently only used on Xbox and therefore can leverage platform specific style properties
+
 @import "color-definitions.less";
 
 .win-scrollviewer .win-itemcontainer {
@@ -16,7 +18,7 @@
 .win-scrollviewer .win-itemcontainer .win-tile-focusindicator {
     margin-top: 4px;
     margin-bottom: 4px;
-    height: calc(100% - 16px);
+    height: ~"calc(100% - 16px)";
 }
 
 .win-scrollviewer .win-itemcontainer .win-voice-host,
@@ -25,7 +27,7 @@
 .win-overlay-container .win-itemcontainer .win-itemcontainer-captureproxy {
     margin-top: 8px;
     margin-bottom: 8px;
-    height: calc(100% - 16px);
+    height: ~"calc(100% - 16px)";
 }
 
 .win-scrollviewer {

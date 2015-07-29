@@ -342,7 +342,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
     for (var i = 0, length = allElements.length; i < length; i++) {
         var potentialElement = <HTMLElement>allElements[i];
 
-        if (refObj.element === potentialElement || !isFocusable(potentialElement) || _isInToggleModeContainer(potentialElement)) {
+        if (refObj.element === potentialElement || !isFocusable(potentialElement) || _isInInactiveToggleModeContainer(potentialElement)) {
             continue;
         }
 
@@ -569,12 +569,17 @@ function _getIFrameFromWindow(win: Window) {
     return found.length ? found[0] : null;
 }
 
-function _isInToggleModeContainer(element: HTMLElement) {
+function _findParentToggleModeContainer(element: HTMLElement) {
     var toggleModeRoot = element.parentElement;
     while (toggleModeRoot && !_isToggleMode(toggleModeRoot)) {
         toggleModeRoot = toggleModeRoot.parentElement;
     }
     return toggleModeRoot;
+}
+
+function _isInInactiveToggleModeContainer(element: HTMLElement) {
+    var container = _findParentToggleModeContainer(element);
+    return container && _ElementUtilities.hasClass(container, ClassNames.toggleModeActive);
 }
 
 function _isToggleMode(element: HTMLElement) {
