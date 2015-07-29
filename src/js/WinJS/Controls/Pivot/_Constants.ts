@@ -4,6 +4,7 @@
 // Names of classes used by the Pivot.
 export var _ClassNames = {
     pivot: "win-pivot",
+    pivotCustomHeaders: "win-pivot-customheaders",
     pivotLocked: "win-pivot-locked",
     pivotTitle: "win-pivot-title",
     pivotHeaderArea: "win-pivot-header-area",

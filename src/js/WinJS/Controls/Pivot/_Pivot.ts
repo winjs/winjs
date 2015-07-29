@@ -117,7 +117,14 @@ export class Pivot {
     }
     set customLeftHeader(value: HTMLElement) {
         _ElementUtilities.empty(this._customLeftHeader);
-        value && this._customLeftHeader.appendChild(value);
+        if (value) {
+            this._customLeftHeader.appendChild(value);
+            _ElementUtilities.addClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+        } else {
+            if (!this._customLeftHeader.children.length && !this._customRightHeader.childNodes.length) {
+                _ElementUtilities.removeClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+            }
+        }
         this.forceLayout();
     }
 
@@ -129,7 +136,14 @@ export class Pivot {
     }
     set customRightHeader(value: HTMLElement) {
         _ElementUtilities.empty(this._customRightHeader);
-        value && this._customRightHeader.appendChild(value);
+        if (value) {
+            this._customRightHeader.appendChild(value);
+            _ElementUtilities.addClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+        } else {
+            if (!this._customLeftHeader.children.length && !this._customRightHeader.childNodes.length) {
+                _ElementUtilities.removeClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+            }
+        }
         this.forceLayout();
 
     }
