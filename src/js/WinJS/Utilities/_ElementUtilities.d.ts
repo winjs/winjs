@@ -546,7 +546,7 @@ export declare enum Key {
 //#region Objects
 
 /**
-    * Represents the result of a query selector, and provides various operations that perform actions over the elements of the collection.
+ * Represents the result of a query selector, and provides various operations that perform actions over the elements of the collection.
 **/
 export interface QueryCollection<T> extends Array<T> {
     //#region Methods

@@ -1773,7 +1773,7 @@ declare module WinJS.UI.Animation {
      * Creates an exit and entrance animation to play for a page navigation given the current and incoming pages'
      * animation preferences and whether the pages are navigating forwards or backwards.
      * @param currentPreferredAnimation A value from WinJS.UI.PageNavigationAnimation describing the animation the current page prefers to use.
-     * @param nextPreferredAnimation WinJS.UI.PageNavigationAnimation describing the animation the incoming page prefers to use.
+     * @param A value from nextPreferredAnimation WinJS.UI.PageNavigationAnimation describing the animation the incoming page prefers to use.
      * @param movingBackwards Boolean value for whether the navigation is moving backwards.
      * @returns an object containing the exit and entrance animations to play based on the parameters given.
     **/
@@ -2542,6 +2542,28 @@ declare module WinJS.UI {
          * Nothing happens.
         **/
         none
+    }
+
+    /**
+     * Specifies what animation type should be returned by WinJS.UI.Animation.createPageNavigationAnimations.
+    **/
+    enum PageNavigationAnimation {
+        /**
+         * The pages will exit and enter using a turnstile animation.
+        **/
+        turnstile,
+        /**
+         * The pages will exit and enter using an animation that slides up/down.
+        **/
+        slide,
+        /**
+         * The pages will enter using an enterPage animation, and exit with no animation.
+        **/
+        enterPage,
+        /**
+         * The pages will exit and enter using a continuum animation.
+        **/
+        continuum,
     }
 
     //#endregion Enumerations
@@ -6231,12 +6253,12 @@ declare module WinJS.UI {
         maxDeferredItemCleanup: number;
 
         /**
-         * Deprecated. Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
+         * This function is deprecated. Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
         **/
         pagesToLoad: number;
 
         /**
-         * Deprecated. Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
+         * This function is deprecated. Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
         **/
         pagesToLoadThreshold: number;
 
@@ -7399,12 +7421,29 @@ declare module WinJS.UI {
         //#region Properties
 
         /**
+         * Gets/Sets how NavBar will display itself while closed. Values are "none" and "minimal".
+        **/
+        closedDisplayMode: string;
+
+        /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        commands: AppBarCommand;
+
+        /**
          * Gets the HTML element that hosts this NavBar.
         **/
         element: HTMLElement;
 
         /**
-         * Gets a value that indicates whether the NavBar is opened or in the process of becoming opened, or sets the NavBar to hide or show itself.
+         * Returns the NavBarCommand object identified by id.
+         * @param id The element idenitifier (ID) of the NavBarCommand to be returned.
+         * @returns The NavBarCommand identified by id. If multiple commands have the same ID, returns the first command found.
+        **/
+        getCommandById(id: string): NavBarCommand;
+
+        /**
+         * Gets a value that indicates whether the NavBar is opened or in the process of becoming opened, or sets the NavBar to open or close itself.
         **/
         opened: boolean;
 
@@ -7432,6 +7471,16 @@ declare module WinJS.UI {
         constructor(element?: HTMLElement, options?: any);
 
         //#endregion Constructors
+
+        //#region Events
+
+        /**
+         * This API supports the Windows Library for JavaScript infrastructure and is not intended to be used directly from your code. 
+         * Use NavBarContainer.oninvoked instead.
+        **/
+        oninvoked: any;
+
+        //#endregion Events
 
         //#region Methods
 
@@ -8078,6 +8127,11 @@ declare module WinJS.UI {
         **/
         removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
 
+        /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        setTimeoutAfterTTFF(callback: Function, delay: number): void
+
         //#endregion Methods
 
         //#region Properties
@@ -8227,6 +8281,11 @@ declare module WinJS.UI {
         //#endregion Methods
 
         //#region Properties
+
+        /**
+         * Specifies whether the SettingsFlyout is disabled.
+        **/
+        disabled: boolean;
 
         /**
          * Gets the DOM element the SettingsFlyout is attached to.
@@ -8473,7 +8532,7 @@ declare module WinJS.UI {
 
     /**
     * Represents a command in the SplitView Pane.
-   **/
+    **/
     class SplitViewCommand {
         //#region Constructors
 
@@ -8577,6 +8636,30 @@ declare module WinJS.UI {
          * @returns A Promise that completes when the full-quality thumbnail is visible.
         **/
         loadThumbnail(item: IItem<T>, image: HTMLImageElement): Promise<void>;
+
+        /**
+         * Registers an event handler for the specified event.
+         * @param type The name of the event for which to add a listener.
+         * @param eventHandler The event handler function to associate with the event.
+         * @param useCapture Set to true to register the event handler for the capturing phase; otherwise, set to false to register the event handler for the bubbling phase.
+        **/
+        addEventListener(type: string, eventHandler: Function, useCapture?: boolean): void;
+
+        /**
+         * Raises an event of the specified type and with additional properties.
+         * @param type The type (name) of the event.
+         * @param details The set of additional properties to be attached to the event object.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(type: string, details: any): boolean;
+
+        /**
+         * Removes a listener for the specified event.
+         * @param type The name of the event for which to remove a listener.
+         * @param eventHandler The event handler function to associate with the event.
+         * @param useCapture Optional. The same value that was passed to addEventListener for this listener. It may be omitted if it was omitted when calling addEventListener.
+        **/
+        removeEventListener(type: string, eventHandler: Function, useCapture?: any): void;
 
         //#endregion Methods
 
@@ -9116,6 +9199,14 @@ declare module WinJS.UI {
         addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
 
         /**
+         * Raises an event of the specified type and with additional properties.
+         * @param eventName The name of the event.
+         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+         * @returns true if preventDefault was called on the event, otherwise false.
+        **/
+        dispatchEvent(eventName: string, eventProperties: any): boolean;
+
+        /**
          * Releases resources held by this ViewBox. Call this method when the ViewBox is no longer needed. After calling this method, the ViewBox becomes unusable.
         **/
         dispose(): void;
@@ -9270,6 +9361,8 @@ declare module WinJS.UI {
     **/
     function isAnimationEnabled(): boolean;
 
+    function optionsParser(): JSON;
+
     /**
      * Applies declarative control binding to all elements, starting at the specified root element.
      * @param rootElement The element at which to start applying the binding. If this parameter is not specified, the binding is applied to the entire document.
@@ -9368,6 +9461,14 @@ declare module WinJS.UI.XYFocus {
     export function addEventListener(type: string, handler: EventListener): void;
 
     /**
+     * Raises an event of the specified type and with additional properties.
+     * @param type The type (name) of the event.
+     * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+     * @returns true if preventDefault was called on the event, otherwise false.
+    **/
+    export function dispatchEvent(type: string, eventProperties: any): boolean;
+    
+    /**
      * Removes an event listener to XYFocus events.
      * @param type The type (name) of the event.
      * @param listener The listener to remove.
@@ -9395,7 +9496,24 @@ declare module WinJS.UI.XYFocus {
     export function moveFocus(direction: "right", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "up", options?: XYFocusOptions): HTMLElement;
     export function moveFocus(direction: "down", options?: XYFocusOptions): HTMLElement;
+
+    //#region Events
+
+    /**
+     * Occurs immeidately after XYFocus has changed focus targets.
+     * @param eventInfo An object that contains information about the event. The detail property of this object includes the following subproperties: previousFocusElemewnt, keyCode.
+    **/
+    export function onfocuschanged(eventInfo: CustomEvent): void;
+
+    /**
+     * Occurs immeidately before XYFocus changes focus targets. Is cancelable.
+     * @param eventInfo An object that contains information about the event. The detail property of this object includes the following subproperties: nextFocusElement, keyCode.
+    **/
+    export function onfocuschanging(eventInfo: CustomEvent): void;
+
+    //#endregion Events
 }
+
 /**
  * Provides functions to load HTML content programmatically.
 **/
@@ -10086,7 +10204,7 @@ declare module WinJS.Utilities {
         **/
         GamepadRightThumbstickLeft,
         /**
-            * The open bracket key ([).
+         * The open bracket key ([).
         **/
         openBracket,
         /**
@@ -10100,7 +10218,11 @@ declare module WinJS.Utilities {
         /**
          * The single quote key (').
         **/
-        singleQuote
+        singleQuote,
+        /**
+         * Any IME input.
+        **/
+        IME,
     }
 
     //#endregion Enumerations

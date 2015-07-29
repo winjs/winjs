@@ -139,7 +139,7 @@ define([
                     }
                 },
 
-                /// <field type="Function" locid="WinJS.UI.NavBarCommand.oninvoked" helpKeyword="WinJS.UI.NavBar.oninvoked">
+                /// <field type="Function" locid="WinJS.UI.NavBarCommand.oninvoked" helpKeyword="WinJS.UI.NavBarCommand.oninvoked">
                 /// This API supports the Windows Library for JavaScript infrastructure and is not intended to be used directly from your code. 
                 /// </field>
                 oninvoked: {
