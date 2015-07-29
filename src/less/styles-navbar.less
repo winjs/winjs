@@ -4,6 +4,13 @@
 @import "mixins.less";
 
 .win-navbar {
+    /* NavBar should overlay content in the body when opened or closed.
+     * This z-index value is chosen to be smaller than light dismissables.
+     * z-index will be overwritten by the light dismiss service to an even
+     * higher value when the NavBar is in the opened state.
+     */
+    z-index: 999;
+
     &.win-navbar-showing,
     &.win-navbar-shown,
     &.win-navbar-hiding {
