@@ -1,6 +1,8 @@
 bin/
 node_modules/
 bld/
+dist/
+repos/
 
 *.orig
 *.suo

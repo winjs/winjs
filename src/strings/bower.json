@@ -1,0 +1,12 @@
+{
+  "name": "winjs-localization",
+  "description": "Provides localized versions of each string used by WinJS for each language WinJS supports.",
+  "license": "MIT",
+  "homepage": "http://try.buildwinjs.com/",
+  "authors": [{
+    "name": "Microsoft Corporation and other contributors",
+    "homepage": "https://github.com/winjs/winjs/graphs/contributors"
+  }],
+  "dependencies": {
+  }
+}

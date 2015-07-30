@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>WinJS-Localization</id>
+        <version>1.0.0</version>
+        <title>Localized strings for the Windows Library for JavaScript (WinJS)</title>
+        <authors>Microsoft Corporation and other contributors</authors>
+        <licenseUrl>https://github.com/winjs/winjs/blob/master/License.txt</licenseUrl>
+        <projectUrl>https://github.com/winjs/winjs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides localized versions of each string used by WinJS for each language WinJS supports.</description>
+        <copyright>Microsoft Corporation</copyright>
+        <tags>javascript</tags>
+    </metadata>
+    <files>
+        <file src="..\..\dist\winjs-localization\npm\**\*.resjson" target="content\WinJS-Localization" />
+        <file src="..\..\dist\winjs-localization\npm\License.txt" target="content\WinJS-Localization\License.txt" />
+        <file src="..\..\dist\winjs-localization\npm\README.md" target="content\WinJS-Localization\README.md" />
+    </files>
+</package>
