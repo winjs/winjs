@@ -2,19 +2,9 @@
 .Colors(@theme) {
     .colorDefinitions(@theme);
 
-    // The desired visual design is to stack 3 elements on top of each other and have
-    // their colors blend together by making the upper elements transparent. For example:
-    // 1. SplitView Pane: defines its own background color
-    // 2. NavBar Command Button: semi-transparent background color
-    // 3. NavBar Command Button Overlay (not used in actual implementation)
-    //   - rest state: no background color
-    //   - hover/pressed state: semi-transparent background color
-    // Instead of creating an extra element just for the purpose of this color blending,
-    // we get rid of element (3), blend the colors of (2) and (3) in LESS, and then apply
-    // the blended color to (2).
-    @splitViewCommandRest: @listHover;
-    @splitViewCommandHover: overlay(@listHover, @listHover);
-    @splitViewCommandPress: overlay(@listPress, @listHover);
+    @splitViewCommandRest: transparent;
+    @splitViewCommandHover: @listHover;
+    @splitViewCommandPress: @listPress;
 
     .win-splitviewcommand-button {
         background-color: @splitViewCommandRest;
