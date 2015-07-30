@@ -193,6 +193,25 @@ export class ScrollViewer {
         this._refreshVisuals();
     }
 
+    private _moveFocus(direction: string) {
+        // If we successfully move focus to a new target element, then set the ScrollViewer as inactive  
+        if (this._isActive()) {
+            var previousFocusRectangleObject = this._scrollingContainer.getBoundingClientRect();
+            var previousFocusRectangle = {
+                top: previousFocusRectangleObject.top,
+                left: previousFocusRectangleObject.left,
+                width: previousFocusRectangleObject.width,
+                height: previousFocusRectangleObject.height
+            };
+
+            var nextFocusElement = XYFocus.moveFocus(direction, { referenceRect: previousFocusRectangle });
+            if (nextFocusElement) {
+                this._setInactive();
+                // Sound: Choose one of the 4 focus sounds to play at random  
+            }
+        }
+    }
+
     private _refreshScrollClassNames() {
         if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
             this._canScrollUp = true;
@@ -366,27 +385,12 @@ export class ScrollViewer {
             case Keys.leftArrow:
             case Keys.GamepadDPadLeft:
             case Keys.GamepadLeftThumbstickLeft:
-                var direction = "left";
+                this._moveFocus("left");
+                break;
             case Keys.rightArrow:
             case Keys.GamepadDPadRight:
             case Keys.GamepadLeftThumbstickRight:
-                var direction = direction || "right";
-                // If we successfully move focus to a new target element, then set the ScrollViewer as inactive  
-                if (this._isActive()) {
-                    var previousFocusRectangleObject = this._scrollingContainer.getBoundingClientRect();
-                    var previousFocusRectangle = {
-                        top: previousFocusRectangleObject.top,
-                        left: previousFocusRectangleObject.left,
-                        width: previousFocusRectangleObject.width,
-                        height: previousFocusRectangleObject.height
-                    };
-
-                    var nextFocusElement = XYFocus.moveFocus(direction, { referenceRect: previousFocusRectangle });
-                    if (nextFocusElement) {
-                        this._setInactive();
-                        // Sound: Choose one of the 4 focus sounds to play at random  
-                    }
-                }
+                this._moveFocus("right");
                 break;
             case Keys.pageUp:
             case Keys.GamepadLeftShoulder:

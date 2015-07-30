@@ -579,7 +579,7 @@ function _findParentToggleModeContainer(element: HTMLElement) {
 
 function _isInInactiveToggleModeContainer(element: HTMLElement) {
     var container = _findParentToggleModeContainer(element);
-    return container && _ElementUtilities.hasClass(container, ClassNames.toggleModeActive);
+    return container && !_ElementUtilities.hasClass(container, ClassNames.toggleModeActive);
 }
 
 function _isToggleMode(element: HTMLElement) {
