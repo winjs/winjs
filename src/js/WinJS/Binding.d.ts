@@ -2,11 +2,6 @@
 
 import Promise = require("Promise");
 
-/**
- * Determines whether or not binding should automatically set the ID of an element. This property should be set to true in apps that use WinJS (WinJS) binding.
-**/
-export declare var optimizeBindingReferences: boolean;
-
 //#endregion Properties
 
 //#region Objects

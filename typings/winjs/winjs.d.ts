@@ -190,11 +190,6 @@ declare module WinJS.Application {
 declare module WinJS.Binding {
     //#region Properties
 
-    /**
-     * Determines whether or not binding should automatically set the ID of an element. This property should be set to true in apps that use WinJS (WinJS) binding.
-    **/
-    var optimizeBindingReferences: boolean;
-
     //#endregion Properties
 
     //#region Objects
@@ -274,7 +269,7 @@ declare module WinJS.Binding {
     /**
      * Do not instantiate. A list returned by the createFiltered method.
     **/
-    class FilteredListProjection<T> extends ListProjection<T> {
+    interface FilteredListProjection<T> extends ListProjection<T> {
         //#region Methods
 
         /**
@@ -1093,15 +1088,6 @@ declare module WinJS.Binding {
     function initializer(customInitializer: Function): Function;
 
     /**
-     * Notifies listeners that a property value was updated.
-     * @param name The name of the property that is being updated.
-     * @param newValue The new value for the property.
-     * @param oldValue The old value for the property.
-     * @returns A promise that is completed when the notifications are complete.
-    **/
-    function notify(name: string, newValue: string, oldValue: string): Promise<any>;
-
-    /**
      * Sets the destination property to the value of the source property.
      * @param source The source object.
      * @param sourceProperties The path on the source object to the source property.
@@ -1506,11 +1492,6 @@ declare module WinJS {
     **/
     function log(message: string, tags?: string, type?: string): void;
     function log(message: () => string, tags?: string, type?: string): void;
-
-    /**
-     * This method has been deprecated. Strict processing is always on; you don't have to call this method to turn it on.
-    **/
-    function strictProcessing(): void;
 
     /**
      * Wraps calls to XMLHttpRequest in a promise.
@@ -2790,145 +2771,6 @@ declare module WinJS.UI {
          * Gets or sets the index of the IItem contained by this IItemPromise.
         **/
         index: number;
-
-        //#endregion Properties
-
-    }
-
-    /**
-     * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface. Represents a layout for the ListView.
-    **/
-    interface ILayout {
-        //#region Methods
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param beginScrollPosition The first visible pixel in the ListView. For horizontal layouts, this is the x-coordinate of the pixel. For vertical layouts, this is the y-coordinate.
-         * @param wholeItem true if the item must be completely visible; otherwise, false if its ok for the item to be partially visible. Promise.
-         * @returns A Promise for the index of the first visible item at the specified point.
-        **/
-        calculateFirstVisible(beginScrollPosition: number, wholeItem: boolean): Promise<any>;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param endScrollPosition The last visible pixel in the ListView. For horizontal layouts, this is the x-coordinate of the pixel. For vertical layouts, this is the y-coordinate.
-         * @param wholeItem true if the item must be completely visible; otherwise, false if its ok for the item to be partially visible. Promise.
-         * @returns A Promise for the index of the last visible item at the specified point.
-        **/
-        calculateLastVisible(endScrollPosition: number, wholeItem: boolean): Promise<any>;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @returns A object that has these properties: animationPromise, newEndIndex.
-        **/
-        endLayout(): any;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param itemIndex The index of the item.
-         * @returns A Promise that returns an object with these properties: left, top, contentWidth, contentHeight, totalWidth, totalHeight.
-        **/
-        getItemPosition(itemIndex: number): Promise<any>;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param itemIndex The data source index of the current item.
-         * @param element The element for the current item.
-         * @param keyPressed The key that was pressed. This function must check for the arrow keys (leftArrow, upArrow, rightArrow, downArrow), pageDown, and pageUp and determine which item the user navigated to.
-         * @returns A Promise that contains the index of the next item (This item becomes the current item).
-        **/
-        getKeyboardNavigatedItem(itemIndex: number, element: HTMLElement, keyPressed: WinJS.Utilities.Key): Promise<number>;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @returns A Promise that returns an object that has these properties: beginScrollPosition, endScrollPosition.
-        **/
-        getScrollBarRange(): Promise<any>;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param x The x-coordinate to test.
-         * @param y The y-coordinate to test.
-        **/
-        hitTest(x: number, y: number): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param elements The elements that represent the items that were added.
-        **/
-        itemsAdded(elements: HTMLElement[]): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-        **/
-        itemsMoved(): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param elements The elements that represent the items that were removed.
-        **/
-        itemsRemoved(elements: HTMLElement[]): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param groupIndex The index of the group in the group data source.
-         * @param element The element to render for the group header.
-        **/
-        layoutHeader(groupIndex: number, element: HTMLElement): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param itemIndex The index of the item in the data source.
-         * @param element The element to render for the item.
-        **/
-        layoutItem(itemIndex: number, element: HTMLElement): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param element The element that represents a header in the data source.
-        **/
-        prepareHeader(element: HTMLElement): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param element An element that represents an item in the data source.
-        **/
-        prepareItem(element: HTMLElement): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param element The element being released.
-        **/
-        releaseItem(element: HTMLElement): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-        **/
-        reset(): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param site The layout site for the layout. You can use this object to query the hosting ListView for info you might need to lay out items.
-        **/
-        setSite(site: ILayoutSite): void;
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-         * @param beginScrollPosition The starting pixel of the area to which the items are rendered.
-         * @param endScrollPosition The last pixel of the area to which the items are rendered.
-         * @param count The upper bound of the number of items to render.
-         * @returns A Promise that returns an object that has these properties: beginIndex, endIndex.
-        **/
-        startLayout(beginScrollPosition: number, endScrollPosition: number, count: number): Promise<any>;
-
-        //#endregion Methods
-
-        //#region Properties
-
-        /**
-         * This API is no longer supported. Starting with the Windows Library for JavaScript 2.0 Preview, use the ILayout2 interface.
-        **/
-        horizontal: boolean;
 
         //#endregion Properties
 
@@ -4683,14 +4525,6 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
-         * Raises an event of the specified type and with additional properties.
-         * @param type The type (name) of the event.
-         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
-         * @returns true if preventDefault was called on the event, otherwise false.
-        **/
-        raiseEvent(type: string, eventProperties: any): boolean;
-
-        /**
          * Removes a listener for the specified event.
          * @param type The name of the event for which to remove a listener.
          * @param listener The listener.
@@ -4759,7 +4593,7 @@ declare module WinJS.UI {
     /**
      * Adds event-related methods to the control.
     **/
-    class DOMEventMixin {
+    module DOMEventMixin {
         //#region Methods
 
         /**
@@ -4768,7 +4602,7 @@ declare module WinJS.UI {
          * @param listener The listener to invoke when the event gets raised.
          * @param useCapture true to initiate capture; otherwise, false.
         **/
-        addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+        export function addEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         /**
          * Raises an event of the specified type, adding the specified additional properties.
@@ -4776,7 +4610,7 @@ declare module WinJS.UI {
          * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
          * @returns true if preventDefault was called on the event, otherwise false.
         **/
-        dispatchEvent(type: string, eventProperties: any): boolean;
+        export function dispatchEvent(type: string, eventProperties: any): boolean;
 
         /**
          * Removes an event listener from the control.
@@ -4784,17 +4618,9 @@ declare module WinJS.UI {
          * @param listener The listener to remove.
          * @param useCapture true to initiate capture; otherwise, false.
         **/
-        removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
-
-        /**
-         * Adds the set of declaratively specified options (properties and events) to the specified control. If the name of the options property begins with "on", the property value is a function and the control supports addEventListener. This method calls the addEventListener method on the control.
-         * @param control The control on which the properties and events are to be applied.
-         * @param options The set of options that are specified declaratively.
-        **/
-        setOptions(control: any, options: any): void;
+        export function removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         //#endregion Methods
-
     }
 
     /**
@@ -5105,20 +4931,6 @@ declare module WinJS.UI {
         //#region Methods
 
         /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param wholeItem
-        **/
-        calculateFirstVisible(beginScrollPosition: number, wholeItem: boolean): void;
-
-        /**
-         * This method is no longer supported.
-         * @param endScrollPosition
-         * @param wholeItem
-        **/
-        calculateLastVisible(endScrollPosition: number, wholeItem: boolean): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         dragLeave(): void;
@@ -5127,11 +4939,6 @@ declare module WinJS.UI {
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         dragOver(): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        endLayout(): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5147,37 +4954,11 @@ declare module WinJS.UI {
         getAdjacent(currentItem: any, pressedKey: WinJS.Utilities.Key): any;
 
         /**
-         * This method is no longer supported.
-         * @param itemIndex
-        **/
-        getItemPosition(itemIndex: number): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element
-         * @param keyPressed
-        **/
-        getKeyboardNavigatedItem(itemIndex: number, element: any, keyPressed: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param endScrollPosition
-        **/
-        getScrollbarRange(beginScrollPosition: number, endScrollPosition: number): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
          * @param x The x-coordinate, or the horizontal position on the screen.
          * @param y The y-coordinate, or the vertical position on the screen.
         **/
         hitTest(x: number, y: number): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        init(): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5187,28 +4968,11 @@ declare module WinJS.UI {
         initialize(site: ILayoutSite2, groupsEnabled: boolean): void;
 
         /**
-         * This method is no longer supported.
-         * @param elements
-        **/
-        itemsAdded(elements: any): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
          * @param firstPixel The first pixel the range of items falls between.
          * @param lastPixel The last pixel the range of items falls between.
         **/
         itemsFromRange(firstPixel: number, lastPixel: number): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        itemsMoved(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param elements
-        **/
-        itemsRemoved(elements: any): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5220,72 +4984,14 @@ declare module WinJS.UI {
         layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): void;
 
         /**
-         * This method is no longer supported.
-         * @param groupIndex
-         * @param element A DOM element.
-        **/
-        layoutHeader(groupIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element A DOM element.
-        **/
-        layoutItem(itemIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param element
-        **/
-        prepareHeader(element: HTMLElement): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element A DOM element.
-        **/
-        prepareItem(itemIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param item
-         * @param newItem
-        **/
-        releaseItem(item: any, newItem: any): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        reset(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param layoutSite
-        **/
-        setSite(layoutSite: any): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         setupAnimations(): void;
 
         /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param endScrollPositionScrollPosition
-        **/
-        startLayout(beginScrollPosition: number, endScrollPositionScrollPosition: number): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         uninitialize(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param count
-        **/
-        updateBackdrop(count: number): void;
 
         //#endregion Methods
 
@@ -5310,11 +5016,6 @@ declare module WinJS.UI {
          * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use a CellSpanningLayout.
         **/
         groupInfo: Function;
-
-        /**
-         * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use the orientation property instead.
-        **/
-        horizontal: boolean;
 
         /**
          * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use a CellSpanningLayout.
@@ -5737,20 +5438,6 @@ declare module WinJS.UI {
         //#region Methods
 
         /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param wholeItem
-        **/
-        calculateFirstVisible(beginScrollPosition: number, wholeItem: boolean): void;
-
-        /**
-         * This method is no longer supported.
-         * @param endScrollPosition
-         * @param wholeItem
-        **/
-        calculateLastVisible(endScrollPosition: number, wholeItem: boolean): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         dragLeave(): void;
@@ -5759,11 +5446,6 @@ declare module WinJS.UI {
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         dragOver(): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        endLayout(): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5779,27 +5461,6 @@ declare module WinJS.UI {
         getAdjacent(currentItem: any, pressedKey: WinJS.Utilities.Key): any;
 
         /**
-         * This method is no longer supported.
-         * @param itemIndex
-        **/
-        getItemPosition(itemIndex: number): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element
-         * @param keyPressed
-        **/
-        getKeyboardNavigatedItem(itemIndex: number, element: HTMLElement, keyPressed: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param endScrollPosition
-        **/
-        getScrollbarRange(beginScrollPosition: number, endScrollPosition: number): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
          * @param x The x-coordinate, or the horizontal position on the screen.
          * @param y The y-coordinate, or the vertical position on the screen.
@@ -5807,20 +5468,9 @@ declare module WinJS.UI {
         hitTest(x: number, y: number): void;
 
         /**
-         * This method is no longer supported.
-        **/
-        init(): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         initialize(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param elements
-        **/
-        itemsAdded(elements: any): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5828,17 +5478,6 @@ declare module WinJS.UI {
          * @param lastPixel
         **/
         itemsFromRange(firstPixel: number, lastPixel: number): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        itemsMoved(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param elements
-        **/
-        itemsRemoved(elements: any): void;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -5850,72 +5489,14 @@ declare module WinJS.UI {
         layout(tree: any, changedRange: any, modifiedItems: any, modifiedGroups: any): void;
 
         /**
-         * This method is no longer supported.
-         * @param groupIndex
-         * @param element A DOM element.
-        **/
-        layoutHeader(groupIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element A DOM element.
-        **/
-        layoutItem(itemIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param element
-        **/
-        prepareHeader(element: HTMLElement): void;
-
-        /**
-         * This method is no longer supported.
-         * @param itemIndex
-         * @param element A DOM element.
-        **/
-        prepareItem(itemIndex: number, element: any): void;
-
-        /**
-         * This method is no longer supported.
-         * @param item
-         * @param newItem
-        **/
-        releaseItem(item: any, newItem: any): void;
-
-        /**
-         * This method is no longer supported.
-        **/
-        reset(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param layoutSite
-        **/
-        setSite(layoutSite: any): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         setupAnimations(): void;
 
         /**
-         * This method is no longer supported.
-         * @param beginScrollPosition
-         * @param endScrollPositionScrollPosition
-        **/
-        startLayout(beginScrollPosition: number, endScrollPositionScrollPosition: number): void;
-
-        /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
         **/
         uninitialize(): void;
-
-        /**
-         * This method is no longer supported.
-         * @param count
-        **/
-        updateBackdrop(count: number): void;
 
         //#endregion Methods
 
@@ -5935,21 +5516,6 @@ declare module WinJS.UI {
          * Gets or sets the position of group headers.
         **/
         groupHeaderPosition: WinJS.UI.HeaderPosition;
-
-        /**
-         * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use a CellSpanningLayout.
-        **/
-        groupInfo: Function;
-
-        /**
-         * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use the orientation property instead.
-        **/
-        horizontal: boolean;
-
-        /**
-         * This property is no longer supported. Starting with the Windows Library for JavaScript 2.0, use a CellSpanningLayout.
-        **/
-        itemInfo: Function;
 
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
@@ -6349,523 +5915,6 @@ declare module WinJS.UI {
         advertisement: string;
         chapter: string;
         custom: string;
-    }
-
-    /**
-     * An interface between the MediaPlayer control and a video or audio element.
-    **/
-    class MediaElementAdapter {
-        //#region Constructors
-
-        /**
-         * Creates a new MenuCommand object.
-         * @constructor
-         * @param element The DOM element that will host the control.
-         * @param existingMediaElement A WinJS.UI.MediaPlayer that is associated with this mediaElementAdapter.
-        **/
-        constructor(mediaPlayer: any, existingMediaElement: HTMLElement);
-
-        //#endregion Constructors
-
-        //#region Methods
-
-        /**
-         * Disposes this control.
-        **/
-        dispose(): void;
-
-        /**
-         * The base class constructor. If you are deriving from the MediaElementAdapter class, you
-         * must call this base class constructor.
-         * @param element The DOM element that will host the control.
-         * @param existingMediaElement A WinJS.UI.MediaPlayer that is associated with this mediaElementAdapter.
-        **/
-        baseMediaElementAdapterConstructor(mediaPlayer: any, existingMediaElement: HTMLElement): void;
-
-        /**
-        * Skips to the next track in a playlist. This function is empty by default and
-        * meant to be overridden with a custom implementation.
-        **/
-        nextTrack(): void;
-
-        /**
-        * Pauses the media.
-        **/
-        pause(): void;
-
-        /**
-        * Sets the playbackRate to the default playbackRate for the media and plays the media.
-        **/
-        play(): void;
-
-        /**
-        * Skips to the previous track in a playlist. This function is empty by default and
-        * meant to be overridden with a custom implementation.
-        **/
-        previousTrack(): void;
-
-        /**
-        * Skips to the previous track in a playlist. This function is empty by default and
-        * meant to be overridden with a custom implementation.
-        * @param newTime The new time to set the media to.
-        **/
-        seek(newTime: number): void;
-
-        /**
-        * Navigates to the specified position in the media.
-        **/
-        stop(): void;
-
-        //#endregion Methods
-
-        //#region Properties
-
-        /**
-         * Gets or sets the live time.
-        **/
-        liveTime: number;
-
-        /**
-         * Gets or sets whether the content is a live stream.
-        **/
-        isLive: boolean;
-
-        /**
-         * Gets or sets a value that specifies whether the pause method can be executed.
-        **/
-        pauseAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
-        isPauseAllowed: boolean;
-
-        /**
-         * Gets or sets a value that specifies whether the play method can be executed.
-        **/
-        playAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
-        isPlayAllowed: boolean;
-
-        /**
-         * Gets or sets a value that specifies whether the seek method can be executed.
-        **/
-        seekAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
-        isSeekAllowed: boolean;
-
-        /**
-         * Gets or sets a value the underlying media element. This is either a video or audio tag.
-        **/
-        mediaElement: HTMLElement;
-
-        //#endregion Properties
-    }
-
-    /**
-     * A UI control for video playback.
-    **/
-    class MediaPlayer {
-        //#region Constructors
-
-        /**
-         * Creates a new MenuCommand object.
-         * @constructor
-         * @param element The DOM element that hosts the MediaPlayer control.
-         * @param options Each property of the options object corresponds to one of the control's properties or events.
-        **/
-        constructor(element?: HTMLElement, options?: any);
-
-        //#endregion Constructors
-
-        //#region Methods
-
-        /**
-         * Adds a new timeline marker.
-         * @param time The marker time.
-         * @param type The marker type.
-         * @param data The marker data.
-         * @param extraClass An extra class that can be used to style the marker.
-        **/
-        addMarker(time: number, type: string, data: any, extraClass: string): void;
-
-        /**
-         * Seeks to the previous chapter marker.
-        **/
-        chapterSkipBack(): void;
-
-        /**
-         * Seeks to the next chapter marker.
-        **/
-        chapterSkipForward(): void;
-
-        /**
-         * Disposes this control.
-        **/
-        dispose(): void;
-
-        /**
-         * Increases the playback rate of the media.
-        **/
-        fastForward(): void;
-
-        /**
-         * Navigates to the real-time position in live streamed media.
-        **/
-        goToLive(): void;
-
-        /**
-         * Hides all the UI associated with the MediaPlayer.
-        **/
-        hideControls(): void;
-
-        /**
-         * Plays the next track.
-        **/
-        nextTrack(): void;
-
-        /**
-         * Pauses the media.
-        **/
-        pause(): void;
-
-        /**
-         * Sets the playbackRate to the default playbackRate for the media and plays the media.
-        **/
-        play(): void;
-
-        /**
-         * Plays the next track.
-        **/
-        previousTrack(): void;
-
-        /**
-         * The time of the marker to remove.
-        **/
-        removeMarker(): void;
-
-        /**
-         * Decreases the playbackRate of the media.
-        **/
-        rewind(): void;
-
-        /**
-         * The position in seconds to seek to.
-        **/
-        seek(): void;
-
-        /**
-         * Sets the metadata fields for the given peice of media. This method should be called before changing the video stream.
-         * @param contentType The type of content that will be played by the mediaPlayer.
-         * @param metadata A collection of name value pairs that provide additional information about the current media.
-        **/
-        setContentMetadata(contentType: string, metadata: any): void;
-
-        /**
-         * Displays the UI associated with the MediaPlayer.
-        **/
-        showControls(): void;
-
-        /**
-         * Stops the media.
-        **/
-        stop(): void;
-
-        /**
-         * Moves the current timeline position backward by a short interval.
-        **/
-        timeSkipBack(): void;
-
-        /**
-         * Moves the current timeline position forward short interval.
-        **/
-        timeSkipForward(): void;
-
-        //#endregion Properties
-
-        //#region Properties
-
-        /**
-         * Gets a property that specifies whether the transport controls are visible.
-        **/
-        controlsVisible: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
-        isControlsVisible: boolean;
-
-        /**
-         * Gets or sets maximum playback position of the media. By default, the value is the duration of the media.
-        **/
-        endTime: boolean;
-
-        /**
-         * The DOM element that hosts the MediaPlayer control.
-        **/
-        element: HTMLElement;
-
-        /**
-         * Gets or sets a value indicating whether the MediaPlayer is using a layout that minimized space used, but only has room for a limited number of
-         * commands or a layout that has room for a lot of commands, but takes up more space.
-        **/
-        compact: boolean;
-
-        /**
-         * Gets or sets a value indicating whether the MediaPlayer is full screen.
-        **/
-        fullScreen: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
-        isFullScreen: boolean;
-
-        /**
-         * Gets or sets a value indicating whether to use thumbnails for fast forward, rewind and scrubbing. If true, the fast forward, rewind and scrub operations
-         * will pause the mediaElement and cycle thumbnails as the user changes position. If false, the fast forward, rewind operations will increase or decrease
-         * the mediaElement's playbackRate and the scrub operation will move the position.
-        **/
-        thumbnailEnabled: boolean;
-
-        /**
-         * The following property is purposely not documented. It only exists to make it easier for app developers who created
-         * apps prior to Windows 10 to migrate to Windows 10. The property forwards to the real property above.
-        **/
-        isThumbnailEnabled: boolean;
-
-        /**
-         * Gets or sets the MediaPlayer's marker collection.
-        **/
-        markers: any;
-
-        /**
-         * Gets or sets an interface that your application can implement to have more control over synchronization between
-         * the MediaPlayer and your media.
-        **/
-        mediaElementAdapter: any;
-
-        /**
-         * Gets or sets the playback mode, which specifies how many transport controls are shown.
-         **/
-        layout: string;
-
-        /**
-         * Gets or sets minimum playback position of the media. By default the value is zero.
-         **/
-        startTime: number;
-
-        /**
-         * Gets the current time as it is represented in the UI. While fast forwarding or rewinding, this property may be different than the video or audio
-         * tag's 'currentTime' property. This is because during an fast forward or rewind operation, the media is paused while the timeline animates to
-         * simulate a fast forward or rewind operation.
-         **/
-        targetCurrentTime: number;
-
-        /**
-         * Gets the playbackRate as it is represented in the UI. While fast forwarding or rewinding, this property may be different than the video or audio
-         * tag's 'playbackRate' property. This is because during an fast forward or rewind operation, the media is paused while the timeline animates to
-         * simulate a fast forward or rewind operation.
-         **/
-        targetPlaybackRate: number;
-
-        /**
-         * Gets or sets a function that converts raw time data from the video or audio tag into text to display in the UI of the MediaPlayer.
-         **/
-        timeFormatter: any;
-
-        /**
-         * Sets the path to the current thumbnail image to display.
-         **/
-        thumbnailImage: string;
-
-        /**
-         * Gets or sets whether the CAST button is visible.
-         **/
-        castButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the cast button is enabled.
-         **/
-        castButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the chapter skip back button is visible.
-         **/
-        chapterSkipBackButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the chapter skip back button is enabled.
-         **/
-        chapterSkipBackButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the chapter skip forward button is visible.
-         **/
-        chapterSkipForwardButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the chapter skip forward button is enabled.
-         **/
-        chapterSkipForwardButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the fast forward button is visible.
-         **/
-        fastForwardButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the fast forward button is enabled.
-         **/
-        fastForwardButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the full screen button is visible.
-         **/
-        fullscreenButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the more button is enabled.
-         **/
-        fullscreenButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the LIVE button is visible.
-         **/
-        goToLiveButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the LIVE button is enabled.
-         **/
-        goToLiveButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the next track button is visible.
-         **/
-        nextTrackButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the next track button is enabled.
-         **/
-        nextTrackButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the play from beginning button is visible.
-         **/
-        playFromBeginningButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the play from beginning button is enabled.
-         **/
-        playFromBeginningButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the play / pause button is visible.
-         **/
-        playPauseButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the play / pause button is enabled.
-         **/
-        playPauseButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the playback rate button is visible.
-         **/
-        playbackRateButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the playback rate button is enabled.
-         **/
-        playbackRateButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the previous track button is enabled.
-         **/
-        previousTrackButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the rewind button is visible.
-         **/
-        rewindButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the rewind button is enabled.
-         **/
-        rewindButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the seek bar is visible.
-         **/
-        seekBarVisible: boolean;
-
-        /**
-         * Gets or sets whether the seeking is enabled.
-         **/
-        seekingEnabled: boolean;
-
-        /**
-         * Gets or sets whether the stop button is visible.
-         **/
-        stopButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the stop button is enabled.
-         **/
-        stopButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the time skip back button is visible.
-         **/
-        timeSkipBackButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the time skip back button is enabled.
-         **/
-        timeSkipBackButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the time skip forward button is visible.
-         **/
-        timeSkipForwardButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the time skip forward button is enabled.
-         **/
-        timeSkipForwardButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the volume button is visible.
-         **/
-        volumeButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the volume button is enabled.
-         **/
-        volumeButtonEnabled: boolean;
-
-        /**
-         * Gets or sets whether the zoom button is visible.
-         **/
-        zoomButtonVisible: boolean;
-
-        /**
-         * Gets or sets whether the zoom button is enabled.
-         **/
-        zoomButtonEnabled: boolean;
-
-        //#endregion Properties
     }
 
     /**
@@ -8756,14 +7805,6 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
-         * Raises an event of the specified type and with additional properties.
-         * @param type The type (name) of the event.
-         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
-         * @returns true if preventDefault was called on the event, otherwise false.
-        **/
-        raiseEvent(type: string, eventProperties: any): boolean;
-
-        /**
          * Removes a listener for the specified event.
          * @param type The name of the event for which to remove a listener.
          * @param listener The listener.
@@ -8867,20 +7908,6 @@ declare module WinJS.UI {
          * Releases resources held by this ToggleSwitch. Call this method when the ToggleSwitch is no longer needed. After calling this method, the ToggleSwitch becomes unusable.
         **/
         dispose(): void;
-
-        /**
-         * Handles the specified event.
-         * @param event The event.
-        **/
-        handleEvent(event: any): void;
-
-        /**
-         * Raises an event of the specified type and with additional properties.
-         * @param type The type (name) of the event.
-         * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
-         * @returns true if preventDefault was called on the event, otherwise false.
-        **/
-        raiseEvent(type: string, eventProperties: any): boolean;
 
         /**
          * Removes an event handler that the addEventListener method registered.
@@ -9262,12 +8289,6 @@ declare module WinJS.UI {
 
         //#region Events
 
-        /**
-         * Occurs when the status of the VirtualizedDataSource changes.
-         * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: status.
-        **/
-        statuschanged(eventInfo: CustomEvent): void;
-
         //#endregion Events
 
         //#region Methods
@@ -9361,8 +8382,6 @@ declare module WinJS.UI {
     **/
     function isAnimationEnabled(): boolean;
 
-    function optionsParser(): JSON;
-
     /**
      * Applies declarative control binding to all elements, starting at the specified root element.
      * @param rootElement The element at which to start applying the binding. If this parameter is not specified, the binding is applied to the entire document.
@@ -9387,14 +8406,7 @@ declare module WinJS.UI {
     function scopedSelect(selector: string, element: HTMLElement): HTMLElement;
 
     /**
-     * Given a DOM element and a control, attaches the control to the element.
-     * @param element Element to associate with the control.
-     * @param control The control to attach to the element.
-    **/
-    function setControl(element: HTMLElement, control: any): void;
-
-    /**
-     * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener. setControl calls addEventListener on the control.
+     * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener.
      * @param control The control on which the properties and events are to be applied.
      * @param options The set of options that are specified declaratively.
     **/
@@ -10425,6 +9437,10 @@ declare module WinJS.Utilities {
     export var QueryCollection: {
         new <T>(items: T[]): QueryCollection<T>;
         prototype: QueryCollection<any>;
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        supportedForProcessing: boolean;
     }
 
     //#endregion Objects
@@ -10712,9 +9728,9 @@ declare module WinJS.Utilities {
     var hasWinRT: boolean;
 
     /**
-     * Indicates whether the app is running on Windows Phone.
+     * Determines if strict declarative processing is enabled in this script context.
     **/
-    var isPhone: boolean;
+    var strictProcessing: boolean;
 
     //#endregion Properties
 

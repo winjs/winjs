@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
 /**
-    * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener. setControl calls addEventListener on the control.
+    * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener.
     * @param control The control on which the properties and events are to be applied.
     * @param options The set of options that are specified declaratively.
 **/
