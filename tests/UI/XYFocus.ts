@@ -724,6 +724,13 @@ module WinJSTests {
             Helper.keydown(layout[1], Keys.GamepadDPadRight);
             waitForFocus(window, layout[2]).done(complete);
         }
+
+        testXYFocusWithNoActiveElementDoesNotCauseExceptions() {
+            var body = document.body;
+            document.body.parentElement.removeChild(body);
+            Helper.keydown(document.documentElement, Keys.GamepadDPadUp);
+            document.documentElement.appendChild(body);
+        }
     }
 }
 LiveUnit.registerTestClass("WinJSTests.XYFocusTests");

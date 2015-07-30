@@ -612,9 +612,14 @@ function _handleKeyEvent(e: KeyboardEvent): void {
     var activeElement = <HTMLElement>_Global.document.activeElement;
     var shouldPreventDefault = false;
 
-    var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
-    var toggleMode = _isToggleMode(activeElement);
-    var toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+    var suspended = false;
+    var toggleMode = false;
+    var toggleModeActive = false;
+    if (activeElement) {
+        suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
+        toggleMode = _isToggleMode(activeElement);
+        toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+    }
 
     var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
     if (suspended) {
@@ -689,7 +694,7 @@ module KeyHandlerStates {
     export class ToggleModeActiveState {
         static accept = _clickElement;
         static cancel(element: HTMLElement) {
-            _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
+            element && _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
             return true;
         }
         static xyFocus = _nop;
