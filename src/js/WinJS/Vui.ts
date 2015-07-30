@@ -32,7 +32,7 @@ interface ListeningModeTransitionHandler {
 }
 
 var Properties = {
-    origContent: "_vuiOrigContent"
+    vuiData: "_winVuiData"
 };
 
 var ClassNames = {
@@ -41,7 +41,7 @@ var ClassNames = {
 };
 
 var EventNames = {
-    ListeningModeStateChanged: "listeningmodestatechanged"
+    ListeningModeStateChanged: "ListeningStateChanged"
 };
 
 var ListeningModeStates = {
@@ -51,6 +51,10 @@ var ListeningModeStates = {
 };
 
 function _handleListeningModeStateChanged(e: ListeningModeEvent) {
+    if (e.defaultPrevented) {
+        return;
+    }
+
     var target = <HTMLElement>e.target;
     var transitionHandler: ListeningModeTransitionHandler = Handlers[target.tagName];
     if (!transitionHandler) {
@@ -59,7 +63,7 @@ function _handleListeningModeStateChanged(e: ListeningModeEvent) {
 
     switch (e.state) {
         case ListeningModeStates.active:
-            if (target[Properties.origContent] || _ElementUtilities.hasClass(target, ClassNames.active)) {
+            if (target[Properties.vuiData] || _ElementUtilities.hasClass(target, ClassNames.active)) {
                 _ElementUtilities.removeClass(target, ClassNames.disambiguation);
                 transitionHandler.reactivate(target, e.label);
             } else {
@@ -83,45 +87,56 @@ function _handleListeningModeStateChanged(e: ListeningModeEvent) {
 }
 
 module Handlers {
-    // The static classes in this module correspond to the element tag name they are handling
-    export class BUTTON {
-        static activate(element: HTMLElement, label: string) {
-            var origContent: any;
-            if (element.childElementCount) {
-                origContent = [];
-                while (element.childElementCount) {
-                    origContent.push(element.removeChild(element.children[0]));
-                }
-            } else {
-                origContent = element.innerHTML;
+    // The name of the exported variables are exactly the same as the tag name of the element they are handling
+    interface IButtonVuiData {
+        nodes: Node[];
+        width: string;
+        height: string;
+    }
+    export var BUTTON: ListeningModeTransitionHandler = {
+        activate: (element: HTMLElement, label: string) => {
+            var vuiData: IButtonVuiData = {
+                nodes: [],
+                width: element.style.width,
+                height: element.style.height
+            };
+
+            // Freeze button size
+            var cs = _ElementUtilities._getComputedStyle(element);
+            element.style.width = cs.width;
+            element.style.height = cs.height;
+
+            // Store nodes: Use element.childNodes to retain elements and textNodes
+            while (element.childNodes.length) {
+                vuiData.nodes.push(element.removeChild(element.childNodes[0]));
             }
-            element[Properties.origContent] = origContent;
-            element.textContent = label;
-        }
 
-        static disambiguate(element: HTMLElement, label: string) {
+            element[Properties.vuiData] = vuiData;
             element.textContent = label;
-        }
+        },
 
-        static reactivate(element: HTMLElement, label: string) {
+        disambiguate: (element: HTMLElement, label: string) => {
             element.textContent = label;
-        }
+        },
 
-        static deactivate(element: HTMLElement) {
-            var origContent = element[Properties.origContent];
-            if (typeof origContent === "string") {
-                element.innerHTML = origContent;
-            } else {
-                element.innerHTML = "";
-                origContent.forEach((node: Node) => element.appendChild(node));
-            }
-            delete element[Properties.origContent];
+        reactivate: (element: HTMLElement, label: string) => {
+            element.textContent = label;
+        },
+
+        deactivate: (element: HTMLElement) => {
+            element.innerHTML = "";
+
+            var vuiData = <IButtonVuiData>element[Properties.vuiData];
+            element.style.width = vuiData.width;
+            element.style.height = vuiData.height;
+            vuiData.nodes.forEach((node: Node) => element.appendChild(node));
+
+            delete element[Properties.vuiData];
         }
     }
 }
 
 
 if (_Global.document) {
-    // We are subscribing for the capture phase to allow subsequent handlers to overwrite the default behavior.
-    _Global.document.addEventListener(EventNames.ListeningModeStateChanged, _handleListeningModeStateChanged, true);
+    _Global.document.addEventListener(EventNames.ListeningModeStateChanged, _handleListeningModeStateChanged);
 }

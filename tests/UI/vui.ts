@@ -10,7 +10,7 @@ module WinJSTests {
         state: string;
     }
 
-    var ListeningModeStateChangedEventName = "listeningmodestatechanged";
+    var ListeningModeStateChangedEventName = "ListeningStateChanged";
     var DisambiguationText = "Item One";
 
     function fireActiveMode(element: HTMLElement, label: string) {
@@ -45,6 +45,9 @@ module WinJSTests {
         completeHandler?: Function) {
 
         function handler(e: ListeningModeStateChangedEvent) {
+            if (e.target !== element) {
+                return;
+            }
             switch (e.state) {
                 case "active":
                     activeHandler(e);
@@ -61,7 +64,7 @@ module WinJSTests {
             }
         }
 
-        element.addEventListener(ListeningModeStateChangedEventName, handler);
+        document.addEventListener(ListeningModeStateChangedEventName, handler);
         var origText = element.textContent;
         var activeText = element.getAttribute("aria-label")
 
@@ -86,6 +89,8 @@ module WinJSTests {
         fireActiveMode(element, activeText);
         fireDisambigMode(element, DisambiguationText);
         fireInactiveMode(element);
+
+        document.removeEventListener(ListeningModeStateChangedEventName, handler);
         completeHandler && completeHandler();
     }
 
@@ -122,8 +127,7 @@ module WinJSTests {
                     // Disambig
                     LiveUnit.Assert.isTrue(button.classList.contains("win-vui-active"));
                     LiveUnit.Assert.isTrue(button.classList.contains("win-vui-disambiguation"));
-                    LiveUnit.Assert.areNotEqual(inactiveText, button.textContent);
-                    LiveUnit.Assert.areNotEqual(activeText, button.textContent);
+                    LiveUnit.Assert.areEqual(DisambiguationText, button.textContent);
                 },
                 e => {
                     // Inactive
@@ -136,17 +140,13 @@ module WinJSTests {
         testButtonWithChildren() {
             var activeText = "Active Text";
 
-            var span1 = document.createElement("span");
-            span1.textContent = "Hello";
-
-            var span2 = document.createElement("span");
-            span2.textContent = "World";
-
             var button = document.createElement("button");
             button.setAttribute("aria-label", activeText);
-            button.appendChild(span1);
-            button.appendChild(span2);
+            button.innerHTML = "A button <span>with</span> two <span>spans</span> in it";
             this.testContainer.appendChild(button);
+
+            var span1 = button.children[0];
+            var span2 = button.children[1];
 
             var inactiveText = button.textContent;
 
@@ -154,12 +154,10 @@ module WinJSTests {
                 e => {
                     // Active
                     LiveUnit.Assert.areEqual(activeText, button.textContent);
-                    LiveUnit.Assert.areNotEqual(inactiveText, button.textContent);
                 },
                 e => {
                     // Disambig
-                    LiveUnit.Assert.areNotEqual(inactiveText, button.textContent);
-                    LiveUnit.Assert.areNotEqual(activeText, button.textContent);
+                    LiveUnit.Assert.areEqual(DisambiguationText, button.textContent);
                 },
                 e => {
                     // Inactive
@@ -167,6 +165,43 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(2, button.childElementCount);
                     LiveUnit.Assert.isTrue(button.children[0] === span1);
                     LiveUnit.Assert.isTrue(button.children[1] === span2);
+                });
+        }
+
+        testButtonFreezesSize() {
+            var activeText = "This text is so long it is going to make the button grow ridiculously!!";
+
+            var button = document.createElement("button");
+            button.textContent = "Hello World";
+            button.setAttribute("aria-label", activeText);
+            this.testContainer.appendChild(button);
+
+            var origWidth = parseFloat(getComputedStyle(button).width);
+            var origHeight = parseFloat(getComputedStyle(button).height);
+
+            if ((origWidth | 0) !== button.offsetWidth) {
+                // On IE11, getComputedStyle returns the wrong actual dimensions, skip test
+                return;
+            }
+
+            simulateVuiStateChanges(button,
+                e => {
+                    // Active
+                    var cs = getComputedStyle(button);
+                    LiveUnit.Assert.areEqual(origWidth, parseFloat(cs.width));
+                    LiveUnit.Assert.areEqual(origHeight, parseFloat(cs.height));
+                },
+                e => {
+                    // Disambig
+                    var cs = getComputedStyle(button);
+                    LiveUnit.Assert.areEqual(origWidth, parseFloat(cs.width));
+                    LiveUnit.Assert.areEqual(origHeight, parseFloat(cs.height));
+                },
+                e => {
+                    // Inactive
+                    var cs = getComputedStyle(button);
+                    LiveUnit.Assert.areEqual(origWidth, parseFloat(cs.width));
+                    LiveUnit.Assert.areEqual(origHeight, parseFloat(cs.height));
                 });
         }
     }
