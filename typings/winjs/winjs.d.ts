@@ -318,9 +318,9 @@ declare module WinJS.Binding {
     }
 
     /**
-     * Do not instantiate. A list of groups.
+     * A list of groups.
     **/
-    class GroupsListProjection<T> extends ListBase<T> {
+    interface GroupsListProjection<T> extends ListBase<T> {
         //#region Methods
 
         /**
@@ -360,7 +360,7 @@ declare module WinJS.Binding {
     /**
      * Do not instantiate. Sorts the underlying list by group key and within a group respects the position of the item in the underlying list. Returned by createGrouped.
     **/
-    class GroupedSortedListProjection<T, G> extends SortedListProjection<T> {
+    interface GroupedSortedListProjection<T, G> extends SortedListProjection<T> {
         //#region Properties
 
         /**
@@ -381,7 +381,8 @@ declare module WinJS.Binding {
     /**
      * Represents a list of objects that can be accessed by index or by a string key. Provides methods to search, sort, filter, and manipulate the data.
     **/
-    class List<T> extends ListBaseWithMutators<T> {
+    // Jesse
+    class List<T> implements ListBaseWithMutators<T> {
         //#region Constructors
 
         /**
@@ -394,7 +395,131 @@ declare module WinJS.Binding {
 
         //#endregion Constructors
 
+        //#region Events
+
+        /**
+         * An item in the list has changed its value.
+         * @param eventInfo An object that contains information about the event. The detail contains the following information: index, key, newItem, newValue, oldItem, oldValue.
+        **/
+        onitemchanged(eventInfo: CustomEvent): void;
+
+        /**
+         * A new item has been inserted into the list.
+         * @param eventInfo An object that contains information about the event. The detail contains the following information: index, key, value.
+        **/
+        oniteminserted(eventInfo: CustomEvent): void;
+
+        /**
+         * An item has been changed locations in the list.
+         * @param eventInfo An object that contains information about the event. The detail contains the following information: index, key, value.
+        **/
+        onitemmoved(eventInfo: CustomEvent): void;
+
+        /**
+         * An item has been mutated. This event occurs as a result of calling the notifyMutated method.
+         * @param eventInfo An object that contains information about the event. The detail contains the following information: index, key, value.
+        **/
+        onitemmutated(eventInfo: CustomEvent): void;
+
+        /**
+         * An item has been removed from the list.
+         * @param eventInfo An object that contains information about the event. The detail contains the following information: index, key, value.
+        **/
+        onitemremoved(eventInfo: CustomEvent): void;
+
+        /**
+         * The list has been refreshed. Any references to items in the list may be incorrect.
+         * @param eventInfo An object that contains information about the event. The detail property of this object is null.
+        **/
+        onreload(eventInfo: CustomEvent): void;
+
+        //#endregion Events
+
         //#region Methods
+
+        /**
+         * Adds an event listener to the control.
+         * @param type The type (name) of the event.
+         * @param listener The listener to invoke when the event gets raised.
+         * @param useCapture If true, initiates capture, otherwise false.
+        **/
+        addEventListener(type: string, listener: Function, useCapture?: boolean): void;
+
+        /**
+         * Links the specified action to the property specified in the name parameter. This function is invoked when the value of the property may have changed. It is not guaranteed that the action will be called only when a value has actually changed, nor is it guaranteed that the action will be called for every value change. The implementation of this function coalesces change notifications, such that multiple updates to a property value may result in only a single call to the specified action.
+         * @param name The name of the property to which to bind the action.
+         * @param action The function to invoke asynchronously when the property may have changed.
+         * @returns A reference to this observableMixin object.
+        **/
+        bind(name: string, action: Function): any;
+
+        /**
+         * Returns a new list consisting of a combination of two arrays.
+         * @param item Additional items to add to the end of the list.
+         * @returns An array containing the concatenation of the list and any other supplied items.
+        **/
+        concat(...item: T[]): T[];
+
+        /**
+         * Creates a live filtered projection over this list. As the list changes, the filtered projection reacts to those changes and may also change.
+         * @param predicate A function that accepts a single argument. The createFiltered function calls the callback with each element in the list. If the function returns true, that element will be included in the filtered list. This function must always return the same results, given the same inputs. The results should not depend on values that are subject to change. You must call notifyMutated each time an item changes. Do not batch change notifications.
+         * @returns A filtered projection over the list.
+        **/
+        createFiltered(predicate: (x: T) => boolean): FilteredListProjection<T>;
+
+        /**
+         * Creates a live grouped projection over this list. As the list changes, the grouped projection reacts to those changes and may also change. The grouped projection sorts all the elements of the list to be in group-contiguous order. The grouped projection also contains a .groups property, which is a List representing the groups that were found in the list.
+         * @param groupKey A function that accepts a single argument. The function is called with each element in the list, the function should return a string representing the group containing the element. This function must always return the same results, given the same inputs. The results should not depend on values that are subject to change. You must call notifyMutated each time an item changes. Do not batch change notifications.
+         * @param groupData A function that accepts a single argument. The function is called once, on one element per group. It should return the value that should be set as the data of the .groups list element for this group. The data value usually serves as summary or header information for the group.
+         * @param groupSorter A function that accepts two arguments. The function is called with pairs of group keys found in the list. It must return one of the following numeric values: negative if the first argument is less than the second (sorted before), zero if the two arguments are equivalent, positive if the first argument is greater than the second (sorted after).
+         * @returns A grouped projection over the list.
+        **/
+        createGrouped<G>(groupKey: (x: T) => string, groupData: (x: T) => G, groupSorter?: (left: string, right: string) => number): GroupedSortedListProjection<T, G>;
+
+        /**
+         * Creates a live sorted projection over this list. As the list changes, the sorted projection reacts to those changes and may also change.
+         * @param sorter A function that accepts two arguments. The function is called with elements in the list. It must return one of the following numeric values: negative if the first argument is less than the second, zero if the two arguments are equivalent, positive if the first argument is greater than the second. This function must always return the same results, given the same inputs. The results should not depend on values that are subject to change. You must call notifyMutated each time an item changes. Do not batch change notifications.
+         * @returns A sorted projection over the list.
+        **/
+        createSorted(sorter: (left: T, right: T) => number): SortedListProjection<T>;
+
+        /**
+        * Raises an event of the specified type and with the specified additional properties.
+        * @param type The type (name) of the event.
+        * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+        * @returns true if preventDefault was called on the event.
+       **/
+        dispatchEvent(type: string, eventProperties: any): boolean;
+
+        /**
+         * Checks whether the specified callback function returns true for all elements in a list.
+         * @param callback A function that accepts up to three arguments. This function is called for each element in the list until it returns false or the end of the list is reached.
+         * @param thisArg An object to which the this keyword can refer in the callback function. If thisArg is omitted, undefined is used.
+         * @returns true if the callback returns true for all elements in the list.
+        **/
+        every(callback: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean;
+
+        /**
+         * Returns the elements of a list that meet the condition specified in a callback function.
+         * @param callback A function that accepts up to three arguments. The function is called for each element in the list. This function must always return the same results, given the same inputs. The results should not depend on values that are subject to change. You must call notifyMutated each time an item changes. Do not batch change notifications.
+         * @param thisArg An object to which the this keyword can refer in the callback function. If thisArg is omitted, undefined is used.
+         * @returns An array containing the elements that meet the condition specified in the callback function.
+        **/
+        filter(callback: (value: T, index: number, array: T[]) => any, thisArg?: any): T[];
+
+        /**
+         * Calls the specified callback function for each element in a list.
+         * @param callback A function that accepts up to three arguments. The function is called for each element in the list. The arguments are as follows: value, index, array.
+         * @param thisArg An object to which the this keyword can refer in the callback function. If thisArg is omitted, undefined is used.
+        **/
+        forEach(callback: (value: T, index: number, array: T[]) => void, thisArg?: any): void;
+
+        /**
+         * Gets the value at the specified index.
+         * @param index The index of the value to get.
+         * @returns The value at the specified index.
+        **/
+        getAt(index: number): T;
 
         /**
          * Gets a key/data pair for the specified list index.
@@ -411,11 +536,42 @@ declare module WinJS.Binding {
         getItemFromKey(key: string): IKeyDataPair<T>;
 
         /**
+         * Gets the index of the first occurrence of the specified value in a list.
+         * @param searchElement The value to locate in the list.
+         * @param fromIndex The index at which to begin the search. If fromIndex is omitted, the search starts at index 0.
+         * @returns The index of the first occurrence of a value in a list or -1 if not found.
+        **/
+        indexOf(searchElement: T, fromIndex?: number): number;
+
+        /**
          * Gets the index of the first occurrence of a key in a list.
          * @param key The key to locate in the list.
          * @returns The index of the first occurrence of a key in a list, or -1 if not found.
         **/
         indexOfKey(key: string): number;
+
+        /**
+         * Returns a string consisting of all the elements of a list separated by the specified separator string.
+         * @param separator A string used to separate the elements of a list. If this parameter is omitted, the list elements are separated with a comma.
+         * @returns The elements of a list separated by the specified separator string.
+        **/
+        join(separator?: string): string;
+
+        /**
+         * Gets the index of the last occurrence of the specified value in a list.
+         * @param searchElement The value to locate in the list.
+         * @param fromIndex The index at which to begin the search. If fromIndex is omitted, the search starts at the last index in the list.
+         * @returns The index of the last occurrence of a value in a list, or -1 if not found.
+        **/
+        lastIndexOf(searchElement: T, fromIndex?: number): number;
+
+        /**
+         * Calls the specified callback function on each element of a list, and returns an array that contains the results.
+         * @param callback A function that accepts up to three arguments. The function is called for each element in the list.
+         * @param thisArg n object to which the this keyword can refer in the callback function. If thisArg is omitted, undefined is used.
+         * @returns An array containing the result of calling the callback function on each element in the list.
+        **/
+        map<G>(callback: (value: T, index: number, array: T[]) => G, thisArg?: any): G[];
 
         /**
          * Moves the value at index to the specified position.
@@ -425,10 +581,62 @@ declare module WinJS.Binding {
         move(index: number, newIndex: number): void;
 
         /**
+         * Notifies listeners that a property value was updated.
+         * @param name The name of the property that is being updated.
+         * @param newValue The new value for the property.
+         * @param oldValue The old value for the property.
+         * @returns A promise that is completed when the notifications are complete.
+        **/
+        notify(name: string, newValue: any, oldValue: any): Promise<any>;
+
+        /**
          * Forces the list to send a itemmutated notification to any listeners for the value at the specified index.
          * @param index The index of the value that was mutated.
         **/
         notifyMutated(index: number): void;
+
+        /**
+         * Forces the list to send a reload notification to any listeners.
+        **/
+        notifyReload(): void;
+
+        /**
+         * Removes the last element from a list and returns it.
+         * @returns The last element from the list.
+        **/
+        pop(): T;
+
+        /**
+         * Appends new element(s) to a list, and returns the new length of the list.
+         * @param value The element to insert at the end of the list.
+         * @returns The new length of the list.
+        **/
+        push(value: T): number;
+        push(...values: T[]): number;
+
+        /**
+         * Accumulates a single result by calling the specified callback function for all elements in a list. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callback A function that accepts up to four arguments. These arguments are: previousValue, currentValue, currentIndex, array. The function is called for each element in the list.
+         * @param initiallValue If initialValue is specified, it is used as the value with which to start the accumulation. The first call to the function provides this value as an argument instead of a list value.
+         * @returns The return value from the last call to the callback function.
+        **/
+        reduce(callback: (previousValue: any, currentValue: any, currentIndex: number, array: T[]) => T, initiallValue?: T): T;
+
+        /**
+         * Accumulates a single result by calling the specified callback function for all elements in a list, starting with the last member of the list. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callback A function that accepts up to four arguments. These arguments are: previousValue, currentValue, currentIndex, array. The function is called for each element in the list.
+         * @param initialValue If initialValue is specified, it is used as the value with which to start the accumulation. The first call to the callback function provides this value as an argument instead of a list value.
+         * @returns The return value from the last call to callback function.
+        **/
+        reduceRight(callback: (previousValue: any, currentValue: any, currentIndex: number, array: T[]) => T, initialValue?: T): T;
+
+        /**
+         * Removes an event listener from the control.
+         * @param type The type (name) of the event.
+         * @param listener The listener to remove.
+         * @param useCapture true if capture is to be initiated, otherwise false.
+        **/
+        removeEventListener(type: string, listener: Function, useCapture?: boolean): void;
 
         /**
          * Returns a list with the elements reversed. This method reverses the elements of a list object in place. It does not create a new list object during execution.
@@ -441,6 +649,28 @@ declare module WinJS.Binding {
          * @param newValue The new value.
         **/
         setAt(index: number, newValue: T): void;
+
+        /**
+         * Removes the first element from a list and returns it.
+         * @returns The first element from the list.
+        **/
+        shift(): T;
+
+        /**
+         * Extracts a section of a list and returns a new list.
+         * @param begin The index that specifies the beginning of the section.
+         * @param end The index that specifies the end of the section.
+         * @returns Returns a section of list.
+        **/
+        slice(begin: number, end?: number): T[];
+
+        /**
+         * Checks whether the specified callback function returns true for any element of a list.
+         * @param callback A function that accepts up to three arguments. The function is called for each element in the list until it returns true, or until the end of the list.
+         * @param thisArg An object to which the this keyword can refer in the callback function. If thisArg is omitted, undefined is used.
+         * @returns true if callback returns true for any element in the list.
+        **/
+        some(callback: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean;
 
         /**
          * Returns a list with the elements sorted. This method sorts the elements of a list object in place. It does not create a new list object during execution.
@@ -457,9 +687,30 @@ declare module WinJS.Binding {
         **/
         splice(start: number, howMany?: number, ...item: T[]): T[];
 
+        /**
+         * Removes one or more listeners from the notification list for a given property.
+         * @param name The name of the property to unbind. If this parameter is omitted, all listeners for all events are removed.
+         * @param action The function to remove from the listener list for the specified property. If this parameter is omitted, all listeners are removed for the specific property.
+         * @returns This object is returned.
+        **/
+        unbind(name: string, action: Function): any;
+
+        /**
+         * Appends new element(s) to a list, and returns the new length of the list.
+         * @param value The element to insert at the start of the list.
+         * @returns The new length of the list.
+        **/
+        unshift(value: T): number;
+        unshift(...values: T[]): number;
+
         //#endregion Methods
 
         //#region Properties
+
+        /**
+         * Gets the IListDataSource for the list. The only purpose of this property is to adapt a List to the data model that is used by ListView and FlipView.
+        **/
+        dataSource: WinJS.UI.IListDataSource<T>;
 
         /**
          * Gets or sets the length of the list, which is an integer value one higher than the highest element defined in the list.
@@ -472,13 +723,12 @@ declare module WinJS.Binding {
         static supportedForProcessing: boolean;
 
         //#endregion Properties
-
     }
 
     /**
      * Represents a base class for lists.
     **/
-    class ListBase<T> {
+    interface ListBase<T> {
         //#region Events
 
         /**
@@ -707,18 +957,13 @@ declare module WinJS.Binding {
         **/
         dataSource: WinJS.UI.IListDataSource<T>;
 
-        /**
-         * Indicates that the object is compatibile with declarative processing.
-        **/
-        static supportedForProcessing: boolean;
-
         //#endregion Properties
     }
 
     /**
      * Represents a base class for normal list modifying operations.
     **/
-    class ListBaseWithMutators<T> extends ListBase<T> {
+    interface ListBaseWithMutators<T> extends ListBase<T> {
         //#region Methods
 
         /**
@@ -755,7 +1000,7 @@ declare module WinJS.Binding {
     /**
      * Represents a base class for list projections.
     **/
-    class ListProjection<T> extends ListBaseWithMutators<T> {
+    interface ListProjection<T> extends ListBaseWithMutators<T> {
         //#region Methods
 
         /**
@@ -900,7 +1145,7 @@ declare module WinJS.Binding {
     /**
      * Do not instantiate. Returned by the createSorted method.
     **/
-    class SortedListProjection<T> extends ListProjection<T> {
+    interface SortedListProjection<T> extends ListProjection<T> {
         //#region Methods
 
         /**
@@ -9817,18 +10062,6 @@ declare module WinJS.Utilities {
         //#endregion Array<T>.prototype
 
     }
-
-    ///**
-    // * Constructor support for QueryCollection interface
-    //**/
-    //export var QueryCollection: {
-    //    new <T>(items: T[]): QueryCollection<T>;
-    //    prototype: QueryCollection<any>;
-    //    /**
-    //     * Indicates that the object is compatibile with declarative processing.
-    //    **/
-    //    supportedForProcessing: boolean;
-    //}
 
     //#endregion Objects
 

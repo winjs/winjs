@@ -391,7 +391,7 @@ declare module WinJS {
             _disposed: boolean;
             static _getInformationJS;
             static _getInformationWinRT;
-            //static getInformation;
+            static getInformation;
         }
 
         class PrivateFlipView<T> extends FlipView<T> {
