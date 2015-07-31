@@ -701,10 +701,10 @@ module WinJSTests {
             var that = this;
             window.addEventListener("message", function windowMessage(e: MessageEvent) {
                 if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
-                    LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                    var origCount = WinJS.UI.XYFocus._iframeHelper.count();
                     window.removeEventListener("message", windowMessage);
                     iframeEl.contentWindow.addEventListener("unload", () => {
-                        LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                        LiveUnit.Assert.areEqual(origCount - 1, WinJS.UI.XYFocus._iframeHelper.count());
                         complete();
                     });
                     iframeEl.parentElement.removeChild(iframeEl);
