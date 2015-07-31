@@ -9814,12 +9814,6 @@ declare module WinJS.Utilities {
 
         [n: number]: T;
 
-        ///**
-        // * Returns a string representation of an array.
-        //**/
-        //toString(): string;
-        //toLocaleString(): string;
-
         //#endregion Array<T>.prototype
 
     }
