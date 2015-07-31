@@ -7,7 +7,7 @@
     module.exports = {
         // Publishes npm packages
         
-		publishWinJs: {
+        publishWinJs: {
             src: config.winjsNpmPublishRoot
         },
         

@@ -3,17 +3,17 @@
     "use strict";
 
     var config = require("../../config.js");
-	var execSync = require('child_process').execSync;
-	
-	var currentGitCommitHash = execSync('git rev-parse HEAD').toString().trim();
+    var execSync = require('child_process').execSync;
+    
+    var currentGitCommitHash = execSync('git rev-parse HEAD').toString().trim();
 
     module.exports = {
-		
-		// Publish GitHub releases and bower packages (bower consumes GitHub tags/releases)
-		
-		// Requires this environment variable to be set: GITHUB_ACCESS_TOKEN
+        
+        // Publish GitHub releases and bower packages (bower consumes GitHub tags/releases)
+        
+        // Requires this environment variable to be set: GITHUB_ACCESS_TOKEN
         // GITHUB_ACCESS_TOKEN can be generated from https://help.github.com/articles/creating-an-access-token-for-command-line-use/
-		
+        
         publishWinJsBower: {
             options: {
                 repository: 'winjs/winjs-bower',
@@ -30,7 +30,7 @@
                 }
             }
         },
-		
+        
         publishLocalizationBower: {
             options: {
                 repository: 'winjs/winjs-localization-bower',
@@ -46,10 +46,10 @@
                         '\n' +
                         'See the [changelog](https://github.com/winjs/winjs/wiki/Changelog) for details about what changed.'
                 }
-			}
+            }
         },
-		
-		publish: {
+        
+        publish: {
             options: {
                 repository: 'winjs/winjs',
                 auth: {
@@ -67,9 +67,9 @@
             },
             files: {
                 src: [
-					config.winjsPublishRoot + 'winjs.zip',
-					config.winjsPublishRoot + 'winjs-localization.zip'
-				]
+                    config.winjsPublishRoot + 'winjs.zip',
+                    config.winjsPublishRoot + 'winjs-localization.zip'
+                ]
             }
         }
     };

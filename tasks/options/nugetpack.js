@@ -5,7 +5,7 @@
     var config = require("../../config.js");
 
     module.exports = {
-		publishWinJs: {
+        publishWinJs: {
             src: 'WinJS.nuspec',
             dest: config.winjsPublishRoot,
             options: {
