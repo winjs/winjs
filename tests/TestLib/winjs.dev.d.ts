@@ -135,8 +135,13 @@ declare module WinJS {
     }
 
     module UI {
+        /**
+         * Takes a string in the form of "{a: 1, b:2}" 
+         * and returns an object in the form of {a: 1, b:2}
+        **/
+        function optionsParser(value: string): any; 
+
         var _optionsLexer;
-        var optionsParser;
         var _optionsParser;
         var _CallExpression;
         var _IdentifierExpression;
@@ -386,7 +391,7 @@ declare module WinJS {
             _disposed: boolean;
             static _getInformationJS;
             static _getInformationWinRT;
-            static getInformation;
+            //static getInformation;
         }
 
         class PrivateFlipView<T> extends FlipView<T> {

@@ -52,6 +52,11 @@ interface IOHelper {
      * @returns A promise that is completed when the file has been written.
      **/
     writeText(fileName: string, text: string): WinJS.Promise<number>;
+
+    /**
+     * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+    **/
+    storage: any;
 }
 
 /**
@@ -965,6 +970,11 @@ declare module WinJS.Binding {
         render(dataContext: any, container?: HTMLElement): Promise<HTMLElement>;
 
         /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use render instead.
+        **/
+        renderItem<T>(item: WinJS.Promise<T>, recyled: HTMLElement): { element: WinJS.Promise<HTMLElement>; renderComplete: WinJS.Promise<any>; };
+
+        /**
          * Renders a template based on the specified URI (static method).
          * @param href The URI from which to load the template.
          * @param dataContext The object to use for default data binding.
@@ -1079,6 +1089,11 @@ declare module WinJS.Binding {
      * @returns An object with a set of properties all of which are wired for binding.
     **/
     function expandProperties(shape: any): any;
+
+    /**
+     * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+    **/
+    function getValue(obj: any, path?: any)
 
     /**
      * Marks a custom initializer function as being compatible with declarative data binding.
@@ -1826,7 +1841,7 @@ declare module WinJS.UI.Animation {
      * @param incomingPage Element to be scaled up and faded out.
      * @returns Promise object that completes when the animation is complete.
     **/
-    function drillInOutgoin(outgoingPage: HTMLElement): Promise<any>
+    function drillInOutgoing(outgoingPage: HTMLElement): Promise<any>
 
     /**
      * Execute the incoming phase of the drill out animation, scaling down the incoming page while fading it in.
@@ -4525,6 +4540,11 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use render instead.
+        **/
+        getInformation(startDate: any, endDate: any, calendar?: any, datePatterns?: any): any;
+
+        /**
          * Removes a listener for the specified event.
          * @param type The name of the event for which to remove a listener.
          * @param listener The listener.
@@ -4765,6 +4785,26 @@ declare module WinJS.UI {
          * Indicates that the object is compatibile with declarative processing.
         **/
         static supportedForProcessing: boolean;
+
+        /**
+         * Event Name
+        **/
+        static datasourceCountChangedEvent: string;
+
+        /**
+         * Event Name
+        **/
+        static pageCompletedEvent: string;
+
+        /**
+         * Event Name
+        **/
+        static pageSelectedEvent: string;
+
+        /**
+         * Event Name
+        **/
+        static pageVisibilityChangedEvent: string;
 
         //#endregion Properties
 
@@ -5266,6 +5306,16 @@ declare module WinJS.UI {
         **/
         isHeaderStatic: boolean;
 
+        /**
+         * This object supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        static isDeclarativeControlContainer: any;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -5410,6 +5460,11 @@ declare module WinJS.UI {
         **/
         tapBehavior: TapBehavior;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -5418,6 +5473,10 @@ declare module WinJS.UI {
      * This object supports the WinJS infrastructure and is not intended to be used directly from your code.
     **/
     class Layout {
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
     }
 
     /**
@@ -5526,6 +5585,11 @@ declare module WinJS.UI {
          * Gets or sets the orientation of the GridLayout.
         **/
         orientation: WinJS.UI.Orientation;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -5878,6 +5942,11 @@ declare module WinJS.UI {
         **/
         zoomableView: IZoomableView<ListView<T>>;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -6032,6 +6101,11 @@ declare module WinJS.UI {
         selectedItem: PivotItem;
 
         /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        /**
          * Gets or sets the title displayed above the PivotItem controls.
         **/
         title: string;
@@ -6080,6 +6154,16 @@ declare module WinJS.UI {
          * Gets or sets the header for this PivotItem.
         **/
         header: string;
+
+        /**
+         * This object supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        static isDeclarativeControlContainer: any;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
     }
@@ -6252,6 +6336,11 @@ declare module WinJS.UI {
         **/
         placement: string;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -6343,6 +6432,11 @@ declare module WinJS.UI {
          * Gets or sets the selected state of a toggle button.
         **/
         selected: boolean;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Gets the type of the command.
@@ -6492,6 +6586,11 @@ declare module WinJS.UI {
         getCommandById(id: string): NavBarCommand;
 
         /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use NavBar.opened instead.
+        **/
+        hidden: boolean;
+
+        /**
          * Gets a value that indicates whether the NavBar is opened or in the process of becoming opened, or sets the NavBar to open or close itself.
         **/
         opened: boolean;
@@ -6500,6 +6599,16 @@ declare module WinJS.UI {
          * Gets or sets a value that specifies whether the NavBar appears at the top or bottom of the main view.
         **/
         placement: string;
+
+        /**
+         * This object supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        static isDeclarativeControlContainer: any;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -6600,6 +6709,11 @@ declare module WinJS.UI {
          * Gets or sets a user-defined object that represents the state associated with the command's location.
         **/
         state: any;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Gets or sets the tooltip of the command.
@@ -6713,6 +6827,11 @@ declare module WinJS.UI {
         maxRows: number;
 
         /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        /**
          * Gets or sets the WinJS.Binding.Template or templating function that creates the DOM elements for each item in the data source. Each item can contain multiple elements, but it must have a single root element.
         **/
         template: WinJS.Binding.Template;
@@ -6810,6 +6929,11 @@ declare module WinJS.UI {
          * Gets or sets the maximum possible rating value.
         **/
         maxRating: number;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Gets or sets a set of descriptions to show for rating values in the tooltip.
@@ -6969,6 +7093,16 @@ declare module WinJS.UI {
         length: number;
 
         /**
+         * This object supports the WinJS infrastructure and is not intended to be used directly from your code.
+        **/
+        static isDeclarativeControlContainer: any;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        /**
          * Gets or sets a WinJS.Binding.Template or custom rendering function that defines the HTML of each item within the Repeater.
         **/
         template: WinJS.Binding.Template;
@@ -7006,12 +7140,6 @@ declare module WinJS.UI {
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.language, detail.queryText, detail.linguisticDetails, detail.keyModifiers.
         **/
         onquerysubmitted(eventInfo: CustomEvent): void;
-
-        /**
-         * Raised when the app automatically redirects focus to the search box. This event can only be raised when the focusOnKeyboardInput property is set to true.
-         * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.propertyName.
-        **/
-        onreceivingfocusonkeyboardinput(eventInfo: CustomEvent): void;
 
         /**
          * Raised when the user selects a suggested option for the search.
@@ -7108,6 +7236,11 @@ declare module WinJS.UI {
         **/
         searchHistoryDisabled: boolean;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
         static createResultSuggestionImage(url: string): any;
@@ -7199,6 +7332,11 @@ declare module WinJS.UI {
          * Gets or sets a value that indicates whether SemanticZoom is locked and zooming between views is disabled.
         **/
         locked: boolean;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Gets or sets a value that indicates whether the control is zoomed out.
@@ -7327,6 +7465,11 @@ declare module WinJS.UI {
         **/
         static showSettings(id: string, path: any): void;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Methods
 
         //#region Properties
@@ -7412,6 +7555,11 @@ declare module WinJS.UI {
             **/
             overlay: string;
         }
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Creates a new SplitView.
@@ -7577,6 +7725,12 @@ declare module WinJS.UI {
          * @param eventInfo An object that contains information about the event.
         **/
         oninvoked(eventInfo: Event): void;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
     }
 
     /**
@@ -7594,6 +7748,16 @@ declare module WinJS.UI {
         constructor(element?: HTMLElement, options?: any);
 
         //#endregion Constructors
+
+        //# region Events
+
+        /** 
+         * Raised when a SplitViewCommand has been invoked.
+         * @param eventInfo An object that contains information about the event.
+        **/
+        oninvoked(eventInfo: CustomEvent): void;
+
+        //#endregion Events
 
         //#region Methods
 
@@ -7646,18 +7810,16 @@ declare module WinJS.UI {
         label: string;
 
         /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        /**
          * Gets or sets the tooltip of the command.
         **/
         tooltip: any;
 
-        /** 
-         * Raised when a SplitViewCommand has been invoked.
-         * @param eventInfo An object that contains information about the event.
-        **/
-        oninvoked(eventInfo: CustomEvent): void;
-
         //#endregion Properties
-
     }
 
     /**
@@ -7712,6 +7874,11 @@ declare module WinJS.UI {
 
         //#endregion Methods
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
     }
 
     /**
@@ -7745,6 +7912,11 @@ declare module WinJS.UI {
          * Gets or sets the child DOM element that receives tab focus.
         **/
         childFocus: HTMLElement;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         /**
          * Gets or sets the tab index of this container.
@@ -7805,6 +7977,11 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
+         * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use render instead.
+        **/
+        getInformation(clock: any, minuteIncrement: any, timerPatterns?: any): any;
+
+        /**
          * Removes a listener for the specified event.
          * @param type The name of the event for which to remove a listener.
          * @param listener The listener.
@@ -7855,6 +8032,11 @@ declare module WinJS.UI {
          * Gets or sets the display pattern for the period. The default period pattern is period.abbreviated(2). You can change the period pattern by changing the number of integers displayed.
         **/
         periodPattern: string;
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
 
         //#endregion Properties
 
@@ -7947,6 +8129,11 @@ declare module WinJS.UI {
         labelOn: string;
 
         /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        /**
          * Gets or sets the main text for the ToggleSwitch control. This text is always displayed, regardless of whether the control is switched on or off.
         **/
         title: string;
@@ -7972,6 +8159,11 @@ declare module WinJS.UI {
             **/
             full: string;
         };
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        public static supportedForProcessing: boolean;
 
         /**
         * Gets the DOM element that hosts the ToolBar.
@@ -8195,6 +8387,11 @@ declare module WinJS.UI {
         **/
         placement: string;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -8260,6 +8457,11 @@ declare module WinJS.UI {
         **/
         element: HTMLElement;
 
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
         //#endregion Properties
 
     }
@@ -8318,6 +8520,15 @@ declare module WinJS.UI {
         removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
 
         //#endregion Methods
+
+        //#region Properties
+
+        /**
+         * Indicates that the object is compatibile with declarative processing.
+        **/
+        static supportedForProcessing: boolean;
+
+        //#endregion Properties
 
     }
 
@@ -8383,6 +8594,11 @@ declare module WinJS.UI {
     function isAnimationEnabled(): boolean;
 
     /**
+     * * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+    **/
+    function optionsParser(value: string): any;
+
+    /**
      * Applies declarative control binding to all elements, starting at the specified root element.
      * @param rootElement The element at which to start applying the binding. If this parameter is not specified, the binding is applied to the entire document.
      * @param skipRoot If true, the elements to be bound skip the specified root element and include only the children.
@@ -8411,6 +8627,11 @@ declare module WinJS.UI {
      * @param options The set of options that are specified declaratively.
     **/
     function setOptions(control: any, options?: any): void;
+
+    /**
+     * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
+    **/
+    function simpleItemRenderer(Function): Function;
 
     //#endregion Functions
 
@@ -8458,7 +8679,32 @@ declare module WinJS.UI.XYFocus {
     /**
      * Gets the mapping object that maps keycodes to XYFocus actions.
     **/
-    export var keyCodeMap: { [key: string]: number[] };
+    export var keyCodeMap: {
+        /**
+         * The array of keycodes that would cause XYFocus to accept.
+        **/
+        accept: Array<number>;
+        /**
+         * The array of keycodes that would cause XYFocus to cancel.
+        **/
+        cancel: Array<number>;
+        /**
+         * The array of keycodes that would cause XYFocus to navigate down.
+        **/
+        down: Array<number>;
+        /**
+         * The array of keycodes that would cause XYFocus to navigate left.
+        **/
+        left: Array<number>;
+        /**
+         * The array of keycodes that would cause XYFocus to navigate right.
+        **/
+        right: Array<number>;
+        /**
+         * The array of keycodes that would cause XYFocus to navigate up.
+        **/
+        up: Array<number>;
+    };
 
     /**
      * Gets or sets the focus root when invoking XYFocus APIs.
@@ -8479,7 +8725,7 @@ declare module WinJS.UI.XYFocus {
      * @returns true if preventDefault was called on the event, otherwise false.
     **/
     export function dispatchEvent(type: string, eventProperties: any): boolean;
-    
+
     /**
      * Removes an event listener to XYFocus events.
      * @param type The type (name) of the event.
@@ -8681,7 +8927,7 @@ declare module WinJS.UI.TrackTabBehavior {
      * Removes the tab order information from the specified element.
      * @param element The element to remove tab information from.
     **/
-    function detatch(element: HTMLElement): void;
+    function detach(element: HTMLElement): void;
 
     //#endregion Functions
 
@@ -9278,7 +9524,7 @@ declare module WinJS.Utilities {
     /**
      * Represents the result of a query selector, and provides various operations that perform actions over the elements of the collection.
     **/
-    interface QueryCollection<T> extends Array<T> {
+    class QueryCollection<T> implements Array<T> {
         //#region Methods
 
         /**
@@ -9287,13 +9533,6 @@ declare module WinJS.Utilities {
          * @returns This QueryCollection object.
         **/
         addClass(name: string): QueryCollection<T>;
-
-        /**
-         * Creates a QueryCollection that contains the children of the specified parent element.
-         * @param element The parent element.
-         * @returns The QueryCollection that contains the children of the element.
-        **/
-        children(element: HTMLElement): QueryCollection<T>;
 
         /**
          * Clears the specified style property for all the elements in the collection.
@@ -9340,13 +9579,6 @@ declare module WinJS.Utilities {
         hasClass(name: string): boolean;
 
         /**
-         * Looks up an element by ID and wraps the result in a QueryCollection.
-         * @param id The ID of the element.
-         * @returns A QueryCollection that contains the element, if it is found.
-        **/
-        id(id: string): QueryCollection<T>;
-
-        /**
          * Adds a set of items to this QueryCollection.
          * @param items The items to add to the QueryCollection. This may be an array-like object, a document fragment, or a single item.
         **/
@@ -9382,7 +9614,7 @@ declare module WinJS.Utilities {
         /**
          * Removes the specified class from all the elements in the collection.
          * @param name The name of the class to be removed.
-         * @returns his QueryCollection object.
+         * @returns This QueryCollection object.
         **/
         removeClass(name: string): QueryCollection<T>;
 
@@ -9429,19 +9661,180 @@ declare module WinJS.Utilities {
 
         //#endregion Methods
 
-    }
-
-    /**
-     * Constructor support for QueryCollection interface
-    **/
-    export var QueryCollection: {
-        new <T>(items: T[]): QueryCollection<T>;
-        prototype: QueryCollection<any>;
         /**
          * Indicates that the object is compatibile with declarative processing.
         **/
-        supportedForProcessing: boolean;
+        static supportedForProcessing: boolean;
+
+        //#region Array<T>.prototype
+
+        /**
+         * Combines two or more arrays.
+         * @param items Additional items to add to the end of array1.
+        **/
+        concat<U extends T[]>(...items: U[]): T[];
+        /**
+         * Combines two or more arrays.
+         * @param items Additional items to add to the end of array1.
+        **/
+        concat(...items: T[]): T[];
+
+        /**
+         * Adds all the elements of an array separated by the specified separator string.
+         * @param separator A string used to separate one element of an array from the next in the resulting String. If omitted, the array elements are separated with a comma.
+        **/
+        join(separator?: string): string;
+
+        /**
+         * Removes the last element from an array and returns it.
+        **/
+        pop(): T;
+
+        /**
+         * Appends new elements to an array, and returns the new length of the array.
+         * @param items New elements of the Array.
+        **/
+        push(...items: T[]): number;
+
+        /**
+         * Reverses the elements in an Array. 
+        **/
+        reverse(): T[];
+
+        /**
+         * Removes the first element from an array and returns it.
+        **/
+        shift(): T;
+
+        /** 
+         * Returns a section of an array.
+         * @param start The beginning of the specified portion of the array.
+         * @param end The end of the specified portion of the array.
+        **/
+        slice(start?: number, end?: number): T[];
+
+        /**
+         * Sorts an array.
+         * @param compareFn The name of the function used to determine the order of the elements. If omitted, the elements are sorted in ascending, ASCII character order.
+        **/
+        sort(compareFn?: (a: T, b: T) => number): T[];
+
+        /**
+         * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+         * @param start The zero-based location in the array from which to start removing elements.
+        **/
+        splice(start: number): T[];
+
+        /**
+         * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+         * @param start The zero-based location in the array from which to start removing elements.
+         * @param deleteCount The number of elements to remove.
+         * @param items Elements to insert into the array in place of the deleted elements.
+        **/
+        splice(start: number, deleteCount: number, ...items: T[]): T[];
+
+        /**
+         * Inserts new elements at the start of an array.
+         * @param items  Elements to insert at the start of the Array.
+        **/
+        unshift(...items: T[]): number;
+
+        /**
+         * Returns the index of the first occurrence of a value in an array.
+         * @param searchElement The value to locate in the array.
+         * @param fromIndex The array index at which to begin the search. If fromIndex is omitted, the search starts at index 0.
+        **/
+        indexOf(searchElement: T, fromIndex?: number): number;
+
+        /**
+         * Returns the index of the last occurrence of a specified value in an array.
+         * @param searchElement The value to locate in the array.
+         * @param fromIndex The array index at which to begin the search. If fromIndex is omitted, the search starts at the last index in the array.
+        **/
+        lastIndexOf(searchElement: T, fromIndex?: number): number;
+
+        /**
+         * Determines whether all the members of an array satisfy the specified test.
+         * @param callbackfn A function that accepts up to three arguments. The every method calls the callbackfn function for each element in array1 until the callbackfn returns false, or until the end of the array.
+         * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+        **/
+        every(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean;
+
+        /**
+         * Determines whether the specified callback function returns true for any element of an array.
+         * @param callbackfn A function that accepts up to three arguments. The some method calls the callbackfn function for each element in array1 until the callbackfn returns true, or until the end of the array.
+         * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+        **/
+        some(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): boolean;
+
+        /**
+         * Calls a defined callback function on each element of an array, and returns an array that contains the results.
+         * @param callbackfn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. 
+         * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+        **/
+        map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
+
+        /**
+         * Returns the elements of an array that meet the condition specified in a callback function. 
+         * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array. 
+         * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
+        **/
+        filter(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): T[];
+
+        /**
+         * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array.
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+        **/
+        reduce(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
+        /**
+         * Calls the specified callback function for all the elements in an array. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to four arguments. The reduce method calls the callbackfn function one time for each element in the array.
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+        **/
+        reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+
+        /** 
+         * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+        **/
+        reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
+        /** 
+         * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
+         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+         * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
+        **/
+        reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
+
+        /**
+         * Gets or sets the length of the array. This is a number one higher than the highest element defined in an array.
+        **/
+        length: number;
+
+        [n: number]: T;
+
+        ///**
+        // * Returns a string representation of an array.
+        //**/
+        //toString(): string;
+        //toLocaleString(): string;
+
+        //#endregion Array<T>.prototype
+
     }
+
+    ///**
+    // * Constructor support for QueryCollection interface
+    //**/
+    //export var QueryCollection: {
+    //    new <T>(items: T[]): QueryCollection<T>;
+    //    prototype: QueryCollection<any>;
+    //    /**
+    //     * Indicates that the object is compatibile with declarative processing.
+    //    **/
+    //    supportedForProcessing: boolean;
+    //}
 
     //#endregion Objects
 
