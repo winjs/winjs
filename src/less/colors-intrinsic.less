@@ -166,23 +166,26 @@
         background-color: @baseLow;
         border-color: transparent;
 
-        &:hover {
+        &.win-button-primary {
+            color: #fff;
+        }
+
+        &:hover,
+        &.win-button-primary:hover {
             border-color: @baseMediumMid;
         }
 
-        &:active {
+        &:active,
+        &.win-button-primary:active {
             background-color: @baseMediumMid;
         }
 
-        &:disabled {
+        &:disabled,
+        &.win-button-primary:disabled {
             color: @baseLow;
             background-color: @baseLow;
             border-color: transparent;
         }
-    }
-
-    .win-button.win-button-primary {
-        color: #fff;
     }
 
     //
