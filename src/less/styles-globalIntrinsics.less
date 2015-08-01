@@ -3,6 +3,51 @@
 @import "color-definitions.less";
 @import "font-definitions.less";
 
+// Globalization for intrinsics
+
+// Explicitly define font-families for Microsoft Yahei UI and Microsoft JhengHei UI so that we can fallback requests for,
+// Microsoft Yahei UI Semilight and Microsoft JhengHei UI Semilight, to Regular instead of Light fonts.
+@font-face {
+    font-family: "Microsoft Yahei UI";
+    font-weight: 200;
+    src: local("Microsoft Yahei UI Light");
+}
+@font-face {
+    font-family: "Microsoft Yahei UI";
+    font-weight: 300;
+    src: local("Microsoft Yahei UI");
+}
+@font-face {
+    font-family: "Microsoft Yahei UI";
+    font-weight: 500;
+    src: local("Microsoft Yahei UI");
+}
+@font-face {
+    font-family: "Microsoft Yahei UI";
+    font-weight: 600;
+    src: local("Microsoft Yahei UI Bold");
+}
+@font-face {
+    font-family: "Microsoft JhengHei UI";
+    font-weight: 200;
+    src: local("Microsoft JhengHei UI Light");
+}
+@font-face {
+    font-family: "Microsoft JhengHei UI";
+    font-weight: 300;
+    src: local("Microsoft JhengHei UI");
+}
+@font-face {
+    font-family: "Microsoft JhengHei UI";
+    font-weight: 500;
+    src: local("Microsoft JhengHei UI");
+}
+@font-face {
+    font-family: "Microsoft JhengHei UI";
+    font-weight: 600;
+    src: local("Microsoft JhengHei UI Bold");
+}
+
 // RTL mixin definition
 .RTL(@rules) {
     &:lang(ar),
@@ -21,6 +66,85 @@
         @rules();
     }
 }
+
+// Mixin defines for the -ms-lang string per each supported language
+// The mixin with the matching string parameter will be used
+.getLanguageString("Ebrima") {
+    @langString: am, ti;
+}
+.getLanguageString("Nirmala UI") {
+    @langString: as, bn, gu, hi, kn, kok, ml, mr, ne, or, pa, sat-Olck, si, srb-Sora, ta, te;
+}
+.getLanguageString("Gadugi") {
+    @langString: chr-CHER-US;
+}
+.getLanguageString("Yu Gothic UI") {
+    @langString: ja;
+}
+.getLanguageString("Leelawadee UI") {
+    @langString: km, lo, th, bug-Bugi;
+}
+.getLanguageString("Malgun Gothic") {
+    @langString: ko;
+}
+.getLanguageString("Microsoft YaHei UI") {
+    @langString: zh-CN, zh-Hans, zh-SG;
+}
+.getLanguageString("Microsoft JhengHei UI") {
+    @langString: zh-HK, zh-TW, zh-Hant, zh-MO;
+}
+.getLanguageString("Javanese Text") {
+    @langString: jv-Java;
+}
+.getLanguageString("Segoe MDL2 Assets") {
+    @langString: cop-Copt;
+}
+
+// List of language fonts to iterate over
+// Each of these fonts will be the first font in the font-family list for the relevant language
+@fonts: "Ebrima", "Nirmala UI", "Gadugi", "Yu Gothic UI", "Leelawadee UI", "Malgun Gothic", "Javanese Text", "Segoe MDL2 Assets", "Microsoft YaHei UI", "Microsoft JhengHei UI";
+
+// Static list of fallback fonts to be placed after the primary language font
+@fontFallbacks: "Ebrima", "Nirmala UI", "Gadugi", "Segoe UI Emoji", "Segoe MDL2 Assets", "Symbols", "Yu Gothic UI", "Yu Gothic", "Meiryo UI", "Leelawadee UI", "Microsoft YaHei UI", "Microsoft JhengHei UI", "Malgun Gothic", "Segoe UI Historic", "Estrangelo Edessa", "Microsoft Himalaya", "Microsoft New Tai Lue", "Microsoft PhagsPa", "Microsoft Tai Le", "Microsoft Yi Baiti", "Mongolian Baiti", "MV Boli", "Myanmar Text", "Javanese Text", "Cambria Math";
+
+// This mixin is used for every language font, and appends the appropriate -ms-lang pseudo class
+// to each selector
+.fontFallBack(@index) {
+    .getLanguageString(extract(@fonts, @index));
+    &:-ms-lang(@{langString}) {
+        font-family: extract(@fonts, @index), @fontFallbacks;
+    }
+}
+
+// Recursive loop over each font in the @fonts list
+.buildFontFallbacks(@index) when (@index <= length(@fonts)) {
+
+    // Apply the font fallback mixin to each of these elements,
+    // for this index
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    button,
+    select,
+    input,
+    a,
+    textarea {
+        .fontFallBack(@index);
+    }
+
+    // Run the next iteration
+    .buildFontFallbacks(@index + 1);
+}
+
+// Begin the loop at index 1, the first index in LESS
+.buildFontFallbacks(1);
+
+// End globalization for intrinsics
+
 
 //
 // Main body and html styles
