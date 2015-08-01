@@ -144,8 +144,8 @@
     <script src="TestLib/liveToQ/testsDashboard.js"></script>                                                               \r\n\
 </head>                                                                                                                     \r\n\
 <body>                                                                                                                      \r\n\
-  <img src="http://try.buildwinjs.com/images/winjs-logo.png" alt="WinJS Tests"/> <br/>                                      \r\n\
-  <button onclick="window.open(\'http://try.buildwinjs.com/#status\')" >View Tests Status page</button>                     \r\n\
+  <img src="http://winjs.azurewebsites.net/images/winjs-logo.png" alt="WinJS Tests"/> <br/>                                 \r\n\
+  <button onclick="window.open(\'http://winjs.azurewebsites.net/#status\')" >View Tests Status page</button>                \r\n\
   <button id="btnRunAll">Run all tests</button>                                                                             \r\n\
   <ul>                                                                                                                      \r\n\
 @@TESTS                                                                                                                     \r\n\
