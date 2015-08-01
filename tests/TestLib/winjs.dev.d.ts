@@ -79,6 +79,8 @@ declare module WinJS {
             constructor(eventObject, overrideProperties);
         }
 
+        var isPhone: boolean;
+
         function _linkedListMixin(name: string);
 
         module Scheduler {
@@ -139,7 +141,7 @@ declare module WinJS {
          * Takes a string in the form of "{a: 1, b:2}" 
          * and returns an object in the form of {a: 1, b:2}
         **/
-        function optionsParser(value: string): any; 
+        function optionsParser(value: string, context?: any, functionContext?: any): any; 
 
         var _optionsLexer;
         var _optionsParser;

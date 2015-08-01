@@ -8841,7 +8841,7 @@ declare module WinJS.UI {
     /**
      * * This API supports the WinJS infrastructure and is not intended to be used directly from your code.
     **/
-    function optionsParser(value: string): any;
+    function optionsParser(value: string, context?: any, functionContext?: any): any;
 
     /**
      * Applies declarative control binding to all elements, starting at the specified root element.
