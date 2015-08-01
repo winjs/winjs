@@ -381,7 +381,6 @@ declare module WinJS.Binding {
     /**
      * Represents a list of objects that can be accessed by index or by a string key. Provides methods to search, sort, filter, and manipulate the data.
     **/
-    // Jesse
     class List<T> implements ListBaseWithMutators<T> {
         //#region Constructors
 
