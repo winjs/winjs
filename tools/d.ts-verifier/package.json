@@ -1,0 +1,27 @@
+{
+  "name": "winjs-control-apis",
+  "version": "0.1.0",
+  "description": "Uses the WinJS d.ts file to output the API surface of each of the WinJS controls.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "winjs"
+  ],
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rigdern/winjs-control-apis"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/rigdern/winjs-control-apis/blob/master/LICENSE.txt"
+  },
+  "bin": {
+    "winjs-control-apis": "./main.js"
+  },
+  "dependencies": {
+    "sugar": "^1.4.1"
+  }
+}
