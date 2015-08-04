@@ -1,3 +1,4 @@
+// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 #!/usr/bin/env node
 
 "use strict";
@@ -82,9 +83,8 @@ function getWinJSModel(env) {
     return model;
 }
 
-function processFile(filePath) {
-    var text = fs.readFileSync(filePath, 'utf8').toString();
-    
+function processFile(filePath, text) {
+
     // invoke tscore
     var result = tscore([
         {
@@ -152,21 +152,27 @@ function sortedPrintObject(obj, indentCount) {
 }
 
 function main() {
-    if (process.argv.length < 3) {
-        console.log("Please pass a valid path. Usage: node d.ts-parser.js /path/to/winjs.d.ts");
+    try {
+        var filePath = path.resolve(process.argv[2]);
+        var text = fs.readFileSync(filePath, 'utf8').toString();
+    } catch(e) {
+        console.log("Please pass a valid path. Usage: node main.js /path/to/winjs.d.ts");
         return;
     }
     
-    console.log(process.argv[2]);
+    console.log("Generating model from definition file ...");
+    var output = processFile(filePath, text);
+    
+    var sorted = "var model = " + sortedPrint(output) + ";";
+    fs.writeFileSync("./result.txt", sorted);
 
-    var filePath = path.resolve(process.argv[2]);
-    
-    //var filePath = path.resolve("F:/WINBLUEPHONE_WWA_WINJS1/windows/webcontrols/winjs/typings/winjs/winjs.d.ts");
-    var output = processFile(filePath);
-    
-    var s = "var model = " + sortedPrint(output) + ";";
-    fs.writeFileSync("./result.txt", s);
-    debugger;
+
+    console.log('Generated model written to result.txt. Press any key to exit');
+
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.on('data', process.exit.bind(process, 0));
+
 }
 
 if (require.main === module) {
