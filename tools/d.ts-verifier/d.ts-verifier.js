@@ -12,16 +12,17 @@
         var publicKeys;
         if (obj === Array.prototype) {
             // Normally we would just want to use Object.keys(obj) to get the public API of each Namespace on the WinJS Object, however if the obj parameter is the 
-            // Array prototype, we have to use Object.getOwnPropertyNames(obj) to get the publicKeys instead. Unlike Object.keys(), Object.getOwnPropertyNames, does not filter 
+            // Array prototype, we have to use Object.getOwnPropertyNames(obj) to get the publicKeys instead. Unlike Object.keys(), Object.getOwnPropertyNames(), does not filter 
             // out non-enumerable properties, and for most objects, its a safe bet that only the enumerable properties are the ones that should be published as part
             // of the public API. However, in the case of Array, all of its public methods like pop, concat, join, shift etc.. ARE non-enumerable, so in the case of the 
             // WinJS.Utilities.QueryCollection class, which derives from Array, we have all of its API explicitly typed out in our WinJS.d.ts file, but if we don't special 
             // case Array.prototype here, then this tool wouldn't find most of that API space, and would report that the WinJS.d.ts file had extra API's for QueryCollection that
-            // didn't exist on the WinJS.Utilities.QueryCollection object.
+            // didn't exist on the WinJS.Utilities.QueryCollection object when inspected in the DOM.
             publicKeys = Object.getOwnPropertyNames(obj)
 
-            // Because we were forced to use Object.getOwnPropertyNames, we also have to weed out any non standardized or experimental Array API't that might be living in the non
-            // enumberable space. To date we are aware of these experimental array API's that aren't yet included in the Lib.d.ts definition of the "interface Array<T>"
+            // Because we were forced to use Object.getOwnPropertyNames, we also have to filter out any non-standard or experimental Array API't that might be living in the non
+            // enumberable space. To date we are aware of these experimental array API's that aren't yet included in the Lib.d.ts definition of the "interface Array<T>". If the 
+            // Lib.d.ts is ever updated to include them in the future, we should stop filtering them here.
             var experimentalFeatures = ["keys", "entries"];
             publicKeys = publicKeys.filter(function (key) {
                 return experimentalFeatures.indexOf(key) < 0;
