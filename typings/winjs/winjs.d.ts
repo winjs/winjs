@@ -2078,28 +2078,28 @@ declare module WinJS.UI.Animation {
      * @param incomingPage Element to be scaled up and faded in.
      * @returns Promise object that completes when the animation is complete.
     **/
-    function drillInIncoming(incomingPage: HTMLElement): Promise<any>
+    function drillInIncoming(incomingPage: HTMLElement): Promise<any>;
 
     /**
      * Execute the outgoing phase of the drill in animation, scaling up the outgoing page while fading it out.
      * @param incomingPage Element to be scaled up and faded out.
      * @returns Promise object that completes when the animation is complete.
     **/
-    function drillInOutgoing(outgoingPage: HTMLElement): Promise<any>
+    function drillInOutgoing(outgoingPage: HTMLElement): Promise<any>;
 
     /**
      * Execute the incoming phase of the drill out animation, scaling down the incoming page while fading it in.
      * @param incomingPage Element to be scaled up and faded in.
      * @returns Promise object that completes when the animation is complete.
     **/
-    function drillOutIncoming(incomingPage: HTMLElement): Promise<any>
+    function drillOutIncoming(incomingPage: HTMLElement): Promise<any>;
 
     /**
      * Execute the outgoing phase of the drill out animation, scaling down the outgoing page while fading it out.
      * @param outgoingPage Element to be scaled down and faded out.
      * @returns Promise object that completes when the animation is complete.
     **/
-    function drillOutOutgoing(outgoingPage: HTMLElement): Promise<any>
+    function drillOutOutgoing(outgoingPage: HTMLElement): Promise<any>;
 
     /**
      * Performs an animation that displays one or more elements on a page.
@@ -4786,7 +4786,7 @@ declare module WinJS.UI {
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use render instead.
         **/
-        getInformation(startDate: any, endDate: any, calendar?: any, datePatterns?: any): any;
+        static getInformation(startDate: any, endDate: any, calendar?: any, datePatterns?: any): any;
 
         /**
          * Removes a listener for the specified event.
@@ -6127,12 +6127,12 @@ declare module WinJS.UI {
         maxDeferredItemCleanup: number;
 
         /**
-         * This function is deprecated. Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
+         * This property is deprecated. Gets or sets the number of pages to load when the loadingBehavior property is set to "incremental" and the user scrolls beyond the threshold specified by the pagesToLoadThreshold property.
         **/
         pagesToLoad: number;
 
         /**
-         * This function is deprecated. Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
+         * This property is deprecated. Gets or sets the threshold (in pages) for initiating an incremental load. When the last visible item is within the specified number of pages from the end of the loaded portion of the list, and if automaticallyLoadPages is true and loadingBehavior is set to "incremental", the ListView initiates an incremental load.
         **/
         pagesToLoadThreshold: number;
 
@@ -6962,7 +6962,7 @@ declare module WinJS.UI {
         /**
          * Gets or sets the tooltip of the command.
         **/
-        tooltip: any;
+        tooltip: string;
 
         //#endregion Properties
 
@@ -8061,7 +8061,7 @@ declare module WinJS.UI {
         /**
          * Gets or sets the tooltip of the command.
         **/
-        tooltip: any;
+        tooltip: string;
 
         //#endregion Properties
     }
@@ -8223,7 +8223,7 @@ declare module WinJS.UI {
         /**
          * This API supports the WinJS infrastructure and is not intended to be used directly from your code. Use render instead.
         **/
-        getInformation(clock: any, minuteIncrement: any, timerPatterns?: any): any;
+        static getInformation(clock: any, minuteIncrement: any, timerPatterns?: any): any;
 
         /**
          * Removes a listener for the specified event.
@@ -8866,7 +8866,7 @@ declare module WinJS.UI {
     function scopedSelect(selector: string, element: HTMLElement): HTMLElement;
 
     /**
-     * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener.
+     * Adds the set of declaratively specified options (properties and events) to the specified control. If name of the options property begins with "on", the property value is a function and the control supports addEventListener, setOptions calls addEventListener on the control.
      * @param control The control on which the properties and events are to be applied.
      * @param options The set of options that are specified declaratively.
     **/
@@ -8925,27 +8925,27 @@ declare module WinJS.UI.XYFocus {
     **/
     export var keyCodeMap: {
         /**
-         * The array of keycodes that would cause XYFocus to accept.
+         * The array of keycodes that cause XYFocus to accept.
         **/
         accept: Array<number>;
         /**
-         * The array of keycodes that would cause XYFocus to cancel.
+         * The array of keycodes that  cause XYFocus to cancel.
         **/
         cancel: Array<number>;
         /**
-         * The array of keycodes that would cause XYFocus to navigate down.
+         * The array of keycodes that cause XYFocus to navigate down.
         **/
         down: Array<number>;
         /**
-         * The array of keycodes that would cause XYFocus to navigate left.
+         * The array of keycodes that cause XYFocus to navigate left.
         **/
         left: Array<number>;
         /**
-         * The array of keycodes that would cause XYFocus to navigate right.
+         * The array of keycodes that cause XYFocus to navigate right.
         **/
         right: Array<number>;
         /**
-         * The array of keycodes that would cause XYFocus to navigate up.
+         * The array of keycodes that cause XYFocus to navigate up.
         **/
         up: Array<number>;
     };
