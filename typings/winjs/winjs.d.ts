@@ -8929,7 +8929,7 @@ declare module WinJS.UI.XYFocus {
         **/
         accept: Array<number>;
         /**
-         * The array of keycodes that  cause XYFocus to cancel.
+         * The array of keycodes that cause XYFocus to cancel.
         **/
         cancel: Array<number>;
         /**

@@ -10,7 +10,7 @@ function startsWith(s, prefix) {
     return s.substring(0, prefix.length) === prefix;
 }
 
-function isInterface(obj) { 
+function isInterface(obj) {
     return obj.type === "object" && obj.meta.kind === "interface";
 }
 
@@ -24,31 +24,24 @@ function appendToModel(namespaceModel, currentNamespace, propertiesToAdd) {
     // @ param currentNamespace: The string value of the current namespace, e.g. "WinJS.Binding.List"
     // @ param propertiesToAdd: The properties on the current namespace according to tscore 's analysis of the WinJS.d.ts
     Object.keys(propertiesToAdd).forEach(function (propName) {
-        try {
-            if (propName[0] !== "_") {
-                // Ensure our model has an entry for every public property name that we see.
-                namespaceModel[propName] = namespaceModel.hasOwnProperty(propName) ? namespaceModel[propName] : {};
-            }
-        } catch (e) {
-            debugger; // Unexpected Exception;
+        if (propName[0] !== "_") {
+            // Ensure our model has an entry for every public property name that we see.
+            namespaceModel[propName] = namespaceModel.hasOwnProperty(propName) ? namespaceModel[propName] : {};
         }
-        
+
         var type = propertiesToAdd[propName].type;
-        
-        try {
-            // Recursively Append all public properties to the model.
-            if (type && type.properties) {
-                var nextNamespace = currentNamespace + "." + propName;
-                var nextProperties = type.properties;
-                appendToModel(namespaceModel[propName], nextNamespace, nextProperties);
-            }
-        } catch (e) {
-            debugger; // Unexpected Exception;
+
+        // Recursively Append all public properties to the model.
+        if (type && type.properties) {
+            var nextNamespace = currentNamespace + "." + propName;
+            var nextProperties = type.properties;
+            appendToModel(namespaceModel[propName], nextNamespace, nextProperties);
         }
+
     });
 }
 
-function findNamespaceInModel(model, namespace) {
+function ensureNamespaceInModel(model, namespace) {
     // Lookup a namespace from our model. If the namespace or its ancestor namespaces don't yet exist in our model, 
     // add them as empty objects.
     var namespaceObject = model;
@@ -67,18 +60,18 @@ function getWinJSModel(env) {
     for (var namespace in env) {
         // iterate through the env object looking for WinJS namespaces to add.
         var obj = env[namespace].object;
-        
+
         // tscore prefixes some important WinJS namespaces with "module:"
         if (startsWith(namespace, "module:")) {
             namespace = namespace.split(":")[1];
         }
-        
+
         if (keepNamespace(namespace, obj)) { // WinJS namespaces only
-            var namespaceModel = findNamespaceInModel(model, namespace);
-            appendToModel(namespaceModel, namespace, obj.properties)
+            var namespaceModel = ensureNamespaceInModel(model, namespace);
+            appendToModel(namespaceModel, namespace, obj.properties);
         }
     }
-    
+
     return model;
 }
 
@@ -92,7 +85,7 @@ function processFile(filePath, text) {
         },
         { file: filePath, text: text }
     ]);;
-    
+
     // invoke custom code to handle tscore output
     return getWinJSModel(result.env);
 }
@@ -154,14 +147,14 @@ function main() {
     try {
         var filePath = path.resolve(process.argv[2]);
         var text = fs.readFileSync(filePath, 'utf8').toString();
-    } catch(e) {
+    } catch (e) {
         console.log("Please pass a valid path. Usage: node main.js /path/to/winjs.d.ts");
         return;
     }
-    
+
     console.log("Generating model from definition file ...");
     var output = processFile(filePath, text);
-    
+
     var sorted = "var model = " + sortedPrint(output) + ";";
     fs.writeFileSync("./result.txt", sorted);
 

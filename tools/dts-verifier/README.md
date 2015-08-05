@@ -1,14 +1,14 @@
 # d.ts-verifier
 
-## Contents x2
-- __main.js:__ A NodeJS command line tool which takes a version of the WinJS.d.ts file as input and generates the public API surface it defines for WinJS.
-- __d.ts-verifier.js:__ A Javascript file which analyzes the output of the command line tool and compares it with the public API surface of a version of WinJS loaded in the DOM.
+## Contents 
+1. __main.js:__ A NodeJS command line tool which takes a version of the WinJS.d.ts file as input and generates the public API surface it defines for WinJS.
+2. __dts-verifier.js:__ A Javascript file which analyzes the output of the command line tool and compares it with the public API surface of a version of WinJS loaded in the DOM.
 
 ## Usage
 
 - #### Install the dependencies:
   ```
-  cd winjs/tools/d.ts-verifier 
+  cd winjs/tools/dts-verifier 
   npm install
   ```
 
