@@ -3,6 +3,7 @@
 "use strict";
 
 var fs = require('fs');
+var fsExtra = require('fs.extra');
 var path = require('path');
 var tscore = require('./tscore');
 
@@ -143,30 +144,59 @@ function sortedPrintObject(obj, indentCount) {
     }
 }
 
+function extractModelFromDts(dtsPath) {
+    var filePath = path.resolve(dtsPath);
+    var text = fs.readFileSync(filePath, 'utf8').toString();
+    var output = processFile(filePath, text);
+    return output;
+}
+
+function printUsage() {
+    console.log("Please pass a valid path. Usage: node main.js /path/to/winjs.d.ts /path/to/winjs");
+}
+
 function main() {
-    try {
-        var filePath = path.resolve(process.argv[2]);
-        var text = fs.readFileSync(filePath, 'utf8').toString();
-    } catch (e) {
-        console.log("Please pass a valid path. Usage: node main.js /path/to/winjs.d.ts");
+    if (process.argv.length < 4) {
+        printUsage();
         return;
     }
 
-    console.log("Generating model from definition file ...");
-    var output = processFile(filePath, text);
+    var dtsPath = path.resolve(process.argv[2]);
+    var winjsPath = path.resolve(process.argv[3]);
 
-    var sorted = "var model = " + sortedPrint(output) + ";";
-    fs.writeFileSync("./result.txt", sorted);
+    var dtsModel = extractModelFromDts(dtsPath);
+    fs.writeFileSync("./bin/dtsModel.json", JSON.stringify(dtsModel, null, 2));
 
+    fs.writeFileSync("./bin/dtsModel.json", JSON.stringify(dtsModel, null, 2));
+    fsExtra.copyRecursive(winjsPath, './bin/winjs/', function (err) {
+        fsExtra.copy('index.html', './bin/index.html', function (err) {
+            fsExtra.copy('dts-verifier.js', './bin/dts-verifier.js', function (err) {
+                var nodeStatic = require('node-static'),
+                    port = 8080,
+                    http = require('http');
 
-    console.log('Generated model written to result.txt. Press any key to exit');
+                // config
+                var file = new nodeStatic.Server('./bin', {
+                    cache: 3600,
+                    gzip: true
+                });
 
-    process.stdin.setRawMode(true);
-    process.stdin.resume();
-    process.stdin.on('data', process.exit.bind(process, 0));
-
+                // serve
+                http.createServer(function (request, response) {
+                    request.addListener('end', function () {
+                        file.serve(request, response);
+                    }).resume();
+                }).listen(port);
+                console.log("listening");
+            });
+        });
+    });
 }
 
 if (require.main === module) {
     main();
 }
+
+module.exports = {
+    extractModelFromDts: extractModelFromDts
+};

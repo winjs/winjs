@@ -164,5 +164,6 @@
     }
 
     // Entry point
-    main();
+    //main();
+    window.main = main;
 })();
