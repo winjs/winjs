@@ -689,8 +689,7 @@ define([
                     // the taskbar's tablet mode button, and the optional window frame back button.
                     var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
                     navManager.addEventListener("backrequested", hardwareButtonBackPressed);
-                }
-                else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     // For WP 8.1
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
                 }
@@ -729,8 +728,7 @@ define([
                 if (_WinRT.Windows.UI.Core.SystemNavigationManager) {
                     var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
                     navManager.removeEventListener("backrequested", hardwareButtonBackPressed);
-                }
-                else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
                 }
 
