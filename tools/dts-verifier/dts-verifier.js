@@ -39,12 +39,12 @@
         // Don't return any key that is considered private or is named "constructor".
 
         // If a key begins with an underscore it is considered private.
-        // If a key is named "constructor" it is a JS construct that is automatically added to every
-        // JavaScript function's prototype object and is a reference to function that created it. 
+        // If a key is named "constructor" it is a native JS construct that is automatically added to every
+        // JavaScript function's prototype object and is a reference to the function that created it. 
         // Unfortunately this property is enumerable so we have to filter it out explicitly, rather 
         // than rely on Object.keys(), lest many "constructor" false positives are reported as part 
         // of the WinJS UI Controls namespaces.
-        return key[0] !== "_" && key !== "constructor";
+        return !isPrivate(key) && key !== "constructor";
     }
 
     function isPrivate(key) {
@@ -113,7 +113,7 @@
     }
 
     function isSubSet(WinJS1, WinJS2) {
-        // Are the keys in WinJS1 a subset of keys in WinJS2?
+        // Are the keys in WinJS1 a subset of the keys in WinJS2?
 
         var missingNamespaces = [];
         function _isSubSetHelper(obj1, obj2, namespace) {
@@ -149,21 +149,22 @@
         }
     }
 
-    function main() {
-        // Ensure the relevant JavaScript files have loaded
-        window.WinJS || console.error("Missing WinJS");
-        window.tscheck && window.tscheck.TS || console.error("Missing data");
+    function main(WinJS, TSModel) {
+        // @ param WinJS a reference to the WinJS library
+        // @ param TSModel a model of the WinJS public API extracted from the WinJS.d.ts file.
+        WinJS || console.error("Missing WinJS");
+        TSModel || console.error("Missing TSModel ");
 
-        window.tscheck.JS = crawlPublicAPI(WinJS, "WinJS");
+        // Generate model of the public API from the WinJS library.
+        var JSModel = { WinJS: crawlPublicAPI(WinJS, "WinJS") };
 
         console.log("Namespaces included in WinJS that are missing from WinJS.d.ts: \n" +
-            printResults(isSubSet(tscheck.JS, tscheck.TS)));
+            printResults(isSubSet(JSModel.WinJS, TSModel.WinJS)));
 
         console.log("Namespaces included in WinJS.d.ts that are missing from WinJS: \n" +
-            printResults(isSubSet(tscheck.TS, tscheck.JS)));
+            printResults(isSubSet(TSModel.WinJS, JSModel.WinJS)));
     }
 
     // Entry point
-    //main();
     window.main = main;
 })();
