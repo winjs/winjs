@@ -164,16 +164,17 @@ function main() {
     var dtsPath = path.resolve(process.argv[2]);
     var winjsPath = path.resolve(process.argv[3]);
 
+    // Crawl the winjs.d.ts file and write the generated model to file.
     var dtsModel = extractModelFromDts(dtsPath);
     fs.writeFileSync("./bin/dtsModel.json", JSON.stringify(dtsModel, null, 2));
 
-    fs.writeFileSync("./bin/dtsModel.json", JSON.stringify(dtsModel, null, 2));
+    // Bin place files
     fsExtra.copyRecursive(winjsPath, './bin/winjs/', function (err) {
         fsExtra.copy('index.html', './bin/index.html', function (err) {
             fsExtra.copy('dts-verifier.js', './bin/dts-verifier.js', function (err) {
-                var nodeStatic = require('node-static'),
-                    port = 8080,
-                    http = require('http');
+                var nodeStatic = require('node-static');
+                var port = 9667;
+                var http = require('http');
 
                 // config
                 var file = new nodeStatic.Server('./bin', {
@@ -187,7 +188,7 @@ function main() {
                         file.serve(request, response);
                     }).resume();
                 }).listen(port);
-                console.log("listening on port 8080: http://localhost:8080/");
+                console.log("listening on port " + port+ ": http://localhost:" + port + "/");
             });
         });
     });

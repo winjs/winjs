@@ -13,7 +13,7 @@
     <script>
         (function () {
             WinJS.xhr({ url: 'dtsModel.json', responseType: 'json' }).then(function (result) {
-                var TSModel = JSON.parse(result.response);
+                var TSModel = result.response
                 main(WinJS, TSModel);
             });
         })();
