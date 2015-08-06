@@ -13,8 +13,9 @@
     <script>
         (function () {
             WinJS.xhr({ url: 'dtsModel.json', responseType: 'json' }).then(function (result) {
-                var TSModel = result.response
-                main(WinJS, TSModel);
+                
+                var TSModel = (typeof result.response === "string") ? JSON.parse(result.response) : result.response;
+                dtsVerifier(WinJS, TSModel);
             });
         })();
     </script>

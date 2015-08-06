@@ -14,14 +14,12 @@
 
 - #### Run the command line tool program with a version of the WinJS TypeScript type definition file:
   ```
-  node ./main.js /path/to/winjs.d.ts
+  node ./main.js /path/to/winjs.d.ts /path/to/WinJS_directory
   ```
-  This will output a model of the WinJS public API to `result.txt`
+  This will generate a model of the WinJS public API from the provided WinJS.d.ts file, and host it on a localhost server.
     
 - #### Analyze WinJS in the DOM and compare it to the model from WinJS.d.ts:
- 1. Replace the definition of model in `data.js` with the output from `result.txt`
- 2. Drop the latest version of WinJS files `base.js` and `ui.js` into the current directory
- 3. Open `index.html` in a browser and inspect the output from the console.
+  open a web browser and navigate to the localhost url provided by the command line tool
 
 ## Output
   dts-verifier outputs an ERROR if a title cased Namespace or any of its properties is found 

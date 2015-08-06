@@ -20,7 +20,7 @@
             // didn't exist on the WinJS.Utilities.QueryCollection object when inspected in the DOM.
             publicKeys = Object.getOwnPropertyNames(obj)
 
-            // Because we were forced to use Object.getOwnPropertyNames, we also have to filter out any non-standard or experimental Array API't that might be living in the non
+            // Because we were forced to use Object.getOwnPropertyNames, we also have to filter out any non-standard or experimental Array API's that might be living in the non
             // enumberable space. To date we are aware of these experimental array API's that aren't yet included in the Lib.d.ts definition of the "interface Array<T>". If the 
             // Lib.d.ts is ever updated to include them in the future, we should stop filtering them here.
             var experimentalFeatures = ["keys", "entries"];
@@ -149,7 +149,7 @@
         }
     }
 
-    function main(WinJS, TSModel) {
+    function dtsVerifier(WinJS, TSModel) {
         // @ param WinJS a reference to the WinJS library
         // @ param TSModel a model of the WinJS public API extracted from the WinJS.d.ts file.
         WinJS || console.error("Missing WinJS");
@@ -166,5 +166,5 @@
     }
 
     // Entry point
-    window.main = main;
+    window.dtsVerifier = dtsVerifier;
 })();
