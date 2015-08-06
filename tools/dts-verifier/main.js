@@ -187,7 +187,7 @@ function main() {
                         file.serve(request, response);
                     }).resume();
                 }).listen(port);
-                console.log("listening");
+                console.log("listening on port 8080: http://localhost:8080/");
             });
         });
     });
