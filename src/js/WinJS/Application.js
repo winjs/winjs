@@ -683,8 +683,14 @@ define([
                     settingsPane.addEventListener("commandsrequested", commandsRequested);
                 }
 
-                // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
-                if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                // This integrates WinJS.Application into the hardware or OS-provided back button.
+                if (_WinRT.Windows.UI.Core.SystemNavigationManager) {
+                    // On Win10 this accomodates hardware buttons (phone), 
+                    // the taskbar's tablet mode button, and the optional window frame back button.
+                    var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
+                    navManager.addEventListener("backrequested", hardwareButtonBackPressed);
+                } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                    // For WP 8.1
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.addEventListener("backpressed", hardwareButtonBackPressed);
                 }
 
@@ -719,8 +725,10 @@ define([
                     settingsPane.removeEventListener("commandsrequested", commandsRequested);
                 }
 
-                // Code in WinJS.Application for phone. This integrates WinJS.Application into the hardware back button.
-                if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
+                if (_WinRT.Windows.UI.Core.SystemNavigationManager) {
+                    var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
+                    navManager.removeEventListener("backrequested", hardwareButtonBackPressed);
+                } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
                 }
 
