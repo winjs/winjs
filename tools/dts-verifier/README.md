@@ -16,10 +16,11 @@
   ```
   node ./main.js /path/to/winjs.d.ts /path/to/WinJS_directory
   ```
-  This will generate a model of the WinJS public API from the provided WinJS.d.ts file, and host it on a localhost server.
+  This will generate a model of the WinJS public API from the provided WinJS.d.ts file, and print a localhost url to the command line.
     
 - #### Analyze WinJS in the DOM and compare it to the model from WinJS.d.ts:
-  open a web browser and navigate to the localhost url provided by the command line tool
+  open a web browser and navigate to the localhost url provided in the previous step.
+  open the  browser console to veiew the results. (You may need to refresh the page)
 
 ## Output
   dts-verifier outputs an ERROR if a title cased Namespace or any of its properties is found 
