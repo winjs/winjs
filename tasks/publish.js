@@ -16,10 +16,12 @@
             // winjs
             'gitreset:publishWinJsBower', 'gitclean:publishWinJsBower', 'gitpull:publishWinJsBower', // Make the local bower repo match the one on GitHub
             'clean:publishWinJs', 'copy:publishWinJs', 'compress:publishWinJs', 'gitadd:publishWinJsBower', 'nugetpack:publishWinJs',
+            'check-bom:publishWinJs', // BOM verification should be the last task in the group
             
             // winjs-localization
             'gitreset:publishLocalizationBower', 'gitclean:publishLocalizationBower', 'gitpull:publishLocalizationBower', // Make the local bower repo match the one on GitHub
-            'clean:publishLocalization', 'copy:publishLocalization', 'compress:publishLocalization', 'gitadd:publishLocalizationBower', 'nugetpack:publishLocalization'
+            'clean:publishLocalization', 'copy:publishLocalization', 'compress:publishLocalization', 'gitadd:publishLocalizationBower', 'nugetpack:publishLocalization',
+            'check-bom:publishLocalization' // BOM verification should be the last task in the group
         ]);
         
         // Populates the 'dist' folder and then uses it to:
