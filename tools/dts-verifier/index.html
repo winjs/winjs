@@ -14,7 +14,6 @@
         (function () {
             WinJS.xhr({ url: 'dtsModel.json', responseType: 'json' }).then(function (result) {
                 var TSModel = JSON.parse(result.response);
-                debugger;
                 main(WinJS, TSModel);
             });
         })();
