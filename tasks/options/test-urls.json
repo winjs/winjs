@@ -1,13 +1,12 @@
 {
     "all": [
           "http://127.0.0.1:9999/bin/tests/Animations/test.html?fastanimations=false&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/AppBar/test.html?fastanimations=true&autostart=true",
+          "http://127.0.0.1:9999/bin/tests/AppBarAndToolBar/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/AutoSuggestBox/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Base/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Binding/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/BindingList/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/BindingTemplate/test.html?fastanimations=true&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/CommandingSurface/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/ContentDialog/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/DateTime/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/FlipView/test.html?fastanimations=true&autostart=true",
@@ -29,12 +28,10 @@
           "http://127.0.0.1:9999/bin/tests/SplitView/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/TimePicker/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Toggle/test.html?fastanimations=true&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/ToolBar/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Tooltip/test.html?fastanimations=true&autostart=true&testtimeout=10000",
           "http://127.0.0.1:9999/bin/tests/UI/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/ViewBox/test.html?fastanimations=true&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/MediaPlayer/test.html?fastanimations=true&autostart=true"
+          "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true"
     ],
      "allWithExtendedDuration": [
          "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
