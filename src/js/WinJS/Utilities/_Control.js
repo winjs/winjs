@@ -12,16 +12,16 @@ define([
     }
 
     function setOptions(control, options) {
-        /// <signature helpKeyword="WinJS.UI.DOMEventMixin.setOptions">
-        /// <summary locid="WinJS.UI.DOMEventMixin.setOptions">
+        /// <signature helpKeyword="WinJS.UI.setOptions">
+        /// <summary locid="WinJS.UI.setOptions">
         /// Adds the set of declaratively specified options (properties and events) to the specified control.
         /// If name of the options property begins with "on", the property value is a function and the control
         /// supports addEventListener. The setOptions method calls the addEventListener method on the control.
         /// </summary>
-        /// <param name="control" type="Object" domElement="false" locid="WinJS.UI.DOMEventMixin.setOptions_p:control">
+        /// <param name="control" type="Object" domElement="false" locid="WinJS.UI.setOptions_p:control">
         /// The control on which the properties and events are to be applied.
         /// </param>
-        /// <param name="options" type="Object" domElement="false" locid="WinJS.UI.DOMEventMixin.setOptions_p:options">
+        /// <param name="options" type="Object" domElement="false" locid="WinJS.UI.setOptions_p:options">
         /// The set of options that are specified declaratively.
         /// </param>
         /// </signature>
