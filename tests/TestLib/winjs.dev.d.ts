@@ -821,7 +821,7 @@ declare module WinJS {
         var _AppBarCommandsLayout;
 
         module XYFocus {
-            var _xyFocusEnabledIFrames: Window[];
+            var _iframeHelper: any;
 
             function _xyFocus(direction: string, referenceRect?: IRect): void;
         }

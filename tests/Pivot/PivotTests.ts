@@ -1482,6 +1482,74 @@ module WinJSTests {
                 complete();
             });
         };
+
+        testSelectionChangedEventFiresAfterSelectedIndexIsUpdated = function (complete) {
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                pivot.addEventListener("selectionchanged", () => {
+                    LiveUnit.Assert.areEqual(2, pivot.selectedIndex);
+                    complete();
+                });
+
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+                pivot.selectedIndex = 2;
+                LiveUnit.Assert.areEqual(0, pivot.selectedIndex);
+            });
+        };
+
+        testCustomHeadersDoNotGetTouchOccluded = function (complete) {
+            var left = document.createElement("div");
+            var right = document.createElement("div");
+            left.style.width = right.style.width = "50px";
+
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(5)),
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            // Tell pivot we are in touch mode
+            pivot.element.classList.add("win-pivot-touch");
+
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                if (pivot.element.classList.contains("win-pivot-nosnap")) {
+                    LiveUnit.LoggingCore.logComment("This test relies on SnapPoints APIs which are not supported on this platform.");
+                    complete();
+                    return;
+                }
+
+                var viewport = pivot.element.querySelector(".win-pivot-viewport");
+
+                // With no custom headers set, the viewport should span over the headers
+                LiveUnit.Assert.areNotEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                // Left custom header is set, viewport should not span over the headers
+                pivot.customLeftHeader = left;
+                LiveUnit.Assert.areEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                // Left custom header removed, the viewport should span over the headers
+                pivot.customLeftHeader = null;
+                LiveUnit.Assert.areNotEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                // Right custom header is set, viewport should not span over the headers
+                pivot.customRightHeader = right;
+                LiveUnit.Assert.areEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                // Right custom header removed, the viewport should span over the headers
+                pivot.customRightHeader = null;
+                LiveUnit.Assert.areNotEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                // Both custom headers set, viewport should not span over the headers
+                pivot.customLeftHeader = left;
+                pivot.customRightHeader = right;
+                LiveUnit.Assert.areEqual(0, parseFloat(getComputedStyle(viewport).marginTop));
+
+                complete();
+            });
+        };
     }
 
     Object.keys(PivotTests).forEach(function (key) {

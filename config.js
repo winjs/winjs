@@ -24,6 +24,15 @@
     config.desktopOutput = config.outputFolder + config.desktopFramework + "/";
     config.compiledTsOutput = config.outputFolder + "tsbuild/";
     
+    config.reposRoot = 'repos/';
+    config.publishRoot = 'dist/';
+    config.winjsPublishRoot = config.publishRoot + 'winjs/';
+    config.winjsNpmPublishRoot = config.winjsPublishRoot + 'npm/';
+    config.winjsBowerRepo = config.reposRoot + 'winjs-bower/';
+    config.localizationPublishRoot = config.publishRoot + 'winjs-localization/';
+    config.localizationNpmPublishRoot = config.localizationPublishRoot + 'npm/';
+    config.localizationBowerRepo = config.reposRoot + 'winjs-localization-bower/';
+    
     config.stringsOutput = config.outputFolder + config.desktopFramework + "-strings/";
 
     config.uiStringsFiles = [
@@ -43,6 +52,5 @@
         "environment": [],
         "results":  []
     };
-    
     
 })();

@@ -20,6 +20,14 @@
         ],
         strings: [
             config.stringsOutput
+        ],
+        publishWinJs: [
+            config.winjsPublishRoot,
+            config.winjsBowerRepo + '*'
+        ],
+        publishLocalization: [
+            config.localizationPublishRoot,
+            config.localizationBowerRepo + '*'
         ]
     };
 })();

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+    <metadata>
+        <id>WinJS</id>
+        <version>1.0.0</version>
+        <title>Windows Library for JavaScript (WinJS)</title>
+        <authors>Microsoft Corporation and other contributors</authors>
+        <licenseUrl>https://github.com/winjs/winjs/blob/master/License.txt</licenseUrl>
+        <projectUrl>https://github.com/winjs/winjs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology.</description>
+        <copyright>Microsoft Corporation</copyright>
+        <tags>javascript</tags>
+    </metadata>
+    <files>
+        <file src="dist\winjs\npm\css\ui-dark.css" target="content\WinJS\css\ui-dark.css" />
+        <file src="dist\winjs\npm\css\ui-dark.min.css" target="content\WinJS\css\ui-dark.min.css" />
+        <file src="dist\winjs\npm\css\ui-light.css" target="content\WinJS\css\ui-light.css" />
+        <file src="dist\winjs\npm\css\ui-light.min.css" target="content\WinJS\css\ui-light.min.css" />
+        <file src="dist\winjs\npm\fonts\Symbols.ttf" target="content\WinJS\fonts\Symbols.ttf" />
+        <file src="dist\winjs\npm\js\en-US\ui.strings.js" target="content\WinJS\js\en-US\ui.strings.js" />
+        <file src="dist\winjs\npm\js\WinJS.intellisense-setup.js" target="content\WinJS\js\WinJS.intellisense-setup.js" />
+        <file src="dist\winjs\npm\js\WinJS.intellisense.js" target="content\WinJS\js\WinJS.intellisense.js" />
+        <file src="dist\winjs\npm\js\base.js" target="content\WinJS\js\base.js" />
+        <file src="dist\winjs\npm\js\base.min.js" target="content\WinJS\js\base.min.js" />
+        <file src="dist\winjs\npm\js\base.min.js.map" target="content\WinJS\js\base.min.js.map" />
+        <file src="dist\winjs\npm\js\ui.js" target="content\WinJS\js\ui.js" />
+        <file src="dist\winjs\npm\js\ui.min.js" target="content\WinJS\js\ui.min.js" />
+        <file src="dist\winjs\npm\js\ui.min.js.map" target="content\WinJS\js\ui.min.js.map" />
+        <file src="dist\winjs\npm\License.txt" target="content\WinJS\License.txt" />
+        <file src="dist\winjs\npm\README.md" target="content\WinJS\README.md" />
+    </files>
+</package>

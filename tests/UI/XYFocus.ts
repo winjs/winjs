@@ -701,10 +701,10 @@ module WinJSTests {
             var that = this;
             window.addEventListener("message", function windowMessage(e: MessageEvent) {
                 if (e.data["msWinJSXYFocusControlMessage"] && e.data["msWinJSXYFocusControlMessage"].type === "register") {
-                    LiveUnit.Assert.areEqual(1, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                    var origCount = WinJS.UI.XYFocus._iframeHelper.count();
                     window.removeEventListener("message", windowMessage);
                     iframeEl.contentWindow.addEventListener("unload", () => {
-                        LiveUnit.Assert.areEqual(0, WinJS.UI.XYFocus._xyFocusEnabledIFrames.length);
+                        LiveUnit.Assert.areEqual(origCount - 1, WinJS.UI.XYFocus._iframeHelper.count());
                         complete();
                     });
                     iframeEl.parentElement.removeChild(iframeEl);
@@ -723,6 +723,13 @@ module WinJSTests {
 
             Helper.keydown(layout[1], Keys.GamepadDPadRight);
             waitForFocus(window, layout[2]).done(complete);
+        }
+
+        testXYFocusWithNoActiveElementDoesNotCauseExceptions() {
+            var body = document.body;
+            document.body.parentElement.removeChild(body);
+            Helper.keydown(document.documentElement, Keys.GamepadDPadUp);
+            document.documentElement.appendChild(body);
         }
     }
 }

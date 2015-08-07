@@ -165,7 +165,6 @@ export function moveFocus(direction: string, options?: XYFocusOptions): HTMLElem
 var _lastTarget: HTMLElement;
 var _cachedLastTargetRect: IRect;
 var _historyRect: IRect;
-var _xyFocusEnabledIFrames: Window[] = [];
 
 /**
  * Executes XYFocus algorithm with the given parameters. Returns true if focus was moved, false otherwise.
@@ -209,8 +208,8 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         }
 
         if (result.target.tagName === "IFRAME") {
-            var index = _xyFocusEnabledIFrames.lastIndexOf((<HTMLIFrameElement>result.target).contentWindow);
-            if (index >= 0) {
+            var targetIframe = <HTMLIFrameElement>result.target;
+            if (IFrameHelper.isXYFocusEnabled(targetIframe)) {
                 // If we successfully moved focus and the new focused item is an IFRAME, then we need to notify it
                 // Note on coordinates: When signaling enter, DO transform the coordinates into the child frame's coordinate system.
                 var refRect = _toIRect({
@@ -226,7 +225,8 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
                     direction: direction,
                     referenceRect: refRect
                 };
-                (<HTMLIFrameElement>result.target).contentWindow.postMessage(message, "*");
+                // postMessage API is safe even in cross-domain scenarios.
+                targetIframe.contentWindow.postMessage(message, "*");
             }
         }
         eventSrc.dispatchEvent(EventNames.focusChanged, { previousFocusElement: activeElement, keyCode: keyCode });
@@ -246,6 +246,7 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
                 direction: direction,
                 referenceRect: refRect
             };
+            // postMessage API is safe even in cross-domain scenarios.
             _Global.parent.postMessage(message, "*");
             return true;
         }
@@ -507,7 +508,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             return false;
         }
 
-        if (elementTagName === "IFRAME" && _xyFocusEnabledIFrames.indexOf((<HTMLIFrameElement>element).contentWindow) === -1) {
+        if (elementTagName === "IFRAME" && !IFrameHelper.isXYFocusEnabled(<HTMLIFrameElement>element)) {
             // Skip IFRAMEs without compatible XYFocus implementation
             return false;
         }
@@ -562,12 +563,6 @@ function _trySetFocus(element: HTMLElement, keyCode: number) {
     return _Global.document.activeElement === element;
 }
 
-function _getIFrameFromWindow(win: Window) {
-    var iframes = _Global.document.querySelectorAll("IFRAME");
-    var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
-    return found.length ? found[0] : null;
-}
-
 function _isToggleMode(element: HTMLElement) {
     if (_ElementUtilities.hasClass(element, ClassNames.toggleMode)) {
         return true;
@@ -597,13 +592,6 @@ function _isToggleMode(element: HTMLElement) {
     return false;
 }
 
-function _unregisterIFrame(window: Window) {
-    var index = _xyFocusEnabledIFrames.indexOf(window);
-    if (index !== -1) {
-        _xyFocusEnabledIFrames.splice(index, 1);
-    }
-}
-
 function _handleKeyEvent(e: KeyboardEvent): void {
     if (e.defaultPrevented) {
         return;
@@ -612,9 +600,14 @@ function _handleKeyEvent(e: KeyboardEvent): void {
     var activeElement = <HTMLElement>_Global.document.activeElement;
     var shouldPreventDefault = false;
 
-    var suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
-    var toggleMode = _isToggleMode(activeElement);
-    var toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+    var suspended = false;
+    var toggleMode = false;
+    var toggleModeActive = false;
+    if (activeElement) {
+        suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
+        toggleMode = _isToggleMode(activeElement);
+        toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+    }
 
     var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
     if (suspended) {
@@ -689,7 +682,7 @@ module KeyHandlerStates {
     export class ToggleModeActiveState {
         static accept = _clickElement;
         static cancel(element: HTMLElement) {
-            _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
+            element && _ElementUtilities.removeClass(element, ClassNames.toggleModeActive);
             return true;
         }
         static xyFocus = _nop;
@@ -705,6 +698,70 @@ module KeyHandlerStates {
     }
 }
 
+module IFrameHelper {
+    // XYFocus caches registered iframes and iterates over the cache for its focus navigation implementation.
+    // However, since there is no reliable way for an iframe to unregister with its parent as it can be
+    // spontaneously taken out of the DOM, the cache can go stale. This helper module makes sure that on
+    // every query to the iframe cache, stale iframes are removed.
+    // Furthermore, merely accessing an iframe that has been garbage collected by the platform will cause an
+    // exception so each iteration during a query must be in a try/catch block.
+
+    var iframes: HTMLIFrameElement[] = [];
+
+    export function count() {
+        // Iterating over it causes stale iframes to be cleared from the cache.
+        _safeForEach(() => false);
+        return iframes.length;
+    }
+
+    export function getIFrameFromWindow(win: Window) {
+        var iframes = _Global.document.querySelectorAll("IFRAME");
+        var found = <Array<HTMLIFrameElement>>Array.prototype.filter.call(iframes, (x: HTMLIFrameElement) => x.contentWindow === win);
+        return found.length ? found[0] : null;
+    }
+
+    export function isXYFocusEnabled(iframe: HTMLIFrameElement) {
+        var found = false;
+        _safeForEach(ifr => {
+            if (ifr === iframe) {
+                found = true;
+            }
+        });
+        return found;
+    }
+
+    export function registerIFrame(iframe: HTMLIFrameElement) {
+        iframes.push(iframe);
+    }
+
+    export function unregisterIFrame(iframe: HTMLIFrameElement) {
+        var index = -1;
+        _safeForEach((ifr, i) => {
+            if (ifr === iframe) {
+                index = i;
+            }
+        });
+        if (index !== -1) {
+            iframes.splice(index, 1);
+        }
+    }
+
+    function _safeForEach(callback: (frame: HTMLIFrameElement, index: number) => any) {
+        for (var i = iframes.length - 1; i >= 0; i--) {
+            try {
+                var iframe = iframes[i];
+                if (!iframe.contentWindow) {
+                    iframes.splice(i, 1);
+                } else {
+                    callback(iframe, i);
+                }
+            } catch (e) {
+                // Iframe has been GC'd
+                iframes.splice(i, 1);
+            }
+        }
+    }
+}
 
 if (_Global.document) {
     // Note: This module is not supported in WebWorker
@@ -718,6 +775,22 @@ if (_Global.document) {
     keyCodeMap.cancel.push(Keys.GamepadB, Keys.NavigationCancel);
 
     _Global.addEventListener("message", (e: MessageEvent): void => {
+        // Note: e.source is the Window object of an iframe which could be hosting content
+        // from a different domain. No properties on e.source should be accessed or we may
+        // run into a cross-domain access violation exception.
+
+        var sourceWindow: Window = null;
+        try {
+            // Since messages are async, by the time we get this message, the iframe could've
+            // been removed from the DOM and e.source is null or throws an exception on access.
+            sourceWindow = e.source;
+            if (!sourceWindow) {
+                return;
+            }
+        } catch (e) {
+            return;
+        }
+
         if (!e.data || !e.data[CrossDomainMessageConstants.messageDataProperty]) {
             return;
         }
@@ -725,18 +798,13 @@ if (_Global.document) {
         var data: ICrossDomainMessage = e.data[CrossDomainMessageConstants.messageDataProperty];
         switch (data.type) {
             case CrossDomainMessageConstants.register:
-                // e.source may be undefined if the iframe is no longer in the DOM
-                if (e.source) {
-                    _xyFocusEnabledIFrames.push(e.source);
-                    e.source.addEventListener("unload", function XYFocus_handleIFrameUnload() {
-                        _unregisterIFrame(e.source);
-                        e.source.removeEventListener("unload", XYFocus_handleIFrameUnload);
-                    });
-                }
+                var iframe = IFrameHelper.getIFrameFromWindow(sourceWindow);
+                iframe && IFrameHelper.registerIFrame(iframe);
                 break;
 
             case CrossDomainMessageConstants.unregister:
-                _unregisterIFrame(e.source);
+                var iframe = IFrameHelper.getIFrameFromWindow(sourceWindow);
+                iframe && IFrameHelper.unregisterIFrame(iframe);
                 break;
 
             case CrossDomainMessageConstants.dFocusEnter:
@@ -745,7 +813,7 @@ if (_Global.document) {
                 break;
 
             case CrossDomainMessageConstants.dFocusExit:
-                var iframe = _getIFrameFromWindow(e.source);
+                var iframe = IFrameHelper.getIFrameFromWindow(sourceWindow);
                 if (_Global.document.activeElement !== iframe) {
                     // Since postMessage is async, by the time we get this message, the user may have
                     // manually moved the focus elsewhere, if so, ignore this message.
@@ -801,7 +869,7 @@ if (_Global.document) {
         onfocuschanging: _Events._createEventProperty(EventNames.focusChanging),
 
         _xyFocus: _xyFocus,
-        _xyFocusEnabledIFrames: _xyFocusEnabledIFrames
+        _iframeHelper: IFrameHelper
     };
     toPublish = _BaseUtils._merge(toPublish, _Events.eventMixin);
     toPublish["_listeners"] = {};

@@ -117,7 +117,14 @@ export class Pivot {
     }
     set customLeftHeader(value: HTMLElement) {
         _ElementUtilities.empty(this._customLeftHeader);
-        value && this._customLeftHeader.appendChild(value);
+        if (value) {
+            this._customLeftHeader.appendChild(value);
+            _ElementUtilities.addClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+        } else {
+            if (!this._customLeftHeader.children.length && !this._customRightHeader.childNodes.length) {
+                _ElementUtilities.removeClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+            }
+        }
         this.forceLayout();
     }
 
@@ -129,7 +136,14 @@ export class Pivot {
     }
     set customRightHeader(value: HTMLElement) {
         _ElementUtilities.empty(this._customRightHeader);
-        value && this._customRightHeader.appendChild(value);
+        if (value) {
+            this._customRightHeader.appendChild(value);
+            _ElementUtilities.addClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+        } else {
+            if (!this._customLeftHeader.children.length && !this._customRightHeader.childNodes.length) {
+                _ElementUtilities.removeClass(this._element, _Constants._ClassNames.pivotCustomHeaders);
+            }
+        }
         this.forceLayout();
 
     }
@@ -512,14 +526,7 @@ export class Pivot {
         this._slideHeadersAnimation.cancel();
 
         var goPrev = this._animateToPrevious;
-
         var newItem = this._items.getAt(index);
-        var selectionChangedDetail = {
-            index: index,
-            direction: goPrev ? "backwards" : "forward",
-            item: newItem
-        };
-        this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
         var skipAnimation = this._firstLoad;
 
         var thisLoadPromise = this._loadPromise = this._loadPromise.then(() => {
@@ -527,6 +534,14 @@ export class Pivot {
             oldItem && this._hidePivotItem(oldItem.element, goPrev, skipAnimation);
             var oldIndex = this._selectedIndex;
             this._selectedIndex = index;
+
+            var selectionChangedDetail = {
+                index: index,
+                direction: goPrev ? "backwards" : "forward",
+                item: newItem
+            };
+            this._fireEvent(_EventNames.selectionChanged, true, false, selectionChangedDetail);
+
             this._headersState.handleNavigation(goPrev, index, oldIndex);
 
             // Note: Adding Promise.timeout to force asynchrony so that thisLoadPromise
@@ -1197,6 +1212,7 @@ class HeaderStateStatic extends HeaderStateBase {
         this.setActiveHeader(headerElement);
         this.pivot._animateToPrevious = headerElement["_pivotItemIndex"] < this.pivot.selectedIndex;
         this.pivot.selectedIndex = headerElement["_pivotItemIndex"];
+        this.pivot._animateToPrevious = false;
     }
 
     handleNavigation(goPrevious: boolean, index: number, oldIndex: number) {

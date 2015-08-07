@@ -38,6 +38,7 @@ define([
         "Windows.UI.ApplicationSettings.SettingsCommand",
         "Windows.UI.ApplicationSettings.SettingsPane",
         "Windows.UI.Core.AnimationMetrics",
+        "Windows.UI.Core.SystemNavigationManager",
         "Windows.UI.Input.EdgeGesture",
         "Windows.UI.Input.EdgeGestureKind",
         "Windows.UI.Input.PointerPoint",

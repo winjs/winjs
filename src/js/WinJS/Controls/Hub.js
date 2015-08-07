@@ -788,6 +788,13 @@ define([
                                                     this._viewportElement.style["-ms-overflow-style"] = "none";
                                                     onScreenItemsAnimatedPromise = Animations.enterContent(this._viewportElement).then(function () {
                                                         this._viewportElement.style["-ms-overflow-style"] = "";
+
+                                                        this._viewportElement.onmousewheel = function () {
+                                                            /*
+                                                                This fixes a mousewheel scrolling issue on Chrome. This empty event handler can be removed
+                                                                once https://code.google.com/p/chromium/issues/detail?id=515674 is resolved and fixed.
+                                                            */
+                                                        };
                                                     }.bind(this));
                                                 }
                                             }

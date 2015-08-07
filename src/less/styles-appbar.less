@@ -4,6 +4,12 @@
     min-width: 32px; /* enough to fit the overflowbutton */
     position: fixed;
     position: -ms-device-fixed;
+    /* AppBar should overlay content in the body when opened or closed.
+     * This z-index value is chosen to be smaller than light dismissables.
+     * z-index will be overwritten by the light dismiss service to an even
+     * higher value when the AppBar is in the opened state.
+     */
+    z-index: 999;
 
     &.win-appbar-top {
         top: 0;
