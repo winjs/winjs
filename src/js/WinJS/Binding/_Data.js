@@ -635,7 +635,7 @@ define([
     _Base.Namespace._moduleDefine(exports, "WinJS.Binding", {
         // must use long form because mixin has "get" and "set" as members, so the define
         // method thinks it's a property
-        mixin: { value: dynamicObservableMixin, enumerable: false, writable: true, configurable: true },
+        mixin: { value: dynamicObservableMixin, enumerable: true, writable: true, configurable: true },
         dynamicObservableMixin: { value: dynamicObservableMixin, enumerable: true, writable: true, configurable: true },
         observableMixin: { value: observableMixin, enumerable: true, writable: true, configurable: true },
         expandProperties: expandProperties,
