@@ -7,10 +7,11 @@ define(['exports',
     '../../ControlProcessor',
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
+    '../../Utilities/_KeyboardBehavior',
     '../AppBar/_Icon',
     'require-style!less/styles-splitviewcommand',
     'require-style!less/colors-splitviewcommand'
-], function SplitViewCommandInit(exports, _Global, _Base, _ErrorFromName, _Events, ControlProcessor, _Control, _ElementUtilities, _Icon) {
+], function SplitViewCommandInit(exports, _Global, _Base, _ErrorFromName, _Events, ControlProcessor, _Control, _ElementUtilities, _KeyboardBehavior, _Icon) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -158,6 +159,9 @@ define(['exports',
                 if (element.winControl) {
                     throw new _ErrorFromName("WinJS.UI.SplitViewCommand.DuplicateConstruction", strings.duplicateConstruction);
                 }
+
+                // Sign up for keyboard focus rect
+                new _KeyboardBehavior._WinKeyboard(element);
 
                 this._baseConstructor(element, options);
             }, {

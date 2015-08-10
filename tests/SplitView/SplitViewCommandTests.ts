@@ -240,6 +240,26 @@ module SplitViewTests {
                 LiveUnit.Assert.areEqual("WinJS.UI.SplitViewCommand.DuplicateConstruction", e.name);
             }
         };
+
+        testKeyboardFocusRect = function () {
+            // Verifies that the SplitViewCommand button gains and loses the css class for keyboard focus when 
+            // switching to and from interacting with the keyboard. SplitViewCommand uses a ".win-keyboard:focus::before" 
+            // pseudo element rule to dictate the appearance of a focus rect for keyboard intereaction.
+            var splitViewCommandEl = document.getElementById("host");
+            var splitViewCommand = new WinJS.UI.SplitViewCommand(splitViewCommandEl);
+            var buttonElement = <HTMLElement>splitViewCommandEl.querySelector(".win-splitviewcommand-button");
+            buttonElement.focus();
+            LiveUnit.Assert.areEqual(buttonElement, document.activeElement);
+
+            Helper.touchDown(buttonElement);
+            LiveUnit.Assert.areEqual(false, WinJS.Utilities.hasClass(buttonElement, "win-keyboard"));
+
+            Helper.keydown(buttonElement, Key.enter);
+            LiveUnit.Assert.areEqual(true, WinJS.Utilities.hasClass(buttonElement, "win-keyboard"));
+
+            Helper.touchDown(buttonElement);
+            LiveUnit.Assert.areEqual(false, WinJS.Utilities.hasClass(buttonElement, "win-keyboard"));
+        }
     };
 }
 LiveUnit.registerTestClass("SplitViewTests.SplitViewCommandTests");
