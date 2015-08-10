@@ -161,7 +161,7 @@ define(['exports',
                 }
 
                 // Sign up for keyboard focus rect
-                new _KeyboardBehavior._WinKeyboard(element);
+                this._winKeyboard = new _KeyboardBehavior._WinKeyboard(element);
 
                 this._baseConstructor(element, options);
             }, {
