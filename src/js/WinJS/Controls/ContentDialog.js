@@ -91,7 +91,7 @@ define([
                 beforeHide: "beforehide",
                 afterHide: "afterhide",
             };
-            var minContentHeightWithInputPane = 96;
+            var minDialogHeight = 184; // Keep in sync with the LESS file
 
             // WinJS animation promises always complete successfully. This
             // helper allows an animation promise to complete in the canceled state
@@ -461,10 +461,14 @@ define([
                 
                 this._onInputPaneShownBound = this._onInputPaneShown.bind(this);
                 this._onInputPaneHiddenBound = this._onInputPaneHidden.bind(this);
+                this._onUpdateInputPaneRenderingBound = this._onUpdateInputPaneRendering.bind(this);
 
                 this._disposed = false;
-                this._resizedForInputPane = false;
                 this._currentFocus = null;
+                this._rendered = {
+                    resizedForInputPane: false,
+                    height: ""
+                };
 
                 this._initializeDom(element || _Global.document.createElement("div"));
                 this._setState(States.Init);
@@ -601,6 +605,7 @@ define([
                     }
                     this._setState(States.Disposed);
                     this._disposed = true;
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
                     _Dispose._disposeElement(this._dom.content);
                 },
 
@@ -780,6 +785,13 @@ define([
                 _onInputPaneHidden: function ContentDialog_onInputPaneHidden() {
                     this._state.onInputPaneHidden();
                 },
+                
+                _onUpdateInputPaneRendering: function ContentDialog_onUpdateInputPaneRendering() {
+                    if (_WinRT.Windows.UI.ViewManagement.InputPane) {
+                        var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
+                        this._renderForInputPane(inputPaneHeight);
+                    }
+                },
 
                 //
                 // Methods called by states
@@ -853,61 +865,58 @@ define([
 
                 _addExternalListeners: function ContentDialog_addExternalListeners() {
                     _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
-                    _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
+                    _ElementUtilities._inputPaneListener.addEventListener(this._dom.root, "hiding", this._onInputPaneHiddenBound);
                 },
 
                 _removeExternalListeners: function ContentDialog_removeExternalListeners() {
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "showing", this._onInputPaneShownBound);
-                    _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneShownBound);
+                    _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneHiddenBound);
                 },
-
-                _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {
-                    this._clearInputPaneRendering();
-
+                
+                _willInputPaneOccludeDialog: function ContentDialog_willInputPaneOccludeDialog(inputPaneHeight) {
                     var dialog = this._dom.dialog;
-                    var style = dialog.style;
-                    var left = dialog.offsetLeft;
                     var top = dialog.offsetTop;
                     var height = dialog.offsetHeight;
                     var bottom = top + height;
                     var visibleBottom = this._dom.root.offsetHeight - inputPaneHeight;
-                    var titleHeight = _ElementUtilities.getTotalHeight(this._dom.title);
-                    var commandsHeight = _ElementUtilities.getTotalHeight(this._dom.commandContainer);
 
-                    if (bottom > visibleBottom) {
-                        var newHeight = height - (bottom - visibleBottom);
-                        if (newHeight - titleHeight - commandsHeight < minContentHeightWithInputPane) {
-                            // Put title into scroller so there's more screen real estate for the content
-                            this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
+                    return bottom > visibleBottom;
+                },
+                
+                _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {
+                    var rendered = this._rendered;
+                    if (rendered.resizedForInputPane || this._willInputPaneOccludeDialog(inputPaneHeight)) {
+                        var height = Math.max(minDialogHeight, window.innerHeight - inputPaneHeight) + "px";
+                        if (height !== rendered.height) {
+                            this._dom.root.style.height = height;
+                            this._dom.backgroundOverlay.style.height = height;
+                            rendered.height = height;
+                            
+                            if (!rendered.resizedForInputPane) {
+                                rendered.resizedForInputPane = true;
+                                _ElementUtilities._resizeNotifier.subscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
+                                // Put title into scroller so there's more screen real estate for the content
+                                this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
+                            }
+                            
+                            _Global.document.activeElement.scrollIntoView(); // Ensure activeElement is scrolled into view
                         }
-
-                        this._dom.root.style.display = "block";
-                        style.height = newHeight + "px";
-                        style.position = "absolute";
-                        style.left = left + "px";
-                        style.top = top + "px";
-                        style.minHeight = 0;
-
-                        this._resizedForInputPane = true;
-                        _Global.document.activeElement.focus(); // Ensure activeElement is scrolled into view
                     }
                 },
 
                 _clearInputPaneRendering: function ContentDialog_clearInputPaneRendering() {
-                    if (this._resizedForInputPane) {
-                        if (this._dom.title.parentNode !== this._dom.dialog) {
-                            // Make sure the title isn't in the scroller
-                            this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
-                        }
-
-                        var style = this._dom.dialog.style;
-                        this._dom.root.style.display = "";
-                        style.height = "";
-                        style.position = "";
-                        style.left = "";
-                        style.top = "";
-                        style.minHeight = "";
-                        this._resizedForInputPane = false;
+                    var rendered = this._rendered;
+                    if (rendered.resizedForInputPane) {
+                        rendered.resizedForInputPane = false;
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
+                        // Make sure the title isn't in the scroller
+                        this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
+                    }
+                    
+                    if (rendered.height !== "") {
+                        this._dom.root.style.height = "";
+                        this._dom.backgroundOverlay.style.height = "";
+                        rendered.height = "";
                     }
                 }
             }, {
