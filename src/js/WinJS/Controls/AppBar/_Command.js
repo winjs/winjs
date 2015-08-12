@@ -433,7 +433,7 @@ define([
                 hidden: {
                     get: function () {
                         // Ensure it's a boolean because we're using the DOM element to keep in-sync
-                        return this._element.style.visibility === "hidden";
+                        return _ElementUtilities.hasClass(this._element, "win-command-hidden");
                     },
                     set: function (value) {
                         if (value === this.hidden) {
@@ -441,21 +441,22 @@ define([
                             return;
                         }
 
-                        var style = this._element.style;
-                        var originalVisibility = style.visibility;
-                        var originalDisplay = style.display;
+                        var wasHidden = this.hidden;
 
                         if (value) {
-                            style.visibility = "hidden";
-                            style.display = "none";
+                            _ElementUtilities.addClass(this._element, "win-command-hidden");
                         } else {
-                            style.visibility = "";
-                            style.display = "inline-block";
+                            _ElementUtilities.removeClass(this._element, "win-command-hiding");
+                            _ElementUtilities.removeClass(this._element, "win-command-hidden");
                         }
 
                         if (!this._sendEvent(_Constants.commandVisibilityChanged)) {
-                            style.visibility = originalVisibility;
-                            style.display = originalDisplay;
+                            if (wasHidden) {
+                                _ElementUtilities.addClass(this._element, "win-command-hidden");
+                            } else {
+                                _ElementUtilities.removeClass(this._element, "win-command-hiding");
+                                _ElementUtilities.removeClass(this._element, "win-command-hidden");
+                            }
                         }
                     }
                 },

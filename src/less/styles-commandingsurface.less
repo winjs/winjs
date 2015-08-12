@@ -172,6 +172,16 @@
     &.win-commandingsurface-closing.win-commandingsurface-closeddisplaynone .win-command {
         opacity: 0;
     }
+
+    .win-command.win-command-hiding {
+        display: inline-block;
+    }
+
+    .win-command.win-command-overflown,
+    .win-command.win-command-secondary-hidden,
+    .win-command.win-command-separator-hidden {
+        display: none;
+    }
 }
 
 @media(max-width:480px) {
