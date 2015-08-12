@@ -2224,7 +2224,7 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "E", id: "E" })
             ]);
 
-            this._element.style.width = "10px";
+            this._element.style.width = "1000px";
             var commandingSurface = new _CommandingSurface(this._element, {
                 data: data
             });
@@ -2233,12 +2233,13 @@ module CorsicaTests {
                 for (var i = 0, len = expectedShown.length; i < len; i++) {
                     var shownCommand = commandingSurface.getCommandById(expectedShown[i]);
                     LiveUnit.Assert.isFalse(shownCommand.hidden);
-                    LiveUnit.Assert.areEqual("inline-block", shownCommand.element.style.display);
+                    LiveUnit.Assert.areEqual("inline-block", getComputedStyle(shownCommand.element).display);
                 }
                 for (var i = 0, len = expectedHidden.length; i < len; i++) {
                     var hiddenCommand = commandingSurface.getCommandById(expectedHidden[i]);
                     LiveUnit.Assert.isTrue(hiddenCommand.hidden);
-                    LiveUnit.Assert.areEqual("none", hiddenCommand.element.style.display);
+                    hiddenCommand.element.classList.remove("win-command-hiding");
+                    LiveUnit.Assert.areEqual("none", getComputedStyle(hiddenCommand.element).display);
                 }
             }
 
