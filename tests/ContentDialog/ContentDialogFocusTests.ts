@@ -54,9 +54,9 @@ module ContentDialogTests {
 
             Helper.waitForFocusWithin(dialog.element, function () { dialog.show(); }).then(function () {
                 LiveUnit.Assert.areEqual(
-                    dialog.element.querySelector(".customButton1"),
+                    dialog.element.querySelector("." + ContentDialog._ClassNames.dialog),
                     document.activeElement,
-                    "The first focusable element in the dialog's content should have received focus"
+                    "The dialog itself should receive focus"
                 );
                 dialog.hide();
                 Helper.validateUnhandledErrors();
