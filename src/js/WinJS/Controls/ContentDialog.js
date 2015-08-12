@@ -874,19 +874,23 @@ define([
                 },
                 
                 _willInputPaneOccludeDialog: function ContentDialog_willInputPaneOccludeDialog(inputPaneHeight) {
+                    var layoutViewportHeight = _Global.document.documentElement.clientHeight;
+                    
                     var dialog = this._dom.dialog;
                     var top = dialog.offsetTop;
                     var height = dialog.offsetHeight;
                     var bottom = top + height;
-                    var visibleBottom = this._dom.root.offsetHeight - inputPaneHeight;
+                    var visibleBottom = layoutViewportHeight - inputPaneHeight;
 
                     return bottom > visibleBottom;
                 },
                 
                 _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {
                     var rendered = this._rendered;
+                    var layoutViewportHeight = _Global.document.documentElement.clientHeight;
+                    
                     if (rendered.resizedForInputPane || this._willInputPaneOccludeDialog(inputPaneHeight)) {
-                        var height = Math.max(minDialogHeight, window.innerHeight - inputPaneHeight) + "px";
+                        var height = Math.max(minDialogHeight, layoutViewportHeight - inputPaneHeight) + "px";
                         if (height !== rendered.height) {
                             this._dom.root.style.height = height;
                             this._dom.backgroundOverlay.style.height = height;
