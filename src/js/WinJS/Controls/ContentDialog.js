@@ -286,11 +286,8 @@ define([
                                 that._pendingHide = null;
                                 _ElementUtilities.addClass(that.dialog._dom.root, ClassNames._visible);
                                 that.dialog._addExternalListeners();
-                                if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                                    var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
-                                    if (inputPaneHeight > 0) {
-                                        that.dialog._renderForInputPane();
-                                    }
+                                if (_KeyboardInfo._KeyboardInfo._visible) {
+                                    that.dialog._renderForInputPane();
                                 }
                                 _LightDismissService.shown(that.dialog._dismissable);
                                 return that.dialog._playEntranceAnimation();
@@ -788,9 +785,10 @@ define([
                 },
                 
                 _onUpdateInputPaneRendering: function ContentDialog_onUpdateInputPaneRendering() {
-                    if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                        this._renderForInputPane();
-                    }
+                    // When the dialog and the input pane are shown and the window resizes, this may
+                    // change the visual document's dimensions so we may need to update the rendering
+                    // of the dialog.
+                    this._renderForInputPane();
                 },
 
                 //
@@ -880,8 +878,8 @@ define([
                         return true;
                     } else {
                         // Dialog is at its default size. It should maintain its size as long as the
-                        // input pane doesn't occlude it. This makes it so that the dialog visual doesn't
-                        // jump unnecessarily when the input pane shows but doesn't occlude the dialog.
+                        // input pane doesn't occlude it. This makes it so the dialog visual doesn't
+                        // jump unnecessarily when the input pane shows if it won't occlude the dialog.
                         var dialogRect = this._dom.dialog.getBoundingClientRect();
                         var willInputPaneOccludeDialog =
                             _KeyboardInfo._KeyboardInfo._visibleDocTop > dialogRect.top ||
@@ -923,6 +921,11 @@ define([
                             // Put title into scroller so there's more screen real estate for the content
                             this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
                             this._dom.root.style.height = "auto"; // Height will be determined by setting top & bottom
+                            // Ensure activeElement is scrolled into view
+                            var activeElement = _Global.document.activeElement;
+                            if (activeElement && this._dom.scroller.contains(activeElement)) {
+                                activeElement.scrollIntoView();
+                            }
                             rendered.resizedForInputPane = true;
                         }
                     }

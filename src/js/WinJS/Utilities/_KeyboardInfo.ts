@@ -161,7 +161,10 @@ _KeyboardInfo = {
         return _Constants.scrollTimeout;
     },
 
-    // _layoutViewportCoords is used with elements that use position:fixed instead of position:-ms-device-fixed
+    // _layoutViewportCoords gives the top and bottom offset of the visible document for elements using
+    // position:fixed. Comparison with position:-ms-device-fixed hepler:
+    //   - Like -ms-device-fixed helper, takes into account input pane occlusion.
+    //   - Unlike -ms-device-fixed helper, doesn't account for optical zoom.
     get _layoutViewportCoords(): { visibleDocTop: number; visibleDocBottom: number } {
         var topOffset = _Global.window.pageYOffset - _Global.document.documentElement.scrollTop;
         var bottomOffset = _Global.document.documentElement.clientHeight - (topOffset + this._visibleDocHeight);
