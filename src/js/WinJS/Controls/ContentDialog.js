@@ -873,13 +873,25 @@ define([
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneHiddenBound);
                 },
                 
-                _willInputPaneOccludeDialog: function ContentDialog_willInputPaneOccludeDialog() {
-                    var dialogRect = this._dom.dialog.getBoundingClientRect();
-                    
-                    return _KeyboardInfo._KeyboardInfo._visibleDocTop > dialogRect.top ||
-                        _KeyboardInfo._KeyboardInfo._visibleDocBottom < dialogRect.bottom;
+                _shouldResizeForInputPane: function ContentDialog_shouldResizeForInputPane() {
+                    if (this._rendered.resizedForInputPane) {
+                        // Dialog has already resized for the input pane so it should continue adjusting
+                        // its size as the input pane occluded rect changes.
+                        return true;
+                    } else {
+                        // Dialog is at its default size. It should maintain its size as long as the
+                        // input pane doesn't occlude it. This makes it so that the dialog visual doesn't
+                        // jump unnecessarily when the input pane shows but doesn't occlude the dialog.
+                        var dialogRect = this._dom.dialog.getBoundingClientRect();
+                        var willInputPaneOccludeDialog =
+                            _KeyboardInfo._KeyboardInfo._visibleDocTop > dialogRect.top ||
+                            _KeyboardInfo._KeyboardInfo._visibleDocBottom < dialogRect.bottom;
+                        
+                        return willInputPaneOccludeDialog;
+                    }
                 },
                 
+                // This function assumes it's in an environment that supports -ms-device-fixed.
                 _renderForInputPane: function ContentDialog_renderForInputPane() {
                     var rendered = this._rendered;
                     
@@ -888,11 +900,11 @@ define([
                         rendered.registeredForResize = true;
                     }
                     
-                    if (rendered.resizedForInputPane || this._willInputPaneOccludeDialog()) {
+                    if (this._shouldResizeForInputPane()) {
                         if (!rendered.resizedForInputPane) {
                             // Put title into scroller so there's more screen real estate for the content
                             this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
-                            this._dom.root.style.height = "auto";
+                            this._dom.root.style.height = "auto"; // Height will be determined by setting top & bottom
                             rendered.resizedForInputPane = true;
                         }
                         
