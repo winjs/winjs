@@ -664,7 +664,7 @@ define([
                         '<div class="' + ClassNames.backgroundOverlay + '"></div>' +
                         '<div class="' + ClassNames._tabStop + '"></div>' +
                         '<div tabindex="-1" role="dialog" class="' + ClassNames.dialog + '">' +
-                            '<div class="' + ClassNames.title + '"></div>' +
+                            '<h2 class="' + ClassNames.title + '" role="heading"></h2>' +
                             '<div class="' + ClassNames._scroller + '"></div>' +
                             '<div class="' + ClassNames.commands + '">' +
                                 '<button type="button" class="' + ClassNames._commandSpacer + ' win-button"></button>' +
