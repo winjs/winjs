@@ -901,6 +901,11 @@ define([
                     }
                     
                     if (this._shouldResizeForInputPane()) {
+                        // Lay the dialog out using its normal rules but restrict it to the *visible document*
+                        // rather than the *visual viewport*.
+                        // Essentially, the dialog should be in the center of the part of the app that the user
+                        // can see regardless of the state of the input pane.
+                        
                         if (!rendered.resizedForInputPane) {
                             // Put title into scroller so there's more screen real estate for the content
                             this._dom.scroller.insertBefore(this._dom.title, this._dom.content);

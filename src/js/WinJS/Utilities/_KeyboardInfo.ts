@@ -12,6 +12,13 @@ var _Constants = {
     scrollTimeout: 150,
 }
 
+// Definiton of *Visible Document*:
+//   Some portions of this file refer to the *visible document* or *visibleDoc*. Generally speaking,
+//   this is the portion of the app that is visible to the user (factoring in optical zoom and input pane occlusion).
+//   Technically speaking, in most cases, this is equivalent to the *visual viewport*. The exception is
+//   when the input pane has shown without resizing the *visual viewport*. In this case, the *visible document*
+//   is the *visual viewport* minus the input pane occlusion.
+
 // This private module provides accurate metrics for the Visual Viewport and WWA's IHM offsets in Win10 WWA 
 // where "-ms-device-fixed" CSS positioning is supported. WinJS controls will also use this module for
 // positoning themselves relative to the viewport in a web browser outside of WWA. Their preference is still 
