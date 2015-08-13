@@ -22,13 +22,13 @@
 
     @minWidth: 320px;
     @maxWidth: 456px;
-    @minHeight: 184px; // Keep in sync with the JS file
+    @minHeight: 184px;
     @maxHeight: 758px;
     @dialogVerticallyCenteredThreshold: 640px;
 
     &.win-contentdialog-verticalalignment {
-        z-index: 1005; /* Above AppBar and SettingsFlyout. Below Flyout. */
         position: fixed;
+        position: -ms-device-fixed;
         top: 0;
         left: 0;
         width: 100vw;
@@ -48,8 +48,8 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
     }
 
     .win-contentdialog-dialog {

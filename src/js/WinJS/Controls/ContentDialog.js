@@ -15,11 +15,12 @@ define([
     '../Core/_Resources',
     '../Utilities/_Control',
     '../Utilities/_ElementUtilities',
+    '../Utilities/_KeyboardInfo',
     '../Utilities/_Hoverable',
     '../Animations',
     'require-style!less/styles-contentdialog',
     'require-style!less/colors-contentdialog'
-], function contentDialogInit(Application, _Dispose, _Accents, Promise, _Signal, _LightDismissService, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _Hoverable, _Animations) {
+], function contentDialogInit(Application, _Dispose, _Accents, Promise, _Signal, _LightDismissService, _BaseUtils, _Global, _WinRT, _Base, _Events, _ErrorFromName, _Resources, _Control, _ElementUtilities, _KeyboardInfo, _Hoverable, _Animations) {
     "use strict";
 
     _Accents.createAccentRule(".win-contentdialog-dialog", [{ name: "outline-color", value: _Accents.ColorTypes.accent }]);
@@ -91,7 +92,6 @@ define([
                 beforeHide: "beforehide",
                 afterHide: "afterhide",
             };
-            var minDialogHeight = 184; // Keep in sync with the LESS file
 
             // WinJS animation promises always complete successfully. This
             // helper allows an animation promise to complete in the canceled state
@@ -206,7 +206,6 @@ define([
                             },
                             onTakeFocus: function (useSetActive) {
                                 dialog._dismissable.restoreFocus() ||
-                                    _ElementUtilities._focusFirstFocusableElement(dialog._dom.content) ||
                                     _ElementUtilities._tryFocusOnAnyElement(dialog._dom.dialog, useSetActive);
                             }
                         });
@@ -290,7 +289,7 @@ define([
                                 if (_WinRT.Windows.UI.ViewManagement.InputPane) {
                                     var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
                                     if (inputPaneHeight > 0) {
-                                        that.dialog._renderForInputPane(inputPaneHeight);
+                                        that.dialog._renderForInputPane();
                                     }
                                 }
                                 _LightDismissService.shown(that.dialog._dismissable);
@@ -466,8 +465,10 @@ define([
                 this._disposed = false;
                 this._currentFocus = null;
                 this._rendered = {
+                    registeredForResize: false,
                     resizedForInputPane: false,
-                    height: ""
+                    top: "",
+                    bottom: ""
                 };
 
                 this._initializeDom(element || _Global.document.createElement("div"));
@@ -788,8 +789,7 @@ define([
                 
                 _onUpdateInputPaneRendering: function ContentDialog_onUpdateInputPaneRendering() {
                     if (_WinRT.Windows.UI.ViewManagement.InputPane) {
-                        var inputPaneHeight = _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView().occludedRect.height;
-                        this._renderForInputPane(inputPaneHeight);
+                        this._renderForInputPane();
                     }
                 },
 
@@ -873,54 +873,67 @@ define([
                     _ElementUtilities._inputPaneListener.removeEventListener(this._dom.root, "hiding", this._onInputPaneHiddenBound);
                 },
                 
-                _willInputPaneOccludeDialog: function ContentDialog_willInputPaneOccludeDialog(inputPaneHeight) {
-                    var layoutViewportHeight = _Global.document.documentElement.clientHeight;
+                _willInputPaneOccludeDialog: function ContentDialog_willInputPaneOccludeDialog() {
+                    var dialogRect = this._dom.dialog.getBoundingClientRect();
                     
-                    var dialog = this._dom.dialog;
-                    var top = dialog.offsetTop;
-                    var height = dialog.offsetHeight;
-                    var bottom = top + height;
-                    var visibleBottom = layoutViewportHeight - inputPaneHeight;
-
-                    return bottom > visibleBottom;
+                    return _KeyboardInfo._KeyboardInfo._visibleDocTop > dialogRect.top ||
+                        _KeyboardInfo._KeyboardInfo._visibleDocBottom < dialogRect.bottom;
                 },
                 
-                _renderForInputPane: function ContentDialog_renderForInputPane(inputPaneHeight) {
+                _renderForInputPane: function ContentDialog_renderForInputPane() {
                     var rendered = this._rendered;
-                    var layoutViewportHeight = _Global.document.documentElement.clientHeight;
                     
-                    if (rendered.resizedForInputPane || this._willInputPaneOccludeDialog(inputPaneHeight)) {
-                        var height = Math.max(minDialogHeight, layoutViewportHeight - inputPaneHeight) + "px";
-                        if (height !== rendered.height) {
-                            this._dom.root.style.height = height;
-                            this._dom.backgroundOverlay.style.height = height;
-                            rendered.height = height;
-                            
-                            if (!rendered.resizedForInputPane) {
-                                rendered.resizedForInputPane = true;
-                                _ElementUtilities._resizeNotifier.subscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
-                                // Put title into scroller so there's more screen real estate for the content
-                                this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
-                            }
-                            
-                            _Global.document.activeElement.scrollIntoView(); // Ensure activeElement is scrolled into view
+                    if (!rendered.registeredForResize) {
+                        _ElementUtilities._resizeNotifier.subscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
+                        rendered.registeredForResize = true;
+                    }
+                    
+                    if (rendered.resizedForInputPane || this._willInputPaneOccludeDialog()) {
+                        if (!rendered.resizedForInputPane) {
+                            // Put title into scroller so there's more screen real estate for the content
+                            this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
+                            this._dom.root.style.height = "auto";
+                            rendered.resizedForInputPane = true;
+                        }
+                        
+                        var top = _KeyboardInfo._KeyboardInfo._visibleDocTop + "px";
+                        var bottom = _KeyboardInfo._KeyboardInfo._visibleDocBottomOffset + "px";
+                        
+                        if (rendered.top !== top) {
+                            this._dom.root.style.top = top;
+                            rendered.top = top;
+                        }
+                        
+                        if (rendered.bottom !== bottom) {
+                            this._dom.root.style.bottom = bottom;
+                            rendered.bottom = bottom;
                         }
                     }
                 },
 
                 _clearInputPaneRendering: function ContentDialog_clearInputPaneRendering() {
                     var rendered = this._rendered;
-                    if (rendered.resizedForInputPane) {
-                        rendered.resizedForInputPane = false;
+                    
+                    if (rendered.registeredForResize) {
                         _ElementUtilities._resizeNotifier.unsubscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
-                        // Make sure the title isn't in the scroller
-                        this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
+                        this._dom.root.style.height = "";
+                        rendered.registeredForResize = false;
                     }
                     
-                    if (rendered.height !== "") {
-                        this._dom.root.style.height = "";
-                        this._dom.backgroundOverlay.style.height = "";
-                        rendered.height = "";
+                    if (rendered.resizedForInputPane) {
+                        // Make sure the title isn't in the scroller
+                        this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
+                        rendered.resizedForInputPane = false;
+                    }
+                    
+                    if (rendered.top !== "") {
+                        this._dom.root.style.top = "";
+                        rendered.top = "";
+                    }
+                    
+                    if (rendered.bottom !== "") {
+                        this._dom.root.style.bottom = "";
+                        rendered.bottom = "";
                     }
                 }
             }, {
