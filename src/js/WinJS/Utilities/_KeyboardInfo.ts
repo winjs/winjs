@@ -17,7 +17,7 @@ var _Constants = {
 //   this is the portion of the app that is visible to the user (factoring in optical zoom and input pane occlusion).
 //   Technically speaking, in most cases, this is equivalent to the *visual viewport*. The exception is
 //   when the input pane has shown without resizing the *visual viewport*. In this case, the *visible document*
-//   is the *visual viewport* minus the input pane occlusion.
+//   is the *visual viewport* height minus the input pane occlusion.
 
 // This private module provides accurate metrics for the Visual Viewport and WWA's IHM offsets in Win10 WWA 
 // where "-ms-device-fixed" CSS positioning is supported. WinJS controls will also use this module for

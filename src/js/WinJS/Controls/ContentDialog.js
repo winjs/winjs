@@ -906,13 +906,6 @@ define([
                         // Essentially, the dialog should be in the center of the part of the app that the user
                         // can see regardless of the state of the input pane.
                         
-                        if (!rendered.resizedForInputPane) {
-                            // Put title into scroller so there's more screen real estate for the content
-                            this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
-                            this._dom.root.style.height = "auto"; // Height will be determined by setting top & bottom
-                            rendered.resizedForInputPane = true;
-                        }
-                        
                         var top = _KeyboardInfo._KeyboardInfo._visibleDocTop + "px";
                         var bottom = _KeyboardInfo._KeyboardInfo._visibleDocBottomOffset + "px";
                         
@@ -925,6 +918,13 @@ define([
                             this._dom.root.style.bottom = bottom;
                             rendered.bottom = bottom;
                         }
+                        
+                        if (!rendered.resizedForInputPane) {
+                            // Put title into scroller so there's more screen real estate for the content
+                            this._dom.scroller.insertBefore(this._dom.title, this._dom.content);
+                            this._dom.root.style.height = "auto"; // Height will be determined by setting top & bottom
+                            rendered.resizedForInputPane = true;
+                        }
                     }
                 },
 
@@ -933,14 +933,7 @@ define([
                     
                     if (rendered.registeredForResize) {
                         _ElementUtilities._resizeNotifier.unsubscribe(this._dom.root, this._onUpdateInputPaneRenderingBound);
-                        this._dom.root.style.height = "";
                         rendered.registeredForResize = false;
-                    }
-                    
-                    if (rendered.resizedForInputPane) {
-                        // Make sure the title isn't in the scroller
-                        this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
-                        rendered.resizedForInputPane = false;
                     }
                     
                     if (rendered.top !== "") {
@@ -951,6 +944,13 @@ define([
                     if (rendered.bottom !== "") {
                         this._dom.root.style.bottom = "";
                         rendered.bottom = "";
+                    }
+                    
+                    if (rendered.resizedForInputPane) {
+                        // Make sure the title isn't in the scroller
+                        this._dom.dialog.insertBefore(this._dom.title, this._dom.scroller);
+                        this._dom.root.style.height = "";
+                        rendered.resizedForInputPane = false;
                     }
                 }
             }, {
