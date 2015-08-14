@@ -27,12 +27,14 @@
         background-color: rgba(133, 133, 133, 0.4);
         color: rgba(255, 255, 255, 0.2);
     }
+
+    input[type=text]:-ms-input-placeholder {
+        color: rgba(0, 0, 0, 0.6);
+    }
     /*  
         Button 
     */
     button,
-    button[type=submit],
-    button[type=reset],
     input[type=button],
     input[type=submit],
     input[type=reset],
@@ -43,8 +45,6 @@
     }
 
     button:focus,
-    button[type=submit]:focus,
-    button[type=reset]:focus,
     input[type=button]:focus,
     input[type=submit]:focus,
     input[type=reset]:focus,
@@ -53,8 +53,6 @@
     }
 
     button:disabled,
-    button[type=submit]:disabled,
-    button[type=reset]:disabled,
     input[type=button]:disabled,
     input[type=submit]:disabled,
     input[type=reset]:disabled,
@@ -95,8 +93,6 @@
     Input focus styles
     */
     button:focus,
-    button[type=submit]:focus,
-    button[type=reset]:focus,
     input[type=checkbox]:focus,
     input[type=button]:focus,
     input[type=submit]:focus,
@@ -114,8 +110,6 @@
     }
 
     button:focus:active,
-    button[type=submit]:focus:active,
-    button[type=reset]:focus:active,
     input[type=checkbox]:focus:active,
     input[type=button]:focus:active,
     input[type=submit]:focus:active,
@@ -129,8 +123,6 @@
     input[type=url]:focus:active,
     input[type=search]:focus:active,
     button:focus:-ms-keyboard-active,
-    button[type=submit]:focus:-ms-keyboard-active,
-    button[type=reset]:focus:-ms-keyboard-active,
     input[type=button]:focus:-ms-keyboard-active,
     input[type=submit]:focus:-ms-keyboard-active,
     input[type=reset]:focus:-ms-keyboard-active,

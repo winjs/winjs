@@ -11,6 +11,9 @@ input[type=number],
 input[type=tel],
 input[type=url],
 input[type=search] {
+    // Note: The input's padding need to be adjusted for every visual state
+    // that changes the border or the content will end up shifting. The following
+    // two rules compensate for the border changing during focus/active states.
     height: 68px;
     padding: 27px 34px 22px 34px;
     min-width: 428px;
@@ -18,6 +21,37 @@ input[type=search] {
     border-style: solid;
     box-sizing: border-box;
     font-size: 24px;
+}
+
+input[type=text]:focus,
+input[type=password]:focus,
+input[type=email]:focus,
+input[type=number]:focus,
+input[type=tel]:focus,
+input[type=url]:focus,
+input[type=search]:focus {
+    // The focus state changes the border width from 1px to 2px,
+    // we offset the margins by -1px so the text content does not shift.
+    padding: 26px 33px 21px 33px;
+}
+
+input[type=text]:focus:active,
+input[type=password]:focus:active,
+input[type=email]:focus:active,
+input[type=number]:focus:active,
+input[type=tel]:focus:active,
+input[type=url]:focus:active,
+input[type=search]:focus:active,
+input[type=text]:focus:-ms-keyboard-active,
+input[type=password]:focus:-ms-keyboard-active,
+input[type=email]:focus:-ms-keyboard-active,
+input[type=number]:focus:-ms-keyboard-active,
+input[type=tel]:focus:-ms-keyboard-active,
+input[type=url]:focus:-ms-keyboard-active,
+input[type=search]:focus:-ms-keyboard-active {
+    // The active state changes the border width from 2px to 4px,
+    // we offset the margins by -2px so the text content does not shift.
+    padding: 24px 31px 19px 31px;
 }
 
 input::-ms-clear,
