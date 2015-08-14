@@ -7,15 +7,61 @@ module Helper._CommandingSurface {
     var _Constants = Helper.require("WinJS/Controls/CommandingSurface/_Constants");
     var _CommandingSurface = <typeof WinJS.UI.PrivateCommandingSurface> Helper.require("WinJS/Controls/CommandingSurface/_CommandingSurface")._CommandingSurface;
 
-    export interface ISizeForCommandsArgs { numStandardCommands?: number; numSeparators?: number; additionalWidth?: number; visibleOverflowButton?: boolean; };
-    export function sizeForCommands(element: HTMLElement, args: ISizeForCommandsArgs) {
-        var width =
-            (args.numStandardCommands || 0) * _Constants.actionAreaCommandWidth +
-            (args.numSeparators || 0) * _Constants.actionAreaSeparatorWidth +
-            (args.additionalWidth || 0) +
-            (args.visibleOverflowButton ? _Constants.actionAreaOverflowButtonWidth : 0);
+    export interface ISizeForCommandsArgs {
+        closedDisplayMode: string;
+        numStandardCommandsShownInActionArea: number;
+        numSeparatorsShownInActionArea: number;
+        widthOfContentCommandsShownInActionArea: number;
+        isACommandVisbleInTheOverflowArea: boolean;
+        /*
+        * Any additonal free space that we would like available in the action area.
+        */
+        additionalFreeSpace: number; 
+        
+    };
+    export function sizeForCommands(controlElement: HTMLElement, args: ISizeForCommandsArgs) {
+        // Sizes the width of the control to have enough available space in the 
+        // action area to be able to fit the values specified in args. 
+        // Automatically detects whether or not an overflow button will be needed 
+        // and adds additional space inside the controlElement to cover it.
 
-        element.style.width = width + "px";
+        var closedDisplayMode = args.closedDisplayMode;
+        var widthForStandardCommands = (args.numStandardCommandsShownInActionArea || 0) * _Constants.actionAreaCommandWidth;
+        var widthForSeparators = (args.numSeparatorsShownInActionArea || 0) * _Constants.actionAreaSeparatorWidth;
+        var widthForContentCommands = (args.widthOfContentCommandsShownInActionArea || 0);
+        var additionalFreeSpace = args.additionalFreeSpace || 0;
+        var isACommandVisbleInTheOverflowArea = args.isACommandVisbleInTheOverflowArea || false;
+
+        var widthForPrimaryCommands = widthForStandardCommands + widthForSeparators + widthForContentCommands;
+
+        // Determine if the control will want to display an overflowButton. 
+        var needsOverflowButton = (isACommandVisbleInTheOverflowArea ||
+            Helper._CommandingSurface.isActionAreaExpandable(closedDisplayMode) && widthForPrimaryCommands > 0);
+        var widthForOverflowButton = needsOverflowButton ? _Constants.actionAreaOverflowButtonWidth : 0;
+
+        var totalWidth = widthForPrimaryCommands + widthForOverflowButton + additionalFreeSpace;
+        controlElement.style.width = totalWidth + "px";
+    }
+
+    export function isActionAreaExpandable(closedDisplayMode: string): boolean {
+        var result;
+        var mode = closedDisplayMode;
+        switch (mode) {
+            case _CommandingSurface.ClosedDisplayMode.none:
+            case _CommandingSurface.ClosedDisplayMode.minimal:
+            case _CommandingSurface.ClosedDisplayMode.compact:
+                // These ClosedDisplayModes have an expandable actionarea when shown.
+                result = true;
+                break;
+            case _CommandingSurface.ClosedDisplayMode.full:
+                // These ClosedDisplayModes do not have an expandable actionarea when shown.
+                result = false;
+                break;
+            default:
+                LiveUnit.Assert.fail("TEST ERROR: Unknown ClosedDisplayMode enum value: " + mode);
+                break;
+        }
+        return result;
     }
 
     export function useSynchronousAnimations(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
@@ -33,6 +79,13 @@ module Helper._CommandingSurface {
                 }
             };
         };
+    }
+
+    export function useSynchronousDataRendering(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+        // Remove delay for batching edits, and render changes synchronously.
+        commandingSurface._batchDataUpdates = (updateFn) => {
+            updateFn();
+        }
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
@@ -98,7 +151,6 @@ module Helper._CommandingSurface {
     export function verifyRenderedOpened(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
         // Verifies actionarea and overflowarea are opened. 
         // Currently only works if there is at least one command in the actionarea and overflow area.
-        // TODO: Make this work even if actionarea and overflowarea don't have commands.
 
         verifyOpened_actionArea(commandingSurface);
         verifyOpened_overflowArea(commandingSurface);
@@ -110,6 +162,7 @@ module Helper._CommandingSurface {
             commandingSurfaceTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface.element),
             actionAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.actionArea),
             actionAreaContentBoxHeight = WinJS.Utilities._getPreciseContentHeight(commandingSurface._dom.actionArea),
+            isOverflowButtonVisible = (commandingSurface._dom.overflowButton.style.display === "none") ? false : true,
             overflowButtonTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowButton);
 
         var heightOfTallestChildElement: number = Array.prototype.reduce.call(commandingSurface._dom.actionArea.children, function (tallest, element) {
@@ -118,13 +171,16 @@ module Helper._CommandingSurface {
 
         LiveUnit.Assert.areEqual(actionAreaTotalHeight, commandingSurfaceTotalHeight, "Height of CommandingSurface should size to its actionarea.");
         LiveUnit.Assert.areEqual(heightOfTallestChildElement, actionAreaContentBoxHeight, "Actionarea height should be fully expanded and size to the heights of its content");
-        LiveUnit.Assert.areEqual(actionAreaTotalHeight, overflowButtonTotalHeight, "overflowButton should stretch to the height of the actionarea");
+
+        if (isOverflowButtonVisible) {
+            LiveUnit.Assert.areEqual(actionAreaTotalHeight, overflowButtonTotalHeight, "overflowButton should stretch to the height of the actionarea");
+        }
 
         // Verify commands are displayed.
         if (Array.prototype.some.call(commandElements, function (commandEl) {
             return getComputedStyle(commandEl).display === "none";
         })) {
-            LiveUnit.Assert.fail("Fully expanded actionarea should display primary commands.");
+            LiveUnit.Assert.fail("Opened actionarea should always display primary commands.");
         }
 
         // Verify command labels are displayed.
@@ -132,7 +188,7 @@ module Helper._CommandingSurface {
             var label = commandEl.querySelector(".win-label");
             return (label && getComputedStyle(label).display == "none");
         })) {
-            LiveUnit.Assert.fail("Fully expanded actionarea should display primary command labels");
+            LiveUnit.Assert.fail("Opened actionarea should display primary command labels");
         }
     };
 
@@ -140,13 +196,18 @@ module Helper._CommandingSurface {
         LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowArea).display);
 
         var overflowAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowArea);
-        LiveUnit.Assert.isTrue(0 < overflowAreaTotalHeight);
+        var overflowCommands = getVisibleCommandsInElement(commandingSurface._dom.overflowArea);
+
+        if (overflowCommands.length) {
+            LiveUnit.Assert.isTrue(0 < overflowAreaTotalHeight);
+        } else {
+            LiveUnit.Assert.isTrue(0 === overflowAreaTotalHeight, "Opened overflowArea should not be visible if there are no overflow commands");
+        }
     };
 
     export function verifyRenderedClosed(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
         // Verifies actionarea and overflowarea are closed.
         // Currently only works if their is at least one command in the actionarea and overflow area.
-        // TODO: Make this work even if actionarea and overflowarea don't have commands.
 
         verifyClosed_actionArea(commandingSurface);
         verifyClosed_oveflowArea(commandingSurface);
