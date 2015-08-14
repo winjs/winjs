@@ -1,4 +1,147 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
 .Colors(@theme) {
-    
+    .colorDefinitions(@theme);
+
+    /*  
+        Text input 
+    */
+    input[type=text],
+    input[type=password],
+    input[type=email],
+    input[type=number],
+    input[type=tel],
+    input[type=url],
+    input[type=search] {
+        background-color: @TVVideoSafeWhite;
+        color: @TVVideoSafeBlack;
+    }
+
+    input[type=text]:disabled,
+    input[type=password]:disabled,
+    input[type=email]:disabled,
+    input[type=number]:disabled,
+    input[type=tel]:disabled,
+    input[type=url]:disabled,
+    input[type=search]:disabled {
+        background-color: rgba(133, 133, 133, 0.4);
+        color: rgba(255, 255, 255, 0.2);
+    }
+    /*  
+        Button 
+    */
+    button,
+    button[type=submit],
+    button[type=reset],
+    input[type=button],
+    input[type=submit],
+    input[type=reset],
+    input[type=file] {
+        background-color: transparent;
+        border-color: @baseMediumMid;
+        color: @TVVideoSafeWhite;
+    }
+
+    button:focus,
+    button[type=submit]:focus,
+    button[type=reset]:focus,
+    input[type=button]:focus,
+    input[type=submit]:focus,
+    input[type=reset]:focus,
+    input[type=file]:focus {
+        background-color: @TVHighlight;
+    }
+
+    button:disabled,
+    button[type=submit]:disabled,
+    button[type=reset]:disabled,
+    input[type=button]:disabled,
+    input[type=submit]:disabled,
+    input[type=reset]:disabled,
+    input[type=file]:disabled {
+        color: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    /*
+        Checkbox
+    */
+    input[type=checkbox] {
+        background-color: rgba(255, 255, 255, 0);
+        outline-color: @baseMediumMid;
+    }
+
+    input[type=checkbox]::-ms-check {
+        background-color: rgba(255, 255, 255, 0);
+        border-color: @TVVideoSafeWhite;
+        color: @TVVideoSafeWhite;
+    }
+
+    input[type=checkbox]:focus {
+        background-color: @TVHighlight;
+    }
+
+    input[type=checkbox]::-ms-check:focus {
+        background-color: @TVHighlight;
+    }
+
+    input[type=checkbox]:disabled {
+        outline-color: rgba(255, 255, 255, 0.2);
+    }
+
+    input[type=checkbox]:disabled::-ms-check {
+        border-color: @baseMediumMid;
+    }
+    /*
+    Input focus styles
+    */
+    button:focus,
+    button[type=submit]:focus,
+    button[type=reset]:focus,
+    input[type=checkbox]:focus,
+    input[type=button]:focus,
+    input[type=submit]:focus,
+    input[type=reset]:focus,
+    input[type=file]:focus,
+    input[type=text]:focus,
+    input[type=password]:focus,
+    input[type=email]:focus,
+    input[type=number]:focus,
+    input[type=tel]:focus,
+    input[type=url]:focus,
+    input[type=search]:focus {
+        outline: 4px solid @TVVideoSafeWhite;
+        border: 2px solid rgba(0, 0, 0, 0.15);
+    }
+
+    button:focus:active,
+    button[type=submit]:focus:active,
+    button[type=reset]:focus:active,
+    input[type=checkbox]:focus:active,
+    input[type=button]:focus:active,
+    input[type=submit]:focus:active,
+    input[type=reset]:focus:active,
+    input[type=file]:focus:active,
+    input[type=text]:focus:active,
+    input[type=password]:focus:active,
+    input[type=email]:focus:active,
+    input[type=number]:focus:active,
+    input[type=tel]:focus:active,
+    input[type=url]:focus:active,
+    input[type=search]:focus:active,
+    button:focus:-ms-keyboard-active,
+    button[type=submit]:focus:-ms-keyboard-active,
+    button[type=reset]:focus:-ms-keyboard-active,
+    input[type=button]:focus:-ms-keyboard-active,
+    input[type=submit]:focus:-ms-keyboard-active,
+    input[type=reset]:focus:-ms-keyboard-active,
+    input[type=file]:focus:-ms-keyboard-active,
+    input[type=text]:focus:-ms-keyboard-active,
+    input[type=password]:focus:-ms-keyboard-active,
+    input[type=email]:focus:-ms-keyboard-active,
+    input[type=number]:focus:-ms-keyboard-active,
+    input[type=tel]:focus:-ms-keyboard-active,
+    input[type=url]:focus:-ms-keyboard-active,
+    input[type=search]:focus:-ms-keyboard-active {
+        border: 4px solid rgba(0, 0, 0, 0.6);
+    }
 }

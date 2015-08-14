@@ -1,2 +1,62 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
+@import "color-definitions.less";
+@import "font-definitions.less";
+@import "globalization.less";
+
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=number],
+input[type=tel],
+input[type=url],
+input[type=search] {
+    height: 68px;
+    padding: 27px 34px 22px 34px;
+    min-width: 428px;
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;
+    font-size: 24px;
+}
+
+input::-ms-clear,
+input::-ms-reveal {
+    display: none;
+}
+
+/*  
+Button control.  
+*/
+button,
+button[type=submit],
+button[type=reset],
+input[type=button],
+input[type=submit],
+input[type=reset],
+input[type=file]::-ms-browse {
+    height: 68px;
+    width: 248px;
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;
+    font-size: 24px;
+}
+
+/*  
+Checkbox.  
+*/
+input[type=checkbox] {
+    outline-width: 1px;
+    outline-style: solid;
+    width: 104px;
+    height: 104px;
+}
+
+input[type=checkbox]::-ms-check {
+    width: 32px;
+    height: 32px;
+    margin: 34px;
+    border-width: 2px;
+    border-style: solid;
+}
