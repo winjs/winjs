@@ -47,6 +47,7 @@ define([
         appBarCommandClass: "win-command",
         appBarCommandGlobalClass: "win-global",
         appBarCommandSelectionClass: "win-selection",
+        commandHiddenClass: "win-command-hidden",
         sectionSelection: "selection", /* deprecated, use sectionSecondary */
         sectionGlobal: "global", /* deprecated, use sectionPrimary */
         sectionPrimary: "primary",

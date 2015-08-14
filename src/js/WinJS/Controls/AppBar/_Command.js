@@ -432,8 +432,7 @@ define([
                 /// </field>
                 hidden: {
                     get: function () {
-                        // Ensure it's a boolean because we're using the DOM element to keep in-sync
-                        return _ElementUtilities.hasClass(this._element, "win-command-hidden");
+                        return _ElementUtilities.hasClass(this._element, _Constants.commandHiddenClass);
                     },
                     set: function (value) {
                         if (value === this.hidden) {
@@ -444,18 +443,16 @@ define([
                         var wasHidden = this.hidden;
 
                         if (value) {
-                            _ElementUtilities.addClass(this._element, "win-command-hidden");
+                            _ElementUtilities.addClass(this._element, _Constants.commandHiddenClass);
                         } else {
-                            _ElementUtilities.removeClass(this._element, "win-command-hiding");
-                            _ElementUtilities.removeClass(this._element, "win-command-hidden");
+                            _ElementUtilities.removeClass(this._element, _Constants.commandHiddenClass);
                         }
 
                         if (!this._sendEvent(_Constants.commandVisibilityChanged)) {
                             if (wasHidden) {
-                                _ElementUtilities.addClass(this._element, "win-command-hidden");
+                                _ElementUtilities.addClass(this._element, _Constants.commandHiddenClass);
                             } else {
-                                _ElementUtilities.removeClass(this._element, "win-command-hiding");
-                                _ElementUtilities.removeClass(this._element, "win-command-hidden");
+                                _ElementUtilities.removeClass(this._element, _Constants.commandHiddenClass);
                             }
                         }
                     }

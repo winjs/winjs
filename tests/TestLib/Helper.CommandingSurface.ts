@@ -89,11 +89,11 @@ module Helper._CommandingSurface {
     }
 
     export function getVisibleCommandsInElement(element: HTMLElement) {
-        var result = [];
+        var result: HTMLElement[] = [];
         var commands = element.querySelectorAll(_Constants.commandSelector);
         for (var i = 0, len = commands.length; i < len; i++) {
             if (getComputedStyle(<Element>commands[i]).display !== "none") {
-                result.push(commands[i]);
+                result.push(<HTMLElement>commands[i]);
             }
         }
         return result;
