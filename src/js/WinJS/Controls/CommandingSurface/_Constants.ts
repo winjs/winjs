@@ -27,6 +27,10 @@ export var ClassNames = {
     fullClass: "win-commandingsurface-closeddisplayfull",
     overflowTopClass: "win-commandingsurface-overflowtop",
     overflowBottomClass: "win-commandingsurface-overflowbottom",
+    commandHiddenClass: "win-commandingsurface-command-hidden",
+    commandPrimaryOverflownPolicyClass: "win-commandingsurface-command-primary-overflown",
+    commandSecondaryOverflownPolicyClass: "win-commandingsurface-command-secondary-overflown",
+    commandSeparatorHiddenPolicyClass: "win-commandingsurface-command-separator-hidden"
 };
 
 export var EventNames = {

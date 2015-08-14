@@ -2215,11 +2215,11 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(firstAddedCommand, commandingSurface.getCommandById("someID"));
         }
 
-        testShowOnlyCommands() {
+        testShowOnlyCommands(complete) {
             var data = new WinJS.Binding.List([
                 new Command(null, { type: _Constants.typeButton, label: "A", id: "A" }),
                 new Command(null, { type: _Constants.typeButton, label: "B", id: "B" }),
-                new Command(null, { type: _Constants.typeButton, label: "C", id: "C" }),
+                new Command(null, { type: _Constants.typeButton, label: "C", id: "C", section: "secondary" }),
                 new Command(null, { type: _Constants.typeButton, label: "D", id: "D" }),
                 new Command(null, { type: _Constants.typeButton, label: "E", id: "E" })
             ]);
@@ -2230,33 +2230,44 @@ module CorsicaTests {
             });
 
             function checkCommandVisibility(expectedShown, expectedHidden) {
-                for (var i = 0, len = expectedShown.length; i < len; i++) {
-                    var shownCommand = commandingSurface.getCommandById(expectedShown[i]);
-                    LiveUnit.Assert.isFalse(shownCommand.hidden);
-                    LiveUnit.Assert.areEqual("inline-block", getComputedStyle(shownCommand.element).display);
-                }
-                for (var i = 0, len = expectedHidden.length; i < len; i++) {
-                    var hiddenCommand = commandingSurface.getCommandById(expectedHidden[i]);
-                    LiveUnit.Assert.isTrue(hiddenCommand.hidden);
-                    hiddenCommand.element.classList.remove("win-command-hiding");
-                    LiveUnit.Assert.areEqual("none", getComputedStyle(hiddenCommand.element).display);
-                }
+                return new WinJS.Promise(c => {
+                    commandingSurface._layoutCompleteCallback = function () {
+                        for (var i = 0, len = expectedShown.length; i < len; i++) {
+                            var shownCommand = commandingSurface.getCommandById(expectedShown[i]);
+                            LiveUnit.Assert.isFalse(shownCommand.hidden);
+                            if (shownCommand.section === "secondary") {
+                                LiveUnit.Assert.areEqual("none", getComputedStyle(shownCommand.element).display);
+                                var overflowAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea);
+                                LiveUnit.Assert.areEqual(shownCommand.label, overflowAreaCommands[0].winControl.label);
+                            } else {
+                                LiveUnit.Assert.areEqual("inline-block", getComputedStyle(shownCommand.element).display);
+                            }
+                        }
+                        for (var i = 0, len = expectedHidden.length; i < len; i++) {
+                            var hiddenCommand = commandingSurface.getCommandById(expectedHidden[i]);
+                            LiveUnit.Assert.isTrue(hiddenCommand.hidden);
+                            LiveUnit.Assert.areEqual("none", getComputedStyle(hiddenCommand.element).display);
+                        }
+                        c();
+                    };
+                });
             }
 
             commandingSurface.showOnlyCommands([]);
-            checkCommandVisibility([], ["A", "B", "C", "D", "E"]);
-
-            commandingSurface.showOnlyCommands(["A", "B", "C", "D", "E"]);
-            checkCommandVisibility(["A", "B", "C", "D", "E"], []);
-
-            commandingSurface.showOnlyCommands(["A"]);
-            checkCommandVisibility(["A"], ["B", "C", "D", "E"]);
-
-            commandingSurface.showOnlyCommands([data.getAt(1)]);
-            checkCommandVisibility(["B"], ["A", "C", "D", "E"]);
-
-            commandingSurface.showOnlyCommands(["C", data.getAt(4)]);
-            checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+            checkCommandVisibility([], ["A", "B", "C", "D", "E"]).then(
+                () => {
+                    commandingSurface.showOnlyCommands(["A", "B", "C", "D", "E"]);
+                    return checkCommandVisibility(["A", "B", "C", "D", "E"], []);
+                }).then(() => {
+                    commandingSurface.showOnlyCommands(["A"]);
+                    return checkCommandVisibility(["A"], ["B", "C", "D", "E"]);
+                }).then(() => {
+                    commandingSurface.showOnlyCommands([data.getAt(1)]);
+                    return checkCommandVisibility(["B"], ["A", "C", "D", "E"]);
+                }).then(() => {
+                    commandingSurface.showOnlyCommands(["C", data.getAt(4)]);
+                    checkCommandVisibility(["C", "E"], ["A", "B", "D"]);
+                }).done(complete);
         }
 
         testThatHiddenCommandsDoNotAppearVisible(complete) {
