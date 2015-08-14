@@ -210,6 +210,10 @@ export class _CommandingSurface {
 
         var isChangingState = (value !== this._closedDisplayMode);
         if (ClosedDisplayMode[value] && isChangingState) {
+            // Changing closedDisplayMode can trigger the overflowButton to show/hide itself in the action area.
+            // Commands may need to reflow based on any changes to the available width in the action area.
+            this._updateDomImpl.layoutDirty();
+
             this._closedDisplayMode = value;
             this._machine.updateDom();
         }
@@ -594,7 +598,7 @@ export class _CommandingSurface {
         };
 
         var elementsInReach = Array.prototype.slice.call(this._dom.actionArea.children);
-        if (this._dom.overflowArea.style.display !== "none") {
+        if (this._updateDomImpl.renderedState.isOpenedMode) {
             elementsInReach = elementsInReach.concat(Array.prototype.slice.call(this._dom.overflowArea.children));
         }
 
@@ -632,13 +636,20 @@ export class _CommandingSurface {
             this._refreshPending = true;
 
             // Batch calls to _dataUpdated
-            Scheduler.schedule(() => {
+            this._batchDataUpdates(() => {
                 if (this._refreshPending && !this._disposed) {
                     this._refreshPending = false;
                     this._dataUpdated();
                 }
-            }, Scheduler.Priority.high, null, "WinJS.UI._CommandingSurface._refresh");
+            });
         }
+    }
+
+    // _batchDataUpdates is used by unit tests
+    _batchDataUpdates(updateFn: () => void): void {
+        Scheduler.schedule(() => {
+            updateFn();
+        }, Scheduler.Priority.high, null, "WinJS.UI._CommandingSurface._refresh");
     }
 
     private _addDataListeners() {
@@ -932,10 +943,15 @@ export class _CommandingSurface {
                     break;
                 }
             }
+
             _currentLayoutStage = currentStage;
             if (currentStage === CommandLayoutPipeline.idle) {
                 // Callback for unit tests.
                 this._layoutCompleteCallback && this._layoutCompleteCallback();
+            } else {
+                // We didn't reach the end of the pipeline. Therefore
+                // one of the stages failed and layout could not complete.
+                this._minimalLayout();
             }
         };
 
@@ -1051,11 +1067,6 @@ export class _CommandingSurface {
 
         // Ensure that the overflow button is always the last element in the actionarea
         this._dom.actionArea.appendChild(this._dom.overflowButton);
-        if (this.data.length > 0) {
-            _ElementUtilities.removeClass(this._dom.root, _Constants.ClassNames.emptyCommandingSurfaceCssClass);
-        } else {
-            _ElementUtilities.addClass(this._dom.root, _Constants.ClassNames.emptyCommandingSurfaceCssClass);
-        }
 
         // Execute the animation.
         updateCommandAnimation.execute();
@@ -1067,16 +1078,22 @@ export class _CommandingSurface {
     private _measure(): boolean {
         this._writeProfilerMark("_measure,info");
         if (this._canMeasure()) {
-            var overflowButtonWidth = _ElementUtilities._getPreciseTotalWidth(this._dom.overflowButton),
-                actionAreaContentBoxWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea),
-                separatorWidth = 0,
-                standardCommandWidth = 0,
-                contentCommandWidths: { [uniqueID: string]: number; } = {};
+
+            var originalDisplayStyle = this._dom.overflowButton.style.display;
+            this._dom.overflowButton.style.display = "";
+            var overflowButtonWidth = _ElementUtilities._getPreciseTotalWidth(this._dom.overflowButton);
+            this._dom.overflowButton.style.display = originalDisplayStyle;
+
+            var actionAreaContentBoxWidth = _ElementUtilities._getPreciseContentWidth(this._dom.actionArea);
+
+            var separatorWidth = 0;
+            var standardCommandWidth = 0;
+            var contentCommandWidths: { [uniqueID: string]: number; } = {};
 
             this._primaryCommands.forEach((command) => {
                 // Ensure that the element we are measuring does not have display: none (e.g. it was just added, and it
                 // will be animated in)
-                var originalDisplayStyle = command.element.style.display;
+                originalDisplayStyle = command.element.style.display;
                 command.element.style.display = "";
 
                 if (command.type === _Constants.typeContent) {
@@ -1114,41 +1131,70 @@ export class _CommandingSurface {
         }
     }
 
+
     private _layoutCommands(): boolean {
         this._writeProfilerMark("_layoutCommands,StartTM");
 
-        //
-        // Filter commands that will not be visible in the actionarea
-        //
+        var hiddenCommands: _Command.ICommand[] = [];
+        var visibleSecondaryCommands: _Command.ICommand[] = [];
+        var visiblePrimaryCommands: _Command.ICommand[] = [];
+        var visiblePrimaryCommandsForActionArea: _Command.ICommand[] = [];
+        var visiblePrimaryCommandsForOverflowArea: _Command.ICommand[] = [];
 
-        this._primaryCommands.forEach((command) => {
-            command.element.style.display = (command.hidden ? "none" : "");
-        })
-
-        var primaryCommandsLocation = this._getVisiblePrimaryCommandsLocation();
-
-        this._hideSeparatorsIfNeeded(primaryCommandsLocation.actionArea);
-
-        // Primary commands that will be mirrored in the overflow area should be hidden so
-        // that they are not visible in the actionarea.
-        primaryCommandsLocation.overflowArea.forEach((command) => {
-            command.element.style.display = "none";
+        // Separate hidden commands from visible commands.
+        // Organize visible commands by section.
+        this.data.forEach((command) => {
+            if (!command.hidden) {
+                if (command.section === _Constants.secondaryCommandSection) {
+                    visibleSecondaryCommands.push(command);
+                } else {
+                    visiblePrimaryCommands.push(command);
+                }
+            } else {
+                hiddenCommands.push(command);
+            }
         });
 
-        // The secondary commands in the actionarea should be hidden since they are always
-        // mirrored as new elements in the overflow area.
-        this._secondaryCommands.forEach((command) => {
-            command.element.style.display = "none";
+        var hasVisibleSecondaryCommand = visibleSecondaryCommands.length > 0;
+        var primaryCommandsLocation = this._getVisiblePrimaryCommandsLocation(visiblePrimaryCommands, hasVisibleSecondaryCommand);
+        visiblePrimaryCommandsForActionArea = primaryCommandsLocation.commandsForActionArea;
+        visiblePrimaryCommandsForOverflowArea = primaryCommandsLocation.commandsForOverflowArea;
+
+        //
+        // Layout commands in the action area
+        //
+
+        var setDisplay = (commands: _Command.ICommand[], display: string) => {
+            commands.forEach((command) => {
+                command.element.style.display = display;
+            });
+        };
+
+        // Display "none" every command element currently in the Actionarea that is not going to be shown in the action area.
+        // (1) all hidden commands,  (2) primary commands that are overflowing, (3) secondary commands.
+        // We never want to display (1), and both (2) & (3) will be represented by seperate proxy elements in the overflow area.
+        setDisplay(hiddenCommands, "none");
+        setDisplay(visiblePrimaryCommandsForOverflowArea, "none");
+        setDisplay(visibleSecondaryCommands, "none");
+
+        // Make sure every command that should be shown in the action area is not displayed "none".
+        setDisplay(visiblePrimaryCommandsForActionArea, "");
+        this._hideSeparatorsIfNeeded(visiblePrimaryCommandsForActionArea);
+
+        //
+        // Layout commands in the overflow area 
+        // Project overflowing and secondary commands into the overflowArea as MenuCommands.
+        //
+
+        // Clean up previous MenuCommand projections
+        _ElementUtilities.empty(this._dom.overflowArea);
+        this._menuCommandProjections.map((menuCommand: _MenuCommand.MenuCommand) => {
+            menuCommand.dispose();
         });
-
-        var overflowCommands = primaryCommandsLocation.overflowArea;
-
-        var showOverflowButton = (overflowCommands.length > 0 || this._secondaryCommands.length > 0);
-        this._dom.overflowButton.style.display = showOverflowButton ? "" : "none";
 
         // Set up a custom content flyout if there will be "content" typed commands in the overflowarea.
         var isCustomContent = (command: _Command.ICommand) => { return command.type === _Constants.typeContent };
-        var hasCustomContent = overflowCommands.some(isCustomContent) || this._secondaryCommands.some(isCustomContent);
+        var hasCustomContent = visiblePrimaryCommandsForOverflowArea.some(isCustomContent) || visibleSecondaryCommands.some(isCustomContent);
 
         if (hasCustomContent && !this._contentFlyout) {
             this._contentFlyoutInterior = _Global.document.createElement("div");
@@ -1165,30 +1211,19 @@ export class _CommandingSurface {
             };
         }
 
-        //
-        // Project overflowing and secondary commands into the overflowArea as MenuCommands
-        //
-
-        // Clean up previous MenuCommand projections
-        _ElementUtilities.empty(this._dom.overflowArea);
-        this._menuCommandProjections.map((menuCommand: _MenuCommand.MenuCommand) => {
-            menuCommand.dispose();
-        });
-
         var hasToggleCommands = false,
             menuCommandProjections: _MenuCommand.MenuCommand[] = [];
 
         // Add primary commands that have overflowed.
-        overflowCommands.forEach((command) => {
+        visiblePrimaryCommandsForOverflowArea.forEach((command) => {
             if (command.type === _Constants.typeToggle) {
                 hasToggleCommands = true;
             }
             menuCommandProjections.push(this._projectAsMenuCommand(command));
         });
 
-        // Add separator between primary and secondary command if applicable
-        var secondaryCommandsLength = this._secondaryCommands.length;
-        if (overflowCommands.length > 0 && secondaryCommandsLength > 0) {
+        // Add new separator between primary and secondary command, if applicable.
+        if (visiblePrimaryCommandsForOverflowArea.length > 0 && visibleSecondaryCommands.length > 0) {
             var separator = new _CommandingSurfaceMenuCommand._MenuCommand(null, {
                 type: _Constants.typeSeparator
             });
@@ -1197,25 +1232,39 @@ export class _CommandingSurface {
         }
 
         // Add secondary commands
-        this._secondaryCommands.forEach((command) => {
-            if (!command.hidden) {
-                if (command.type === _Constants.typeToggle) {
-                    hasToggleCommands = true;
-                }
-                menuCommandProjections.push(this._projectAsMenuCommand(command));
+        visibleSecondaryCommands.forEach((command) => {
+            if (command.type === _Constants.typeToggle) {
+                hasToggleCommands = true;
             }
+            menuCommandProjections.push(this._projectAsMenuCommand(command));
         });
 
         this._hideSeparatorsIfNeeded(menuCommandProjections);
+
+        // Add menuCommandProjections to the DOM.
         menuCommandProjections.forEach((command) => {
             this._dom.overflowArea.appendChild(command.element);
         });
         this._menuCommandProjections = menuCommandProjections;
 
-        // Re-append spacer to the end of the oveflowarea
-        this._dom.overflowArea.appendChild(this._dom.overflowAreaSpacer);
-
+        // Reserve additional horizontal space for toggle icons if any MenuCommand projection is type "toggle"
         _ElementUtilities[hasToggleCommands ? "addClass" : "removeClass"](this._dom.overflowArea, _Constants.ClassNames.menuContainsToggleCommandClass);
+
+        if (menuCommandProjections.length > 0) {
+            // Re-append spacer to the end of the oveflowarea if there are visible commands there.
+            // Otherwise the overflow area should be empty and not take up height.
+            this._dom.overflowArea.appendChild(this._dom.overflowAreaSpacer);
+        }
+
+        //
+        // Style the overflow button
+        //
+
+        var needsOverflowButton = this._needsOverflowButton(
+            /* hasVisibleCommandsInActionArea */ visiblePrimaryCommandsForActionArea.length > 0, 
+            /* hasVisibleCommandsInOverflowArea */ menuCommandProjections.length > 0
+            );
+        this._dom.overflowButton.style.display = needsOverflowButton ? "" : "none";
 
         this._writeProfilerMark("_layoutCommands,StopTM");
 
@@ -1223,77 +1272,119 @@ export class _CommandingSurface {
         return true;
     }
 
-    private _commandUniqueId(command: _Command.ICommand): string {
-        return _ElementUtilities._uniqueID(command.element);
-    }
+    private _getVisiblePrimaryCommandsInfo(visibleCommands: _Command.ICommand[]): ICommandInfo[] {
+        // PRECONDITION: Assumes that for every command in visibleCommands, command.hidden === false;
 
-    private _getVisiblePrimaryCommandsInfo(): ICommandInfo[] {
+        // Sorts and designates commands for the actionarea or the overflowarea, 
+        // depending on available space and the priority order of the commands
         var width = 0;
-        var commands: ICommandInfo[] = [];
+        var visibleCommandsInfo: ICommandInfo[] = [];
         var priority = 0;
         var currentAssignedPriority = 0;
 
-        for (var i = this._primaryCommands.length - 1; i >= 0; i--) {
-            var command = this._primaryCommands[i];
-            if (!command.hidden) {
-                if (command.priority === undefined) {
-                    priority = currentAssignedPriority--;
-                } else {
-                    priority = command.priority;
-                }
-                width = (command.element.style.display === "none" ? 0 : this._getCommandWidth(command));
-
-                commands.unshift({
-                    command: command,
-                    width: width,
-                    priority: priority
-                });
+        for (var i = visibleCommands.length - 1; i >= 0; i--) {
+            var command = visibleCommands[i];
+            if (command.priority === undefined) {
+                priority = currentAssignedPriority--;
+            } else {
+                priority = command.priority;
             }
+            width = this._getCommandWidth(command);
+
+            visibleCommandsInfo.unshift({
+                command: command,
+                width: width,
+                priority: priority
+            });
         }
 
-        return commands;
+        return visibleCommandsInfo;
     }
 
-    private _getVisiblePrimaryCommandsLocation() {
-        this._writeProfilerMark("_getVisiblePrimaryCommandsLocation,info");
+    private _getVisiblePrimaryCommandsLocation(visiblePrimaryCommands: _Command.ICommand[], isThereAVisibleSecondaryCommand: boolean) {
+        // Returns two lists of primary commands, those which fit can in the actionarea and those which will overflow.
+        var commandsForActionArea: _Command.ICommand[] = [];
+        var commandsForOverflowArea: _Command.ICommand[] = [];
 
-        var actionAreaCommands: _Command.ICommand[] = [];
-        var overflowAreaCommands: _Command.ICommand[] = [];
-        var overflowButtonSpace = 0;
-        var hasSecondaryCommands = this._secondaryCommands.length > 0;
+        var visibleCommandsInfo = this._getVisiblePrimaryCommandsInfo(visiblePrimaryCommands);
 
-        var commandsInfo = this._getVisiblePrimaryCommandsInfo();
-        var sortedCommandsInfo = commandsInfo.slice(0).sort((commandInfo1: ICommandInfo, commandInfo2: ICommandInfo) => {
+        // Sort by ascending priority 
+        var sortedCommandsInfo = visibleCommandsInfo.slice(0).sort((commandInfo1: ICommandInfo, commandInfo2: ICommandInfo) => {
             return commandInfo1.priority - commandInfo2.priority;
         });
 
         var maxPriority = Number.MAX_VALUE;
-        var availableWidth = this._cachedMeasurements.actionAreaContentBoxWidth;
+        var currentAvailableWidth = this._cachedMeasurements.actionAreaContentBoxWidth;
+
+        // Even though we don't yet know if we will have any primary commands overflowing into the 
+        // overflow area, see if our current state already justifies a visible overflow button.
+        var overflowButtonAlreadyNeeded = this._needsOverflowButton(
+            /* hasVisibleCommandsInActionArea */ visiblePrimaryCommands.length > 0,
+            /* hasVisibleCommandsInOverflowArea */ isThereAVisibleSecondaryCommand
+            );
 
         for (var i = 0, len = sortedCommandsInfo.length; i < len; i++) {
-            availableWidth -= sortedCommandsInfo[i].width;
+            currentAvailableWidth -= sortedCommandsInfo[i].width;
 
-            // The overflow button needs space if there are secondary commands, or we are not evaluating the last command.
-            overflowButtonSpace = (hasSecondaryCommands || (i < len - 1) ? this._cachedMeasurements.overflowButtonWidth : 0);
+            // Until we have reached the final sorted command, we presume we will need to fit 
+            // the overflow button into the action area as well. If we are on the last command, 
+            // and we don't already need an overflow button, free up the reserved space before 
+            // checking whether or not the last command fits
+            var additionalSpaceNeeded = (!overflowButtonAlreadyNeeded && (i === len - 1) ? 0 : this._cachedMeasurements.overflowButtonWidth);
 
-            if (availableWidth - overflowButtonSpace < 0) {
+            if (currentAvailableWidth < additionalSpaceNeeded) {
+                // All primary commands with a priority greater than this final value should overflow.
                 maxPriority = sortedCommandsInfo[i].priority - 1;
                 break;
             }
         }
 
-        commandsInfo.forEach((commandInfo) => {
+        // Designate each command to either the action area or the overflow area
+        visibleCommandsInfo.forEach((commandInfo) => {
             if (commandInfo.priority <= maxPriority) {
-                actionAreaCommands.push(commandInfo.command);
+                commandsForActionArea.push(commandInfo.command);
             } else {
-                overflowAreaCommands.push(commandInfo.command);
+                commandsForOverflowArea.push(commandInfo.command);
             }
         });
 
         return {
-            actionArea: actionAreaCommands,
-            overflowArea: overflowAreaCommands
+            commandsForActionArea: commandsForActionArea,
+            commandsForOverflowArea: commandsForOverflowArea,
+        };
+    }
+
+    private _needsOverflowButton(hasVisibleCommandsInActionArea: boolean, hasVisibleCommandsInOverflowArea: boolean): boolean {
+        // The following "Inclusive-Or" conditions inform us if an overflow button is needed.
+        // 1. There are going to be visible commands in the overflowarea. (primary or secondary)
+        // 2. The action area is expandable and contains at least one visible primary command.
+        if (hasVisibleCommandsInOverflowArea) {
+            return true;
+        } else if (this._hasExpandableActionArea() && hasVisibleCommandsInActionArea) {
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    private _minimalLayout(): void {
+        // Normally the overflowButton will be updated based on the most accurate measurements when layoutCommands() is run, 
+        // However if we are unable to measure, then layout will not run. Normally if we cannot measure it means the control
+        // is not rendered. However, when the control is closed with closedDisplayMode: 'minimal' we cannot measure and the 
+        // control is rendered. Perform a minimal layout to show/hide the overflow button whether or not there are any
+        // visible commands to show.
+        if (this.closedDisplayMode === ClosedDisplayMode.minimal) {
+            var isCommandVisible = (command: _Command.ICommand) => {
+                return !command.hidden;
+            };
+
+            var hasVisibleCommand = this.data.some(isCommandVisible);
+            this._dom.overflowButton.style.display = (hasVisibleCommand ? "" : "none");
+        }
+    }
+
+    private _commandUniqueId(command: _Command.ICommand): string {
+        return _ElementUtilities._uniqueID(command.element);
     }
 
     private _getCommandWidth(command: _Command.ICommand): number {
@@ -1365,6 +1456,19 @@ export class _CommandingSurface {
             } else {
                 break;
             }
+        }
+    }
+
+    private _hasExpandableActionArea(): boolean {
+        // Can the actionarea expand to reveal more content given the current closedDisplayMode?
+        switch (this.closedDisplayMode) {
+            case ClosedDisplayMode.none:
+            case ClosedDisplayMode.minimal:
+            case ClosedDisplayMode.compact:
+                return true;
+            case ClosedDisplayMode.full:
+            default:
+                return false;
         }
     }
 

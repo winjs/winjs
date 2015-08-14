@@ -81,6 +81,79 @@ module CorsicaTests {
         }
     }
 
+    interface IOverflowButtonVisibilityTestCase {
+        name: string;
+        commands: Array<WinJS.UI.PrivateCommand>;
+        expectsOverflowCommands: boolean;
+    }
+    var visibleOverflowButton_Helpers = {
+        verifyOverflowButton: function verifyOverflowButton(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+            // PRECONDITION: this helper expects the commandingSurface param to be using Synchronous Animations.
+            
+            // Inspects the _CommandingSurface DOM and verifies that the appearance of the overflow button, 
+            // while the control is opened and closed, is in alignment with our expectations.
+            var mode = commandingSurface.closedDisplayMode;
+            var isRendered = (mode !== _CommandingSurface.ClosedDisplayMode.none);
+            // Test is a Nop is the control isn't rendered.
+            if (isRendered) {
+
+                // Some closedDisplayModes can't do a full layout while closed, but still need to be able to 
+                // Set visibility on the overflowButton correctly. Record the style of the button before the control
+                // is ever opened since opening the control can cause another layout to run and we want to make sure
+                // that the overflow button was correctly laid out and visible to a user while the control was closed.
+                var hadVisibleOverflowButtonBeforeOpening = this.isOverflowButtonVisible(commandingSurface);
+
+                // Record where the visible commands are when the control is opened.
+                commandingSurface.open();
+                var hasVisibleActionAreaCommands = this.areVisibleCommandsInActionArea(commandingSurface);
+                var hasVisibleOverflowAreaCommands = this.areVisibleCommandsInOverflowArea(commandingSurface);
+                var hadVisibleOverflowButtonAfterOpening = this.isOverflowButtonVisible(commandingSurface);
+                commandingSurface.close();
+                var hasVisibleCommands = (hasVisibleActionAreaCommands || hasVisibleOverflowAreaCommands);
+                var hasExandableActionArea = this.isActionAreaExpandable(commandingSurface);
+
+                LiveUnit.Assert.areEqual(hadVisibleOverflowButtonBeforeOpening, hadVisibleOverflowButtonAfterOpening, 
+                    "Overflow button visibility should not change just because the control was opened or closed.")
+
+                if (!hasVisibleCommands) {
+                    LiveUnit.Assert.isFalse(hadVisibleOverflowButtonBeforeOpening, "Overflow button should always be hidden if there are no commands visible.");
+                } else {
+                    if (hasExandableActionArea) {
+                        // Should always have an overflow button.
+                        LiveUnit.Assert.isTrue(hadVisibleOverflowButtonBeforeOpening,
+                            "Overflow button should be visible when there is at least one visible command and closedDisplayMode = " + mode);
+                    } else {
+                        // Should only have an overflow button if there are commands in the overflowarea.
+                        if (hasVisibleOverflowAreaCommands) {
+                            LiveUnit.Assert.isTrue(hadVisibleOverflowButtonBeforeOpening,
+                                "Overflow button should be visible when closedDisplayMode = " + mode + ", and there ARE commands in the overflowArea");
+                        } else {
+                            LiveUnit.Assert.isFalse(hadVisibleOverflowButtonBeforeOpening,
+                                "Overflow button should be hidden when closedDisplayMode = " + mode + ", and there are NO commands in the overflowArea");
+                        }
+                    }
+                }
+            }
+        },
+        isOverflowButtonVisible: function isOverflowButtonVisible(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+            var overflowButton = commandingSurface._dom.overflowButton;
+            return overflowButton.style.display !== "none";
+        },
+        areVisibleCommandsInActionArea: function areCommandsVisibleInActionArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+            var actionArea = commandingSurface._dom.actionArea;
+            var actionAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(actionArea);
+            return actionAreaCommands.length > 0;
+        },
+        areVisibleCommandsInOverflowArea: function areVisibleCommandsInOverflowArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+            var overflowArea = commandingSurface._dom.overflowArea;
+            var overflowAreaCommands = Helper._CommandingSurface.getVisibleCommandsInElement(overflowArea);
+            return overflowAreaCommands.length > 0;
+        },
+        isActionAreaExpandable: function isActionAreaExpandable(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+            return Helper._CommandingSurface.isActionAreaExpandable(commandingSurface.closedDisplayMode);
+        },
+    }
+
     export class _CommandingSurfaceTests {
         "use strict";
 
@@ -115,12 +188,11 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "opt 2" })
             ]);
             var commandingSurface = new _CommandingSurface(null, {
-                data: data
+                data: data,
             });
             var insertedHandler = function () {
                 commandingSurface.element.removeEventListener("WinJSNodeInserted", insertedHandler);
                 LiveUnit.Assert.areEqual(data.length, commandingSurface._primaryCommands.length, "Primary commands array has an invalid length");
-                LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be hidden when the primary commands fit");
                 LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
                 complete();
             }
@@ -196,7 +268,6 @@ module CorsicaTests {
             }
             commandingSurface = new _CommandingSurface(el);
             LiveUnit.Assert.areEqual(numberOfCommands, commandingSurface.data.length, "CommandingSurface declarative commands were not parsed as data.");
-            LiveUnit.Assert.isFalse(Util.hasClass(commandingSurface.element, _Constants.ClassNames.emptyCommandingSurfaceCssClass), "Empty commandingSurface css class should not be present");
         }
 
         testDispose() {
@@ -285,51 +356,101 @@ module CorsicaTests {
         //    LiveUnit.Assert.areEqual("myList", commandingSurface.element.getAttribute("aria-label"), "CommandingSurface should have not set a default aria label");
         //}
 
-        testOverflowButtonHiddenWithoutSecondaryCommands() {
-            this._element.style.width = "1000px";
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
-                new Command(null, { type: _Constants.typeButton, label: "opt 2" })
-            ]);
-            var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
-            });
+        testOverflowButtonVisibilityWhenChangingData() {
+            // Verifies that for each closed display mode, changing the data in the CommandingSurface 
+            // will update the visibility of the overflow button accordingly
 
-            LiveUnit.Assert.areEqual(data.length, commandingSurface._primaryCommands.length, "Primary commands array has an invalid length");
-            LiveUnit.Assert.areEqual(0, commandingSurface._secondaryCommands.length, "Secondary commands array has an invalid length");
-            LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be hidden when the primary commands fit");
+            function verifyPreCondition(commandingSurface: WinJS.UI.PrivateCommandingSurface, testCase: IOverflowButtonVisibilityTestCase) {
+                var hasOverflowAreaCommands = visibleOverflowButton_Helpers.areVisibleCommandsInOverflowArea(commandingSurface);
+                var mode = commandingSurface.closedDisplayMode;
+
+                switch (mode) {
+                    case _CommandingSurface.ClosedDisplayMode.compact:
+                    case _CommandingSurface.ClosedDisplayMode.full:
+                        LiveUnit.Assert.isTrue(commandingSurface._canMeasure(),
+                            "TEST ERROR: Closed CommandingSurface with closedDisplayMode:" + mode + " is unable to measure. Layout is blocked.");
+                        LiveUnit.Assert.areEqual(testCase.expectsOverflowCommands, hasOverflowAreaCommands,
+                            "TEST ERROR: Configuration for test: " + testCase.name + " with closedDisplayMode: " + mode +
+                            " has incorrect presence of commands in overflowarea");
+                        break;
+                    case _CommandingSurface.ClosedDisplayMode.minimal:
+                    case _CommandingSurface.ClosedDisplayMode.none:
+                        LiveUnit.Assert.isFalse(commandingSurface._canMeasure(),
+                            "TEST ERROR: Test expects that a closed CommandingSurface with closedDisplayMode: " + mode +
+                            " can't measure or peform layout. Update the test to include '" + mode + "' with the closedDisplayModes" +
+                            " that can be measured while closed.");
+                        break;
+                    default:
+                        LiveUnit.Assert.fail("TEST ERROR: Unknown ClosedDisplayMode enum value: " + mode);
+                        break;
+                }
+            }
+
+            var commandingSurface = new _CommandingSurface(this._element, {});
+            var controlWidth = 500; // More than wide enough to fit our primary command + overflow button.
+            this._element.style.width = controlWidth + "px";
+
+            var primaryCommand = new Command(null, { section: 'primary', type: 'button', label: 'primary command', icon: '1' });
+            var secondaryCommand = new Command(null, { section: 'secondary', type: 'button', label: 'secondary command' });
+            var overflowCommand = new Command(null, { section: 'primary', type: 'content', label: 'overflow command', });
+            // Make the 'content' command wide enough to always force overflow.
+            overflowCommand.element.style.width = (controlWidth + 5) + "px";
+
+            var hiddenPrimaryCommand = new Command(null, { section: 'primary', type: 'button', label: 'hidden primary command', icon: 'H', hidden: true });
+            var hiddenSecondaryCommand = new Command(null, { section: 'secondary', type: 'button', label: 'hidden secondary command', hidden: true });
+
+            var dataTestCases: Array<IOverflowButtonVisibilityTestCase> = [
+                { name: "NoCommands", commands: [], expectsOverflowCommands: false },
+                { name: "PrimayCommandsOnly_NoOverflow", commands: [primaryCommand], expectsOverflowCommands: false },
+                { name: "PrimaryCommandsOnly_SomeOverflow", commands: [primaryCommand, overflowCommand], expectsOverflowCommands: true },
+                { name: "SecondaryCommandsOnly", commands: [secondaryCommand], expectsOverflowCommands: true },
+                { name: "PrimaryAndSecondaryCommands", commands: [primaryCommand, secondaryCommand], expectsOverflowCommands: true },
+                { name: "HiddenCommands", commands: [hiddenPrimaryCommand, hiddenSecondaryCommand], expectsOverflowCommands: false },
+            ];
+
+            Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+            Helper._CommandingSurface.useSynchronousDataRendering(commandingSurface);
+
+            Object.keys(_CommandingSurface.ClosedDisplayMode).forEach((mode) => {
+                commandingSurface.closedDisplayMode = mode;
+
+                dataTestCases.forEach((testCase) => {
+                    commandingSurface.data = new WinJS.Binding.List(testCase.commands);
+
+                    // PRECONDITION: Sanity test that the testCase's expected configuration for overflow commands 
+                    // has been met.
+                    verifyPreCondition(commandingSurface, testCase);
+
+                    visibleOverflowButton_Helpers.verifyOverflowButton(commandingSurface);
+                });
+            });
         }
 
-        testOverflowButtonVisibleForSecondaryCommand() {
-            this._element.style.width = "1000px";
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
-                new Command(null, { type: _Constants.typeButton, label: "opt 2", section: _Constants.secondaryCommandSection })
-            ]);
+        testOverflowButtonVisibilityWhenChangingClosedDisplayModes() {
+            // The visibility of the overflow button can depend on the closedDisplay mode. 
+            // Specifically, closedDisplayMode 'full' should not show an overflow button if there are 
+            // visible commands in the action area, but no visible commands of any sort in the overflow area
+            // Verify that changing the closedDisplayMode under these circumstances updates the visibility
+            // of the overflow button
 
-            var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
-            });
+            var initControl = (closedDisplayMode) => {
+                var controlElement = document.createElement("DIV");
+                this._element.appendChild(controlElement);
+                var commandingSurface = new _CommandingSurface(controlElement, { closedDisplayMode: closedDisplayMode });
+                commandingSurface.data = new WinJS.Binding.List([new Command(null, { section: 'primary' })]);
+                Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
+                return commandingSurface;
+            }
 
-            LiveUnit.Assert.areEqual(1, commandingSurface._primaryCommands.length, "Primary commands array has an invalid length");
-            LiveUnit.Assert.areEqual(1, commandingSurface._secondaryCommands.length, "Secondary commands array has an invalid length");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when there are secondary commands");
-            LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
-        }
+            for (var beginningMode in _CommandingSurface.ClosedDisplayMode) {
+                for (var endingMode in _CommandingSurface.ClosedDisplayMode) {
+                    var commandingSurface = initControl(beginningMode);
+                    visibleOverflowButton_Helpers.verifyOverflowButton(commandingSurface);
 
-        testOverflowButtonVisibleForOverflowingPrimaryCommand() {
-            this._element.style.width = "10px";
-            var data = new WinJS.Binding.List([
-                new Command(null, { type: _Constants.typeButton, label: "opt 1" }),
-                new Command(null, { type: _Constants.typeButton, label: "opt 2" })
-            ]);
-            var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
-            });
-
-            LiveUnit.Assert.areEqual(data.length, commandingSurface._primaryCommands.length, "Primary commands array has an invalid length");
-            LiveUnit.Assert.areEqual(0, commandingSurface._secondaryCommands.length, "Secondary commands array has an invalid length");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when the primary commands overflow");
+                    commandingSurface.closedDisplayMode = endingMode;
+                    visibleOverflowButton_Helpers.verifyOverflowButton(commandingSurface);
+                }
+            }
         }
 
         testForceLayout() {
@@ -351,7 +472,8 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeButton, label: "sec opt 1", section: _Constants.secondaryCommandSection })
             ]);
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             // The measurement stage of the CommandLayoutPipeline should have failed because our element was display "none". 
@@ -371,9 +493,12 @@ module CorsicaTests {
             // Decrease the width of the CommandingSurface so that it is 1px too thin to fit both primary commands, then test forceLayout.
             var customContentTotalWidth = commandingSurface._getCommandWidth(data.getAt(1));
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 1,
-                additionalWidth: customContentTotalWidth - 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: customContentTotalWidth - 1,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -432,8 +557,12 @@ module CorsicaTests {
 
                 // Decrease the width of our control to fit exactly 1 command + the overflow button in the actionarea.
                 var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                    numStandardCommands: 1,
-                    visibleOverflowButton: true,
+                    closedDisplayMode: commandingSurface.closedDisplayMode,
+                    numStandardCommandsShownInActionArea: 1,
+                    numSeparatorsShownInActionArea: 0,
+                    widthOfContentCommandsShownInActionArea: 0,
+                    isACommandVisbleInTheOverflowArea: true,
+                    additionalFreeSpace: 0,
                 };
                 Helper._CommandingSurface.sizeForCommands(commandingSurfaceElement, args);
 
@@ -508,7 +637,6 @@ module CorsicaTests {
             });
 
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when a command overflow");
             LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Custom content should overflow as a flyout menu item
@@ -534,7 +662,6 @@ module CorsicaTests {
             });
 
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when a command overflow");
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             var menuCommand = <WinJS.UI.MenuCommand>(Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea)[0]["winControl"]);
@@ -577,8 +704,7 @@ module CorsicaTests {
                 data: data
             });
 
-            LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when a command overflow");
+            LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea")
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             var menuCommand = <WinJS.UI.MenuCommand>(Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea)[0]["winControl"]);
@@ -603,7 +729,8 @@ module CorsicaTests {
 
             this._element.style.width = "10px";
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
             var menuCommand = <WinJS.UI.MenuCommand>(Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea)[0]["winControl"]);
             LiveUnit.Assert.isTrue(menuCommand.selected, "Invalid menuCommand selected property value");
@@ -612,9 +739,14 @@ module CorsicaTests {
             var menuCommandEl = (<HTMLElement> commandingSurface._dom.overflowArea.children[0]);
             menuCommandEl.click();
 
+            // Increase the size of the control to fit both commands.
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 2,
-                visibleOverflowButton: false,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 2,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: false,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -639,7 +771,6 @@ module CorsicaTests {
             });
 
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when a command overflow");
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             var menuCommand = <WinJS.UI.MenuCommand>(Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea)[0]["winControl"]);
@@ -671,7 +802,6 @@ module CorsicaTests {
             });
 
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visible when a command overflow");
             var menuCommand = commandingSurface._dom.overflowArea.querySelectorAll(_Constants.commandSelector)[1]["winControl"];
             LiveUnit.Assert.areEqual(_Constants.typeSeparator, menuCommand.type, "Invalid menuCommand type");
         }
@@ -687,102 +817,119 @@ module CorsicaTests {
             ]);
 
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             // Make sure everything fits, nothing should overflow
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 4,
-                numSeparators: 2,
-                visibleOverflowButton: false,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 4,
+                numSeparatorsShownInActionArea: 2,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: false,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(6, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be hidden when there is no overflow");
 
             // Decrease size to overflow 1 command
             args = {
-                numStandardCommands: 3,
-                numSeparators: 2,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 2,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(5 - 1 /* trailing separator is hidden */, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Increase size to put command back into the actionarea
             args = {
-                numStandardCommands: 4,
-                numSeparators: 2,
-                visibleOverflowButton: false,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 4,
+                numSeparatorsShownInActionArea: 2,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: false,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(6, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be hidden when there is no overflow");
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 2 commands
             args = {
-                numStandardCommands: 3,
-                numSeparators: 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 1,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(4, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(2 - 1 /* leading separator is hidden */, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 3 commands
             args = {
-                numStandardCommands: 2,
-                numSeparators: 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 2,
+                numSeparatorsShownInActionArea: 1,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 4 commands
             args = {
-                numStandardCommands: 1,
-                numSeparators: 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 1,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(2 - 1 /* trailing separator is hidden */, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(4, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 5 commands
             args = {
-                numStandardCommands: 1,
-                numSeparators: 0,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(5 - 1 /* leading separator is hidden */, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 6 commands
             args = {
-                numStandardCommands: 0,
-                numSeparators: 0,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 0,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: false,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(6, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
         }
 
@@ -802,7 +949,8 @@ module CorsicaTests {
             ]);
 
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             var customContent1Width = commandingSurface._getCommandWidth(data.getAt(1));
@@ -810,40 +958,43 @@ module CorsicaTests {
 
             // Make sure everything fits, nothing should overflow
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 1,
-                numSeparators: 0,
-                additionalWidth: customContent1Width + customContent2Width,
-                visibleOverflowButton: false,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: customContent1Width + customContent2Width,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(3, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be hidden when there is no overflow");
 
             // Decrease size to overflow 1 command
             args = {
-                numStandardCommands: 1,
-                numSeparators: 0,
-                additionalWidth: customContent1Width,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: customContent1Width,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow 2 commands
             args = {
-                numStandardCommands: 1,
-                numSeparators: 0,
-                additionalWidth: customContent1Width - 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: customContent1Width - 1,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(1, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should not be hidden when there is overflow");
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
         }
 
@@ -912,30 +1063,34 @@ module CorsicaTests {
             ]);
 
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             var customContentWidth = commandingSurface._getCommandWidth(data.getAt(1));
 
             // Make sure everything fits, nothing should overflow
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 5,
-                numSeparators: 2,
-                additionalWidth: customContentWidth,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 5,
+                numSeparatorsShownInActionArea: 2,
+                widthOfContentCommandsShownInActionArea: customContentWidth,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
             LiveUnit.Assert.areEqual(8, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Invalid number of commands in the actionarea");
-            LiveUnit.Assert.areNotEqual("none", getComputedStyle(commandingSurface._dom.overflowButton).display, "Overflow button should be visble because there are secondary commands");
             LiveUnit.Assert.areEqual(2, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Menu commands list has an invalid length");
 
             // Decrease size to overflow priority 5 commands
             args = {
-                numStandardCommands: 5,
-                numSeparators: 2,
-                additionalWidth: customContentWidth - 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 5,
+                numSeparatorsShownInActionArea: 2,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: customContentWidth - 1,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -947,9 +1102,12 @@ module CorsicaTests {
 
             // Decrease size to overflow priority 4 commands
             args = {
-                numStandardCommands: 3,
-                numSeparators: 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 1,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -961,9 +1119,12 @@ module CorsicaTests {
 
             // Decrease size to overflow priority 3 commands
             args = {
-                numStandardCommands: 2,
-                numSeparators: 1,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 2,
+                numSeparatorsShownInActionArea: 1,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -975,9 +1136,12 @@ module CorsicaTests {
 
             // Decrease size to overflow priority 2 commands
             args = {
-                numStandardCommands: 1,
-                numSeparators: 0,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 1,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -989,9 +1153,12 @@ module CorsicaTests {
 
             // Decrease size to overflow priority 1 commands
             args = {
-                numStandardCommands: 0,
-                numSeparators: 0,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 0,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -1036,12 +1203,17 @@ module CorsicaTests {
             var commandingSurface = new _CommandingSurface(this._element, {
                 data: data,
                 opened: true,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             // Make sure primary commands fit exactly
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 6,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 6,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -1163,7 +1335,7 @@ module CorsicaTests {
             });
         }
 
-        xtestKeyboarding_Closed(complete) { // TODO reenable when new keyboarding model is decided.
+        testKeyboarding_Closed(complete) {
             var Key = WinJS.Utilities.Key;
             var firstEL = document.createElement("button");
             var data = new WinJS.Binding.List([
@@ -1178,12 +1350,17 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 3,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -1193,16 +1370,16 @@ module CorsicaTests {
             setTimeout(function () {
                 Helper.keydown(commandingSurface.element, Key.downArrow);
                 LiveUnit.Assert.areEqual(firstEL, document.activeElement);
-                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+                LiveUnit.Assert.areEqual("1", document.activeElement.winControl.label);
 
                 Helper.keydown(commandingSurface.element, Key.end);
                 LiveUnit.Assert.areEqual(commandingSurface._dom.overflowButton, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.home);
-                LiveUnit.Assert.areEqual("1", document.activeElement.textContent);
+                LiveUnit.Assert.areEqual("1", document.activeElement.winControl.label);
 
                 Helper.keydown(commandingSurface.element, Key.rightArrow);
-                LiveUnit.Assert.areEqual("3", document.activeElement.textContent, "Right arrow, should skip '2' because that command is disabled");
+                LiveUnit.Assert.areEqual("3", document.activeElement.winControl.label, "Right arrow, should skip '2' because that command is disabled");
 
                 Helper.keydown(commandingSurface.element, Key.downArrow);
                 LiveUnit.Assert.areEqual(commandingSurface._dom.overflowButton, document.activeElement);
@@ -1211,65 +1388,73 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(commandingSurface._dom.overflowButton, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.leftArrow);
-                LiveUnit.Assert.areEqual("3", document.activeElement.textContent);
+                LiveUnit.Assert.areEqual("3", document.activeElement.winControl.label);
 
                 Helper.keydown(commandingSurface.element, Key.upArrow);
-                LiveUnit.Assert.areEqual("1", document.activeElement.textContent, "Up arrow, should skip '2' because that command is disabled");
+                LiveUnit.Assert.areEqual("1", document.activeElement.winControl.label, "Up arrow, should skip '2' because that command is disabled");
                 complete();
             });
         }
 
         testKeyboardingWithCustomContent(complete) {
             var Key = WinJS.Utilities.Key;
-            var firstEL = document.createElement("button");
-            var customEl = document.createElement("div");
+            var firstCommand = document.createElement("button");
+            var customCommand = document.createElement("div");
             var firstCheckBox = document.createElement("input");
             firstCheckBox.type = "checkbox";
             var secondCheckBox = document.createElement("input");
             secondCheckBox.type = "checkbox";
-            customEl.appendChild(firstCheckBox);
-            customEl.appendChild(secondCheckBox);
-            var lastEl = document.createElement("button");
+            customCommand.appendChild(firstCheckBox);
+            customCommand.appendChild(secondCheckBox);
+            var lastCommand = document.createElement("button");
             var data = new WinJS.Binding.List([
-                new Command(firstEL, { type: _Constants.typeButton, label: "1" }),
-                new Command(customEl, { type: _Constants.typeContent, label: "2", firstElementFocus: firstCheckBox, lastElementFocus: secondCheckBox }),
-                new Command(lastEl, { type: _Constants.typeButton, label: "3" }),
+                new Command(firstCommand, { type: _Constants.typeButton, label: "1" }),
+                new Command(customCommand, { type: _Constants.typeContent, label: "2", firstElementFocus: firstCheckBox, lastElementFocus: secondCheckBox }),
+                new Command(lastCommand, { type: _Constants.typeButton, label: "3" }),
             ]);
             this._element.style.width = "10px";
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
+            var overflowButton = commandingSurface._dom.overflowButton;
 
+            // Size the width of the control to fit all 3 commands.
             var customContentWidth = commandingSurface._getCommandWidth(data.getAt(1));
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 2,
-                additionalWidth: customContentWidth,
-                visibleOverflowButton: false,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 2,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: customContentWidth,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
 
-            // The actionarea should show | 1 | 2 (custom) | 3 |
-
+            // The actionarea should show | 1 | 2 (custom) | 3 | ... |
             commandingSurface.element.focus();
             setTimeout(function () {
                 Helper.keydown(commandingSurface.element, Key.rightArrow);
-                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                LiveUnit.Assert.areEqual(firstCommand, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.end);
-                LiveUnit.Assert.areEqual(lastEl, document.activeElement);
+                LiveUnit.Assert.areEqual(overflowButton, document.activeElement);
+
+                Helper.keydown(commandingSurface.element, Key.leftArrow);
+                LiveUnit.Assert.areEqual(lastCommand, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.leftArrow);
                 LiveUnit.Assert.areEqual(secondCheckBox, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.leftArrow);
-                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                LiveUnit.Assert.areEqual(firstCommand, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.rightArrow);
                 LiveUnit.Assert.areEqual(firstCheckBox, document.activeElement);
 
                 Helper.keydown(commandingSurface.element, Key.home);
-                LiveUnit.Assert.areEqual(firstEL, document.activeElement);
+                LiveUnit.Assert.areEqual(firstCommand, document.activeElement);
                 complete();
             });
         }
@@ -1290,12 +1475,18 @@ module CorsicaTests {
             ]);
             this._element.style.width = "10px";
             var commandingSurface = new _CommandingSurface(this._element, {
-                data: data
+                data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
+            // Limit the width of the control to fit only 3 commands.
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 3,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -1367,11 +1558,17 @@ module CorsicaTests {
             this._element.style.width = "10px";
             var commandingSurface = new _CommandingSurface(this._element, {
                 data: data,
+                closedDisplayMode: _CommandingSurface.ClosedDisplayMode.compact,
             });
 
+            // Limit the width of the control to fit 3 commands.
             var args: Helper._CommandingSurface.ISizeForCommandsArgs = {
-                numStandardCommands: 3,
-                visibleOverflowButton: true,
+                closedDisplayMode: commandingSurface.closedDisplayMode,
+                numStandardCommandsShownInActionArea: 3,
+                numSeparatorsShownInActionArea: 0,
+                widthOfContentCommandsShownInActionArea: 0,
+                isACommandVisbleInTheOverflowArea: true,
+                additionalFreeSpace: 0,
             };
             Helper._CommandingSurface.sizeForCommands(this._element, args);
             commandingSurface.forceLayout();
@@ -1387,9 +1584,8 @@ module CorsicaTests {
             commandingSurface.data = new WinJS.Binding.List([]);
 
             WinJS.Utilities.Scheduler.schedule(() => {
-                LiveUnit.Assert.areEqual(2, commandingSurface._dom.actionArea.children.length, "Only the overflow button and spacer elements should be present.");
-                LiveUnit.Assert.areEqual(1, commandingSurface._dom.overflowArea.children.length, "Only the spacer element should be present.");
-
+                LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea).length, "Action area should be empty");
+                LiveUnit.Assert.areEqual(0, Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.overflowArea).length, "Overflow area should be empty");
                 LiveUnit.Assert.isTrue(menuCommandProjections.every(function (menuCommand) {
                     return menuCommand._disposed;
                 }), "Setting new data should have disposed all previous overflowarea MenuCommand projections.");
@@ -1607,11 +1803,21 @@ module CorsicaTests {
                 new Command(null, { type: _Constants.typeSeparator }),
                 new Command(null, { type: _Constants.typeButton, section: 'secondary', label: "secondary" })
             ]);
-            var commandingSurface = new _CommandingSurface(this._element, { data: data, opened: false });
+            var commandingSurface = new _CommandingSurface(this._element, { opened: false });
             Helper._CommandingSurface.useSynchronousAnimations(commandingSurface);
 
+            // Test empty scenario.
             commandingSurface.open();
-            LiveUnit.Assert.isTrue(commandingSurface.opened)
+            LiveUnit.Assert.isTrue(commandingSurface.opened);
+            Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
+
+            commandingSurface.close();
+            LiveUnit.Assert.isFalse(commandingSurface.opened);
+
+            // Test scenario with data.
+            commandingSurface.data = data;
+            commandingSurface.open();
+            LiveUnit.Assert.isTrue(commandingSurface.opened);
             Helper._CommandingSurface.verifyRenderedOpened(commandingSurface);
         }
 
@@ -1774,7 +1980,7 @@ module CorsicaTests {
             commandingSurface.open();
 
             LiveUnit.LoggingCore.logComment("Verify that first and last tabStop have tabIndex === 0, " +
-            "when the control is opened");
+                "when the control is opened");
             var firstTabStopIndex = 0;
             var finalTabStopIndex = 0;
             verifyTabIndices(commandingSurface, firstTabStopIndex, finalTabStopIndex);
@@ -1792,7 +1998,7 @@ module CorsicaTests {
             commandingSurface.opened = true;
 
             LiveUnit.Assert.areEqual(commandingSurface._dom.finalTabStop.id,
-                commandingSurface._dom.firstTabStop.getAttribute("x-ms-aria-flowfrom"), 
+                commandingSurface._dom.firstTabStop.getAttribute("x-ms-aria-flowfrom"),
                 "first tab stop should flow from final tab stop, while opened");
             LiveUnit.Assert.areEqual(commandingSurface._dom.firstTabStop.id,
                 commandingSurface._dom.finalTabStop.getAttribute("aria-flowto"),
