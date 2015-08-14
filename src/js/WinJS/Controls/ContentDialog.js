@@ -84,7 +84,8 @@ define([
                 _column0or1: "win-contentdialog-column0or1",
                 _visible: "win-contentdialog-visible",
                 _tabStop: "win-contentdialog-tabstop",
-                _commandSpacer: "win-contentdialog-commandspacer"
+                _commandSpacer: "win-contentdialog-commandspacer",
+                _deviceFixedSupported: "win-contentdialog-devicefixedsupported"
             };
             var EventNames = {
                 beforeShow: "beforeshow",
@@ -92,6 +93,16 @@ define([
                 beforeHide: "beforehide",
                 afterHide: "afterhide",
             };
+            
+            var _supportsMsDeviceFixedCached;
+            function supportsMsDevicedFixed(dialogRoot) {
+                if (typeof _supportsMsDeviceFixedCached === "undefined") {
+                    var element = document.createElement("div");
+                    element.style.position = "-ms-device-fixed";
+                    _supportsMsDeviceFixedCached = (_ElementUtilities._getComputedStyle(element).position === "-ms-device-fixed");
+                }
+                return _supportsMsDeviceFixedCached;
+            }
 
             // WinJS animation promises always complete successfully. This
             // helper allows an animation promise to complete in the canceled state
@@ -699,6 +710,10 @@ define([
                     _ElementUtilities._addEventListener(dom.endBodyTab, "focusin", this._onEndBodyTabFocusIn.bind(this));
                     dom.commands[0].addEventListener("click", this._onCommandClicked.bind(this, DismissalResult.primary));
                     dom.commands[1].addEventListener("click", this._onCommandClicked.bind(this, DismissalResult.secondary));
+                    
+                    if (supportsMsDevicedFixed()) {
+                        _ElementUtilities.addClass(dom.root, ClassNames._deviceFixedSupported);
+                    }
                 },
 
                 _updateCommandsUI: function ContentDialog_updateCommandsUI() {

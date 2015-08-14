@@ -28,12 +28,22 @@
 
     &.win-contentdialog-verticalalignment {
         position: fixed;
-        position: -ms-device-fixed;
         top: 0;
         left: 0;
-        width: 100vw;
+        right: 0;
         height: 100vh;
         overflow: hidden;
+        
+        &.win-contentdialog-devicefixedsupported {
+            // We have to use different techniques for sizing the height due to browser bugs:
+            //   - In Edge, height:100vh doesn't work properly on elements with
+            //     position:-ms-device-fixed so we use top:0 and bottom:0.
+            //   - In Chrome, using top:0 and bottom:0 breaks percentage heights within the
+            //     flexbox so we use height:100vh.
+            position: -ms-device-fixed;
+            height: auto;
+            bottom: 0;
+        }
 
         display: none;
         &.win-contentdialog-visible {
@@ -63,8 +73,8 @@
         outline-width: 1px;
         box-sizing: border-box;
         padding: 18px 24px 24px 24px;
-
-        width: 100vw;
+        
+        width: 100%;
         min-width: @minWidth;
         max-width: @maxWidth;
 
@@ -87,8 +97,7 @@
        This element works by moving between flexbox columns as the window's height changes.
      */
     .win-contentdialog-column0or1 {
-        height: 50vh;
-        #flex > .flex(@grow: 10000; @shrink: 0);
+        #flex > .flex(@grow: 10000; @shrink: 0; @basis: 50%);
         width: 0;
     }
 
