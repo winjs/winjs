@@ -6,11 +6,12 @@
 
     module.exports = function (grunt) {    
 
-        grunt.registerTask('npm-release', 'Publishes a package to npm', function (mode) {
+        grunt.registerMultiTask('npm-release', 'Publishes a package to npm', function () {
             var done = this.async();
-            var src = grunt.option('src');
+            var options = this.options();
+            var root = options.root;
             
-            var cmd = 'npm publish ' + src;
+            var cmd = 'npm publish ' + root;
             
             exec(cmd, function (err, stdout) {
                 if (err) {

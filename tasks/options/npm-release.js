@@ -8,11 +8,15 @@
         // Publishes npm packages
         
         publishWinJs: {
-            src: config.winjsNpmPublishRoot
+            options: {
+                root: config.winjsNpmPublishRoot
+            }
         },
         
         publishLocalization: {
-            src: config.localizationPublishRoot
+            options: {
+                root: config.localizationNpmPublishRoot
+            }
         }
     };
 })();

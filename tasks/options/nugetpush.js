@@ -10,16 +10,12 @@
         // Requires NuGet API key to be set. You can do this with:
         //   grunt nugetkey --key=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
         
-        nugetpushWinJs: {
-            publish: {
-                src: config.winjsPublishRoot + '*.nupkg',
-            }
+        publishWinJs: {
+            src: config.winjsPublishRoot + '*.nupkg'
         },
         
-        nugetpushLocalization: {
-            publish: {
-                src: config.localizationPublishRoot + '*.nupkg',
-            }
+        publishLocalization: {
+            src: config.localizationPublishRoot + '*.nupkg'
         }
     };
 })();

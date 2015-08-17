@@ -63,7 +63,7 @@
                 grunt.log.writeln('If everything is in order, run "grunt publish:force" to proceed');
             } else if (mode === 'force') {
                 grunt.task.run([
-                    'prepare-publish',
+                    '_preparePublish',
                     
                     // winjs
                     'nugetpush:publishWinJs', // NuGet
@@ -71,7 +71,7 @@
                     'gitcommit:publishWinJsBower', 'gitpush:publishWinJsBower', 'github-release:publishWinJsBower', // bower
                     
                     // winjs-localization
-                    'nugetpush:publisLocalization', // NuGet
+                    'nugetpush:publishLocalization', // NuGet
                     'npm-release:publishLocalization', // npm
                     'gitcommit:publishLocalizationBower', 'gitpush:publishLocalizationBower', 'github-release:publishLocalizationBower', // bower
                     
