@@ -68,7 +68,7 @@
             files: {
                 src: [
                     config.winjsPublishRoot + 'winjs.zip',
-                    config.winjsPublishRoot + 'winjs-localization.zip'
+                    config.localizationPublishRoot + 'winjs-localization.zip'
                 ]
             }
         }
