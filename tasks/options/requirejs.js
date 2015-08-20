@@ -76,7 +76,7 @@
 "            define([" + amdDependencies + "], factory);\n" +
 "        } else {\n" +
 "            globalObject.msWriteProfilerMark && msWriteProfilerMark('$(TARGET_DESTINATION) $(build.version).$(build.branch).$(build.date) " + name + ".js,StartTM');\n" +
-"            if (typeof module !== 'undefined') {\n" +
+"            if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {\n" +
 "                // CommonJS\n" +
 "                factory(" + commonJsDependencies + ");\n" +
 "            } else {\n" +
