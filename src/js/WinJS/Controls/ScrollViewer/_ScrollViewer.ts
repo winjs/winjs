@@ -3,8 +3,11 @@
 import _Global = require("../../Core/_Global");
 
 import _Control = require("../../Utilities/_Control");
+import _Dispose = require("../../Utilities/_Dispose");
 import _ElementUtilities = require("../../Utilities/_ElementUtilities");
 
+import ControlProcessor = require("../../ControlProcessor");
+import Scheduler = require("../../Scheduler");
 import XYFocus = require("../../XYFocus");
 
 require(["require-style!less/styles-scrollviewer"]);
@@ -15,7 +18,6 @@ require(["require-style!less/colors-scrollviewer"]);
 var SMALL_SCROLL_AMOUNT = 200;
 var PERCENTAGE_OF_PAGE_TO_SCROLL = 0.8;
 var THRESHOLD_TO_SHOW_TOP_ARROW = 50;
-var DelayBeforeCheckingSizeOfScrollableRegion = 500;
 
 var Keys = _ElementUtilities.Key;
 
@@ -39,6 +41,7 @@ export var ScrollMode = {
 };
 
 export class ScrollViewer {
+    static isDeclarativeControlContainer = true;
     static supportedForProcessing = true;
 
     private _element: HTMLElement;
@@ -46,12 +49,17 @@ export class ScrollViewer {
     private _canScrollUp = false;
     private _disposed = false;
     private _previousFocusRoot: HTMLElement;
+    private _processors: Function[] = [];
+    private _pendingRefresh = false;
     private _scrollingContainer: HTMLElement;
     private _scrollingIndicatorElement: HTMLElement;
     private _scrollMode: string;
     private _vuiActive = false;
     private _vuiPageUpElement: HTMLElement;
     private _vuiPageDownElement: HTMLElement;
+
+    // Used for testing
+    private _refreshDone: () => any;
 
     /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.ScrollViewer.element" helpKeyword="WinJS.UI.ScrollViewer.element">  
     /// Gets the DOM element that hosts the ScrollViewer.  
@@ -145,8 +153,6 @@ export class ScrollViewer {
         this.scrollMode = ScrollMode.text;
         _Control.setOptions(this, options);
 
-        this._refreshVisuals();
-
         // The scroll viewer has two interaction modes:  
         //   1. Normal - In this state there is focusable content within the scrollable  
         //      region. Automatic focus handles directional navigation and scrolls  
@@ -160,14 +166,10 @@ export class ScrollViewer {
 
         // We need to wait for processAll to finish on the inner contents of the scrollable region, because we need accurate   
         // sizing information to determine if a region is scrollable or not.  
-        _Global.setTimeout(() => {
-            if (this._disposed) {
-                return;
-            }
-            this._refreshVisuals();
-        }, DelayBeforeCheckingSizeOfScrollableRegion);
+        ControlProcessor.processAll(this.element).done(() => {
+            this.refresh();
+        });
     }
-
 
     /// <signature helpKeyword="WinJS.UI.ScrollViewer.dispose">  
     /// <summary locid="WinJS.UI.ScrollViewer.dispose">  
@@ -181,7 +183,7 @@ export class ScrollViewer {
         this._disposed = true;
 
         _ElementUtilities.removeClass(this._element, "win-xyfocus-suspended");
-        _ElementUtilities.disposeSubTree(this.element);
+        _Dispose.disposeSubTree(this.element);
     }
 
     /// <signature helpKeyword="WinJS.UI.ScrollViewer.refresh">  
@@ -262,10 +264,18 @@ export class ScrollViewer {
     }
 
     private _refreshVisuals() {
+        if (this._pendingRefresh) {
+            return;
+        }
+        this._pendingRefresh = true;
+        
         // We call this function any time the size of the contents within the ScrollViewer changes. This function  
         // determines if we need to display the visual treatment for "more content".
-        _Global.setTimeout(() => {
+        Scheduler.schedule(() => {
+            this._pendingRefresh = false;
+
             if (this._disposed) {
+                this._refreshDone && this._refreshDone();
                 return;
             }
 
@@ -291,7 +301,8 @@ export class ScrollViewer {
                 _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
                 _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
             }
-        });
+            this._refreshDone && this._refreshDone();
+        }, Scheduler.Priority.high);
     }
 
     private _scrollDownBySmallAmount() {

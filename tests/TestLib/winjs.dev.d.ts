@@ -307,6 +307,23 @@ declare module WinJS {
             };
         }
 
+        var ScrollMode: { text: string; nonModalText: string; list: string; };
+
+        class ScrollViewer {
+            element: HTMLElement;
+            scrollMode: string;
+
+            _refreshDone: () => any;
+            _scrollingContainer: HTMLElement;
+            _scrollingIndicatorElement: HTMLElement;
+
+            constructor(element?: HTMLElement, options?: any);
+
+            dispose(): any;
+
+            _setActive(): any;
+        }
+
         interface ISelect {
             value;
             index: number;
