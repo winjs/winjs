@@ -19,7 +19,7 @@ define([
     '../Utilities/_UI',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler'
-    ], function itemContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
+], function itemContainerInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _KeyboardBehavior, _UI, _Constants, _ItemEventsHandler) {
     "use strict";
 
     var createEvent = _Events._createEventProperty;
@@ -154,9 +154,6 @@ define([
                     changeFocus: function () { },
                     selectRange: function (firstIndex, lastIndex) {
                         return that._selection.set({ firstIndex: firstIndex, lastIndex: lastIndex });
-                    },
-                    disablePressAnimation: function () {
-                        return false;
                     }
                 }, {
                     pressedEntity: {

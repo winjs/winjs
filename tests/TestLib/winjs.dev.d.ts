@@ -805,9 +805,6 @@ declare module WinJS {
 
         function _animationTimeAdjustment(time: number);
 
-        function _rotationTransform3d(angle, axis);
-        function _tiltTransform(clickX, clickY, elementRect);
-
         var ListDataSource;
         var _SelectionMode;
         var _SelectionManager;

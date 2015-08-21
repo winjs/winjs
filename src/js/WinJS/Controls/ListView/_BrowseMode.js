@@ -11,7 +11,7 @@ define([
     '../ItemContainer/_Constants',
     '../ItemContainer/_ItemEventsHandler',
     './_SelectionManager'
-    ], function browseModeInit(exports, _Global, _Base, _BaseUtils, Animations, Promise, _ElementUtilities, _UI, _Constants, _ItemEventsHandler, _SelectionManager) {
+], function browseModeInit(exports, _Global, _Base, _BaseUtils, Animations, Promise, _ElementUtilities, _UI, _Constants, _ItemEventsHandler, _SelectionManager) {
     "use strict";
 
     var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
@@ -45,7 +45,7 @@ define([
                 this._pressedPosition = null;
 
                 this.initialize(modeSite);
-            },{
+            }, {
                 _dispose: function () {
                     if (this._itemEventsHandler) {
                         this._itemEventsHandler.dispose();
@@ -108,9 +108,6 @@ define([
                         },
                         selectRange: function (firstIndex, lastIndex, additive) {
                             return that._selectRange(firstIndex, lastIndex, additive);
-                        },
-                        disablePressAnimation: function () {
-                            return site._isInSelectionMode();
                         }
                     }, {
                         pressedEntity: {

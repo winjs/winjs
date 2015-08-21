@@ -17,50 +17,8 @@ define([
 
     var transformNames = _BaseUtils._browserStyleEquivalents["transform"];
 
-    // Returns a CSS transformation to rotate and shrink an element when it is
-    // pressed. The closer the click is to the center of the item, the more it
-    // shrinks and the less it rotates.
-    // *elementRect* should be of the form returned by getBoundingClientRect. All
-    // of the parameters must be relative to the same coordinate system.
-    // This function was translated from the Splash implementation.
-    function tiltTransform(clickX, clickY, elementRect) {
-        var minSize = 44,
-            maxSize = 750,
-            minRotationX = 2,
-            maxRotationX = 9,
-            minRotationY = 2.11,
-            maxRotationY = 13,
-            sizeRange = maxSize - minSize,
-            halfWidth = elementRect.width / 2,
-            halfHeight = elementRect.height / 2;
-
-        var clampedWidth = _ElementUtilities._clamp(elementRect.width, minSize, maxSize);
-        var clampedHeight = _ElementUtilities._clamp(elementRect.height, minSize, maxSize);
-
-        // The maximum rotation that any element is capable of is calculated by using its width and height and clamping it into the range calculated above.
-        // minRotationX|Y and maxRotationX|Y are the absolute minimums and maximums that any generic element can be rotated by, but in order to determine
-        // what the min/max rotations for our current element is (which will be inside of the absolute min/max described above), we need
-        // to calculate the max rotations for this element by clamping the sizes and doing a linear interpolation:
-        var maxElementRotationX = maxRotationX - (((clampedHeight - minSize) / sizeRange) * (maxRotationX - minRotationX));
-        var maxElementRotationY = maxRotationY - (((clampedWidth - minSize) / sizeRange) * (maxRotationY - minRotationY));
-
-        // Now we calculate the distance of our current point from the center of our element and normalize it to be in the range of 0 - 1
-        var normalizedOffsetX = ((clickX - elementRect.left) - halfWidth) / halfWidth;
-        var normalizedOffsetY = ((clickY - elementRect.top) - halfHeight) / halfHeight;
-
-        // Finally, we calculate the appropriate rotations and scale for the element by using the normalized click offsets and the
-        // maximum element rotation.
-        var rotationX = maxElementRotationX * normalizedOffsetY;
-        var rotationY = maxElementRotationY * normalizedOffsetX;
-        var scale = 0.97 + 0.03 * (Math.abs(normalizedOffsetX) + Math.abs(normalizedOffsetY)) / 2.0;
-        var transform = "perspective(800px) scale(" + scale + ") rotateX(" + -rotationX + "deg) rotateY(" + rotationY + "deg)";
-        return transform;
-    }
-
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         // Expose these to the unit tests
-        _tiltTransform: tiltTransform,
-
         _ItemEventsHandler: _Base.Namespace._lazy(function () {
             var PT_TOUCH = _ElementUtilities._MSPointerEvent.MSPOINTER_TYPE_TOUCH || "touch";
 
@@ -139,7 +97,7 @@ define([
                                 this._site.pressedContainer = site.containerAtIndex(this._site.pressedEntity.index);
                                 this._site.animatedElement = this._site.pressedContainer;
                                 this._site.pressedHeader = null;
-                                this._togglePressed(true, false, eventObject);
+                                this._togglePressed(true, eventObject);
                                 this._site.pressedContainer.addEventListener('dragstart', this._DragStartBound);
                                 if (!touchInput) {
                                     // This only works for non touch input because on touch input we set capture which immediately fires the MSPointerOut.
@@ -151,7 +109,7 @@ define([
                                 // Interactions with the headers on phone show an animation
                                 if (_BaseUtils.isPhone) {
                                     this._site.animatedElement = this._site.pressedHeader;
-                                    this._togglePressed(true, false, eventObject);
+                                    this._togglePressed(true, eventObject);
                                 } else {
                                     this._site.pressedItemBox = null;
                                     this._site.pressedContainer = null;
@@ -199,13 +157,13 @@ define([
 
                 onPointerEnter: function ItemEventsHandler_onPointerEnter(eventObject) {
                     if (this._site.pressedContainer && this._pointerId === eventObject.pointerId) {
-                        this._togglePressed(true, false, eventObject);
+                        this._togglePressed(true, eventObject);
                     }
                 },
 
                 onPointerLeave: function ItemEventsHandler_onPointerLeave(eventObject) {
                     if (this._site.pressedContainer && this._pointerId === eventObject.pointerId) {
-                        this._togglePressed(false, true /* synchronous */, eventObject);
+                        this._togglePressed(false, eventObject);
                     }
                 },
 
@@ -453,11 +411,8 @@ define([
                     return (this._selectionAllowed() && containerElement && !this._isInteractive(element));
                 },
 
-                _togglePressed: function ItemEventsHandler_togglePressed(add, synchronous, eventObject) {
-                    var that = this;
+                _togglePressed: function ItemEventsHandler_togglePressed(add, eventObject) {
                     var isHeader = this._site.pressedEntity.type === _UI.ObjectType.groupHeader;
-
-                    this._site.animatedDownPromise && this._site.animatedDownPromise.cancel();
 
                     if (!isHeader && _ElementUtilities.hasClass(this._site.pressedItemBox, _Constants._nonSelectableClass)) {
                         return;
@@ -465,70 +420,11 @@ define([
 
                     if (!this._staticMode(isHeader)) {
                         if (add) {
-                            if (!_ElementUtilities.hasClass(this._site.animatedElement, _Constants._pressedClass)) {
-                                _WriteProfilerMark("WinJS.UI._ItemEventsHandler:applyPressedUI,info");
-                                _ElementUtilities.addClass(this._site.animatedElement, _Constants._pressedClass);
-
-                                var boundingElement = isHeader ? that._site.pressedHeader : that._site.pressedContainer;
-                                var transform = tiltTransform(eventObject.clientX, eventObject.clientY, boundingElement.getBoundingClientRect());
-                                // Timeout prevents item from looking like it was pressed down during pans
-                                this._site.animatedDownPromise = Promise.timeout(50).then(function () {
-                                    applyDownVisual(transform);
-                                });
-                            }
+                            _ElementUtilities.addClass(this._site.animatedElement, _Constants._pressedClass);
                         } else {
-                            if (_ElementUtilities.hasClass(this._site.animatedElement, _Constants._pressedClass)) {
-                                var element = this._site.animatedElement;
-                                var expectingStyle = this._site.animatedElementScaleTransform;
-                                if (synchronous) {
-                                    applyUpVisual(element, expectingStyle);
-                                } else {
-                                    // Force removal of the _pressedClass to be asynchronous so that users will see at
-                                    // least one frame of the shrunken item when doing a quick tap.
-                                    //
-                                    // setImmediate is used rather than requestAnimationFrame to ensure that the item
-                                    // doesn't get stuck down for too long -- apps are told to put long running invoke
-                                    // code behind a setImmediate and togglePressed's async code needs to run first.
-                                    _BaseUtils._setImmediate(function () {
-                                        if (_ElementUtilities.hasClass(element, _Constants._pressedClass)) {
-                                            applyUpVisual(element, expectingStyle);
-                                        }
-                                    });
-                                }
-                            }
+                            _ElementUtilities.removeClass(this._site.animatedElement, _Constants._pressedClass);
                         }
                     }
-
-                    function applyDownVisual(transform) {
-                        if (that._site.disablePressAnimation()) {
-                            return;
-                        }
-
-                        if (that._site.animatedElement.style[transformNames.scriptName] === "") {
-                            that._site.animatedElement.style[transformNames.scriptName] = transform;
-                            that._site.animatedElementScaleTransform = that._site.animatedElement.style[transformNames.scriptName];
-                        } else {
-                            that._site.animatedElementScaleTransform = "";
-                        }
-                    }
-
-                    function applyUpVisual(element, expectingStyle) {
-                        _WriteProfilerMark("WinJS.UI._ItemEventsHandler:removePressedUI,info");
-                        _ElementUtilities.removeClass(element, _Constants._pressedClass);
-                        if (that._containsTransform(element, expectingStyle)) {
-                            _TransitionAnimation.executeTransition(element, {
-                                property: transformNames.cssName,
-                                delay: 150,
-                                duration: 350,
-                                timing: "cubic-bezier(0.17,0.17,0.2,1)",
-                                to: element.style[transformNames.scriptName].replace(expectingStyle, "")
-                            });
-                        }
-                    }
-                },
-
-                _containsTransform: function ItemEventsHandler_containsTransform(element, transform) {
-                    return transform && element.style[transformNames.scriptName].indexOf(transform) !== -1;
                 },
 
                 _resetPointerDownStateForPointerId: function ItemEventsHandler_resetPointerDownState(eventObject) {

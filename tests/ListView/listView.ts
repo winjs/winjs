@@ -1878,68 +1878,6 @@ module WinJSTests {
             }
             return result;
         }
-
-        ListViewTests.prototype['testTiltTransform'] = function () {
-            var testTilt = function (description, clickX, clickY, elementRect, expectedTransform) {
-                description = "Tilt transform: " + description;
-                var transform = parseCssTransform(WinJS.UI._tiltTransform(clickX, clickY, elementRect));
-                Helper.Assert.areSetsEqual(Object.keys(transform), ["rotateX", "rotateY", "perspective", "scale"], "The transformation should consist of exactly 4 transforms");
-
-                var scale = Helper.round(parseFloat(transform.scale), 5);
-                var rotateX = Helper.round(parseFloat(transform.rotateX), 5);
-                var rotateY = Helper.round(parseFloat(transform.rotateY), 5);
-
-                LiveUnit.Assert.areEqual("800px", transform.perspective, description);
-                LiveUnit.Assert.areEqual(expectedTransform.scale, scale, description);
-                LiveUnit.Assert.areEqual(expectedTransform.rotateX, rotateX, description);
-                LiveUnit.Assert.areEqual(expectedTransform.rotateY, rotateY, description);
-            };
-
-            var standardRect = {
-                left: 0, width: 100, right: 100,
-                top: 0, height: 100, bottom: 100
-            };
-            testTilt("Click on center has no rotation & max shrink", 50, 50, standardRect, {
-                scale: 0.97,
-                rotateX: 0,
-                rotateY: 0
-            });
-            testTilt("Click on top left corner has a max rotation & no shrink", 0, 0, standardRect, {
-                scale: 1,
-                rotateX: 8.44476,
-                rotateY: -12.13620
-            });
-            testTilt("Click on top right corner has a max rotation & no shrink", 100, 0, standardRect, {
-                scale: 1,
-                rotateX: 8.44476,
-                rotateY: 12.13620
-            });
-            testTilt("Click on bottom left corner has a max rotation & no shrink", 0, 100, standardRect, {
-                scale: 1,
-                rotateX: -8.44476,
-                rotateY: -12.13620
-            });
-            testTilt("Click on bottom right corner has a max rotation & no shrink", 100, 100, standardRect, {
-                scale: 1,
-                rotateX: -8.44476,
-                rotateY: 12.13620
-            });
-            testTilt("Click on arbitrary point", 33, 65, standardRect, {
-                scale: 0.9796,
-                rotateX: -2.53343,
-                rotateY: -4.12631
-            });
-
-            var realisticRect = {
-                left: 72, width: 243, right: 315,
-                top: 1044, height: 42, bottom: 1086
-            };
-            testTilt("Location and size of element are properly taken into account", 315, 1044, realisticRect, {
-                scale: 1,
-                rotateX: 9,
-                rotateY: 9.93044
-            });
-        };
     })();
 }
 LiveUnit.registerTestClass("WinJSTests.ListViewTests");

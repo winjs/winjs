@@ -69,9 +69,12 @@
     }
     // We need to add html.win-hoverable to this class list to ensure that this selector wins out over the regular hover color selector defined in ColorsHover.
     html.win-hoverable .win-listview.win-selectionstylefilled .win-container.win-pressed .win-itembox,
-    html.win-hoverable .win-itemcontainer.win-selectionstylefilled.win-container .win-itembox,
     html.win-hoverable .win-listview.win-selectionstylefilled .win-container .win-itembox.win-pressed,
-    html.win-hoverable .win-itemcontainer.win-selectionstylefilled.win-container .win-itembox.win-pressed {
+    html.win-hoverable .win-itemcontainer.win-selectionstylefilled.win-container.win-pressed .win-itembox,
+    // The following 3 styles is to enable "pressed" styling on platforms where we do not apply the win-hoverable class.
+    .win-listview.win-selectionstylefilled .win-container.win-pressed .win-itembox,
+    .win-listview.win-selectionstylefilled .win-container .win-itembox.win-pressed,
+    .win-itemcontainer.win-selectionstylefilled.win-container.win-pressed .win-itembox  {
         background-color: @listPress;
     }
     .mixin(@theme);
@@ -121,9 +124,8 @@ html.win-hoverable .win-itemcontainer .win-itembox:hover::before {
     opacity: 0.4;
 }
 html.win-hoverable .win-listview .win-pressed .win-itembox:hover::before,
-html.win-hoverable .win-itemcontainer .win-pressed .win-itembox:hover::before,
 html.win-hoverable .win-listview .win-pressed.win-itembox:hover::before,
-html.win-hoverable .win-itemcontainer .win-pressed.win-itembox:hover::before {
+html.win-hoverable .win-itemcontainer.win-pressed .win-itembox:hover::before {
     opacity: 0.6;
 }
 html.win-hoverable .win-listview.win-selectionstylefilled .win-container:hover,
