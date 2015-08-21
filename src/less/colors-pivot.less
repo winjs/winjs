@@ -1,47 +1,91 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
-.Colors(@theme) {
-    .colorDefinitions(@theme);
+#win-pivot {
 
-    .win-pivot .win-pivot-title {
-        color: @baseHigh;
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
+        @headerColor: @baseMid;
+        @headerActiveColor: @baseMediumHigh;
+        @headerDisabledColor: @baseMediumMid;
+        @headerHoverColor: baseMediumHigh;
+        @headerSelectedColor: @baseHigh;
+        @headerSelectedBackgroundColor: transparent;
+        @navButtonColor: @altMediumHigh;
+        @navButtonHoverColor: @baseMid;
+        @navButtonBackgroundColor: @baseMediumMid;
+        @titleColor: @baseHigh;
     }
 
-    .win-pivot .win-pivot-navbutton {
-        background-color: @baseMediumMid;
-        color: @altMediumHigh;
+    .variableDefs(highcontrast) {
+        .colorDefinitions(@theme);
+        @headerColor: HighlightText;
+        @headerActiveColor: HighlightText;
+        @headerDisabledColor: GrayText;
+        @headerHoverColor: HighlightText;
+        @headerSelectedColor: HighlightText;
+        @headerSelectedBackgroundColor: Highlight;
+        @navButtonColor: HighlightText;
+        @navButtonHoverColor: HighlightText;
+        @navButtonBackgroundColor: Highlight;
+        @titleColor: WindowText;
     }
 
-    .win-pivot .win-pivot-navbutton.win-pivot-navbutton:hover:active {
-        color: @baseMediumHigh;
+    .stylesForTheme(@theme) {
+        #win-pivot > .variableDefs(@theme);
+
+        .win-pivot .win-pivot-title {
+            color: @titleColor;
+        }
+
+        .win-pivot .win-pivot-navbutton {
+            background-color: @navButtonBackgroundColor;
+            color: @navButtonColor;
+        }
+
+        .win-pivot .win-pivot-navbutton.win-pivot-navbutton:hover:active {
+            color: @headerActiveColor;
+        }
+
+        .win-pivot button.win-pivot-header {
+            color: @headerColor;
+            background-color: transparent;
+        }
+
+        .win-pivot button.win-pivot-header:focus,
+        .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
+            color: @headerActiveColor;
+        }
+
+        .win-pivot button.win-pivot-header.win-pivot-header-selected {
+            color: @headerSelectedColor;
+            background-color: @headerSelectedBackgroundColor;
+        }
+
+        .win-pivot-header[disabled] {
+            color: @headerDisabledColor;
+        }
     }
 
-    .win-pivot button.win-pivot-header {
-        color: @baseMid;
-        background-color: transparent;
-    }
+    .stylesForThemeHover(@theme) {
+        #win-pivot > .variableDefs(@theme);
 
-    .win-pivot button.win-pivot-header:focus,
-    .win-pivot button.win-pivot-header.win-pivot-header:hover:active {
-        color: @baseMediumHigh;
-    }
+        .win-pivot .win-pivot-navbutton:hover {
+            color: @navButtonHoverColor;
+        }
 
-    .win-pivot button.win-pivot-header.win-pivot-header-selected {
-        color: @baseHigh;
-    }
-
-    .win-pivot-header[disabled] {
-        color: @baseMediumMid;
+        .win-pivot button.win-pivot-header:hover {
+            color: @headerHoverColor;
+        }
     }
 }
 
+.Colors(@theme) {
+    #win-pivot > .stylesForTheme(@theme);
+}
+
 .ColorsHover(@theme) {
-    .colorDefinitions(@theme);
+    #win-pivot > .stylesForThemeHover(@theme);
+}
 
-    .win-pivot .win-pivot-navbutton:hover {
-        color: @baseMid;
-    }
-
-    .win-pivot button.win-pivot-header:hover {
-        color: @baseMediumHigh;
-    }
+.HighContrast() {
+    #win-pivot > .stylesForTheme(highcontrast);
 }
