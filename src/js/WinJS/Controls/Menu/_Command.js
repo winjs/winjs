@@ -483,16 +483,20 @@ define([
                         var subFlyout = menuCommand.flyout;
                         // Flyout may not have processAll'd, so this may be a DOM object
                         if (subFlyout && subFlyout.hidden && subFlyout.show) {
-                            _ElementUtilities.addClass(menuCommand.element, _Constants.menuCommandFlyoutActivatedClass);
 
-                            // Remove activation class from the command if the flyout is ever hidden.
+                            // Add activation state to the command.
+                            _ElementUtilities.addClass(menuCommand.element, _Constants.menuCommandFlyoutActivatedClass);
+                            subFlyout.element.setAttribute("aria-expanded", "true");
                             subFlyout.addEventListener("beforehide", function beforeHide() {
+                                // Remove activation state from the command if the flyout is ever hidden.
                                 subFlyout.removeEventListener("beforehide", beforeHide, false);
                                 _ElementUtilities.removeClass(menuCommand.element, _Constants.menuCommandFlyoutActivatedClass);
+                                subFlyout.element.removeAttribute("aria-expanded");
                             }, false);
 
                             subFlyout.addEventListener("aftershow", function afterShow() {
                                 subFlyout.removeEventListener("aftershow", afterShow, false);
+
                                 // We are considered activated once we start showing the flyout.
                                 c();
                             }, false);
@@ -507,13 +511,13 @@ define([
 
                 _deactivateFlyoutCommand: function MenuCommand_deactivateFlyoutCommand(menuCommand) {
                     // Deactivates the associated Flyout command and returns a promise once complete.
-                    // A command is considered to be deactivated once the proper CSS class has been applied and its associated flyout has finished hiding.
+                    // A command is considered to be deactivated once the proper CSS class has been removed and its associated flyout has finished hiding.
                     return new Promise(function (c) {
                         menuCommand = menuCommand.winControl || menuCommand;
                         _ElementUtilities.removeClass(menuCommand.element, _Constants.menuCommandFlyoutActivatedClass);
 
                         var subFlyout = menuCommand.flyout;
-                        // Flyout may not have processAll'd, so this may be a DOM object
+                        // Flyout may not have processAll'd, so this may be a DOM object.
                         if (subFlyout && !subFlyout.hidden && subFlyout.hide) {
 
                             subFlyout.addEventListener("afterhide", function afterHide() {
@@ -521,6 +525,8 @@ define([
                                 c();
                             }, false);
 
+                            // Leverage pre-existing "beforehide" listener already set on the Flyout for clearing the command's activated state.
+                            // The "beforehide" listener is expected to have been added to the Flyout in the _activateFlyoutCommand.
                             subFlyout.hide();
                         } else {
                             // subFlyout does not need to be hidden.

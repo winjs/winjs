@@ -86,19 +86,15 @@ define([
                 }
 
                 // Remember aria role in case base constructor changes it
-                var role = this._element ? this._element.getAttribute("role") : null;
-                var label = this._element ? this._element.getAttribute("aria-label") : null;
+                var role = this._element && this._element.getAttribute("role") || "menu";
+                var label = this._element && this._element.getAttribute("aria-label") || null;
 
                 // Call the base overlay constructor helper
                 this._baseFlyoutConstructor(this._element, options);
 
                 // Make sure we have an ARIA role
-                if (role === null || role === "" || role === undefined) {
-                    this._element.setAttribute("role", "menu");
-                }
-                if (label === null || label === "" || label === undefined) {
-                    this._element.setAttribute("aria-label", strings.ariaLabel);
-                }
+                this._element.setAttribute("role", role);
+                this._element.setAttribute("aria-label", label);
 
                 // Handle "esc" & "up/down" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown.bind(this), true);
