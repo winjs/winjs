@@ -109,7 +109,7 @@ define([
                     if (role === null || role === "" || role === undefined) {
                         role = "menuitem";
                         if (this._type === _Constants.typeToggle) {
-                            role = "menuitemcheckbox";
+                            role = "checkbox";
                         }
                         this._element.setAttribute("role", role);
                         if (this._type === _Constants.typeFlyout) {

@@ -182,13 +182,22 @@ module CorsicaTests {
             var menuCommand = new MenuCommand(null, { label: 'test', icon: 'test.png', type: 'toggle', extraClass: 'extra' });
             LiveUnit.LoggingCore.logComment("menuCommand has been instantiated.");
             LiveUnit.Assert.isNotNull(menuCommand, "menuCommand element should not be null when instantiated.");
+            // Verify initial state of toggle command.
+            LiveUnit.Assert.areEqual("checkbox", menuCommand.element.getAttribute("role"),
+                "Narrator requires 'checkbox' role in order to announce updates to the toggled state");
+            LiveUnit.Assert.areEqual(false, menuCommand.selected, "Verifying that selected is false");
+            LiveUnit.Assert.areEqual(menuCommand.selected.toString(), menuCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
 
             // Cycle selected
-            LiveUnit.Assert.areEqual(false, menuCommand.selected, "Verifying that selected is false");
             menuCommand.selected = true;
             LiveUnit.Assert.areEqual(true, menuCommand.selected, "Verifying that selected is true");
+            LiveUnit.Assert.areEqual(menuCommand.selected.toString(), menuCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
             menuCommand.selected = false;
             LiveUnit.Assert.areEqual(false, menuCommand.selected, "Verifying that selected goes back to false");
+            LiveUnit.Assert.areEqual(menuCommand.selected.toString(), menuCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
 
             // Cycle extra class
             LiveUnit.Assert.areEqual("extra", menuCommand.extraClass, "Verifying that extraClass is 'extra'");
