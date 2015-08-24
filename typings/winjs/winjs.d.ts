@@ -5397,6 +5397,12 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
+         * Forces the Hub to update its layout.
+         * Use this function when making the Hub visible again after you set its style.display property to "none” or after style changes have been made that affect the size or position of the Hub or its HubSections.
+        **/
+        forceLayout(): void;
+
+        /**
          * Removes an event handler that the addEventListener method registered.
          * @param eventName The name of the event that the event handler is registered for.
          * @param eventCallback The event handler function to remove.
@@ -8680,7 +8686,9 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
-         * Forces the ViewBox to update its layout. Use this function when making the ViewBox visible again after its style.display property had been set to "none".
+         * Forces the ViewBox to update its layout. 
+         * Use this function when making the ViewBox visible again after its style.display property had been set to "none"
+         * or after style changes have been made that affect the size or position of the control or its child element.
         **/
         forceLayout(): void;
 

@@ -144,12 +144,12 @@ define([
                     }
                 },
 
+                /// <signature helpKeyword="WinJS.UI.ViewBox.dispose">
+                /// <summary locid="WinJS.UI.ViewBox.dispose">
+                /// Disposes this ViewBox.
+                /// </summary>
+                /// </signature>
                 dispose: function () {
-                    /// <signature helpKeyword="WinJS.UI.ViewBox.dispose">
-                    /// <summary locid="WinJS.UI.ViewBox.dispose">
-                    /// Disposes this ViewBox.
-                    /// </summary>
-                    /// </signature>
                     if (this._disposed) {
                         return;
                     }
@@ -165,6 +165,13 @@ define([
                     _Dispose.disposeSubTree(this._element);
                 },
 
+                /// <signature helpKeyword="WinJS.UI.ViewBox.forceLayout">
+                /// <summary locid="WinJS.UI.ViewBox.forceLayout">
+                /// Forces the ViewBox to update its layout.
+                /// Use this function when making the ViewBox visible again after its style.display property had been set to "none"
+                /// or after style changes have been made that affect the size or position of the control or its child element.
+                /// </summary>
+                /// </signature>
                 forceLayout: function () {
                     this._initialize();
                     this._updateLayout();
