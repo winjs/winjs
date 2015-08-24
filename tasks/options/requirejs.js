@@ -134,6 +134,8 @@
         options.stubModules = ["require-style", "require-json"];
         options.done = options.done || done;
         options.findNestedDependencies = true;
+        options.generateSourceMaps = false;
+        options.preserveLicenseComments = true;
 
         // If it doesn't have an exclude then we include the default AMD implementations
         var primary = !options.exclude;

@@ -255,6 +255,18 @@
     });
 
     QUnit.done(function (results) {
+        
+        function sendCoverageData(){
+            var component = document.querySelector("#qunit-header").firstChild.innerText;
+            var url = "http://localhost:8888/?fileName=" + component ;
+            var http = new XMLHttpRequest();
+            http.open("POST", url, true);
+            http.setRequestHeader("Content-type", "application/json");
+            http.send(JSON.stringify(window.__coverage__));
+            console.log("sent request");
+        }
+        //sendCoverageData();
+        
         if (document.querySelector("#loopTests").checked) {
             if (!log.length) {
                 document.querySelector("#startButton").click();
