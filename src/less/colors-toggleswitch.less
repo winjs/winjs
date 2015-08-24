@@ -1,90 +1,171 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 
-.Colors(@theme) {
-    .colorDefinitions(@theme);
+#win-toggleswitch {
+    .variableDefs(@theme) when not (@theme = highcontrast) {
+        .colorDefinitions(@theme);
 
-    /// Off Styles
-    // Rest
-    .win-toggleswitch-header {
-        color: @baseHigh;
-    }
-    .win-toggleswitch-value {
-        color: @baseHigh;
-    }
-    .win-toggleswitch-thumb {
-        background-color: @baseMediumHigh;
-    }
-    .win-toggleswitch-off .win-toggleswitch-track {
-        border-color: @baseMediumHigh;
-    }
+        @offRestTextColor: @baseHigh;
+        @offRestThumbBackgroundColor: @baseMediumHigh;
+        @offRestTrackBorderColor: @baseMediumHigh;
 
-    // Active
-    .win-toggleswitch-pressed .win-toggleswitch-track {
-        border-color: transparent;
-        background-color: @baseMid;
-    }
-    .win-toggleswitch-pressed .win-toggleswitch-thumb {
-        background-color: @baseWhite;
-    }
+        @offActiveThumbBackgroundColor: @baseWhite;
+        @offActiveTrackBorderColor: transparent;
+        @offActiveTrackBackgroundColor: @baseMid;
 
-    // Disabled
-    .win-toggleswitch-disabled .win-toggleswitch-track {
-        border-color: @baseLow;
-    }
-    .win-toggleswitch-disabled .win-toggleswitch-thumb {
-        background-color: @baseLow;
-    }
-    .win-toggleswitch-disabled .win-toggleswitch-header,
-    .win-toggleswitch-disabled .win-toggleswitch-value {
-        color: @baseLow;
+        @offDisabledTextColor: @baseLow;
+        @offDisabledThumbBackgroundColor: @baseLow;
+        @offDisabledTrackBorderColor: @baseLow;
+
+        @onRestThumbBackgroundColor: @baseWhite;
+        @onRestTrackBorderColor: transparent;
+
+        @onActiveTrackBackgroundColor: @baseMid;
+
+        @onDisabledThumbBackgroundColor: @baseLow;
+        @onDisabledTrackBackgroundColor: @baseLow;
+
+        @offHoverThumbBackgroundColor: @baseHigh;
+        @onHoverThumbBackgroundColor: @baseWhite;
+        @hoverTrackBorderColor: @baseHigh;
     }
 
+    .variableDefs(highcontrast) {
+        .colorDefinitions(@theme);
 
-    /// On styles
-    .win-toggleswitch-on {
+        @offRestTextColor: HighlightText;
+        @offRestThumbBackgroundColor: HighlightText;
+        @offRestTrackBorderColor: HighlightText;
+
+        @offActiveThumbBackgroundColor: HighlightText;
+        @offActiveTrackBorderColor: Highlight;
+        @offActiveTrackBackgroundColor: Highlight;
+
+        @offDisabledTextColor: GrayText;
+        @offDisabledThumbBackgroundColor: GrayText;
+        @offDisabledTrackBorderColor: GrayText;
+
+        @onRestThumbBackgroundColor: HighlightText;
+        @onRestTrackBorderColor: HighlightText;
+
+        @onActiveTrackBackgroundColor: Highlight;
+
+        @onDisabledThumbBackgroundColor: Background;
+        @onDisabledTrackBackgroundColor: GrayText;
+
+        @offHoverThumbBackgroundColor: Highlight;
+        @onHoverThumbBackgroundColor: HighlightText;
+        @hoverTrackBorderColor: Highlight;
+    }
+
+    .stylesForTheme(@theme) {
+        #win-toggleswitch > .variableDefs(@theme);
+        /// Off Styles
         // Rest
-        .win-toggleswitch-track {
-            border-color: transparent;
+        .win-toggleswitch-header,
+        .win-toggleswitch-value {
+            color: @offRestTextColor;
         }
+
         .win-toggleswitch-thumb {
-            background-color: @baseWhite;
+            background-color: @offRestThumbBackgroundColor;
         }
 
+        .win-toggleswitch-off .win-toggleswitch-track {
+            border-color: @offRestTrackBorderColor;
+        }
         // Active
-        &.win-toggleswitch-pressed .win-toggleswitch-track {
-            background-color: @baseMid;
+        .win-toggleswitch-pressed .win-toggleswitch-thumb {
+            background-color: @offActiveThumbBackgroundColor;
         }
 
-        // Disabled
-        &.win-toggleswitch-disabled .win-toggleswitch-track {
-            background-color: @baseLow;
+        .win-toggleswitch-pressed .win-toggleswitch-track {
+            border-color: @offActiveTrackBorderColor;
+            background-color: @offActiveTrackBackgroundColor;
         }
-        &.win-toggleswitch-disabled .win-toggleswitch-thumb {
-            background-color: @baseLow;
+        // Disabled
+        .win-toggleswitch-disabled .win-toggleswitch-header,
+        .win-toggleswitch-disabled .win-toggleswitch-value {
+            color: @offDisabledTextColor;
+        }
+
+        .win-toggleswitch-disabled .win-toggleswitch-thumb {
+            background-color: @offDisabledThumbBackgroundColor;
+        }
+
+        .win-toggleswitch-disabled .win-toggleswitch-track {
+            border-color: @offDisabledTrackBorderColor;
+        }
+        /// On styles
+        .win-toggleswitch-on {
+            // Rest
+            .win-toggleswitch-thumb {
+                background-color: @onRestThumbBackgroundColor;
+            }
+
+            .win-toggleswitch-track {
+                border-color: @onRestTrackBorderColor;
+            }
+            // Active
+            &.win-toggleswitch-pressed .win-toggleswitch-track {
+                background-color: @onActiveTrackBackgroundColor;
+            }
+            // Disabled
+            &.win-toggleswitch-disabled .win-toggleswitch-thumb {
+                background-color: @onDisabledThumbBackgroundColor;
+            }
+
+            &.win-toggleswitch-disabled .win-toggleswitch-track {
+                background-color: @onDisabledTrackBackgroundColor;
+            }
+        }
+    }
+
+    .stylesForThemeHover(@theme) {
+        #win-toggleswitch > .variableDefs(@theme);
+        // Hover styles
+        .win-toggleswitch:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
+            // Off
+            .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
+                background-color: @offHoverThumbBackgroundColor;
+            }
+            // On
+            &.win-toggleswitch-on .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
+                background-color: @onHoverThumbBackgroundColor;
+            }
+        }
+
+        .win-toggleswitch-off:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
+            .win-toggleswitch-clickregion:hover .win-toggleswitch-track {
+                border-color: @hoverTrackBorderColor;
+            }
         }
     }
 }
 
+.Colors(@theme) {
+    #win-toggleswitch > .stylesForTheme(@theme);
+}
+
 .ColorsHover(@theme) {
-    .colorDefinitions(@theme);
+    #win-toggleswitch > .stylesForThemeHover(@theme);
+}
 
-    // Hover styles
-    .win-toggleswitch-off:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
-        .win-toggleswitch-clickregion:hover .win-toggleswitch-track {
-            border-color: @baseHigh;
-        }
+.HighContrast() {
+    #win-toggleswitch > .stylesForTheme(highcontrast);
+    /* Override Accent Color styles */
+    .win-toggleswitch-on.win-toggleswitch-enabled:not(.win-toggleswitch-pressed) .win-toggleswitch-track {
+        background-color: Highlight;
     }
 
-    .win-toggleswitch:not(.win-toggleswitch-disabled):not(.win-toggleswitch-pressed) {
-        // Off
-        .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
-            background-color: @baseHigh;
-        }
-
-        // On
-        &.win-toggleswitch-on .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
-            background-color: @baseWhite;
-        }
+    .win-toggleswitch-on.win-toggleswitch-disabled .win-toggleswitch-track {
+        border-color: GrayText;
     }
 
+    .win-toggleswitch-enabled .win-toggleswitch-clickregion:hover .win-toggleswitch-track {
+        border-color: Highlight;
+    }
+
+    .win-toggleswitch-off.win-toggleswitch-enabled:not(.win-toggleswitch-pressed) .win-toggleswitch-clickregion:hover .win-toggleswitch-thumb {
+        background-color: Highlight;
+    }
 }
