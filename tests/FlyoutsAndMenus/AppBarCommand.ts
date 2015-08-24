@@ -197,13 +197,22 @@ module CorsicaTests {
             var appBarCommand = new WinJS.UI.AppBarCommand(null, { label: 'test', icon: 'test.png', type: 'toggle', extraClass: 'extra' });
             LiveUnit.LoggingCore.logComment("AppBarCommand has been instantiated.");
             LiveUnit.Assert.isNotNull(appBarCommand, "AppBarCommand element should not be null when instantiated.");
+            // Verify initial state of toggle command.
+            LiveUnit.Assert.areEqual("checkbox", appBarCommand.element.getAttribute("role"),
+                "Narrator requires 'checkbox' role in order to announce updates to the toggled state");
+            LiveUnit.Assert.areEqual(false, appBarCommand.selected, "Verifying that selected is false");
+            LiveUnit.Assert.areEqual(appBarCommand.selected.toString(), appBarCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
 
             // Cycle selected
-            LiveUnit.Assert.areEqual(false, appBarCommand.selected, "Verifying that selected is false");
             appBarCommand.selected = true;
             LiveUnit.Assert.areEqual(true, appBarCommand.selected, "Verifying that selected is true");
+            LiveUnit.Assert.areEqual(appBarCommand.selected.toString(), appBarCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
             appBarCommand.selected = false;
             LiveUnit.Assert.areEqual(false, appBarCommand.selected, "Verifying that selected goes back to false");
+            LiveUnit.Assert.areEqual(appBarCommand.selected.toString(), appBarCommand.element.getAttribute("aria-checked"),
+                "aria-checked should map to 'selected' state");
 
             // Cycle extra class
             LiveUnit.Assert.areEqual("extra", appBarCommand.extraClass, "Verifying that extraClass is 'extra'");
