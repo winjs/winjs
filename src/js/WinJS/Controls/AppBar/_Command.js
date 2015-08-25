@@ -162,7 +162,7 @@ define([
                     var role = this._element.getAttribute("role");
                     if (role === null || role === "" || role === undefined) {
                         if (this._type === _Constants.typeToggle) {
-                            role = "menuitemcheckbox";
+                            role = "checkbox";
                         } else if (this._type === _Constants.typeContent) {
                             role = "group";
                         } else {
