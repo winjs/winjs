@@ -316,6 +316,7 @@ declare module WinJS {
             _refreshDone: () => any;
             _scrollingContainer: HTMLElement;
             _scrollingIndicatorElement: HTMLElement;
+            _vuiActive: boolean;
 
             constructor(element?: HTMLElement, options?: any);
 

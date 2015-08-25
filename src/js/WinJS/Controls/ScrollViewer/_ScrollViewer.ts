@@ -94,7 +94,6 @@ export class ScrollViewer {
 
     constructor(element?: HTMLElement, options: any = {}) {
         this._element = element || document.createElement("div");
-        options = options || {};
         this._element["winControl"] = this;
 
         _ElementUtilities.addClass(this._element, "win-disposable");

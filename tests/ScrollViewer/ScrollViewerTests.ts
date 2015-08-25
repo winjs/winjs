@@ -62,6 +62,10 @@ module CorsicaTests {
             }
         }
 
+        testEmptyConstructor() {
+            new WinJS.UI.ScrollViewer();
+        }
+
         testTextMode(complete) {
             if (!HTMLElement.prototype.setActive) {
                 LiveUnit.LoggingCore.logComment("This test relies on IE specific focus APIs.");
@@ -295,7 +299,45 @@ module CorsicaTests {
             };
         }
 
-        testVUIActiveEnablesScrolling(complete) {
+        testVUIActivation(complete) {
+            if (!HTMLElement.prototype.setActive) {
+                LiveUnit.LoggingCore.logComment("This test relies on IE specific focus APIs.");
+                complete();
+                return;
+            }
+
+            this.sv._refreshDone = () => {
+                this.sv._refreshDone = null;
+
+                // VUI should start off disabled
+                LiveUnit.Assert.isFalse(this.sv.element.classList.contains("win-voice-voicemodeactive"));
+
+                // VUI should be active in active state
+                var evt = <CustomEvent>document.createEvent("CustomEvent");
+                evt["state"] = "active";
+                evt.initCustomEvent("listeningstatechanged", true, false, null);
+                this.sv._scrollingIndicatorElement.dispatchEvent(evt);
+                LiveUnit.Assert.isTrue(this.sv.element.classList.contains("win-voice-voicemodeactive"));
+
+                // VUI should remain active in disambig state
+                var evt = <CustomEvent>document.createEvent("CustomEvent");
+                evt["state"] = "disambiguation";
+                evt.initCustomEvent("listeningstatechanged", true, false, null);
+                this.sv._scrollingIndicatorElement.dispatchEvent(evt);
+                LiveUnit.Assert.isTrue(this.sv.element.classList.contains("win-voice-voicemodeactive"));
+
+                // VUI should be disabled in inactive state
+                var evt = <CustomEvent>document.createEvent("CustomEvent");
+                evt["state"] = "inactive";
+                evt.initCustomEvent("listeningstatechanged", true, false, null);
+                this.sv._scrollingIndicatorElement.dispatchEvent(evt);
+                LiveUnit.Assert.isFalse(this.sv.element.classList.contains("win-voice-voicemodeactive"));
+
+                complete();
+            };
+        }
+
+        testVUIScrolling(complete) {
             if (!HTMLElement.prototype.setActive) {
                 LiveUnit.LoggingCore.logComment("This test relies on IE specific focus APIs.");
                 complete();
@@ -310,23 +352,44 @@ module CorsicaTests {
                 LiveUnit.Assert.areEqual(this.sv._scrollingContainer, document.activeElement);
                 LiveUnit.Assert.isFalse(this.sv._scrollingContainer.classList.contains("win-xyfocus-togglemode-active"));
 
-                // Try scrolling by a small amount, should fail
+                // Try scrolling by large amounts, should fail
                 var origScrollPosition = this.sv._scrollingContainer.scrollTop;
-                Helper.keydown(document.activeElement, Keys.downArrow);
+                Helper.keydown(document.activeElement, Keys.pageDown);
+                Helper.keydown(document.activeElement, Keys.pageDown);
+                Helper.keydown(document.activeElement, Keys.pageUp);
                 WinJS.Promise.timeout(200)
                     .then(() => {
                         LiveUnit.Assert.areEqual(origScrollPosition, this.sv._scrollingContainer.scrollTop);
 
                         // Simulate VUI active
-                        this.sv.element.classList.add("win-voice-voicemodeactive");
+                        this.sv._vuiActive = true;
 
-                        // Try scrolling by a small amount, should work
+                        // Try scrolling by a small amounts, should not work
                         origScrollPosition = this.sv._scrollingContainer.scrollTop;
                         Helper.keydown(document.activeElement, Keys.downArrow);
+                        Helper.keydown(document.activeElement, Keys.downArrow);
+                        Helper.keydown(document.activeElement, Keys.upArrow);
 
-                        return WinJS.Promise.timeout(200)
-                    }).done(() => {
+                        return WinJS.Promise.timeout(500)
+                    }).then(() => {
                         LiveUnit.Assert.areEqual(origScrollPosition, this.sv._scrollingContainer.scrollTop);
+
+                        // Try scrolling by a large amount, should work
+                        origScrollPosition = this.sv._scrollingContainer.scrollTop;
+                        Helper.keydown(document.activeElement, Keys.pageDown);
+
+                        return WinJS.Promise.timeout(500)
+                    }).then(() => {
+                        LiveUnit.Assert.areNotEqual(origScrollPosition, this.sv._scrollingContainer.scrollTop);
+
+                        // Try scrolling by a large amount, should work
+                        origScrollPosition = this.sv._scrollingContainer.scrollTop;
+                        Helper.keydown(document.activeElement, Keys.pageUp);
+
+                        return WinJS.Promise.timeout(500)
+                    }).done(() => {
+                        LiveUnit.Assert.areNotEqual(origScrollPosition, this.sv._scrollingContainer.scrollTop);
+
                         complete();
                     });
             };
