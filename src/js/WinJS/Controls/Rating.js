@@ -472,7 +472,7 @@ define([
                 _decrementRating: function () {
                     this._closeTooltip();
                     var firePreviewChange = true;
-                    if ((this._tentativeRating === 0) || ((this._tentativeRating === -1) && (this._userRating === 0))) {
+                    if (this._tentativeRating <= 0) {
                         firePreviewChange = false;
                     } else {
                         if (this._tentativeRating > 0) {
@@ -579,7 +579,7 @@ define([
                 _incrementRating: function () {
                     this._closeTooltip();
                     var firePreviewChange = true;
-                    if ((this._tentativeRating === this._maxRating) || ((this._tentativeRating === -1) && (this._userRating === this._maxRating))) {
+                    if (this._tentativeRating < 0 || this._tentativeRating >= this._maxRating) {
                         firePreviewChange = false;
                     }
 
@@ -781,32 +781,32 @@ define([
 
                             break;
                         case Key.leftArrow: // Arrow Left
-                            if (rtlString === "rtl" && this.userRating < this.maxRating - 1) {
+                            if (rtlString === "rtl" && this._tentativeRating < this.maxRating) {
                                 this._incrementRating();
-                            } else if (rtlString !== "rtl" && this.userRating > 0) {
+                            } else if (rtlString !== "rtl" && this._tentativeRating > 0) {
                                 this._decrementRating();
                             } else {
                                 handled = false;
                             }
                             break;
                         case Key.upArrow: // Arrow Up
-                            if (this.userRating < this.maxRating - 1) {
+                            if (this._tentativeRating < this.maxRating) {
                                 this._incrementRating();
                             } else {
                                 handled = false;
                             }
                             break;
                         case Key.rightArrow: // Arrow Right
-                            if (rtlString === "rtl" && this.userRating > 0) {
+                            if (rtlString === "rtl" && this._tentativeRating > 0) {
                                 this._decrementRating();
-                            } else if (rtlString !== "rtl" && this.userRating < this.maxRating - 1) {
+                            } else if (rtlString !== "rtl" && this._tentativeRating < this.maxRating) {
                                 this._incrementRating();
                             } else {
                                 handled = false;
                             }
                             break;
                         case Key.downArrow: // Arrow Down
-                            if (this.userRating > 0) {
+                            if (this._tentativeRating > 0) {
                                 this._decrementRating();
                             } else {
                                 handled = false;
