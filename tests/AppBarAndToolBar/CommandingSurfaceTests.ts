@@ -343,18 +343,10 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual("4", commandingSurface.element.getAttribute("tabIndex"), "CommandingSurface should have not assigned a default tabIndex");
         }
 
-        //xtestAria() {
-        //    var commandingSurface = new _CommandingSurface();
-        //    LiveUnit.Assert.areEqual("menubar", commandingSurface.element.getAttribute("role"), "Missing default aria role");
-        //    LiveUnit.Assert.areEqual("CommandingSurface", commandingSurface.element.getAttribute("aria-label"), "Missing default aria label");
-
-        //    var el = document.createElement("div");
-        //    commandingSurface = new _CommandingSurface(el);
-        //    el.setAttribute("role", "list");
-        //    el.setAttribute("aria-label", "myList");
-        //    LiveUnit.Assert.areEqual("list", commandingSurface.element.getAttribute("role"), "CommandingSurface should have not set a default aria role");
-        //    LiveUnit.Assert.areEqual("myList", commandingSurface.element.getAttribute("aria-label"), "CommandingSurface should have not set a default aria label");
-        //}
+        testOverflowButtonAriaLabel() {
+            var commandingSurface = new _CommandingSurface();
+            LiveUnit.Assert.areEqual("View more", commandingSurface._dom.overflowButton.getAttribute("aria-label"), "Missing overflowButton aria label");            
+        }
 
         testOverflowButtonVisibilityWhenChangingData() {
             // Verifies that for each closed display mode, changing the data in the CommandingSurface 
