@@ -96,7 +96,7 @@ define([
                     label = this._element.getAttribute("aria-label") || label;
                 }
 
-                // Call the base overlay constructor
+                // Call the base constructor helper.
                 this._baseFlyoutConstructor(this._element, options);
 
                 // Set ARIA role and label.
