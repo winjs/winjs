@@ -355,3 +355,255 @@
         outline: 2px solid white;
     }
 }
+
+.HighContrast() {
+    //
+    // Text selection
+    //
+    ::selection {
+        background-color: Highlight;
+        color: HighlightText;
+    }
+    
+    //
+    // Link
+    //
+    .win-link {
+        color: -ms-hotlight;
+        
+        &:active {
+            color: Highlight;
+        }
+        
+        &[disabled] {
+            color: GrayText;
+        }
+    }
+    
+    //
+    // Radio and Checkbox
+    //
+    .win-checkbox,
+    .win-radio {
+        &::-ms-check {
+            background-color: ButtonFace;
+            border-color: ButtonText;
+            color: HighlightText;
+        }
+        
+        &:indeterminate::-ms-check {
+            background-color: Highlight;
+            border-color: ButtonText;
+            color: ButtonText;
+        }
+        &:checked::-ms-check {
+            background-color: Highlight;
+            border-color: HighlightText;
+        }
+        
+        &:hover::-ms-check {
+            border-color: Highlight;
+        }
+        
+        &:hover:active::-ms-check,
+        &:-ms-keyboard-active::-ms-check {
+            border-color: Highlight;
+        }
+        
+        &:disabled::-ms-check,
+        &:disabled:active::-ms-check {
+            background-color: ButtonFace;
+            border-color: GrayText;
+            color: GrayText;
+        }
+    }
+    
+    //
+    // Progress
+    //
+    .win-progress-bar,
+    .win-progress-ring,
+    .win-ring, {
+        background-color: ButtonFace;
+        color: Highlight;
+        
+        &::-ms-fill {
+            background-color: Highlight;
+        }
+        &.win-paused:not(:indeterminate)::-ms-fill {
+            background-color: GrayText;
+        }
+        &.win-paused:not(:indeterminate) {
+            // Override animation and opacity changes from non-highcontrast styles
+            animation-name: none;
+            opacity: 1.0;
+        }
+    }
+    
+    //
+    // Push button
+    //
+    .win-button {
+        border-color: ButtonText;
+        color: ButtonText;
+        
+        &:hover {
+            border-color: Highlight;
+            color: Highlight;
+        }
+        &:active {
+            border-color: Highlight;
+            color: Highlight;
+        }
+        &:disabled {
+            border-color: GrayText;
+            color: GrayText;
+        }
+    }
+    
+    //
+    // Select
+    //
+    .win-dropdown {
+        background-color: ButtonFace;
+        border-color: ButtonText;
+        color: WindowText;
+        
+        &:hover {
+            border-color: Highlight;
+        }
+        &:active {
+            border-color: Highlight;
+        }
+        &:disabled {
+            border-color: GrayText;
+            color: GrayText;
+        }
+        
+        &::-ms-expand {
+            color: ButtonText;
+        }
+        &:disabled::-ms-expand {
+            color: GrayText;
+        }
+        
+        option {
+            background-color: ButtonFace;
+            color: ButtonText;
+            
+            &:hover,
+            &:active,
+            &:checked {
+                background-color: Highlight;
+                color: HighlightText;
+            }
+            &:disabled {
+                background-color: ButtonFace;
+                color: GrayText;
+            }
+        }
+    }
+    select[multiple].win-dropdown {
+        border: none;
+        
+        &:disabled option {
+            background-color: ButtonFace;
+            color: GrayText;
+            
+            &:checked {
+                background-color: GrayText;
+                color: ButtonFace;
+            }
+        }
+    }
+    
+    //
+    // Slider
+    //
+    .win-slider {
+        &::-ms-track {
+            color: transparent;
+        }
+        
+        &::-ms-ticks-before,
+        &::-ms-ticks-after {
+            color: ButtonText;
+        }
+        
+        &::-ms-fill-lower {
+            background-color: Highlight;
+        }
+        &::-ms-fill-upper {
+            background-color: ButtonText;
+        }
+        
+        &::-ms-thumb {
+            background-color: ButtonText;
+        }
+        &:hover::-ms-thumb {
+            background-color: Highlight;
+        }
+        &:active::-ms-thumb {
+            background-color: Highlight;
+        }
+        
+        &:disabled::-ms-fill-lower,
+        &:disabled::-ms-fill-upper,
+        &:disabled::-ms-thumb {
+            background-color: GrayText;
+        }
+    }
+    
+    //
+    // Text box
+    //
+    .win-textbox,
+    .win-textarea {
+        border-color: ButtonText;
+        color: ButtonText;
+        
+        &:hover,
+        &:active,
+        &:focus {
+            border-color: Highlight;
+        }
+        &:disabled {
+            border-color: GrayText;
+            color: GrayText;
+        }
+        
+        // Hint text color
+        //
+        
+        .placeholderText() {
+            color: WindowText;
+        }
+        .placeholderTextDisabled() {
+            color: GrayText;
+        }
+        
+        // :-ms-input-placeholder (single colon) for IE
+        // ::-ms-input-placeholder (double colon) for Edge
+        &:-ms-input-placeholder { .placeholderText(); }
+        &::-ms-input-placeholder { .placeholderText(); }
+        &:disabled:-ms-input-placeholder { .placeholderTextDisabled(); }
+        &:disabled::-ms-input-placeholder { .placeholderTextDisabled(); }
+    }
+    
+    //
+    // Clear/Reveal buttons
+    //
+    .win-textbox::-ms-clear,
+    .win-textbox::-ms-reveal {
+        background-color: ButtonFace;
+        color: ButtonText;
+        
+        &:hover {
+            color: Highlight;
+        }
+        &:active {
+            background-color: Highlight;
+            color: HighlightText;
+        }
+    }
+}
