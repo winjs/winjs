@@ -275,7 +275,7 @@ module Helper._CommandingSurface {
 
             case _CommandingSurface.ClosedDisplayMode.full:
                 // closedDisplayMode: full should render the action area fully expanded.
-                verifyActionArea_FullyExpanded
+                verifyActionArea_FullyExpanded(commandingSurface);
                 break;
 
             default:
