@@ -16,7 +16,7 @@ define([
     }
 
     var _zoomToDuration = 167;
-    
+
     // Firefox's implementation of getComputedStyle returns null when called within
     // an iframe that is display:none. This is a bug: https://bugzilla.mozilla.org/show_bug.cgi?id=548397
     // _getComputedStyle is a helper which is guaranteed to return an object whose keys
@@ -648,6 +648,10 @@ define([
         focusin: {
             register: registerBubbleListener,
             unregister: removeListenerFromEventMap
+        },
+        winjselementresize: {
+            register: {},
+            unregister: {},
         }
     };
     if (!_Global.PointerEvent) {
@@ -790,6 +794,111 @@ define([
             _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
+
+    // Class to handle resize events on inididual elements.
+    var Resizemometer = (function IIFE() {
+
+        // Detect IE10, IE11 and Edge
+        var isIE; 
+        var el = document.createElement("div");
+        el.style.position = "-ms-device-fixed";
+        var supportsDeviceFixed = (el.style.position === "-ms-device-fixed");
+        isIE = navigator.userAgent.match(/Trident/) || supportsDeviceFixed; // check for -ms-device-fixed to catch EDGE as well.
+
+        var styleText = 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;';
+
+        function objectWindowResizeHandler(e) {
+            var objWindow = e.target;
+            var objEl = objWindow._frameElement;
+            // Use requestAnimationFrame to batch consecutive resize events.
+            if (objWindow._pendingResizeAnimationFrame) {
+                window.cancelAnimationFrame(objWindow._pendingResizeAnimationFrame);
+            }
+            objWindow._pendingResizeAnimationFrame = window.requestAnimationFrame(function () {
+                var trigger = objEl._host;
+                trigger.__resizeListeners__.forEach(function (fn) {
+                    fn.call(trigger, e);
+                });
+            });
+        }
+
+        function objectLoad(e) {
+            var objEl = e.target;
+            var objWindow = objEl.contentDocument.defaultView;
+            objWindow._frameElement = objWindow.frameElement || objEl;
+            objWindow.addEventListener('resize', objectWindowResizeHandler);
+        }
+
+        // Returns an invisible instrumented HTMLObjectElement that is used to automatically detect and handle any element size changes that occur on its nearest positioned ancestor element.
+        // Add the instrumented element to the DOM of the element you want to detect and handle size changes for. The computed style.position of the host element may not be "static".
+        return _Base.Class.define(function Resizemometer_ctor (resizeHandler) {
+            this._resizeHandler = resizeHandler;
+            this._element = document.createElement('object');
+            this._element.winControl = this;
+            
+            objEl.setAttribute('style', styleText);
+            objEl._host = element;
+            objEl.onload = objectLoad;
+            objEl.type = 'text/html';
+            //if (isIE) {
+            //    element.appendChild(objEl);
+            //}
+            objEl.data = 'about:blank';
+            element.appendChild(objEl);
+
+            //if (!isIE) {
+            //    element.appendChild(objEl);
+            //}
+                
+                
+        }, {
+            /**
+             * The DOM element that hosts the Resizemometer
+             * 
+            **/
+            element: {
+                get: function () {
+                    return this._element;
+                },
+            }
+            //addListener: function (element, fn) {
+            //    if (!element.__resizeListeners__) {
+            //        element.__resizeListeners__ = [];
+
+            //        var objEl = document.createElement('object');
+            //        element._resizemometer = objEl; // temp name is play on "Seismometer"
+            //        objEl.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
+            //        objEl._host = element;
+            //        objEl.onload = objectLoad;
+            //        objEl.type = 'text/html';
+            //        if (Resizemometer._isIE) {
+            //            element.appendChild(objEl);
+            //        }
+            //        objEl.data = 'about:blank';
+            //        if (!Resizemometer._isIE) {
+            //            element.appendChild(objEl);
+            //        }
+            //    }
+            //    element.__resizeListeners__.push(fn);
+            //},
+
+            //removeListener: function (element, fn) {
+            //    element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+            //    if (!element.__resizeListeners__.length) {
+            //        element._resizemometer.contentDocument.defaultView.removeEventListener('resize', objectWindowResizeHandler);
+            //        element._resizemometer = !element.removeChild(element._resizemometer);
+            //    }
+            //}
+            dispose: function (element, fn) {
+                element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+                if (!element.__resizeListeners__.length) {
+                    element._resizemometer.contentDocument.defaultView.removeEventListener('resize', objectWindowResizeHandler);
+                    element._resizemometer = !element.removeChild(element._resizemometer);
+                }
+            }
+        }, {});
+
+    }());
 
     // - object: The object on which GenericListener will listen for events.
     // - objectName: A string representing the name of *object*. This will be
@@ -1169,7 +1278,7 @@ define([
         },
 
         _MSPointerEvent: _MSPointerEvent,
-        
+
         _getComputedStyle: _getComputedStyle,
 
         _zoomToDuration: _zoomToDuration,
@@ -2533,12 +2642,12 @@ define([
             callback();
             exports._trySetActiveOnAnyElement(focusedElement);
         },
-        
+
         // Tries to give focus to an element (even if its tabIndex is -1) via setActive.
         _trySetActiveOnAnyElement: function Utilities_trySetActiveOnAnyElement(element, scroller) {
             return exports._tryFocusOnAnyElement(element, true, scroller);
         },
-        
+
         // Tries to give focus to an element (even if its tabIndex is -1).
         _tryFocusOnAnyElement: function Utilities_tryFocusOnAnyElement(element, useSetActive, scroller) {
             var previousActiveElement = _Global.document.activeElement;
@@ -2546,22 +2655,22 @@ define([
             if (element === previousActiveElement) {
                 return true;
             }
-            
+
             if (useSetActive) {
                 exports._setActive(element, scroller);
             } else {
                 element.focus();
             }
-            
+
             return previousActiveElement !== _Global.document.activeElement;
         },
-        
+
         // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0)
         // via setActive.
         _trySetActive: function Utilities_trySetActive(elem, scroller) {
             return this._tryFocus(elem, true, scroller);
         },
-        
+
         // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0).
         _tryFocus: function Utilities_tryFocus(elem, useSetActive, scroller) {
             var previousActiveElement = _Global.document.activeElement;
