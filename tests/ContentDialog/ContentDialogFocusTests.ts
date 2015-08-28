@@ -27,7 +27,7 @@ module ContentDialogTests {
             var parent = testRoot.parentNode;
             parent && parent.removeChild(testRoot);
         }
-
+        
         testInitialFocusWithoutFocusableContent(complete) {
             var dialog = Utils.useSynchronousAnimations(createDialog({ innerHTML: "Some text" }));
 
@@ -95,5 +95,12 @@ module ContentDialogTests {
             });
         }
     }
+    
+    var disabledTestRegistry = {
+        testInitialFocusWithoutFocusableContent: Helper.Browsers.firefox,
+        testInitialFocusWithFocusableContent: Helper.Browsers.firefox,
+        testFocusIsRestoredAfterHiding: Helper.Browsers.firefox
+    };
+    Helper.disableTests(FocusTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("ContentDialogTests.FocusTests");

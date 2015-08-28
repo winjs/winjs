@@ -12,7 +12,6 @@
           "http://127.0.0.1:9999/bin/tests/ElementResize/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/FlipView/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/FlyoutsAndMenus/test.html?fastanimations=true&autostart=true",
-          "http://127.0.0.1:9999/bin/tests/Hub/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/ItemContainer/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Itemsmanager/test.html?fastanimations=true&autostart=true",
           "http://127.0.0.1:9999/bin/tests/Less/test.html?autostart=true",
@@ -35,6 +34,7 @@
           "http://127.0.0.1:9999/bin/tests/WWA-Application/test.html?fastanimations=true&autostart=true"
     ],
      "allWithExtendedDuration": [
+		 "http://127.0.0.1:9999/bin/tests/Hub/test.html?fastanimations=true&autostart=true",
          "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
          "http://127.0.0.1:9999/bin/tests/ListViewComponents/test.html?fastanimations=true&autostart=true&testtimeout=10000",
          "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000"

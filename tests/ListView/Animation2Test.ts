@@ -180,7 +180,6 @@ module WinJSTests {
 
     export class ListViewAnimation2Test {
 
-
         setUp() {
             LiveUnit.LoggingCore.logComment("In setUp");
             itemId = 0;
@@ -216,8 +215,7 @@ module WinJSTests {
             document.body.removeChild(testRootEl);
         }
 
-
-        testInsertAtEndAnimations = function (complete) {
+        testInsertAtEndAnimations(complete) {
             var bindingList = getBindingList(1);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.ListLayout();
@@ -240,9 +238,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(1, transitionEnd.length, "List Animations: After Insert: Correct number of transitions");
                 }).
                 done(complete);
-        };
+        }
 
-        testListAnimations = function (complete) {
+        testListAnimations(complete) {
             var bindingList = getBindingList(100);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.ListLayout();
@@ -291,9 +289,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(2, transitionEnd.length, "List Animations: After Insert/Removal: Correct number of transitions");
                 }).
                 done(complete);
-        };
+        }
 
-        testInsertThenResize = function (complete) {
+        testInsertThenResize(complete) {
             var bindingList = getBindingList(100);
             var listView = new ListView(listViewEl);
             listView.layout = new WinJS.UI.ListLayout();
@@ -318,11 +316,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-
-
-        testExpandItemsContainerForReflowNeeded = function (complete) {
+        testExpandItemsContainerForReflowNeeded(complete) {
             var bindingList = getBindingList(100);
             var listView = new WinJS.UI.ListView(listViewEl);
 
@@ -348,9 +344,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual("", itemsContainer.style.marginRight);
                     complete();
                 });
-        };
+        }
 
-        testExpandItemsContainerForReflowNotNeeded = function (complete) {
+        testExpandItemsContainerForReflowNotNeeded(complete) {
             var bindingList = getBindingList(100);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.GridLayout();
@@ -374,9 +370,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual("", itemsContainer.style.marginRight);
                     complete();
                 });
-        };
+        }
 
-        testGridAnimations = function (complete) {
+        testGridAnimations(complete) {
             var bindingList = getBindingList(100);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.GridLayout();
@@ -429,9 +425,9 @@ module WinJSTests {
 
                 }).
                 done(complete);
-        };
+        }
 
-        testGridMultiSizeAnimations = function (complete) {
+        testGridMultiSizeAnimations(complete) {
             if (!Helper.Browser.supportsCSSGrid) {
                 LiveUnit.LoggingCore.logComment("Cellspanning layout not supported on this platform.");
                 complete();
@@ -502,9 +498,9 @@ module WinJSTests {
 
                 }).
                 done(complete);
-        };
+        }
 
-        testGridGroupAnimations = function (complete) {
+        testGridGroupAnimations(complete) {
             //WPBlue: 317490 - This test is not stable on the phone due to dropped animations, so limiting to desktop.
             if (WinJS.Utilities.isPhone) {
                 return complete();
@@ -620,10 +616,10 @@ module WinJSTests {
                     transitionEnd = [];
                     complete();
                 });
-        };
+        }
 
 
-        testOverlappingInsertsAnimations = function (complete) {
+        testOverlappingInsertsAnimations(complete) {
             var bindingList = getBindingList(3);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.ListLayout();
@@ -654,9 +650,9 @@ module WinJSTests {
                     clearTimeout(timeout);
                     complete();
                 });
-        };
+        }
 
-        testOverlappingRemovalsAnimations = function (complete) {
+        testOverlappingRemovalsAnimations(complete) {
             var bindingList = getBindingList(6);
             var listView = new WinJS.UI.ListView(listViewEl);
             listView.layout = new WinJS.UI.ListLayout();
@@ -687,12 +683,12 @@ module WinJSTests {
                     clearTimeout(timeout);
                     complete();
                 });
-        };
+        }
 
 
         // Verifies that after ListLayout's width changes, the animations of deleted items
         // start at the correct size and in the correct location.
-        testPositioningOfDeletedItemAfterResize = function (complete) {
+        testPositioningOfDeletedItemAfterResize(complete) {
             function itemRenderer(itemPromise) {
                 return itemPromise.then(function (item) {
                     var element = document.createElement("div");
@@ -720,9 +716,9 @@ module WinJSTests {
                     return verifyDeleteAnimation(listView, bindingList, 2);
                 }).
                 done(complete);
-        };
+        }
 
-        testDeleteBeforeFullRealize = function (complete) {
+        testDeleteBeforeFullRealize(complete) {
 
             function groupKey(itemData) {
                 return itemData.group;
@@ -779,7 +775,7 @@ module WinJSTests {
                     testRootEl.removeChild(element);
                     complete();
                 });
-        };
+        } 
     }
 
 
@@ -888,5 +884,40 @@ module WinJSTests {
             }
         });
     })();
+    
+    var disabledTestRegistry = {
+        testPositioningOfDeletedItem_LTR_GroupedListLayout_HeaderPositionLeft_horizontal_: [
+            Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ],
+        testPositioningOfDeletedItem_RTL_GroupedListLayout_HeaderPositionTop_vertical_: [
+            Helper.Browsers.ie11,
+            Helper.Browsers.safari
+        ],
+        testOverlappingRemovalsAnimations: [
+            Helper.Browsers.firefox,
+            Helper.Browsers.safari,
+            Helper.Browsers.android,
+            Helper.Browsers.ie11,
+			Helper.Browsers.ie10
+        ],
+        testOverlappingInsertsAnimations: [
+			Helper.Browsers.firefox,
+			Helper.Browsers.ie10,
+		],
+        testPositioningOfDeletedItem_LTR_GroupedListLayout_HeaderPositionTop_vertical_: [
+            Helper.Browsers.safari,
+            Helper.Browsers.ie11
+        ],
+        testPositioningOfDeletedItem_RTL_GroupedListLayout_HeaderPositionLeft_vertical_:[
+           Helper.Browsers.safari,
+           Helper.Browsers.ie11
+        ],
+        testPositioningOfDeletedItem_RTL_GroupedListLayout_HeaderPositionTop_horizontal_: Helper.Browsers.ie11,
+        testPositioningOfDeletedItem_RTL_GroupedListLayout_HeaderPositionLeft_horizontal_: Helper.Browsers.ie11,
+        testPositioningOfDeletedItem_LTR_GroupedListLayout_HeaderPositionTop_horizontal_: Helper.Browsers.ie11,
+        testPositioningOfDeletedItem_LTR_GroupedListLayout_HeaderPositionLeft_vertical_: Helper.Browsers.ie11 
+    };
+    Helper.disableTests(ListViewAnimation2Test, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("WinJSTests.ListViewAnimation2Test");

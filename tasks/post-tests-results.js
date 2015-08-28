@@ -48,7 +48,7 @@
                         travisPullRequest: process.env.TRAVIS_PULL_REQUEST,
                         auth: process.env.auth
                     }, function () {
-                        done();
+                        done(config.tests_results.passed);
                     });
             });
     };

@@ -311,6 +311,16 @@ module WinJSTests {
             })(i);
         }
     })();
+    
+    var disabledTestRegistry = {
+        testGetAndSet_indexOfFirstVisible: [
+            Helper.Browsers.chrome,
+            Helper.Browsers.safari,
+            Helper.Browsers.firefox,
+            Helper.Browsers.android
+        ]
+    };
+    Helper.disableTests(PropertyTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.PropertyTests");

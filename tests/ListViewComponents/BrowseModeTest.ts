@@ -355,10 +355,10 @@ module WinJSTests {
             var element = document.getElementById("BrowseModeTests");
             document.body.removeChild(element);
         }
-
+        
         // Test methods
         // Any child objects that start with "test" are automatically test methods
-        testSimpleClick = function (complete) {
+        testSimpleClick(complete) {
             LiveUnit.LoggingCore.logComment("In testSimpleClick");
             mockRequestAnimationFrame();
 
@@ -377,9 +377,9 @@ module WinJSTests {
                 LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
                 complete();
             });
-        };
+        }
 
-        testInvokeEvent = function (complete) {
+        testInvokeEvent(complete) {
             var items = [];
             for (var i = 0; i < 100; ++i) {
                 items[i] = { title: "Tile" + i };
@@ -417,10 +417,10 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
         // Verify that right-click doesn't trigger the pressed visual when selection is disabled
-        testRightClickDisabled = function (complete) {
+        testRightClickDisabled(complete) {
             LiveUnit.LoggingCore.logComment("In testRightClickDisabled");
             mockRequestAnimationFrame();
 
@@ -437,9 +437,9 @@ module WinJSTests {
                 LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
                 complete();
             });
-        };
+        }
 
-        testDownMoveUp = function (complete) {
+        testDownMoveUp(complete) {
             LiveUnit.LoggingCore.logComment("In testDownMoveUp");
             mockRequestAnimationFrame();
 
@@ -462,9 +462,9 @@ module WinJSTests {
                 LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
                 complete();
             });
-        };
+        }
 
-        testMoveUp = function () {
+        testMoveUp() {
             LiveUnit.LoggingCore.logComment("In testMoveUp");
 
             var browseMode = createMode();
@@ -482,9 +482,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(WinJS.UI._INVALID_INDEX, invoked.index);
             LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(first, WinJS.UI._pressedClass));
             LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
-        };
+        }
 
-        testDownMoveBackUp = function (complete) {
+        testDownMoveBackUp(complete) {
             LiveUnit.LoggingCore.logComment("In testDownMoveBackUp");
             mockRequestAnimationFrame();
 
@@ -512,9 +512,9 @@ module WinJSTests {
                 LiveUnit.Assert.isTrue(!WinJS.Utilities.hasClass(second, WinJS.UI._pressedClass));
                 complete();
             });
-        };
+        }
 
-        testKeyboard = function () {
+        testKeyboard() {
             var Key = WinJS.Utilities.Key;
             var browseMode = createMode();
 
@@ -632,7 +632,7 @@ module WinJSTests {
             document.body.removeEventListener("keyboardnavigating", onKeyboardNavigating_handler);
         }
 
-    testInvocableHeaders = function (complete) {
+    testInvocableHeaders(complete) {
             var host = <HTMLElement>document.querySelector("#list");
             host.style.position = "absolute"; //this test requires the element not to scroll
             host.style.top = "0";
@@ -688,9 +688,9 @@ module WinJSTests {
                 lv._mode.onPointerDown(e);
                 lv._mode.onPointerUp(e);
             });
-        };
+        }
 
-        testTabbingToHeaderFromChildElementDrawsFocusRect = function (complete) {
+        testTabbingToHeaderFromChildElementDrawsFocusRect(complete) {
             var data = [];
             for (var i = 0; i < 20; i++) {
                 data.push({ data: i });
@@ -744,9 +744,9 @@ module WinJSTests {
                     document.body.removeChild(lv.element);
                     complete();
                 });
-        };
+        }
 
-        testPointerDownOnHeaderAndUpOnItemShouldNotInvoke = function (complete) {
+        testPointerDownOnHeaderAndUpOnItemShouldNotInvoke(complete) {
             var host = <HTMLElement>document.querySelector("#list");
             host.style.position = "absolute"; //this test requires the element not to scroll
             host.style.top = "0";
@@ -797,9 +797,9 @@ module WinJSTests {
             }).done(function () {
                     complete();
                 });
-        };
+        }
 
-        testOnTabExiting = function () {
+        testOnTabExiting() {
             // This test mode mimics a ListView with infinite number of groups,
             // where each group has 10 items: group0 has items 0-9, group1 has items 10-19, etc
             var prevent = false;
@@ -848,9 +848,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
             LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
 
-        };
+        }
 
-        testOnTabEntered = function () {
+        testOnTabEntered() {
             // This test mode mimics a ListView with infinite number of groups,
             // where each group has 10 items: group0 has items 0-9, group1 has items 10-19, etc
             var fireCount = 0;
@@ -901,9 +901,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(WinJS.UI.ObjectType.groupHeader, mode.site._selection._getFocused().type);
             LiveUnit.Assert.areEqual(1, mode.site._selection._getFocused().index);
             LiveUnit.Assert.areEqual(curFireCount + 1, fireCount);
-        };
+        }
 
-        testResetPointerStateAfterPressingEnterOnHeader = function (complete) {
+        testResetPointerStateAfterPressingEnterOnHeader(complete) {
             Helper.initUnhandledErrors();
 
             var data = [];
@@ -931,9 +931,9 @@ module WinJSTests {
                 }).
                 then(Helper.validateUnhandledErrorsOnIdle).
                 done(complete);
-        };
+        }
 
-        testKeyboardingBeforeTreeCreated = function (complete) {
+        testKeyboardingBeforeTreeCreated(complete) {
             Helper.initUnhandledErrors();
 
             var placeholder = document.createElement("div");
@@ -984,10 +984,10 @@ module WinJSTests {
                     document.body.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
 
-        testKeyboardReorderStopsPropagationOnArrowKeyUp = function (complete) {
+        testKeyboardReorderStopsPropagationOnArrowKeyUp(complete) {
             if (!WinJS.Utilities.isPhone) {
                 return complete();
             }
@@ -1024,9 +1024,9 @@ module WinJSTests {
                 document.body.removeChild(placeholder);
                 complete();
             });
-        };
+        }
 
-        testKeyboardReorderStopsPropagationOnShiftThenArrowKeyUp = function (complete) {
+        testKeyboardReorderStopsPropagationOnShiftThenArrowKeyUp(complete) {
             if (!WinJS.Utilities.isPhone) {
                 return complete();
             }
@@ -1064,7 +1064,7 @@ module WinJSTests {
                 document.body.removeChild(placeholder);
                 complete();
             });
-        };
+        }
 
     };
 
@@ -1691,6 +1691,11 @@ module WinJSTests {
     };
     generateOffscreenPageKeysTest("ListLayout");
     generateOffscreenPageKeysTest("GridLayout");
+    
+    var disabledTestRegistry = {
+        testTabbingToHeaderFromChildElementDrawsFocusRect: Helper.Browsers.firefox
+    };
+    Helper.disableTests(BrowseModeTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.BrowseModeTests");

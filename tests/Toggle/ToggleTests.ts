@@ -230,6 +230,11 @@ module WinJSTests {
             });
         }
     }
+    
+    var disabledTestRegistry = {
+        testThumbDragToOtherSide: Helper.Browsers.ie11
+    };
+    Helper.disableTests(ToggleSwitchTests, disabledTestRegistry);
 
 }
 

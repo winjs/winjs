@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
+/// <reference path="../TestLib/Helper.ts" />
 
 module CorsicaTests {
     var testElementId = "accent-test-element";
@@ -242,5 +243,13 @@ module CorsicaTests {
             iframe.onload = complete;
         }
     }
+    
+    var disabledTestRegistry = {
+        testCreateAccentRuleSimple: Helper.Browsers.android,
+        testCreateAccentRuleInverseHover: Helper.Browsers.android,
+        testCreateAccentRuleInverseHoverWithWhitespace: Helper.Browsers.android,
+		testCreateAccentRuleInverse: Helper.Browsers.android
+    };
+    Helper.disableTests(AccentTests, disabledTestRegistry);
 }
     LiveUnit.registerTestClass("CorsicaTests.AccentTests");

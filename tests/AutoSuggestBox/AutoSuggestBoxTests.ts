@@ -90,7 +90,7 @@ module AutoSuggestBoxTests {
                 document.body.removeChild(element);
             }
         }
-
+        
         // Test functions
         testInitTest = function () {
             var asb: WinJS.UI.PrivateAutoSuggestBox = document.getElementById("ASBID").winControl;
@@ -914,5 +914,17 @@ module AutoSuggestBoxTests {
             asb._inputElement.focus();
         }
     };
+    
+    var disabledTestRegistry = {
+        testSuggestionsDisplayed: Helper.Browsers.firefox,
+        testQueryChangeAfterFocusLoss:[Helper.Browsers.ie11, Helper.Browsers.firefox],
+        testQuerySuggestionSelected: Helper.Browsers.firefox,
+        testResultSuggestionSelected: Helper.Browsers.firefox,
+        testSuggestionSelectionWithNarrator: Helper.Browsers.firefox,
+        testChooseSuggestionOnEnterEnabled: Helper.Browsers.firefox,
+        testArrowKeysOnSuggestionFlyout: Helper.Browsers.firefox,
+        testArrowKeysOnSuggestionFlyoutAbove: Helper.Browsers.firefox,
+    };
+    Helper.disableTests(AutoSuggestBoxTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("AutoSuggestBoxTests.AutoSuggestBoxTests");

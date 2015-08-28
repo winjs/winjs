@@ -106,7 +106,7 @@ module WinJSTests {
             document.body.removeChild(testRootEl);
         }
 
-        testFirstVisibleInConstructor = function (complete) {
+        testFirstVisibleInConstructor(complete) {
             function test(layoutName) {
                 var element = document.createElement("div");
                 element.style.width = "200px";
@@ -173,9 +173,9 @@ module WinJSTests {
                     LiveUnit.LoggingCore.logComment("testing with ListLayout");
                     return test("ListLayout");
                 }).done(complete);
-        };
+        }
 
-        testSingleRealizationWithIndexOfFirstVisible = function (complete) {
+        testSingleRealizationWithIndexOfFirstVisible(complete) {
 
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -231,9 +231,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testScrollingSynchronization = function (complete) {
+        testScrollingSynchronization(complete) {
 
             function createListView() {
                 var element = document.createElement("div");
@@ -342,9 +342,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testIndexOfFirstVisible = function (complete) {
+        testIndexOfFirstVisible(complete) {
 
             function test(layoutName, count, firstVisible, lastVisible) {
                 LiveUnit.LoggingCore.logComment("testing " + layoutName + " layout with " + count + " items");
@@ -416,9 +416,9 @@ module WinJSTests {
             }
 
             runTest(0).then(complete);
-        };
+        }
 
-        testCSSChange = function (complete) {
+        testCSSChange(complete) {
 
             function test(layoutName, index, beforeLeft, beforeTop, afterLeft, afterTop) {
                 var element = document.createElement("div");
@@ -467,9 +467,9 @@ module WinJSTests {
             test("GridLayout", 1, 0, 100, 200, 0).then(function () {
                 return test("ListLayout", 1, 0, 100, 0, 200);
             }).then(complete);
-        };
+        }
 
-        testRestoringScrollpos = function (complete) {
+        testRestoringScrollpos(complete) {
 
             function test(layoutName, functionName) {
                 var element = document.createElement("div");
@@ -542,7 +542,7 @@ module WinJSTests {
                 }).then(function () {
                     return test("ListLayout", "recalculateItemPosition");
                 }).then(complete);
-        };
+        }
     }
 
     var generateHeightAutoTest = function (layoutName, expectedHeight) {
@@ -1039,7 +1039,7 @@ module WinJSTests {
 
         Helper.ListView.runTests(listview, tests);
     };
-    generate("testEnsureVisibleWithAsymmetricalM   arginsInGridLayout", "GridLayout", testEnsureVisibleWithAsymmetricalMarginsInGrid, "asymmetricalMarginsTemplate", "asymmetricalMarginsPlaceholder");
+    generate("testEnsureVisibleWithAsymmetricalMarginsInGridLayout", "GridLayout", testEnsureVisibleWithAsymmetricalMarginsInGrid, "asymmetricalMarginsTemplate", "asymmetricalMarginsPlaceholder");
 
     var testEnsureVisibleWithAsymmetricalMarginsInList = function (element, listview, complete) {
         var tests = [
@@ -1283,14 +1283,16 @@ module WinJSTests {
         };
     };
     generateRecalculateItemPosition("GridLayout");
-
-
-    if (!Helper.Browser.isIE11) {
-        Helper.disableTest(LayoutTestsExtra, "testFirstLastDisplayedInGridLayout_GridLayout");
-        Helper.disableTest(LayoutTestsExtra, "testHeightAutoLayoutGridLayout");
-        Helper.disableTest(LayoutTestsExtra, "testHeightAutoLayoutListLayout");
-        Helper.disableTest(LayoutTestsExtra, "testRestoringScrollpos");
-    }
+    
+    var disabledTestRegistry = {
+        testFirstLastDisplayedInGridLayout_GridLayout: Helper.BrowserCombos.allButIE11,
+        testHeightAutoLayoutListLayout: Helper.BrowserCombos.allButIE11,
+		testHeightAutoLayoutGridLayout: Helper.BrowserCombos.allButIE11,
+		testRestoringScrollpos: Helper.BrowserCombos.all,
+		testSingleRealizationWithIndexOfFirstVisible: [Helper.Browsers.ie10, Helper.Browsers.safari]
+    };
+    
+    Helper.disableTests(LayoutTestsExtra, disabledTestRegistry);
 
 }
 

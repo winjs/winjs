@@ -7,9 +7,10 @@ before_script:
 - git submodule update --init --recursive
 script:
 - grunt release
+- grunt saucelabs
 after_success:
 - grunt update-winjs-controls
-- grunt saucelabs --force
+
 env:
   global:
   - SAUCE_USERNAME=winjs

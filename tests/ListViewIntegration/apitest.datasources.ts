@@ -872,7 +872,8 @@ module WinJSTests {
     generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("GridLayout");
     
     var disabledTestRegistry = {
-        testNoKeyDSSimulateLiveMailSendListLayout: Helper.BrowserCombos.allButIE11
+        testNoKeyDSSimulateLiveMailSendListLayout: Helper.BrowserCombos.allButIE11,
+		testNoKeyDSSelectionListLayout: Helper.Browsers.safari
     };
     Helper.disableTests(ListViewDSTestClass, disabledTestRegistry);
     

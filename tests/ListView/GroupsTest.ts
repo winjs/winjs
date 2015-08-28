@@ -224,7 +224,9 @@ module WinJSTests {
         }
 
 
-
+        
+        
+        
         // Verifies that when you read indexOfFirstVisible after setting it, it returns the
         // value that you set it to. It verifies this under the following conditions:
         //  - win-groupleader has no margins

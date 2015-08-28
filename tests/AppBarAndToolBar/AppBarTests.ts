@@ -1935,5 +1935,27 @@ module CorsicaTests {
             this._testLightDismissWithTrigger((appBar) => { _LightDismissService._clickEaterTapped(); }).then(complete);
         }
     }
+    
+     var disabledTestRegistry = {
+        testLightDismissWithClose:[
+			Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ],
+        testShowOnlyCommands:[
+            Helper.Browsers.chrome,
+            Helper.Browsers.safari,
+            Helper.Browsers.firefox,
+            Helper.Browsers.android
+        ],
+        testLightDismissWithDispose:[
+            Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ],
+        testLightDismissWithTap:[
+            Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ]
+    };
+    Helper.disableTests(AppBarTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("CorsicaTests.AppBarTests");

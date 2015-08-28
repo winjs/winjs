@@ -818,6 +818,21 @@ module CorsicaTests {
         Utilities.prototype["testNoScroll" + name + "_ltr"] = generateTestNoScroll(false, setActiveTests[name]);
         Utilities.prototype["testNoScroll" + name + "_rtl"] = generateTestNoScroll(true, setActiveTests[name]);
     });
-
+    
+    var disabledTestsRegistry = {
+        testNoScroll_setActive_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_trySetActive_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveFirstFocusableElement0_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveFirstFocusableElementPos_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveLastFocusableElement0_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveLastFocusableElementPos_ltr: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActive_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_trySetActive_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveFirstFocusableElement0_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveFirstFocusableElementPos_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveLastFocusableElement0_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11],
+        testNoScroll_setActiveLastFocusableElementPos_rtl: [Helper.Browsers.firefox, Helper.Browsers.ie11]
+    };
+    Helper.disableTests(Utilities, disabledTestsRegistry);
 }
 LiveUnit.registerTestClass("CorsicaTests.Utilities");

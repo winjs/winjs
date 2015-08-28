@@ -279,6 +279,15 @@ module WinJSTests {
                 });
             }).done(complete);
     });
+	
+	var disabledTestRegistry = {
+		testSetScrollPosition_VGrid_4X3X5: Helper.Browsers.safari,
+		testSetIndexOfFirstVisible_VGrid_4X1X5: Helper.Browsers.safari,
+		testSetScrollPosition_VGrid_4X5X5: Helper.Browsers.safari,
+		testSetScrollPosition_VGrid_1X1X5: Helper.Browsers.safari,
+		testSetIndexOfFirstVisible_VGrid_4X2X5: Helper.Browsers.safari
+	};
+	Helper.disableTests(VerticalGridTests, disabledTestRegistry);
 
 }
 // register the object as a test class by passing in the name

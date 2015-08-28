@@ -2554,8 +2554,8 @@ module WinJSTests {
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
         }
-
-        testAssureMarginRuleSpecificityDoesNotTrumpWin8 = function (complete) {
+        
+        testAssureMarginRuleSpecificityDoesNotTrumpWin8(complete) {
             // Test can't run with ListView.less.css in effect otherwise one of the rules will
             // overrule what we are trying to verify in this test.
             WinJS.Utilities.removeClass(testRootEl, "file-listview-css");
@@ -2586,11 +2586,11 @@ module WinJSTests {
                 lv.dispose();
                 complete();
             });
-        };
+        }
 
         // Verifies that the layout measures and sets the margins correctly on the items
         // container and the header container. Does this for both grouped and non-grouped grid layouts.
-        testDefaultItemsContainerMargins = function (complete) {
+        testDefaultItemsContainerMargins(complete) {
             function test(rtl, useGroups, headerPosition?) {
                 function groupKey(item) {
                     return item.groupKey;
@@ -2675,11 +2675,11 @@ module WinJSTests {
             promise.then(function () {
                 complete()
             });
-        };
+        }
 
         // Verifies that the surface length (width in horizontal layouts and height in vertical layouts)
         // is the appropriate length to fit all of the ListView's items.
-        testSurfaceLength = function (complete) {
+        testSurfaceLength(complete) {
             function test(layout, expectedSurfaceLength) {
                 var list = new WinJS.Binding.List(initData(itemCount)),
                     listView = new ListView(document.getElementById("LayoutTest"), {
@@ -2704,12 +2704,12 @@ module WinJSTests {
                     columnCount = Math.ceil(itemCount / itemsPerColumn);
                 return test(new WinJS.UI.GridLayout(), containerWidth * columnCount);
             }).done(complete);
-        };
+        }
 
         // Verifies that when a renderer returns an element with no size for stage 1,
         // the layout measures the stage 2 item instead. This is a feature which makes
         // us backwards compatible with Win8.
-        testMeasuringContainerWithZeroSizedPlaceholder = function (complete) {
+        testMeasuringContainerWithZeroSizedPlaceholder(complete) {
             function renderer(itemPromise) {
                 var element = document.createElement("div");
                 return {
@@ -2735,12 +2735,12 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(100, container.offsetWidth, "win-container has incorrect offsetWidth");
                 complete();
             });
-        };
+        }
 
         // Verifies that GridLayout's layout can be canceled while the default item info function
         // is in the middle of measuring.
         // Regression test for WinBlue#281129.
-        testCancelationWithDefaultItemInfo = function (complete) {
+        testCancelationWithDefaultItemInfo(complete) {
             if (!Helper.Browser.supportsCSSGrid) {
                 LiveUnit.LoggingCore.logComment("Cellspanning not supported on this platform.");
                 complete();
@@ -2808,15 +2808,16 @@ module WinJSTests {
                     return Helper.validateUnhandledErrorsOnIdle();
                 }).
                 done(complete);
-        };
+        }
 
 
 
     };
-
-    if (!Helper.Browser.isIE11) {
-        Helper.disableTest(LVLayoutTests, "testDefaultItemsContainerMargins");
-    }
+    
+    var disabledTestRegistry = {
+        testDefaultItemsContainerMargins: Helper.BrowserCombos.allButIE11
+    };
+    Helper.disableTests(LVLayoutTests, disabledTestRegistry);
 
 }
 

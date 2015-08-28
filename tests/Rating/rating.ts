@@ -26,7 +26,7 @@ module CorsicaTests {
                 document.body.removeChild(ratingElement);
             }
         }
-
+        
         testSimpleRating = function () {
             var rating = new WinJS.UI.Rating();
             LiveUnit.Assert.areEqual(5, rating.maxRating, "default should be 5");
@@ -37,7 +37,7 @@ module CorsicaTests {
         }
 
         // Test Rating Instantiation
-        testRatingInstantiation = function () {
+        testRatingInstantiation() {
             // Get the rating element from the DOM
             LiveUnit.LoggingCore.logComment("Getting the rating element by id");
             var ratingElement = document.getElementById("rating");
@@ -63,7 +63,7 @@ module CorsicaTests {
         }
 
         // Test Rating Instatiation with null element
-        testRatingNullInstatiation = function () {
+        testRatingNullInstatiation() {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the rating with null element");
             var rating = null;
 
@@ -78,7 +78,7 @@ module CorsicaTests {
         }
 
         // Test rating parameters
-        testRatingParams = function () {
+        testRatingParams() {
             function testGoodInitOption(paramName, value) {
                 LiveUnit.LoggingCore.logComment("Testing creating a rating using good parameter " + paramName + "=" + value);
 
@@ -101,7 +101,7 @@ module CorsicaTests {
         }
 
         // Test maxRating,userRating & averageRating updates during runtime
-        testRatingPropertiesUpdate = function (complete) {
+        testRatingPropertiesUpdate(complete) {
             var ratingElement = <HTMLElement>document.getElementById('ratingTestDiv');
             var ratingControl = new WinJS.UI.Rating(ratingElement, { averageRating: 5.5, maxRating: 10 });
             var verifyRatingProperties = function (userRating, averageRating, maxRating, enableClear) {
@@ -154,7 +154,7 @@ module CorsicaTests {
         }
 
         // Tests for dispose members and requirements
-        testRatingDispose = function () {
+        testRatingDispose() {
             var rating = <WinJS.UI.PrivateRating> new WinJS.UI.Rating();
             LiveUnit.Assert.isTrue(rating.dispose);
             LiveUnit.Assert.isTrue(rating.element.classList.contains("win-disposable"));
@@ -186,6 +186,10 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(1, rating.userRating);
         }
     }
+    var disabledTestRegistry = {
+        testRatingPropertiesUpdate: Helper.Browsers.ie10
+    };
+    Helper.disableTests(RatingTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.RatingTests");

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
+/// <reference path="../TestLib/Helper.ts"/>
 /// <reference path="repeaterUtils.ts"/>
 
 module WinJSTests {
@@ -169,6 +170,11 @@ module WinJSTests {
 
 
     })();
+    
+    var disabledTestRegistry = {
+        testSetPromiseAfterListReverse: Helper.Browsers.android
+    };
+    Helper.disableTests(RepeaterSetPromiseTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.RepeaterSetPromiseTests");

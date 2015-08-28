@@ -664,5 +664,11 @@ module WinJSTests {
         FlipperInstantiationTests.prototype["testVDSSetItemDataSource"] = generateTest(vds, setItemDataSource);
         FlipperInstantiationTests.prototype["testVDSSetItemTemplate"] = generateTest(vds, setItemTemplate);
     })();
+	
+	var disabledTestRegistry = {
+		testFlipViewDisposeDuringVirtualization: Helper.Browsers.chrome,
+		testBindingListSetItemDataSource: Helper.Browsers.chrome
+	};
+	Helper.disableTests(FlipperInstantiationTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("WinJSTests.FlipperInstantiationTests");

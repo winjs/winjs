@@ -1567,26 +1567,34 @@ module Helper {
             Browsers.chrome,
             Browsers.firefox,
             Browsers.android
+        ],
+        allButIE10:[
+            Browsers.ie11,
+            Browsers.edge,
+            Browsers.safari,
+            Browsers.chrome,
+            Browsers.firefox,
+            Browsers.android
         ]
     }
     
     export function getCurrentBrowser(){
-        if (bowser.msie && bowser.version === "10.0"){
+        if (bowser.msie && bowser.version === "10.0") {
             return Helper.Browsers.ie10;
-        } else if (bowser.msie && bowser.version === "11.0"){
+        } else if (bowser.msie && bowser.version === "11.0") {
             return Helper.Browsers.ie11;
-        } else if (bowser.chrome){
+        } else if (bowser.chrome && !bowser.android) {
             return Helper.Browsers.chrome;
-        } else if(bowser.safari){
+        } else if(bowser.safari) {
             return Helper.Browsers.safari;
-        } else if (bowser.firefox){
+        } else if (bowser.firefox) {
             return Helper.Browsers.firefox;
-        } else if (bowser.android){
+        } else if (bowser.android) {
             return Helper.Browsers.android;
-        } else if (bowser.msedge){
+        } else if (bowser.msedge) {
             return Helper.Browsers.edge;
-        } else{
-           throw new Error("Unrecognized Browser");
+        } else {
+            throw new Error("Unrecognized Browser");
         }
     }
     
@@ -1600,24 +1608,24 @@ module Helper {
     //         Helper.Browsers.chrome
     //     ],
     //     testTouch: [
-    //           Helper.BrowserCombos.onlyIE,
-    //           Helper.Browsers.firefox
+    //          Helper.BrowserCombos.onlyIE,
+    //          Helper.BrowserCombos.firefox
     //     ]
     // };
+
     // disableTests(TestClass, disabledTestRegistry);
     export function disableTests(testClass, registry) {
         
-        if (!registry){
+        if (!registry) {
             throw new Error("undefined registry in Helper.disableTests");
         }
         
-        if (!testClass){
+        if (!testClass) {
             throw new Error("undefined testClass in Helper.disableTests");
         }
         
         function getDisabledTests(browser) {
             var testNames = Object.keys(registry);
-            
             function shallowFlatten(list) {
                 var flatList = [];
                 for (var i = 0; i < list.length; i++) {
@@ -1632,16 +1640,16 @@ module Helper {
                 }
                 return flatList;
             }
-            
+             
             function ensureArray(obj) {
                 if (!Array.isArray(obj)) {
                     obj = [obj];
                 }
                 return obj;
             }
-            
+
             return testNames.filter(function (testName) {
-                var disabledBrowsers = ensureArray(shallowFlatten(registry[testName]));
+                var disabledBrowsers = shallowFlatten(ensureArray(registry[testName]));
                 return disabledBrowsers.indexOf(browser) !== -1;
             });
         }
@@ -1652,6 +1660,7 @@ module Helper {
         // Create instance of test class to access methods defined in constructor
         var testInst = new testClass();
         var testKeys = Object.keys(proto).concat(Object.keys(testInst));
+
         for (var i = 0; i < testKeys.length; i++) {
             var testKey = testKeys[i];
             var index = disabledList.indexOf(testKey);
@@ -1660,7 +1669,7 @@ module Helper {
                 var disabledName = "x" + testKey;
                 proto[disabledName] = proto[testKey];
                 delete proto[testKey];
-                
+     
                 // Create a property with the disabled test name that will not be overwritten
                 // by properties created in the test class' constructor when an instance
                 // of the class is created
@@ -1683,6 +1692,7 @@ module Helper {
             }
             throw new Error(errorString);
         }
+
     };
 
     // Useful for when you have a large number of configurations but don't want to

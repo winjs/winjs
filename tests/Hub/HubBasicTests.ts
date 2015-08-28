@@ -278,7 +278,7 @@ module HubTests {
         return HubUtils.waitForReady(control)().
             then(function () {
                 var currentScrollPosition = 42; //starting scroll position for test
-                var increment = 11; //how far to increment on each iteration
+                var increment = 44; //how far to increment on each iteration
                 var scrollRange = HubUtils.getScrollRange(control);
 
                 var index = HubUtils.findCurrentSectionOnScreen(control);
@@ -315,7 +315,7 @@ module HubTests {
                 var scrollRange = HubUtils.getScrollRange(control);
                 var scroller = control.element.firstElementChild;
                 var currentScrollPosition = WinJS.Utilities.getScrollPosition(scroller)[scrollProperty];
-                var increment = 11;
+                var increment = 44;
 
                 function loop() {
                     return new WinJS.Promise(function (c) {
@@ -346,7 +346,7 @@ module HubTests {
                 var scrollRange = HubUtils.getScrollRange(control);
                 var scroller = control.element.firstElementChild;
                 var currentScrollPosition = control.scrollPosition;
-                var increment = 11;
+                var increment = 44;
 
                 function loop() {
                     return new WinJS.Promise(function (c) {

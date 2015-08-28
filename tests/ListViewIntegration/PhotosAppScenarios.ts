@@ -98,7 +98,7 @@ module WinJSTests {
                 document.body.removeChild(element);
             }
         }
-
+        
         testFlipViewBatchInsert(complete) {
             var element = document.getElementById("batchInsert"),
                 dsCount = 100,
@@ -346,8 +346,13 @@ module WinJSTests {
         PhotosAppScenarios.prototype["testListViewTemplateContentSwap"] = foo(WinJS.UI.ListView);
     })();
 
-
-
+    var disabledTestRegistry = {
+        testSemanticZoomMappingStartGridLayout: [
+            Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ]
+    };
+    Helper.disableTests(PhotosAppScenarios,disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.PhotosAppScenarios");

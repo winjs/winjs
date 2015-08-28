@@ -39,7 +39,7 @@ module CorsicaTests {
         }
 
         // Test flyout Instantiation
-        testFlyoutInstantiation = function () {
+        testFlyoutInstantiation() {
             var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
@@ -60,20 +60,12 @@ module CorsicaTests {
             verifyFunction("removeEventListener");
         }
 
-
-
-
-
     // Test flyout Instantiation with null element
-    testFlyoutNullInstantiation = function () {
+        testFlyoutNullInstantiation() {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the flyout with null element");
             var flyout = new Flyout(null);
             LiveUnit.Assert.isNotNull(flyout, "flyout instantiation was null when sent a null flyout element.");
         }
-
-
-
-
 
     // Test multiple instantiation of the same flyout DOM element
         testFlyoutMultipleInstantiation() {
@@ -86,7 +78,7 @@ module CorsicaTests {
 
 
         // Test flyout parameters
-        testFlyoutParams = function () {
+        testFlyoutParams() {
             function testGoodInitOption(paramName, value) {
                 LiveUnit.LoggingCore.logComment("Testing creating a flyout using good parameter " + paramName + "=" + value);
                 var div = document.createElement("div");
@@ -146,12 +138,8 @@ module CorsicaTests {
             testBadInitOption("placement", {}, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         }
 
-
-
-
-
-    // Test defaults
-    testDefaultflyoutParameters = function () {
+        // Test defaults
+        testDefaultflyoutParameters() {
             var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
@@ -161,12 +149,8 @@ module CorsicaTests {
             LiveUnit.Assert.areEqual(flyout['lightDismiss'], undefined, "Verifying that lightDismiss is undefined");
         }
 
-
-
-
-
-    // Simple Function Tests
-    testSimpleflyoutFunctions = function () {
+        // Simple Function Tests
+        testSimpleflyoutFunctions() {
             var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
@@ -179,7 +163,7 @@ module CorsicaTests {
         }
 
 
-    testHiddenProperty = function (complete) {
+        testHiddenProperty(complete) {
             var flyout = new WinJS.UI.Flyout(_element);
             flyout.anchor = document.body;
 
@@ -198,7 +182,7 @@ module CorsicaTests {
         }
 
 
-    testFlyoutDispose = function () {
+        testFlyoutDispose() {
             var flyout = new Flyout();
             LiveUnit.Assert.isTrue(flyout.dispose);
             LiveUnit.Assert.isFalse(flyout._disposed);
@@ -223,7 +207,7 @@ module CorsicaTests {
 
 
 
-    testFlyoutShowThrows = function (complete) {
+        testFlyoutShowThrows(complete) {
             var flyout: any = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
             LiveUnit.Assert.isNotNull(flyout, "flyout element should not be null when instantiated.");
@@ -245,7 +229,7 @@ module CorsicaTests {
             complete();
         }
 
-    testFlyoutInnerHTMLChangeDuringShowAnimation = function (complete) {
+        testFlyoutInnerHTMLChangeDuringShowAnimation(complete) {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the flyout element");
             var flyout = new Flyout(_element);
             LiveUnit.LoggingCore.logComment("flyout has been instantiated.");
@@ -258,7 +242,7 @@ module CorsicaTests {
             Helper.waitForEvent(_element, "aftershow").done(complete);
         }
 
-    testDisposeRemovesFlyoutClickEatingDiv = function (complete) {
+        testDisposeRemovesFlyoutClickEatingDiv(complete) {
             var flyout = new Flyout();
             document.body.appendChild(flyout.element);
             flyout.show(document.body);
@@ -273,9 +257,9 @@ module CorsicaTests {
                 LiveUnit.Assert.isNull(document.querySelector("." + _LightDismissService._ClassNames._clickEater));
                 complete();
             });
-        };
+        }
 
-        testTopPlacement = function (complete) {
+        testTopPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -298,9 +282,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testBottomPlacement = function (complete) {
+        testBottomPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -323,9 +307,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testLeftPlacement = function (complete) {
+        testLeftPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -348,9 +332,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testRightPlacement = function (complete) {
+        testRightPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -373,9 +357,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testAutoHorizontalPlacement = function (complete) {
+        testAutoHorizontalPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -401,9 +385,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testAutoVerticalPlacement = function (complete) {
+        testAutoVerticalPlacement(complete) {
             var anchor = document.createElement("DIV");
             anchor.style.cssText = anchorStyling;
             document.body.appendChild(anchor);
@@ -432,9 +416,9 @@ module CorsicaTests {
                 document.body.removeChild(anchor);
                 complete();
             }, false);
-        };
+        }
 
-        testDismissesWhenLosingFocus = function (complete) {
+        testDismissesWhenLosingFocus(complete) {
             var root = _element;
             root.innerHTML =
             "<button id='outsideFlyout'>outsideFlyout</button>" +
@@ -452,9 +436,9 @@ module CorsicaTests {
                 overlay: flyout,
                 focusTo: outsideFlyout
             }).then(complete);
-        };
+        }
 
-        testRemainsVisibleWhenMovingFocusInternally = function (complete) {
+        testRemainsVisibleWhenMovingFocusInternally(complete) {
             var root = _element;
             root.innerHTML =
             "<div id='anchor'></div>" +
@@ -470,9 +454,9 @@ module CorsicaTests {
                 focusFrom: flyout.element.querySelector("#button0"),
                 focusTo: flyout.element.querySelector("#button1")
             }).then(complete);
-        };
+        }
 
-        testBackClickEventTriggersLightDismiss = function (complete) {
+        testBackClickEventTriggersLightDismiss(complete) {
             // Verifies that a shown Flyout will  light dismiss due to backclick.
 
             // Simulate
@@ -493,9 +477,9 @@ module CorsicaTests {
             var flyout = new Flyout(_element);
             flyout.addEventListener("aftershow", simulateBackClick, false);
             flyout.show(document.body);
-        };
+        }
 
-        testEscapeKeyClosesFlyout = function (complete) {
+        testEscapeKeyClosesFlyout(complete) {
             // Verifies that ESC key hides a Flyout
 
             function afterHide() {
@@ -511,9 +495,9 @@ module CorsicaTests {
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
                 Helper.keydown(flyout.element, Key.escape);
             });
-        };
+        }
 
-        testShowMovesFocusSyncAndHideMovesFocusAsync = function (complete) {
+        testShowMovesFocusSyncAndHideMovesFocusAsync(complete) {
             // Verifies Flyout.show moves focus at the beginning of the animation
             // and Flyout.hide moves focus at the end of the animation.
             var button = document.createElement("button");
@@ -707,6 +691,20 @@ module CorsicaTests {
                 });
         }
     }
+    
+    var disabledTestRegistry = {
+        testDismissesWhenLosingFocus:[
+            Helper.Browsers.ie11,
+            Helper.Browsers.chrome,
+            Helper.Browsers.firefox
+        ],
+        testRemainsVisibleWhenMovingFocusInternally:[
+            Helper.Browsers.chrome,
+            Helper.Browsers.firefox
+        ],
+        testShowMovesFocusSyncAndHideMovesFocusAsync: Helper.Browsers.firefox
+    };
+    Helper.disableTests(FlyoutTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.FlyoutTests");

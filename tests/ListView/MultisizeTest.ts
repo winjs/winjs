@@ -1116,7 +1116,10 @@ module WinJSTests {
     };
     generateBigGroup("CellSpanningLayout");
 
-
+    var disabledTestRegistry = {
+        testBigGroupCellSpanningLayout: Helper.Browsers.ie10
+    };
+    Helper.disableTests(MultisizeTests, disabledTestRegistry);
 }
 if (Helper.Browser.supportsCSSGrid) {
     // register the object as a test class by passing in the name

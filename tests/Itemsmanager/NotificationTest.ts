@@ -934,6 +934,11 @@ module WinJSTests {
             testCountChangedNotificationWithChangingDataSource(signalTestCaseCompleted, true);
         }
     };
+    
+    var disabledTestRegistry = {
+        testRandomUsageWithoutIndependentChanges: [Helper.Browsers.chrome, Helper.Browsers.safari]
+    };
+    Helper.disableTests(NotificationTests, disabledTestRegistry);
 }
 // Register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.NotificationTests");

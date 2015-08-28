@@ -1879,5 +1879,10 @@ module WinJSTests {
             return result;
         }
     })();
+    
+    var disabledTestRegistry = {
+        testViewportFocus: Helper.Browsers.firefox
+    };
+    Helper.disableTests(ListViewTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("WinJSTests.ListViewTests");

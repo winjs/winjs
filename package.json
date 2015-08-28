@@ -41,7 +41,7 @@
     "grunt-jscs": "^1.8.0",
     "grunt-nuget": "^0.1.4",
     "grunt-replace": "~0.7.8",
-    "grunt-saucelabs": "git+https://github.com/xirzec/grunt-saucelabs.git#debug",
+    "grunt-saucelabs": "git+https://github.com/PaulWells/grunt-saucelabs.git#debug",
     "grunt-shell": "~0.7.0",
     "grunt-ts": "~3.0.0",
     "http-post": "~0.1.1",

@@ -37,7 +37,7 @@ module WinJSTests {
             document.body.removeChild(testRootEl);
         }
 
-        testWin8_342083 = function (complete) {
+        testWin8_342083(complete) {
             var div = document.createElement("DIV");
             var cleanup = parent(div);
             WinJS.Promise.as().then(function () {
@@ -47,9 +47,9 @@ module WinJSTests {
                 then(cleanup).
                 then(complete);
 
-        };
+        }
 
-        testWin8_312074 = function (complete) {
+        testWin8_312074(complete) {
 
             function createDataSource(steps) {
                 var count = 100,
@@ -163,9 +163,9 @@ module WinJSTests {
             }
 
             runTest(0);
-        };
+        }
 
-        testWin8_370759 = function (complete) {
+        testWin8_370759(complete) {
 
             function createDataSource() {
                 var count = 500,
@@ -257,9 +257,9 @@ module WinJSTests {
             }
 
             listView.addEventListener("loadingstatechanged", readyStateHandler, false);
-        };
+        }
 
-        testWin8_595149 = function (complete) {
+        testWin8_595149(complete) {
             var items = [];
             for (var i = 0; i < 100; i++) {
                 items.push({ title: "Tile" + i });
@@ -313,9 +313,9 @@ module WinJSTests {
                 },
             ];
             Helper.ListView.runTests(listView, tests);
-        };
+        }
 
-        testWin8_725480 = function (complete) {
+        testWin8_725480(complete) {
             var items = [{
                 group: "A",
                 title: "Tile" + 0
@@ -397,10 +397,10 @@ module WinJSTests {
                     cleanup();
                     complete();
                 });
-        };
+        }
 
 
-        testWin8_769820 = function (complete) {
+        testWin8_769820(complete) {
 
             var items = [],
                 tiles = [];
@@ -454,9 +454,9 @@ module WinJSTests {
             }
 
             listView.addEventListener("loadingstatechanged", whenComplete, false);
-        };
+        }
 
-        testWin8_930766 = function (complete) {
+        testWin8_930766(complete) {
             var count = 500;
 
             var rendererCalled = [],
@@ -547,10 +547,10 @@ module WinJSTests {
                     cleanup();
                     complete();
                 });
-        };
+        }
 
 
-        testWinBlue_148641 = function (complete) {
+        testWinBlue_148641(complete) {
             var items = [],
                 tiles = [];
             for (var i = 0; i < 100; i++) {
@@ -598,9 +598,9 @@ module WinJSTests {
             }
 
             listView.addEventListener("loadingstatechanged", whenComplete, false);
-        };
+        }
 
-        testWinBlue_256523 = function (complete) {
+        testWinBlue_256523(complete) {
             var items = [];
             for (var i = 0; i < 100; i++) {
                 items.push({
@@ -657,9 +657,9 @@ module WinJSTests {
                     cleanup();
                     complete();
                 });
-        };
+        }
 
-        testWinBlue_389800_EnsureVisibleOnHiddenListViewRTL = function (complete) {
+        testWinBlue_389800_EnsureVisibleOnHiddenListViewRTL(complete) {
             Helper.initUnhandledErrors();
 
             var lv = document.createElement("div");
@@ -700,16 +700,16 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
 
     }
-
-    if (!Helper.Browser.isIE11) {
-        Helper.disableTest(ListViewRegression, "testWinBlue_148641");
-        Helper.disableTest(ListViewRegression, "testWin8_725480");
-    }
-
+    
+    var disabledTestRegistry = {
+        testWin8_725480: Helper.BrowserCombos.all,
+        testWinBlue_148641: Helper.BrowserCombos.allButIE11
+    };
+    Helper.disableTests(ListViewRegression, disabledTestRegistry);
 }
 
 LiveUnit.registerTestClass("WinJSTests.ListViewRegression");

@@ -239,7 +239,7 @@ module WinJSTests {
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
         }
-
+             
         testGridLayoutHitTest(complete) {
             var largeListView = document.createElement("div");
             largeListView.id = "GridLayoutHitTest";
@@ -1655,6 +1655,15 @@ module WinJSTests {
 
         Helper.ListView.runTests(listView, tests);
     }, null, true);
+    
+    var disabledTestRegistry = {
+        testUncontiguousSelectionReorderGridLayoutVDS_rtl: Helper.BrowserCombos.all,
+        testUncontiguousSelectionReorderListLayoutVDS_rtl: Helper.BrowserCombos.all,
+        testUncontiguousSelectionReorderListLayoutBindingList_ltr: Helper.BrowserCombos.all,
+        testUncontiguousSelectionReorderGridLayoutBindingList_ltr: Helper.BrowserCombos.all,
+		testDragEnterInReorderableSourceListLayoutBindingList_ltr: Helper.Browsers.android
+    };
+    Helper.disableTests(ListViewDragDropTest, disabledTestRegistry);
 
 }
 if (!WinJS.Utilities.isPhone) {

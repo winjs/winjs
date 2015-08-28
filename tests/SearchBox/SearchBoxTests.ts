@@ -49,7 +49,7 @@ module SearchBoxTests {
                 document.body.removeChild(element);
             }
         }
-
+        
         // Test functions
         testInitTest = function () {
             var searchBox: WinJS.UI.SearchBox = document.getElementById("SearchBoxID").winControl;
@@ -181,5 +181,11 @@ module SearchBoxTests {
             var sb = new WinJS.UI.SearchBox(null, { disabled: true });
         }
     };
+    
+    var disabledTestRegistry = {
+        testFocusOnKeyboardInputBringsUpSuggestions: Helper.Browsers.firefox,
+        testLegacyClassNames: Helper.Browsers.firefox
+    };
+    Helper.disableTests(SearchBoxTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("SearchBoxTests.SearchBoxTests");

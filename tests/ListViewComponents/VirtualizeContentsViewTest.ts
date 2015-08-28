@@ -695,7 +695,7 @@ module WinJSTests {
             completed();
         }
 
-        tearDown = function () {
+        tearDown() {
             WinJS.Utilities.disposeSubTree(testRootEl);
             document.body.removeChild(testRootEl);
             WinJS.UI._VirtualizeContentsView._chunkSize = defaultChunkSize;
@@ -703,9 +703,9 @@ module WinJSTests {
             WinJS.UI._VirtualizeContentsView._defaultPagesToPrefetch = defaultPagesToPrefetch;
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = defaultDisableCustomPagesPrefetch;
             WinJS.Utilities._setIsiOS(defaultIsiOS);
-        };
-
-        testInitalization = function (complete) {
+        }
+        
+        testInitalization(complete) {
             function createListView(orientation) {
 
                 var placeholder = createListViewElement();
@@ -808,10 +808,10 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
-        testGroupedInitialization = function (complete) {
+        testGroupedInitialization(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
 
             var placeholder = createListViewElement();
@@ -872,9 +872,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testLayoutWrapper = function (complete) {
+        testLayoutWrapper(complete) {
             var placeholder = createListViewElement();
 
             var newLayout = {
@@ -920,9 +920,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testUninitialize = function (complete) {
+        testUninitialize(complete) {
 
             function createListView(oldPlaceholder?) {
                 if (oldPlaceholder) {
@@ -1048,9 +1048,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testGetItemPosition = function (complete) {
+        testGetItemPosition(complete) {
             var placeholder = createListViewElement();
 
             var listView = new ListView(placeholder, {
@@ -1077,9 +1077,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testClickOnContainer = function (complete) {
+        testClickOnContainer(complete) {
             var placeholder = createListViewElement();
 
             var listView = new ListView(placeholder, {
@@ -1140,10 +1140,10 @@ module WinJSTests {
 
                 complete();
             }).done();
-        };
+        }
 
 
-        testLayoutSite = function (complete) {
+        testLayoutSite(complete) {
             var placeholder = createListViewElement();
 
             var layoutSite;
@@ -1222,20 +1222,20 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
 
 
-        testTreeUpdate = function (complete) {
+        testTreeUpdate(complete) {
             var layout = {
                 initialize: function (site, groups) {
                     return "vertical";
                 }
             };
             verifyTreeUpdate(layout, validateFlatTree, complete);
-        };
+        }
 
-        testTreeUpdateWithStructureNodes = function (complete) {
+        testTreeUpdateWithStructureNodes(complete) {
             var layout = {
                 initialize: function (site, groups) {
                     return "vertical";
@@ -1246,20 +1246,20 @@ module WinJSTests {
             verifyTreeUpdate(layout, function (listView) {
                 validateFlatTree(listView);
             }, complete);
-        };
+        }
 
 
 
-        testGroupedTreeUpdate = function (complete) {
+        testGroupedTreeUpdate(complete) {
             var layout = {
                 initialize: function (site, groups) {
                     return "vertical";
                 }
             };
             verifyGroupedTreeUpdate(layout, validateGroupedTree, complete);
-        };
+        }
 
-        testGroupedTreeUpdateWithStructureNodes = function (complete) {
+        testGroupedTreeUpdateWithStructureNodes(complete) {
             var layout = {
                 initialize: function (site, groups) {
                     return "vertical";
@@ -1270,9 +1270,9 @@ module WinJSTests {
             verifyGroupedTreeUpdate(layout, function (listView) {
                 validateGroupedTree(listView);
             }, complete);
-        };
+        }
 
-        testNoReparentingDuringEdits = function (complete) {
+        testNoReparentingDuringEdits(complete) {
 
             var placeholder;
 
@@ -1514,9 +1514,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testRebuildingStructureNodesAfterResize = function (complete) {
+        testRebuildingStructureNodesAfterResize(complete) {
             WinJS.UI._VirtualizeContentsView._chunkSize = 15;
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = Number.MAX_VALUE;
 
@@ -1587,9 +1587,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testResizeDuringLazyTreeCreation = function (complete) {
+        testResizeDuringLazyTreeCreation(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
             WinJS.UI._VirtualizeContentsView._createContainersJobTimeslice = 0;
 
@@ -1665,13 +1665,13 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
         // Verifies that structural nodes are enabled/disabled on the fly due to list edits.
         // When all of the groups are uniform, structural nodes should be enabled.
         // If any of the groups are cell spanning, structural nodes should be disabled.
-        testTogglingStructuralNodesDueToEdits = function (complete) {
+        testTogglingStructuralNodesDueToEdits(complete) {
             function itemInfo(index) {
                 return {
                     width: 95,
@@ -1748,11 +1748,11 @@ module WinJSTests {
             }
 
             Helper.ListView.runTests(listView, tests);
-        };
+        }
 
         // Verifies that when the ListView is resized such that the number of items per
         // column changes, columns are not split across multiple items blocks.
-        testResizeWithStructuralNodes = function (complete) {
+        testResizeWithStructuralNodes(complete) {
             function verifyTree() {
                 LiveUnit.Assert.isTrue(placeholder.querySelectorAll("." + WinJS.UI._itemsBlockClass).length > 1,
                     "ListView must be using more than 1 items block in order for this test to verify that " +
@@ -1793,9 +1793,9 @@ module WinJSTests {
             }
 
             Helper.ListView.runTests(listView, tests);
-        };
+        }
 
-        testLazyFlatTreeCreation = function (complete) {
+        testLazyFlatTreeCreation(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
 
@@ -1839,9 +1839,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testLazyTreeCreationPriority = function (complete) {
+        testLazyTreeCreationPriority(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
 
@@ -1907,25 +1907,25 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
 
-        testLazyGroupedTreeCreationWithSmallGroups = function (complete) {
+        testLazyGroupedTreeCreationWithSmallGroups(complete) {
             var itemsCount = BIG_DATASET,
                 data = initData(itemsCount, 250);
 
             testLazyGroupedTreeCreation(data, complete);
-        };
+        }
 
-        testLazyGroupedTreeCreationWithBigGroups = function (complete) {
+        testLazyGroupedTreeCreationWithBigGroups(complete) {
             var itemsCount = BIG_DATASET,
                 data = initData(itemsCount, 2250);
 
             testLazyGroupedTreeCreation(data, complete);
-        };
+        }
 
-        testStoppingLazyTreeCreation = function (complete) {
+        testStoppingLazyTreeCreation(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
 
             function createListView(oldPlaceholder?) {
@@ -2016,9 +2016,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testEditsDuringLazyCreation = function (complete) {
+        testEditsDuringLazyCreation(complete) {
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
 
             var itemsCount = BIG_DATASET,
@@ -2060,7 +2060,7 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
         // Verifies that if the data in the ListView's Binding.List is entirely replaced while
         // containers are still being created, the ListView will create enough containers for
@@ -2073,7 +2073,7 @@ module WinJSTests {
         //     local data in the ListView's data source with the data from the server. Specifically, this
         //     can be done by setting the Binding.List's length to 0 and pushing on the data from the server.
         // Regression test for #146 (https://github.com/winjs/winjs/issues/146#issuecomment-41634154)
-        testReplaceDataDuringLazyContainerCreation = function (complete) {
+        testReplaceDataDuringLazyContainerCreation(complete) {
             Helper.initUnhandledErrors();
             WinJS.UI._VirtualizeContentsView._chunkSize = 50;
 
@@ -2128,12 +2128,12 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(75, listView._view.containers.length);
                 return Helper.validateUnhandledErrorsOnIdle();
             }).then(complete);
-        };
+        }
 
         // Verifies that all items in a CellSpanningLayout get properly laid out when
         // insertions occur before all of the containers have been created.
         // Regression test for WinBlue#427057.
-        testInsertionsDuringLazyContainerCreation = function (complete) {
+        testInsertionsDuringLazyContainerCreation(complete) {
             if (!Helper.Browser.supportsCSSGrid) {
                 complete();
                 return;
@@ -2213,11 +2213,11 @@ module WinJSTests {
                 });
                 return result;
             };
-        };
+        }
 
 
 
-        testRealizeMoreThanCreated = function (complete) {
+        testRealizeMoreThanCreated(complete) {
             // ListView height is 300, container height is 30
             var itemsPerColumn = 10,
                 numberOfItemsPerItemsBlock = itemsPerColumn * WinJS.UI._LayoutCommon._barsPerItemsBlock;
@@ -2261,9 +2261,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testScrollingDuringLazyCreation = function (complete) {
+        testScrollingDuringLazyCreation(complete) {
             // ListView height is 300, container height is 100
             var itemsPerColumn = 3,
                 numberOfItemsPerItemsBlock = itemsPerColumn * WinJS.UI._LayoutCommon._barsPerItemsBlock;
@@ -2343,11 +2343,11 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
 
-        testAnimationsInterface = function (complete) {
+        testAnimationsInterface(complete) {
             function initModifiedArray(count) {
                 var retVal = [];
                 for (var i = 0; i < count; i++) {
@@ -2543,9 +2543,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testSerializeAnimations = function (complete) {
+        testSerializeAnimations(complete) {
             function verifyTile(listView, index, text) {
                 var element = listView.elementFromIndex(index);
                 LiveUnit.Assert.areEqual(text, element.textContent);
@@ -2622,9 +2622,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testChangedRange = function (complete) {
+        testChangedRange(complete) {
             var rangeTester = {
                 expectedRange: function (start, end) {
                     this.firstIndex = start;
@@ -2681,9 +2681,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testLayoutIsCalledForChangesToRealizedAndUnRealizedItems = function (complete) {
+        testLayoutIsCalledForChangesToRealizedAndUnRealizedItems(complete) {
 
             LiveUnit.Assert.isTrue(COUNT >= 100, "Test expects a data set of at least 100 items.")
 
@@ -2903,11 +2903,11 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
         // Verifies that when the ListView creates containers asynchronously, it only
         // lays out the new containers rather than also relaying out the existing containers.
-        testChangedRangeDuringAsyncContainerCreation = function (complete) {
+        testChangedRangeDuringAsyncContainerCreation(complete) {
             WinJS.UI._VirtualizeContentsView._chunkSize = 10;
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
             var lastLaidOutItem = 0;
@@ -2934,11 +2934,11 @@ module WinJSTests {
                     },
                 }
             });
-        };
+        }
 
         // Verifies that when the ListView has no containers, layout is called with
         // a changedRange of { firstIndex: 0, lastIndex: -1 }.
-        testChangedRangeForDeleteAll = function (complete) {
+        testChangedRangeForDeleteAll(complete) {
             var placeholder = createListViewElement();
             var data = initData(COUNT),
                 list = new WinJS.Binding.List(data),
@@ -2969,9 +2969,9 @@ module WinJSTests {
                     LiveUnit.Assert.isTrue(verifiedChangedRange, "Layout should have been called after deleting all of the items");
                     complete();
                 });
-        };
+        }
 
-        testBackdropClass = function (complete) {
+        testBackdropClass(complete) {
             if (!Helper.Browser.supportsCSSGrid) {
                 complete();
                 return;
@@ -3065,11 +3065,11 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
 
-        testDeferRealizationOnDelete = function (complete) {
+        testDeferRealizationOnDelete(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -3107,9 +3107,9 @@ module WinJSTests {
                     });
                 });
             });
-        };
+        }
 
-        testDeferRealizationOnDeleteNotJustDeletes = function (complete) {
+        testDeferRealizationOnDeleteNotJustDeletes(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -3131,9 +3131,9 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
-        testDeferRealizationOnDeleteWithDataModificationsDuringAnimation = function (complete) {
+        testDeferRealizationOnDeleteWithDataModificationsDuringAnimation(complete) {
             var listViewNode = document.createElement("DIV");
             listViewNode.innerHTML = "<div style='width:600px; height:400px;'></div>";
             VirtualizeContentsViewTestHost.appendChild(listViewNode);
@@ -3180,12 +3180,10 @@ module WinJSTests {
                     });
                 }, 300);
             });
-        };
-
-
+        }
 
         // Regression test for WinBlue: 88018
-        testEnsureVisibleAfterDataChange = function (complete) {
+        testEnsureVisibleAfterDataChange(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var newNode = document.createElement("div");
             newNode.innerHTML =
@@ -3222,9 +3220,9 @@ module WinJSTests {
                 }
             ];
             Helper.ListView.runTests(listView, tests);
-        };
+        }
 
-        testScrollAfterSkippedRealization = function (complete) {
+        testScrollAfterSkippedRealization(complete) {
             Helper.initUnhandledErrors();
 
             var newNode = document.createElement("div");
@@ -3254,9 +3252,9 @@ module WinJSTests {
                     VirtualizeContentsViewTestHost.removeChild(newNode);
                     complete();
                 });
-        };
+        }
 
-        testSingleDeleteUpdateFollowedByInserts = function (complete) {
+        testSingleDeleteUpdateFollowedByInserts(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var newNode = document.createElement("div");
             newNode.innerHTML =
@@ -3293,11 +3291,11 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
         // Regression test for WinBlue: 88791
         //
-        testCompleteEventOnReloadForHightZeroFollowedByResize = function (complete) {
+        testCompleteEventOnReloadForHightZeroFollowedByResize(complete) {
             var newNode = document.createElement("div");
             newNode.innerHTML =
             "<div style='width:600px; height:0px;'></div>" +
@@ -3364,9 +3362,9 @@ module WinJSTests {
                     complete();
                 }
             }
-        };
+        }
 
-        testReadySignalOrder = function (complete) {
+        testReadySignalOrder(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "100px";
@@ -3437,9 +3435,9 @@ module WinJSTests {
                     complete();
                 });
 
-        };
+        }
 
-        testReadySignalOrderWithSlowDataSource = function (complete) {
+        testReadySignalOrderWithSlowDataSource(complete) {
 
             function createDataSource() {
                 var blockSize = 10,
@@ -3586,9 +3584,9 @@ module WinJSTests {
                 element.parentNode.removeChild(element);
                 complete();
             });
-        };
+        }
 
-        testSuppressCallbacksDuringScrolling = function (complete) {
+        testSuppressCallbacksDuringScrolling(complete) {
 
             function checkTile(listView, index) {
                 var element = listView.elementFromIndex(index);
@@ -3697,9 +3695,9 @@ module WinJSTests {
                     element.parentNode.removeChild(element);
                     complete();
                 });
-        };
+        }
 
-        testWaitingForItemRenderers = function (complete) {
+        testWaitingForItemRenderers(complete) {
 
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -3773,9 +3771,9 @@ module WinJSTests {
                         break;
                 }
             });
-        };
+        }
 
-        testAsynchronousLayoutsDoNotRunConcurrently = function (complete) {
+        testAsynchronousLayoutsDoNotRunConcurrently(complete) {
 
             WinJS.UI._VirtualizeContentsView._maxTimePerCreateContainers = 0;
 
@@ -3865,9 +3863,9 @@ module WinJSTests {
                     complete();
                 });
 
-        };
+        }
 
-        testEditDuringAsyncLayout = function (complete) {
+        testEditDuringAsyncLayout(complete) {
             var placeholder = createListViewElement();
 
             var data = initData(),
@@ -3939,9 +3937,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testDatasourceChangeDuringAsyncLayout = function (complete) {
+        testDatasourceChangeDuringAsyncLayout(complete) {
             var placeholder = createListViewElement();
 
             var data1 = initData(),
@@ -4012,9 +4010,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testMaxDeferredItemCleanup = function (complete) {
+        testMaxDeferredItemCleanup(complete) {
             var MAX_DEFERRED_ITEM_CLEANUP = 10;
 
             var itemsCount = BIG_DATASET,
@@ -4096,9 +4094,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testInsertsAnimationStartsBeforeRealizationIsDone = function (complete) {
+        testInsertsAnimationStartsBeforeRealizationIsDone(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -4143,9 +4141,9 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
-        testDeleteAnimationStartsBeforeUpdateTreeIsDone = function (complete) {
+        testDeleteAnimationStartsBeforeUpdateTreeIsDone(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -4220,9 +4218,9 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
-        testInsertItemWithDeferredUnrealizedNonAnimatedItems = function (complete) {
+        testInsertItemWithDeferredUnrealizedNonAnimatedItems(complete) {
             WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch = true;
             var element = document.createElement("div");
             element.style.width = "300px";
@@ -4277,19 +4275,19 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
 
 
-        testAnimationInViewportPendingFlagTrue = function (complete) {
+        testAnimationInViewportPendingFlagTrue(complete) {
             generateAnimationInViewportPendingFlagTest(complete, 2, true);
-        };
+        }
 
-        testAnimationInViewportPendingFlagFalse = function (complete) {
+        testAnimationInViewportPendingFlagFalse(complete) {
             generateAnimationInViewportPendingFlagTest(complete, 20, false);
-        };
+        }
 
-        testSerializeRealizePasses = function (complete) {
+        testSerializeRealizePasses(complete) {
             Helper.initUnhandledErrors();
 
             var placeholder = createListViewElement();
@@ -4315,9 +4313,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testScrollDonotCancelAnimations = function (complete) {
+        testScrollDonotCancelAnimations(complete) {
             Helper.initUnhandledErrors();
 
             var placeholder = createListViewElement();
@@ -4373,12 +4371,12 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
 
 
 
-        testNoProgressRingInEmptyView = function (complete) {
+        testNoProgressRingInEmptyView(complete) {
             var lv = new ListView();
 
             VirtualizeContentsViewTestHost.appendChild(lv.element);
@@ -4393,10 +4391,10 @@ module WinJSTests {
                 lv.dispose();
                 complete();
             });
-        };
+        }
 
 
-        testDeferContainerCreationUntilSeZoZoomCompletes = function (complete) {
+        testDeferContainerCreationUntilSeZoZoomCompletes(complete) {
             var wrapper = document.createElement("div");
             wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
             var sezoDiv = <HTMLElement>wrapper.firstElementChild;
@@ -4447,10 +4445,10 @@ module WinJSTests {
             Helper.ListView.waitForReady(zoomedIn, -1)().then(function () {
                 sezo.zoomedOut = true;
             });
-        };
+        }
 
 
-        testSlowHeaderRenderingDoesNotCrash = function (complete) {
+        testSlowHeaderRenderingDoesNotCrash(complete) {
             var data = [];
             for (var i = 0; i < 10; i++) {
                 data.push({ data: "" + i });
@@ -4483,9 +4481,9 @@ module WinJSTests {
                 lv.dispose();
                 complete();
             });
-        };
+        }
 
-        testSlowHeaderRenderingDoesNotRenderDuplicateHeaders = function (complete) {
+        testSlowHeaderRenderingDoesNotRenderDuplicateHeaders(complete) {
             var data = [];
             for (var i = 0; i < 100; i++) {
                 data.push({ data: "" + i });
@@ -4524,9 +4522,9 @@ module WinJSTests {
                     lv.dispose();
                     complete();
                 });
-        };
+        }
 
-        testGetAdjacentWait = function (complete) {
+        testGetAdjacentWait(complete) {
             var itemsCount = 300,
                 list = new WinJS.Binding.List(initData(itemsCount));
 
@@ -4576,9 +4574,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testPanningUsingAsyncDataSourceWithMultiStageRenderers = function (complete) {
+        testPanningUsingAsyncDataSourceWithMultiStageRenderers(complete) {
             function createDataSource() {
                 var count = 10000;
 
@@ -4682,9 +4680,9 @@ module WinJSTests {
                     });
                 });
             });
-        };
+        }
 
-        testAddingItemToTheEndOfListWhileLastItemHadFocusDoesNotLoseFocus = function (complete) {
+        testAddingItemToTheEndOfListWhileLastItemHadFocusDoesNotLoseFocus(complete) {
             var data = [];
             for (var i = 0; i < 10; i++) {
                 data.push({ data: "" + i });
@@ -4721,9 +4719,9 @@ module WinJSTests {
                     lv.dispose();
                     complete();
                 });
-        };
+        }
 
-        testDeleteWhileFocusIsOnLastItemDoesNotLoseFocus = function (complete) {
+        testDeleteWhileFocusIsOnLastItemDoesNotLoseFocus(complete) {
             var data = [];
             for (var i = 0; i < 390; i++) {
                 data.push({ data: "" + i });
@@ -4760,9 +4758,9 @@ module WinJSTests {
 
                     complete();
                 });
-        };
+        }
 
-        testAriaWorkerCancellation = function (complete) {
+        testAriaWorkerCancellation(complete) {
             Helper.initUnhandledErrors();
 
             var data = [];
@@ -4837,9 +4835,9 @@ module WinJSTests {
 
                 return cancellationPromise;
             };
-        };
+        }
 
-        testDeleteDoesNotLoseFocusRectangle = function (complete) {
+        testDeleteDoesNotLoseFocusRectangle(complete) {
             Helper.initUnhandledErrors();
 
             var data = [];
@@ -4876,13 +4874,9 @@ module WinJSTests {
                         ". document requires focus to pass");
                     complete();
                 });
-        };
+        }
 
-
-
-
-
-        testRealizeRetryDuringEdits = function (complete) {
+        testRealizeRetryDuringEdits(complete) {
             Helper.initUnhandledErrors();
 
             var list = new WinJS.Binding.List(initData());
@@ -4914,9 +4908,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testUpdateContainersUpdatesToAffectedRange = function (complete) {
+        testUpdateContainersUpdatesToAffectedRange(complete) {
 
             if (!Helper.Browser.supportsCSSGrid) {
                 complete();
@@ -4993,9 +4987,9 @@ module WinJSTests {
                     placeholder.parentNode.removeChild(placeholder);
                     complete();
                 });
-        };
+        }
 
-        testDefaultPagesToPrefetch = function (complete) {
+        testDefaultPagesToPrefetch(complete) {
             // Verifies the correct default values for ListView.maxTrailingPages and ListView.maxLeadingPages are used when no values are set by the user.
             WinJS.Utilities._setIsiOS(false);
 
@@ -5025,9 +5019,9 @@ module WinJSTests {
                 expectedTrailingPages = listView.maxTrailingPages;
 
             validatePagesToPrefetch(listView, expectedLeadingPages, expectedTrailingPages, viewPortHeight).done(complete);
-        };
+        }
 
-        testIOSDefaultPagesToPrefetch = function (complete) {
+        testIOSDefaultPagesToPrefetch(complete) {
             // Verifies that when running in IOS the correct IOS default values for ListView.maxTrailingPages and ListView.maxLeadingPages are used.
             WinJS.Utilities._setIsiOS(true);
 
@@ -5057,9 +5051,9 @@ module WinJSTests {
                 expectedTrailingPages = WinJS.UI._VirtualizeContentsView._iOSMaxTrailingPages;
 
             validatePagesToPrefetch(listView, expectedLeadingPages, expectedTrailingPages, viewPortHeight).done(complete);
-        };
+        }
 
-        testCustomPagesToPrefetch = function (complete) {
+        testCustomPagesToPrefetch(complete) {
             var viewPortHeight = 300,
                 count = 200,
                 list = new WinJS.Binding.List(initData(count));
@@ -5088,9 +5082,9 @@ module WinJSTests {
             });
 
             validatePagesToPrefetch(listView, expectedLeadingPages, expectedTrailingPages, viewPortHeight).done(complete);
-        };
+        }
 
-        testPrefetchAllPages = function (complete) {
+        testPrefetchAllPages(complete) {
             // Test that it is possible to turn off virtualization by setting ListView.maxLeadingPages and ListView.maxTrailingPages to Number.MAX_VALUE
             var viewPortHeight = 300,
                 count = 200,
@@ -5128,11 +5122,11 @@ module WinJSTests {
                 var expectedRealizedCount = count;
                 LiveUnit.Assert.areEqual(expectedRealizedCount, listView.element.querySelectorAll(".win-container:not(.win-backdrop)").length, "With no virtualization, we expect all items to be realized.");
             }).done(complete);
-        };
+        }
 
         // Some browsers do not have good FlexBox behavior so we have to disable
         // structure nodes.
-        testStructureNodesUsedWhenSupported = function (complete) {
+        testStructureNodesUsedWhenSupported(complete) {
             var element = document.createElement("div");
             element.style.width = "300px";
             element.style.height = "300px";
@@ -5149,9 +5143,9 @@ module WinJSTests {
                 element.parentNode.removeChild(element);
                 complete();
             });
-        };
+        }
 
-        testDeferUnrealizingUntilSeZoZoomCompletes = function (complete) {
+        testDeferUnrealizingUntilSeZoZoomCompletes(complete) {
             var wrapper = document.createElement("div");
             wrapper.innerHTML = "<div id='sezo'><div></div><div></div></div>";
             var sezoDiv = <HTMLElement>wrapper.firstElementChild;
@@ -5203,7 +5197,9 @@ module WinJSTests {
                 zoomedIn.scrollPosition = Number.MAX_VALUE;
                 sezo.zoomedOut = true;
             });
-        };
+        }
+        
+        
 
     }
 
@@ -5775,7 +5771,31 @@ module WinJSTests {
     // Generate stripe tests
     getPairWiseConfigurationsForSmallDataStripeTests().forEach(generateStripeTests);
     getPairWiseConfigurationsForBigDataStripeTests().forEach(generateStripeTests);
-
+    
+    var disabledTestRegistry = {
+        testDeleteDoesNotLoseFocusRectangle: [
+            Helper.Browsers.ie11,
+            Helper.Browsers.firefox
+        ],
+        testRealizeMoreThanCreated: [Helper.Browsers.ie10, Helper.Browsers.safari],
+        testMaxDeferredItemCleanup: Helper.BrowserCombos.allButIE11,
+        testScrollingDuringLazyCreation: [Helper.Browsers.ie10, Helper.Browsers.safari],
+        testInsertsAnimationStartsBeforeRealizationIsDone: [
+            Helper.Browsers.safari,
+            Helper.Browsers.android,
+            Helper.Browsers.chrome
+        ],
+        testAddingItemToTheEndOfListWhileLastItemHadFocusDoesNotLoseFocus: Helper.Browsers.firefox,
+        testUninitialize: [Helper.Browsers.firefox, Helper.Browsers.safari],
+		testPanningUsingAsyncDataSourceWithMultiStageRenderers: Helper.Browsers.safari,
+		testAriaWorkerCancellation: Helper.Browsers.safari,
+		testDeferContainerCreationUntilSeZoZoomCompletes: [
+			Helper.Browsers.android,
+			Helper.Browsers.ie10,
+			Helper.Browsers.chrome
+		]
+    };
+    Helper.disableTests(VirtualizedViewTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("WinJSTests.VirtualizedViewTests");

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 // <reference path="ms-appx://$(TargetFramework)/js/WinJS.js" />
 // <reference path="ms-appx://$(TargetFramework)/css/ui-dark.css" />
-
+// <reference path="../TestLib/Helper.ts"/>
 /// <deploy src="../TestData/" />
 
 module WinJSTests {
@@ -810,5 +810,18 @@ module WinJSTests {
             });
         }
     }
+    
+    var disabledTestRegistry = {
+        testIFrameRemovalUnregistersWithXYFocus: [
+            Helper.Browsers.safari,
+            Helper.Browsers.chrome,
+            Helper.Browsers.android
+        ],
+        testXYFocusHistory: [
+            Helper.Browsers.chrome,
+            Helper.Browsers.android
+        ]
+    };
+    Helper.disableTests(XYFocusTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("WinJSTests.XYFocusTests");

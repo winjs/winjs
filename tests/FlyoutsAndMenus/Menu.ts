@@ -29,7 +29,7 @@ module CorsicaTests {
         }
 
         // Test Menu Instantiation
-        testMenuInstantiation = function () {
+        testMenuInstantiation() {
             // Get the Menu element from the DOM
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu element");
             var menuElement = document.createElement('div');
@@ -56,14 +56,14 @@ module CorsicaTests {
         }
 
         // Test Menu Instantiation with null element
-        testMenuNullInstantiation = function () {
+        testMenuNullInstantiation(){
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu with null element");
             var menu = new Menu(null, { commands: { type: 'separator', id: 'sep' } });
             LiveUnit.Assert.isNotNull(menu, "Menu instantiation was null when sent a null Menu element.");
         }
 
         // Test Menu Instantiation with no options
-        testMenuEmptyInstantiation = function () {
+        testMenuEmptyInstantiation() {
             LiveUnit.LoggingCore.logComment("Attempt to Instantiate the Menu with empty constructor");
             var menu = new Menu();
             LiveUnit.Assert.isNotNull(menu, "Menu instantiation was null when sent a Empty Menu element.");
@@ -89,7 +89,7 @@ module CorsicaTests {
         }
 
         // Test Menu parameters
-        testMenuParams = function () {
+        testMenuParams() {
             function testGoodInitOption(paramName, value) {
                 LiveUnit.LoggingCore.logComment("Testing creating a Menu using good parameter " + paramName + "=" + value);
                 var div = document.createElement("div");
@@ -150,7 +150,7 @@ module CorsicaTests {
             testBadInitOption("placement", {}, "WinJS.UI.Flyout.BadPlacement", badPlacement);
         }
 
-        testDefaultMenuParameters = function () {
+        testDefaultMenuParameters() {
             // Get the Menu element from the DOM
             var menuElement = document.createElement("div");
             document.body.appendChild(menuElement);
@@ -165,7 +165,7 @@ module CorsicaTests {
         }
 
         // Simple Function Tests
-        testSimpleMenuTestsFunctions = function () {
+        testSimpleMenuTestsFunctions() {
             // Get the MenuTests element from the DOM
             var menuElement = document.createElement("div");
             document.body.appendChild(menuElement);
@@ -205,7 +205,7 @@ module CorsicaTests {
             LiveUnit.Assert.isFalse(menu.hidden);
         }
 
-        testMenuDispose = function () {
+        testMenuDispose() {
             var mc1 = new MenuCommand(document.createElement("button"), { label: "mc1" });
             var mc2 = new MenuCommand(document.createElement("button"), { label: "mc2" });
 
@@ -966,6 +966,16 @@ module CorsicaTests {
                 });
         }
     }
+    
+    var disabledTestRegistry = {
+         testFocusChangeBetweenCommandDeactivatesFlyoutCommands: Helper.Browsers.firefox,
+         testParentMenuMovesFocusToSubMenuWhenActivatedMenuCommandIsFocused: Helper.Browsers.firefox,
+         testAdaptiveSpacing: Helper.Browsers.firefox,
+         testAdaptiveSpacingConsistentInCascade: Helper.Browsers.firefox,
+         testMenuInstantiation: Helper.Browsers.firefox,
+         testShowMovesFocusSyncAndHideMovesFocusAsync: Helper.Browsers.firefox
+    };
+    Helper.disableTests(MenuTests, disabledTestRegistry);
 }
 // register the object as a test class by passing in the name
 LiveUnit.registerTestClass("CorsicaTests.MenuTests");

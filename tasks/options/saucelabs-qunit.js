@@ -59,12 +59,17 @@
             if (!details.testPageUrl) {
                 throw "empty testPageUrl in details argument " + JSON.stringify(details);
             }
-
+			
             var component = details.testPageUrl.split('/')[5];
             var browserIndex = getBrowserIndex(details.platform);
             var componentResults = getComponentResults(component);
             if (componentResults) {
                 if (details.result && typeof details.result === "object") {
+					// Tests completed successfully
+                    if (details.result.failed > 0) {
+                        config.tests_results.passed = false;
+                    }
+					
                     console.log("======================================================\n" +
                                 "Passed: " + details.result.passed + "\n" +
                                 "Failed: " + details.result.failed + "\n" +
@@ -80,6 +85,9 @@
                         "time": Math.ceil(parseFloat(details.result.runtime) / 1000)
                     };
                 } else {
+					// Tests did not complete
+                    config.tests_results.passed = false;
+					
                     console.log("======================================================\n" +
                                 "Component: " +  component + "\n" +
                                 "Note: " + details.result + "\n"
@@ -145,6 +153,7 @@
                 "max-duration": 180,
                 testname: "winjs qunit tests",
                 tags: ["winjs"],
+				maxRetries: 3,
                 onTestComplete: onTestComplete
             }
         },
@@ -158,6 +167,7 @@
                 "max-duration": 500,
                 testname: "winjs qunit tests - extended duration",
                 tags: ["winjs"],
+				maxRetries: 3,
                 onTestComplete: onTestComplete
             }
         }

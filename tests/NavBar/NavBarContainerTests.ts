@@ -29,26 +29,24 @@ module WinJSTests {
     export class NavBarContainerTests {
 
 
-        setUp = function () {
+        setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
             var newNode = document.createElement("div");
             newNode.id = "host";
             document.body.appendChild(newNode);
             _element = newNode;
-        };
+        }
 
-        tearDown = function () {
+        tearDown() {
             LiveUnit.LoggingCore.logComment("In tearDown");
             if (_element) {
                 WinJS.Utilities.disposeSubTree(_element);
                 document.body.removeChild(_element);
                 _element = null;
             }
-        };
-
-
-
-        testHiddenNavContainer = function () {
+        }
+        
+        testHiddenNavContainer() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -64,9 +62,9 @@ module WinJSTests {
             navbarContainerEl.style.display = "block";
             navbarContainer.forceLayout();
             LiveUnit.Assert.isTrue(navbarContainer._measured, "Measured after visible");
-        };
+        }
 
-        testInstantiationMarkup = function (complete) {
+        testInstantiationMarkup(complete) {
             var html = "<div id ='navcontainer' data-win-control='WinJS.UI.NavBarContainer'>" +
                 navUtils.getNavBarCommandsMarkup(20, true, true, true, true, true, true) +
                 "</div>";
@@ -102,9 +100,9 @@ module WinJSTests {
                     LiveUnit.Assert.isFalse(leftArrowEl === rightArrowEl);
                 }).
                 done(complete);
-        };
+        }
 
-        testCurrentIndexConstructor = function (complete) {
+        testCurrentIndexConstructor(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -125,9 +123,9 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(5, navbarContainer.currentIndex);
                 complete();
             });
-        };
+        }
 
-        testCurrentIndexAndMaxRowsConstructor = function (complete) {
+        testCurrentIndexAndMaxRowsConstructor(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -149,9 +147,9 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual(10, navbarContainer.currentIndex);
                 complete();
             });
-        };
+        }
 
-        testCurrentIndexAndMaxRows = function (complete) {
+        testCurrentIndexAndMaxRows(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -182,9 +180,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(2500, navbarContainer._scrollPosition);
                     complete();
                 });
-        };
+        }
 
-        testSizes = function () {
+        testSizes() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -196,9 +194,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(itemWidth, navbarContainer._sizes.itemOffsetWidth);
             LiveUnit.Assert.areEqual(itemHeightWithMargins, navbarContainer._sizes.itemHeight);
             LiveUnit.Assert.areEqual(itemWidthWithMargins, navbarContainer._sizes.itemWidth);
-        };
+        }
 
-        testMaxRows = function () {
+        testMaxRows() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -217,9 +215,9 @@ module WinJSTests {
                 navbarContainer.data = navUtils.getNavBarCommandsData(dataSize, true);
                 LiveUnit.Assert.areEqual(2, navbarContainer._sizes.pages);
             }
-        };
+        }
 
-        testConsumeMarkup = function () {
+        testConsumeMarkup() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -230,9 +228,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(1, navbarContainer._sizes.columnsPerPage);
             LiveUnit.Assert.areEqual(1, navbarContainer._sizes.rowsPerPage);
             LiveUnit.Assert.areEqual(10, navbarContainer._sizes.pages);
-        };
+        }
 
-        testConstructTwice = function () {
+        testConstructTwice() {
             var navbarContainerEl = document.createElement('div');
             var navbarContainer = new NavBarContainer(navbarContainerEl);
 
@@ -243,9 +241,9 @@ module WinJSTests {
                 LiveUnit.Assert.areEqual("Invalid argument: Controls may only be instantiated one time for each DOM element", e.message);
                 LiveUnit.Assert.areEqual("WinJS.UI.NavBarContainer.DuplicateConstruction", e.name);
             }
-        };
+        }
 
-        testArrowKeysPressed = function (complete) {
+        testArrowKeysPressed(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
             _element.style.width = "800px";
@@ -277,9 +275,9 @@ module WinJSTests {
                     complete();
                 });
             });
-        };
+        }
 
-        testKeyboardingHorizontal = function (complete) {
+        testKeyboardingHorizontal(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -355,9 +353,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testKeyboardingVertical = function (complete) {
+        testKeyboardingVertical(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
             navbarContainerEl.className = "verticalTest";
@@ -424,9 +422,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testFocusUpdateOnDataRemove = function (complete) {
+        testFocusUpdateOnDataRemove(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -466,9 +464,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testFocusUpdateOnDataChange = function (complete) {
+        testFocusUpdateOnDataChange(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -496,9 +494,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testFocusUpdateOnDataInserts = function (complete) {
+        testFocusUpdateOnDataInserts(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -529,9 +527,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testFocusUpdateOnDataReload = function (complete) {
+        testFocusUpdateOnDataReload(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -559,9 +557,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testFocusUpdateOnDataMove = function (complete) {
+        testFocusUpdateOnDataMove(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -589,9 +587,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testSplitToggle = function (complete) {
+        testSplitToggle(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -632,9 +630,9 @@ module WinJSTests {
 
                 complete();
             });
-        };
+        }
 
-        testSplitOpenedAndSplitToggleOnPropertyUpdates = function (complete) {
+        testSplitOpenedAndSplitToggleOnPropertyUpdates(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -709,9 +707,9 @@ module WinJSTests {
             });
 
             complete();
-        };
+        }
 
-        testInvokedEvent = function () {
+        testInvokedEvent() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -737,9 +735,9 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(expectedIndex, clickedIndex);
             LiveUnit.Assert.areEqual(expectedNavBarCmd, navbarCmd);
             LiveUnit.Assert.areEqual(expectedDataItem, dataItem);
-        };
+        }
 
-        testSplitToggleFiresWhenSplitOpenedUpdated = function (complete) {
+        testSplitToggleFiresWhenSplitOpenedUpdated(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -763,9 +761,9 @@ module WinJSTests {
             LiveUnit.Assert.isTrue(splitToggleFired);
 
             complete();
-        };
+        }
 
-        testSplitToggleEvent = function () {
+        testSplitToggleEvent() {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -807,9 +805,9 @@ module WinJSTests {
             LiveUnit.Assert.isFalse(navItem1.splitOpened); // Verify the previous split button is closed
             LiveUnit.Assert.areEqual(expectedNavBarCmd, navbarCmd);
             LiveUnit.Assert.areEqual(expectedDataItem, dataItem);
-        };
+        }
 
-        testDataEdits = function (complete) {
+        testDataEdits(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -898,18 +896,18 @@ module WinJSTests {
             }
 
             complete();
-        };
+        }
 
-        testDispose = function () {
+        testDispose() {
             var navbarContainer = new NavBarContainer();
             LiveUnit.Assert.isFalse(navbarContainer._disposed);
             navbarContainer.dispose();
             LiveUnit.Assert.isTrue(navbarContainer._disposed);
             navbarContainer.dispose();
             LiveUnit.Assert.isTrue(navbarContainer._disposed);
-        };
+        }
 
-        testForceLayoutUpdatesUI = function (complete) {
+        testForceLayoutUpdatesUI(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -941,7 +939,7 @@ module WinJSTests {
 
         }
 
-    testChangeLayoutProperty = function (complete) {
+        testChangeLayoutProperty(complete) {
             var navbarContainerEl = document.createElement('div');
             _element.appendChild(navbarContainerEl);
 
@@ -990,6 +988,23 @@ module WinJSTests {
                 complete();
             });
         }
-};
+    };
+    
+    var disabledTestRegistry = {
+        testCurrentIndexConstructor: Helper.Browsers.firefox,
+        testCurrentIndexAndMaxRowsConstructor: Helper.Browsers.firefox,
+        testCurrentIndexAndMaxRows: Helper.Browsers.firefox,
+        testArrowKeysPressed: Helper.Browsers.firefox,
+        testKeyboardingHorizontal: Helper.Browsers.firefox,
+        testKeyboardingVertical: Helper.Browsers.firefox,
+        testFocusUpdateOnDataRemove: Helper.Browsers.firefox,
+        testFocusUpdateOnDataChange: Helper.Browsers.firefox,
+        testFocusUpdateOnDataInserts: Helper.Browsers.firefox,
+        testFocusUpdateOnDataReload: Helper.Browsers.firefox,
+        testFocusUpdateOnDataMove: Helper.Browsers.firefox,
+        testSplitToggle: Helper.Browsers.firefox,
+        testChangeLayoutProperty: Helper.Browsers.firefox   
+    };
+    Helper.disableTests(NavBarContainerTests, disabledTestRegistry);
 }
 LiveUnit.registerTestClass("WinJSTests.NavBarContainerTests");
