@@ -21,6 +21,7 @@
   ],
   "bugs": "https://github.com/winjs/winjs/issues",
   "devDependencies": {
+    "bowser": "~1.0.0",
     "chalk": "~0.5.1",
     "fs-extra": "^0.10.0",
     "glob": "^4.0.5",

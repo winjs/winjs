@@ -4,6 +4,9 @@
 // Put non-feature specific functions used in > 1 test file in here to share with other tests
 // and simplify maintenance across tests by avoiding copy/paste.
 //
+
+///<reference path="../../typings/bowser.d.ts"/>
+
 "use strict";
 
 module Helper {
@@ -1523,6 +1526,162 @@ module Helper {
             delete testObj[testName];
         } else {
             disableTest(Object.getPrototypeOf(testObj), testName);
+        }
+    };
+    
+    export enum Browsers {
+        ie10,
+        ie11,
+        edge,
+        safari,
+        chrome,
+        firefox,
+        android
+    }
+    
+    export var BrowserCombos = {
+        all:[
+            Browsers.ie10,
+            Browsers.ie11,
+            Browsers.edge,
+            Browsers.safari,
+            Browsers.chrome,
+            Browsers.firefox,
+            Browsers.android
+        ],
+        allButIE:[
+            Browsers.edge,
+            Browsers.safari,
+            Browsers.chrome,
+            Browsers.firefox,
+            Browsers.android
+        ],
+        onlyIE:[
+            Browsers.ie10,
+            Browsers.ie11
+        ],
+        allButIE11:[
+            Browsers.ie10,
+            Browsers.edge,
+            Browsers.safari,
+            Browsers.chrome,
+            Browsers.firefox,
+            Browsers.android
+        ]
+    }
+    
+    export function getCurrentBrowser(){
+        if (bowser.msie && bowser.version === "10.0"){
+            return Helper.Browsers.ie10;
+        } else if (bowser.msie && bowser.version === "11.0"){
+            return Helper.Browsers.ie11;
+        } else if (bowser.chrome){
+            return Helper.Browsers.chrome;
+        } else if(bowser.safari){
+            return Helper.Browsers.safari;
+        } else if (bowser.firefox){
+            return Helper.Browsers.firefox;
+        } else if (bowser.android){
+            return Helper.Browsers.android;
+        } else if (bowser.msedge){
+            return Helper.Browsers.edge;
+        } else{
+           throw new Error("Unrecognized Browser");
+        }
+    }
+    
+    // Useful for disabling tests in specific browsers. Disables any tests in testObj which 
+    // are in the registry under the current browser.  Example usage:
+    // 
+    // disabledTestRegistry = {
+    //     testButton: Helper.BrowserCombos.allButIE,
+    //     testClick: [
+    //         Helper.Browsers.safari,
+    //         Helper.Browsers.chrome
+    //     ],
+    //     testTouch: [
+    //           Helper.BrowserCombos.onlyIE,
+    //           Helper.Browsers.firefox
+    //     ]
+    // };
+    // disableTests(TestClass, disabledTestRegistry);
+    export function disableTests(testClass, registry) {
+        
+        if (!registry){
+            throw new Error("undefined registry in Helper.disableTests");
+        }
+        
+        if (!testClass){
+            throw new Error("undefined testClass in Helper.disableTests");
+        }
+        
+        function getDisabledTests(browser) {
+            var testNames = Object.keys(registry);
+            
+            function shallowFlatten(list) {
+                var flatList = [];
+                for (var i = 0; i < list.length; i++) {
+                    if (Array.isArray(list[i])) {
+                        var nestedList = list[i];
+                        for (var j = 0; j < nestedList.length; j++) {
+                            flatList.push(nestedList[j]);
+                        }
+                    } else {
+                        flatList.push(list[i]);
+                    }
+                }
+                return flatList;
+            }
+            
+            function ensureArray(obj) {
+                if (!Array.isArray(obj)) {
+                    obj = [obj];
+                }
+                return obj;
+            }
+            
+            return testNames.filter(function (testName) {
+                var disabledBrowsers = ensureArray(shallowFlatten(registry[testName]));
+                return disabledBrowsers.indexOf(browser) !== -1;
+            });
+        }
+
+        var disabledList = getDisabledTests(getCurrentBrowser());
+        var proto = testClass.prototype;
+        
+        // Create instance of test class to access methods defined in constructor
+        var testInst = new testClass();
+        var testKeys = Object.keys(proto).concat(Object.keys(testInst));
+        for (var i = 0; i < testKeys.length; i++) {
+            var testKey = testKeys[i];
+            var index = disabledList.indexOf(testKey);
+            if (index !== -1) {
+                disabledList.splice(index, 1);
+                var disabledName = "x" + testKey;
+                proto[disabledName] = proto[testKey];
+                delete proto[testKey];
+                
+                // Create a property with the disabled test name that will not be overwritten
+                // by properties created in the test class' constructor when an instance
+                // of the class is created
+                Object.defineProperty(proto, testKey, {
+                    enumerable: false,
+                    get: function(){
+                        return undefined;
+                    },
+                    set: function (value){
+                        //no-op
+                    }
+                });
+            }
+        }
+        
+        if (disabledList.length > 0) {
+            var errorString = "Disabling non-existant test(s):";
+            for (var i = 0; i < disabledList.length; i++) {
+                errorString += disabledList[i] + " ";
+            }
+            throw new Error(errorString);
         }
     };
 
