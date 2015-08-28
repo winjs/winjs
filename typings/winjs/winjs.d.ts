@@ -5488,7 +5488,7 @@ declare module WinJS.UI {
         /**
          * Gets the current loading state of the Hub.
         **/
-        LoadingState: {
+        static LoadingState: {
             /**
              * The Hub is loading sections.
             **/
