@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Seite nach unten",
+  "tv/scrollViewerPageUp": "Seite nach oben",
   "ui/appBarAriaLabel": "App-Leiste",
   "ui/appBarCommandAriaLabel": "App-Leistenelement",
   "ui/appBarOverflowButtonAriaLabel": "Weitere anzeigen",

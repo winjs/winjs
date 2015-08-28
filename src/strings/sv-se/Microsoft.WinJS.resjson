@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "En sida ned",
+  "tv/scrollViewerPageUp": "En sida upp",
   "ui/appBarAriaLabel": "Appfält",
   "ui/appBarCommandAriaLabel": "Objekt i appfältet",
   "ui/appBarOverflowButtonAriaLabel": "Visa mer",

@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "На страницу вниз",
+  "tv/scrollViewerPageUp": "На страницу вверх",
   "ui/appBarAriaLabel": "Панель приложения",
   "ui/appBarCommandAriaLabel": "Элемент панели приложения",
   "ui/appBarOverflowButtonAriaLabel": "Показать больше",

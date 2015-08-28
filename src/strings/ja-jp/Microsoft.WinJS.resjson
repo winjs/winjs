@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "したのページ",
+  "tv/scrollViewerPageUp": "うえのページ",
   "ui/appBarAriaLabel": "アプリ バー",
   "ui/appBarCommandAriaLabel": "アプリ バー項目",
   "ui/appBarOverflowButtonAriaLabel": "さらに表示",

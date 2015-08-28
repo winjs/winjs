@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "下一頁",
+  "tv/scrollViewerPageUp": "上一頁",
   "ui/appBarAriaLabel": "應用程式列",
   "ui/appBarCommandAriaLabel": "應用程式列項目",
   "ui/appBarOverflowButtonAriaLabel": "檢視更多",

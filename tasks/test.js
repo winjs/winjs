@@ -164,9 +164,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  \r\n\
     <!-- WinJS references -->                                                                                               \r\n\
     <link type="text/css" rel="stylesheet" href="../../$(TargetFramework)/css/ui-dark.css" />                               \r\n\
+    <link type="text/css" rel="stylesheet" href="../../$(TargetFramework)/css/ui-dark-tv.css" />                            \r\n\
     <script src="../../$(TargetFramework)/js/base.js"></script>                                                             \r\n\
     <script src="../../$(TargetFramework)/js/ui.js"></script>                                                               \r\n\
-    <script src="../../$(TargetFramework)/js/en-US/ui.strings.js"></script>                                                             \r\n\
+    <script src="../../$(TargetFramework)/js/tv.js"></script>                                                               \r\n\
+    <script src="../../$(TargetFramework)/js/en-US/ui.strings.js"></script>                                                 \r\n\
                                                                                                                             \r\n\
     <!-- Test framework references -->                                                                                      \r\n\
     <link type="text/css" rel="stylesheet" href="../../../node_modules/qunitjs/qunit/qunit.css" />                          \r\n\

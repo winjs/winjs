@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Sivu alas",
+  "tv/scrollViewerPageUp": "Sivu ylös",
   "ui/appBarAriaLabel": "Sovelluspalkki",
   "ui/appBarCommandAriaLabel": "Sovelluspalkin kohde",
   "ui/appBarOverflowButtonAriaLabel": "Näytä lisää",
