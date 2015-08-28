@@ -526,7 +526,7 @@ define([
                             }, false);
 
                             // Leverage pre-existing "beforehide" listener already set on the Flyout for clearing the command's activated state.
-                            // The "beforehide" listener is expected to have been added to the Flyout in the _activateFlyoutCommand.
+                            // The "beforehide" listener is expected to have been added to the Flyout in the call to _activateFlyoutCommand.
                             subFlyout.hide();
                         } else {
                             // subFlyout does not need to be hidden.

@@ -90,7 +90,7 @@ define([
                 var role = "menu";
                 var label = null;
                 if (this._element) {
-                    // We want to use any user defined ARIA role or label that have be set.
+                    // We want to use any user defined ARIA role or label that have been set.
                     // Store them now because the baseFlyoutConstructor will overwrite them.
                     role = this._element.getAttribute("role") || role;
                     label = this._element.getAttribute("aria-label") || label;
