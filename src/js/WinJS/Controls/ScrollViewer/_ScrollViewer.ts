@@ -2,6 +2,7 @@ import _Global = require("../../Core/_Global");
 
 import _Control = require("../../Utilities/_Control");
 import _ElementUtilities = require("../../Utilities/_ElementUtilities");
+import _Resources = require("../../Core/_Resources");
 
 import XYFocus = require("../../XYFocus");
 
@@ -16,6 +17,11 @@ var THRESHOLD_TO_SHOW_TOP_ARROW = 50;
 var DelayBeforeCheckingSizeOfScrollableRegion = 500;
 
 var Keys = _ElementUtilities.Key;
+
+var strings = {
+    get pageDown() { return _Resources._getWinJSString("tv/scrollViewerPageDown").value; },
+    get pageUp() { return _Resources._getWinJSString("tv/scrollViewerPageUp").value;  }
+};
 
 export var ScrollMode = {
     /// <field type="String" locid="WinJS.UI.ScrollMode.text" helpKeyword="WinJS.UI.ScrollMode.text">  
@@ -108,8 +114,8 @@ export class ScrollViewer {
         "  <div class='win-overlay-scrolldownindicator'></div>" +
         "</div>" +
         "<div class='win-overlay-voiceindicators'>" +
-        "  <div class='win-overlay-voice-command win-overlay-pageupindicator' aria-label='Page Up'></div>" +
-        "  <div class='win-overlay-voice-command win-overlay-pagedownindicator' aria-label='Page Down'></div>" +
+        "  <div class='win-overlay-voice-command win-overlay-pageupindicator' aria-label='" + strings.pageUp + "'></div>" +
+        "  <div class='win-overlay-voice-command win-overlay-pagedownindicator' aria-label='" + strings.pageDown + "'></div>" +
         "</div>";
         this._scrollingIndicatorElement.addEventListener("listeningstatechanged", this._handleListeningStateChanged);
 

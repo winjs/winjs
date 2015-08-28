@@ -1,4 +1,6 @@
 {
+    "tv/scrollViewerPageDown": "Page Down",
+    "tv/scrollViewerPageUp": "Page Up",
     "ui/appBarAriaLabel": "App Bar",
     "ui/appBarCommandAriaLabel": "App Bar Item",
     "ui/appBarOverflowButtonAriaLabel": "View more",
