@@ -85,20 +85,23 @@ define([
                     options.commands = this._verifyCommandsOnly(this._element, "WinJS.UI.MenuCommand");
                 }
 
-                // Remember aria role in case base constructor changes it
-                var role = this._element ? this._element.getAttribute("role") : null;
-                var label = this._element ? this._element.getAttribute("aria-label") : null;
+                
+                // Menu default ARIA role and label.
+                var role = "menu";
+                var label = null;
+                if (this._element) {
+                    // We want to use any user defined ARIA role or label that have been set.
+                    // Store them now because the baseFlyoutConstructor will overwrite them.
+                    role = this._element.getAttribute("role") || role;
+                    label = this._element.getAttribute("aria-label") || label;
+                }
 
-                // Call the base overlay constructor helper
+                // Call the base constructor helper.
                 this._baseFlyoutConstructor(this._element, options);
 
-                // Make sure we have an ARIA role
-                if (role === null || role === "" || role === undefined) {
-                    this._element.setAttribute("role", "menu");
-                }
-                if (label === null || label === "" || label === undefined) {
-                    this._element.setAttribute("aria-label", strings.ariaLabel);
-                }
+                // Set ARIA role and label.
+                this._element.setAttribute("role", role);
+                this._element.setAttribute("aria-label", label);
 
                 // Handle "esc" & "up/down" key presses
                 this._element.addEventListener("keydown", this._handleKeyDown.bind(this), true);
