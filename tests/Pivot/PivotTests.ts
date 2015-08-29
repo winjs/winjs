@@ -1550,6 +1550,34 @@ module WinJSTests {
                 complete();
             });
         };
+
+        testHeadersTabStory = function (complete) {
+            /*
+                The Story
+                The entire headers container is a single tabbable element, none of the individual headers are tabstops.
+                However, in narrator mode, the headers container is not accessible and instead, each individual header
+                is accessible so each header's state and label can be narrated.
+             */
+
+            var pivot = new Pivot(undefined, {
+                items: new WinJS.Binding.List(getPivotItemsProgrammatically(2)),
+            });
+            pivotWrapperEl.appendChild(pivot.element);
+
+            waitForNextItemAnimationEnd(pivot).done(function () {
+                var headersContainer = <HTMLElement>pivot.element.querySelector(".win-pivot-headers");
+
+                LiveUnit.Assert.areNotEqual(-1, headersContainer.tabIndex);
+
+                var headers = headersContainer.querySelectorAll(".win-pivot-header");
+                for (var i = 0; i < headers.length; i++) {
+                    var header = <HTMLElement>headers[i];
+                    LiveUnit.Assert.areEqual(-1, header.tabIndex);
+                }
+
+                complete();
+            });
+        };
     }
 
     Object.keys(PivotTests).forEach(function (key) {
