@@ -164,7 +164,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                  \r\n\
     <!-- WinJS references -->                                                                                               \r\n\
     <link type="text/css" rel="stylesheet" href="../../$(TargetFramework)/css/ui-dark.css" />                               \r\n\
-    <link type="text/css" rel="stylesheet" href="../../$(TargetFramework)/css/ui-dark-tv.css" />                            \r\n\
+@@ADDITIONAL_STYLES                                                                                                         \r\n\
     <script src="../../$(TargetFramework)/js/base.js"></script>                                                             \r\n\
     <script src="../../$(TargetFramework)/js/ui.js"></script>                                                               \r\n\
     <script src="../../$(TargetFramework)/js/tv.js"></script>                                                               \r\n\
@@ -208,6 +208,7 @@
 
                 var html = testPageTemplate;
                 html = html.replace("@@TITLE", dir);
+                html = html.replace("@@ADDITIONAL_STYLES", dir === "TV" ? "    <link type='text/css' rel='stylesheet' href='../../$(TargetFramework)/css/ui-dark-tv.css' />" : "");
 
                 var testReferences = "";
 
