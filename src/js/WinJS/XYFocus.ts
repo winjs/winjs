@@ -172,8 +172,9 @@ var _historyRect: IRect;
  * @param direction The direction to move focus.
  * @param keyCode The key code of the pressed key.
  * @param (optional) A rectangle to use as the source coordinates for finding the next focusable element.
+ * @param (optional) Indicates whether this focus request is allowed to propagate to its parent if we are in iframe.
 **/
-function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): boolean {
+function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect, dontExit?: boolean): boolean {
     // If focus has moved since the last XYFocus movement, scrolling occured, or an explicit
     // reference rectangle was given to us, then we invalidate the history rectangle.
     if (referenceRect || _Global.document.activeElement !== _lastTarget) {
@@ -233,9 +234,9 @@ function _xyFocus(direction: string, keyCode: number, referenceRect?: IRect): bo
         eventSrc.dispatchEvent(EventNames.focusChanged, { previousFocusElement: activeElement, keyCode: keyCode });
         return true;
     } else {
-        // No focus target was found; if we are inside an IFRAME, notify the parent that focus is exiting this IFRAME
+        // No focus target was found; if we are inside an IFRAME and focus is allowed to propagate out, notify the parent that focus is exiting this IFRAME
         // Note on coordinates: When signaling exit, do NOT transform the coordinates into the parent's coordinate system.
-        if (top !== window) {
+        if (!dontExit && top !== window) {
             var refRect = referenceRect;
             if (!refRect) {
                 refRect = _Global.document.activeElement ? _toIRect(_Global.document.activeElement.getBoundingClientRect()) : _defaultRect();
@@ -343,7 +344,7 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
     for (var i = 0, length = allElements.length; i < length; i++) {
         var potentialElement = <HTMLElement>allElements[i];
 
-        if (refObj.element === potentialElement || !isFocusable(potentialElement) || _isInInactiveToggleModeContainer(potentialElement)) {
+        if (refObj.element === potentialElement || !_isFocusable(potentialElement) || _isInInactiveToggleModeContainer(potentialElement)) {
             continue;
         }
 
@@ -501,32 +502,6 @@ function _findNextFocusElementInternal(direction: string, options?: XYFocusOptio
             rect: refRect
         }
     }
-
-    function isFocusable(element: HTMLElement): boolean {
-        var elementTagName = element.tagName;
-        if (!element.hasAttribute("tabindex") && FocusableTagNames.indexOf(elementTagName) === -1 && !_ElementUtilities.hasClass(element, ClassNames.focusable)) {
-            // If the current potential element is not one of the tags we consider to be focusable, then exit
-            return false;
-        }
-
-        if (elementTagName === "IFRAME" && !IFrameHelper.isXYFocusEnabled(<HTMLIFrameElement>element)) {
-            // Skip IFRAMEs without compatible XYFocus implementation
-            return false;
-        }
-
-        if (elementTagName === "DIV" && element["winControl"] && element["winControl"].disabled) {
-            // Skip disabled WinJS controls
-            return false;
-        }
-
-        var style = _ElementUtilities._getComputedStyle(element);
-        if (element.getAttribute("tabIndex") === "-1" || style.display === "none" || style.visibility === "hidden" || element.disabled) {
-            // Skip elements that are hidden
-            // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.
-            return false;
-        }
-        return true;
-    }
 }
 
 function _defaultRect(): IRect {
@@ -564,12 +539,30 @@ function _trySetFocus(element: HTMLElement, keyCode: number) {
     return _Global.document.activeElement === element;
 }
 
-function _isInToggleModeContainer(element: HTMLElement) {
-    var toggleModeRoot = element.parentElement;
-    while (toggleModeRoot && !_isToggleMode(toggleModeRoot)) {
-        toggleModeRoot = toggleModeRoot.parentElement;
+function _isFocusable(element: HTMLElement): boolean {
+    var elementTagName = element.tagName;
+    if (!element.hasAttribute("tabindex") && FocusableTagNames.indexOf(elementTagName) === -1 && !_ElementUtilities.hasClass(element, ClassNames.focusable)) {
+        // If the current potential element is not one of the tags we consider to be focusable, then exit
+        return false;
     }
-    return toggleModeRoot;
+
+    if (elementTagName === "IFRAME" && !IFrameHelper.isXYFocusEnabled(<HTMLIFrameElement>element)) {
+        // Skip IFRAMEs without compatible XYFocus implementation
+        return false;
+    }
+
+    if (elementTagName === "DIV" && element["winControl"] && element["winControl"].disabled) {
+        // Skip disabled WinJS controls
+        return false;
+    }
+
+    var style = _ElementUtilities._getComputedStyle(element);
+    if (element.getAttribute("tabIndex") === "-1" || style.display === "none" || style.visibility === "hidden" || element.disabled) {
+        // Skip elements that are hidden
+        // Note: We don't check for opacity === 0, because the browser cannot tell us this value accurately.
+        return false;
+    }
+    return true;
 }
 
 function _findParentToggleModeContainer(element: HTMLElement) {
@@ -831,7 +824,20 @@ if (_Global.document) {
 
             case CrossDomainMessageConstants.dFocusEnter:
                 // The coordinates stored in data.refRect are already in this frame's coordinate system.
-                _xyFocus(data.direction, -1, data.referenceRect);
+
+                // First try to focus anything within this iframe without leaving the current frame.
+                var focused = _xyFocus(data.direction, -1, data.referenceRect, true);
+
+                if (!focused) {
+                    // No focusable element was found, we'll focus document.body if it is focusable.
+                    if (_isFocusable(_Global.document.body)) {
+                        _Global.document.body.focus();
+                    } else {
+                        // Nothing within this iframe is focusable, we call _xyFocus again without a refRect
+                        // and allow the request to propagate to the parent.
+                        _xyFocus(data.direction, -1);
+                    }
+                }
                 break;
 
             case CrossDomainMessageConstants.dFocusExit:
@@ -845,8 +851,15 @@ if (_Global.document) {
                 // The coordinates stored in data.refRect are in the IFRAME's coordinate system,
                 // so we must first transform them into this frame's coordinate system.
                 var refRect: IRect = data.referenceRect;
-                refRect.left += iframe.offsetLeft;
-                refRect.top += iframe.offsetTop;
+                var iframeRect = iframe.getBoundingClientRect();
+                refRect.left += iframeRect.left;
+                refRect.top += iframeRect.top;
+                if (typeof refRect.right === "number") {
+                    refRect.right += iframeRect.left;
+                }
+                if (typeof refRect.bottom === "number") {
+                    refRect.bottom += iframeRect.top;
+                }
                 _xyFocus(data.direction, -1, refRect);
                 break;
         }
