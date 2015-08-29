@@ -607,21 +607,14 @@ function _isToggleMode(element: HTMLElement) {
     return false;
 }
 
-function _handleKeyEvent(e: KeyboardEvent): void {
-    if (e.defaultPrevented) {
-        return;
-    }
-
-    var activeElement = <HTMLElement>_Global.document.activeElement;
-    var shouldPreventDefault = false;
-
+function _getStateHandler(element: HTMLElement) {
     var suspended = false;
     var toggleMode = false;
     var toggleModeActive = false;
-    if (activeElement) {
-        suspended = _ElementUtilities._matchesSelector(activeElement, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
-        toggleMode = _isToggleMode(activeElement);
-        toggleModeActive = _ElementUtilities.hasClass(activeElement, ClassNames.toggleModeActive);
+    if (element) {
+        suspended = _ElementUtilities._matchesSelector(element, "." + ClassNames.suspended + ", ." + ClassNames.suspended + " *");
+        toggleMode = _isToggleMode(element);
+        toggleModeActive = _ElementUtilities.hasClass(element, ClassNames.toggleModeActive);
     }
 
     var stateHandler: KeyHandlerStates.IKeyHandlerState = KeyHandlerStates.RestState;
@@ -636,25 +629,48 @@ function _handleKeyEvent(e: KeyboardEvent): void {
             }
         }
     }
+    return stateHandler;
+}
 
+function _handleKeyEvent(e: KeyboardEvent) {
+    if (e.defaultPrevented) {
+        return;
+    }
+
+    var stateHandler = _getStateHandler(<HTMLElement>document.activeElement);
+
+    var direction = "";
+    if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
+        direction = "up";
+    } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
+        direction = "down";
+    } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
+        direction = "left";
+    } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
+        direction = "right";
+    }
+
+    if (direction) {
+        var shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
+        if (shouldPreventDefault) {
+            e.preventDefault();
+        }
+    }
+}
+
+function _handleCaptureKeyEvent(e: KeyboardEvent) {
+    if (e.defaultPrevented) {
+        return;
+    }
+
+    var activeElement = <HTMLElement>document.activeElement;
+    var shouldPreventDefault = false;
+    var stateHandler = _getStateHandler(<HTMLElement>document.activeElement);
+   
     if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.accept(activeElement);
     } else if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.cancel(activeElement);
-    } else {
-        var direction = "";
-        if (keyCodeMap.up.indexOf(e.keyCode) !== -1) {
-            direction = "up";
-        } else if (keyCodeMap.down.indexOf(e.keyCode) !== -1) {
-            direction = "down";
-        } else if (keyCodeMap.left.indexOf(e.keyCode) !== -1) {
-            direction = "left";
-        } else if (keyCodeMap.right.indexOf(e.keyCode) !== -1) {
-            direction = "right";
-        }
-        if (direction) {
-            shouldPreventDefault = stateHandler.xyFocus(direction, e.keyCode);
-        }
     }
 
     if (shouldPreventDefault) {
@@ -871,8 +887,11 @@ if (_Global.document) {
         }
 
         // Subscribe on capture phase to prevent this key event from interacting with
-        // the element/control if XYFocus handled it.
-        _Global.document.addEventListener("keydown", _handleKeyEvent, true);
+        // the element/control if XYFocus handled it for accept/cancel keys.
+        _Global.document.addEventListener("keydown", _handleCaptureKeyEvent, true);
+
+        // Subscribe on bubble phase to allow developers to override XYFocus behaviors for directional keys.
+        _Global.document.addEventListener("keydown", _handleKeyEvent);
 
         // If we are running within an iframe, we send a registration message to the parent window
         if (_Global.top !== _Global.window) {

@@ -281,7 +281,7 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
 
-        testPreventXYFocus() {
+        testPreventXYFocusViaFocusChangingEvent() {
             var eventReceived = false;
             WinJS.UI.XYFocus.addEventListener("focuschanging", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(layout[1], e.detail.nextFocusElement);
@@ -297,6 +297,23 @@ module WinJSTests {
             WinJS.UI.XYFocus.moveFocus("up");
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
             LiveUnit.Assert.isTrue(eventReceived);
+        }
+
+        testPreventXYFocusViaKeyDownPreventDefault() {
+            var layout = createCrossLayout(this.rootContainer);
+
+            layout[3].focus();
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
+
+            var eventReceived = false;
+            layout[3].addEventListener("keydown", e => {
+                eventReceived = true;
+                e.preventDefault()
+            });
+
+            Helper.keydown(layout[3], Keys.GamepadDPadUp);
+            LiveUnit.Assert.isTrue(eventReceived);
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
 
         testOverrideAttribute() {
