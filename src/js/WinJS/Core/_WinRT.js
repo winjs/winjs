@@ -54,15 +54,27 @@ define([
         "Windows.UI.WebUI.WebUIApplication",
     ];
 
+    // If getForCurrentView fails, it is an indication that we are running in a WebView without
+    // a CoreWindow where some WinRT APIs are not available. In this case, we just treat it as
+    // if no WinRT APIs are available.
+    var isCoreWindowAvailable = false;
+    try {
+        _Global.Windows.UI.ViewManagement.InputPane.getForCurrentView();
+        isCoreWindowAvailable = true;
+    } catch (e) { }
+
     APIs.forEach(function (api) {
         var parts = api.split(".");
         var leaf = {};
         leaf[parts[parts.length - 1]] = {
             get: function () {
-                return parts.reduce(function (current, part) { return current ? current[part] : null; }, _Global);
+                if (isCoreWindowAvailable) {
+                    return parts.reduce(function (current, part) { return current ? current[part] : null; }, _Global);
+                } else {
+                    return null;
+                }
             }
         };
         _Base.Namespace.defineWithParent(exports, parts.slice(0, -1).join("."), leaf);
     });
-
 });
