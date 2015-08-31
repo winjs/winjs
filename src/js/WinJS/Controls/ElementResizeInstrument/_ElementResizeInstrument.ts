@@ -24,7 +24,7 @@ export class _ElementResizeInstrument {
     private _disposed: boolean;
     private _resizeHandler: () => void;
     private _loadingSignal: _Signal<any>;
-    private _monitoringPromise: Promise<any>;
+    private _monitoringSignal: _Signal<any>;
     private _pendingResizeAnimationFrameId: number;
     private _objectElementLoadHandlerBound: () => void;
     private _objectWindowResizeHandlerBound: () => void;
@@ -59,8 +59,8 @@ export class _ElementResizeInstrument {
 
         // If a previous call to monitorAncestor was still waiting on a promise to complete. 
         // Cancel it now notify that previously passed in resizeHandler will never be ready to fire.
-        if (this._monitoringPromise) {
-            this._monitoringPromise.cancel();
+        if (this._monitoringSignal) {
+            this._monitoringSignal.cancel();
         }
 
         this._resizeHandler = resizeHandler;
@@ -90,10 +90,16 @@ export class _ElementResizeInstrument {
 
         // Wait until the object element has loaded before we signal that monitoring 
         // the ancestor element with the specified resizeHandler is ready.
-        this._monitoringPromise = new Promise((c) => {
-            this._loadingSignal.promise.then(c, this._monitoringPromise.cancel);
-        });
-        return this._monitoringPromise;
+        this._monitoringSignal = new _Signal();
+        this._loadingSignal.promise.then(
+            () => {
+                this._monitoringSignal.complete();
+                },
+            () => {
+                this._monitoringSignal.cancel();
+                }
+            );
+        return this._monitoringSignal.promise;
     }
     dispose(): void {
         if (!this._disposed) {
