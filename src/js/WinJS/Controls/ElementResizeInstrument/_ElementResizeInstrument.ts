@@ -92,10 +92,10 @@ export class _ElementResizeInstrument {
         // the ancestor element with the specified resizeHandler is ready.
         this._monitoringSignal = new _Signal();
         this._loadingSignal.promise.then(
-            () => {
+            () => { // Complete handler
                 this._monitoringSignal.complete();
                 },
-            () => {
+            () => { // Error handler
                 this._monitoringSignal.cancel();
                 }
             );
