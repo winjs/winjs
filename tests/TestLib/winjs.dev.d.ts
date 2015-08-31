@@ -52,6 +52,14 @@ declare module WinJS {
             function _handleResize(): void;
         }
 
+        class _ElementResizeInstrument {
+            constructor();
+            element: HTMLDivElement;
+            monitorAncestor(resizeHandler: () => void): Promise<any>;
+            dispose(): void;
+            _batchResizeEvents(handleResizeFn: () => void): void;
+        }
+
         var _browserStyleEquivalents: IStyleEquivalentsMap;
 
         function _setActive(element: HTMLElement, scroller?: HTMLElement);
