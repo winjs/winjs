@@ -649,10 +649,6 @@ define([
             register: registerBubbleListener,
             unregister: removeListenerFromEventMap
         },
-        winjselementresize: {
-            register: {},
-            unregister: {},
-        }
     };
     if (!_Global.PointerEvent) {
         var pointerEventEntry = {
