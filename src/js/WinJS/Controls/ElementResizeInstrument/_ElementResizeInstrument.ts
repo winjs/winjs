@@ -91,7 +91,7 @@ export class _ElementResizeInstrument {
         // Wait until the object element has loaded before we signal that monitoring 
         // the ancestor element with the specified resizeHandler is ready.
         this._monitoringPromise = new Promise((c) => {
-            this._loadingSignal.promise.then(c);
+            this._loadingSignal.promise.then(c, this._monitoringPromise.cancel);
         });
         return this._monitoringPromise;
     }
@@ -105,10 +105,12 @@ export class _ElementResizeInstrument {
         }
     }
     private _objectElementLoadHandler(): void {
-        var objEl = this.element;
-        var objWindow = objEl.contentDocument.defaultView;
-        objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
-        this._loadingSignal.complete();
+        if (!this._disposed) {
+            var objEl = this.element;
+            var objWindow = objEl.contentDocument.defaultView;
+            objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
+            this._loadingSignal.complete();
+        }
     }
     private _objectWindowResizeHandler(): void {
         this._batchResizeEvents(() => {
