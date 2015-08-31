@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
-/// <reference path="../../../../typings/require.d.ts" />
+/// <reference path="../../Core.d.ts" />
 
-
-import _BaseCoreUtils = require('../Core/_BaseCoreUtils');
-import _Global = require('../Core/_Global');
-import _Base = require('../Core/_Base');
-import _WriteProfilerMark = require('../Core/_WriteProfilerMark');
-import Promise = require('../Promise');
-import _Signal = require('../_Signal');
-import _ElementUtilities = require('../Utilities/_ElementUtilities');
+import _BaseCoreUtils = require('../../Core/_BaseCoreUtils');
+import _Global = require('../../Core/_Global');
+import _Base = require('../../Core/_Base');
+import _WriteProfilerMark = require('../../Core/_WriteProfilerMark');
+import Promise = require('../../Promise');
+import _Signal = require('../../_Signal');
+import _ElementUtilities = require('../../Utilities/_ElementUtilities');
 
 "use strict";
 

@@ -2,7 +2,7 @@
 /// <reference path="../../../../typings/require.d.ts" />
 
 import _Base = require('../Core/_Base');
-import _ElementResizeInstrument = require('./_ElementResizeInstrument');
+import _ElementResizeInstrument = require('./ElementResizeInstrument/_ElementResizeInstrument');
 
 var module: typeof _ElementResizeInstrument = null;
 
@@ -10,7 +10,7 @@ _Base.Namespace.define("WinJS.UI", {
     _ElementResizeInstrument: {
         get: () => {
             if (!module) {
-                require(["./_ElementResizeInstrument"], (m: typeof _ElementResizeInstrument) => {
+                require(["./ElementResizeInstrument/_ElementResizeInstrument"], (m: typeof _ElementResizeInstrument) => {
                     module = m;
                 });
             }

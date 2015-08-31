@@ -8,8 +8,7 @@
 
 module CorsicaTests {
 
-    //var _ElementResizeInstrument = <typeof WinJS.Utilities._ElementResizeInstrument> Helper.require("WinJS/Utilities/ElementResizeInstrument");
-    var _ElementResizeInstrument = <typeof WinJS.Utilities._ElementResizeInstrument>WinJS.UI['_ElementResizeInstrument'];
+    var _ElementResizeInstrument = WinJS.UI._ElementResizeInstrument;
 
     function disposeAndRemoveElement(element: HTMLElement) {
         if (element.winControl) {
@@ -21,7 +20,7 @@ module CorsicaTests {
         }
     }
 
-    function useSynchronousResizeEventHandling(instrument: WinJS.Utilities._ElementResizeInstrument) {
+    function useSynchronousResizeEventHandling(instrument: WinJS.UI._ElementResizeInstrument) {
         // Remove delay for batching edits, and render changes synchronously.
         instrument._batchResizeEvents = (handleResizeFn) => {
             handleResizeFn();
@@ -34,8 +33,8 @@ module CorsicaTests {
         _element: HTMLElement;
         _parent: HTMLElement;
         _child: HTMLElement;
-        _parentResizeInstrument: WinJS.Utilities._ElementResizeInstrument;
-        _childResizeInstrument: WinJS.Utilities._ElementResizeInstrument;
+        _parentResizeInstrument: WinJS.UI._ElementResizeInstrument;
+        _childResizeInstrument: WinJS.UI._ElementResizeInstrument;
 
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");

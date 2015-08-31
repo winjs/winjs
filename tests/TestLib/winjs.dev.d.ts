@@ -52,15 +52,6 @@ declare module WinJS {
             function _handleResize(): void;
         }
 
-        class _ElementResizeInstrument {
-            constructor();
-            element: HTMLDivElement;
-            monitorAncestor(resizeHandler: () => void): Promise<any>;
-            dispose(): void;
-            _batchResizeEvents(handleResizeFn: () => void): void;
-            _disposed: boolean;
-        }
-
         var _browserStyleEquivalents: IStyleEquivalentsMap;
 
         function _setActive(element: HTMLElement, scroller?: HTMLElement);
@@ -218,6 +209,15 @@ declare module WinJS {
             export var _colors: string[];
             export function _reset();
             export var _isDarkTheme: boolean;
+        }
+
+        class _ElementResizeInstrument {
+            constructor();
+            element: HTMLDivElement;
+            monitorAncestor(resizeHandler: () => void): Promise<any>;
+            dispose(): void;
+            _batchResizeEvents(handleResizeFn: () => void): void;
+            _disposed: boolean;
         }
 
         class _ParallelWorkQueue {
