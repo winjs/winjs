@@ -103,15 +103,13 @@ export class _ElementResizeInstrument {
         this._loadingSignal.complete();
     }
     private _objectWindowResizeHandler(): void {
-
         this._batchResizeEvents(() => {
             if (!this._disposed) {
                 this._resizeHandler();
             }
         });
     }
-    // _batchResizeEvents is used by UnitTests
-    _batchResizeEvents(handleResizeFn: () => void): void {
+    private _batchResizeEvents(handleResizeFn: () => void): void {
         // Use requestAnimationFrame to batch consecutive resize events.
         if (this._pendingResizeAnimationFrameId) {
             _Global.cancelAnimationFrame(this._pendingResizeAnimationFrameId);

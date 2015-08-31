@@ -20,13 +20,6 @@ module CorsicaTests {
         }
     }
 
-    function useSynchronousResizeEventHandling(instrument: WinJS.UI._ElementResizeInstrument) {
-        // Remove delay for batching edits, and render changes synchronously.
-        instrument._batchResizeEvents = (handleResizeFn) => {
-            handleResizeFn();
-        }
-    }
-
     export class ElementResizeInstrumentTests {
         "use strict";
 
@@ -89,7 +82,6 @@ module CorsicaTests {
                 }
                 LiveUnit.Assert.fail("Size changes to the child element should not trigger resize events in the parent element.");
             }
-
 
             var childStyle = this._child.style;
             var childResizedCounter = 0;
