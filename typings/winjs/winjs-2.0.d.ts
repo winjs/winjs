@@ -2100,6 +2100,8 @@ declare module WinJS.UI {
         fontincrease,
         fontsize,
         cellphone,
+        print,
+        share,
         reshare,
         tag,
         repeatone,
