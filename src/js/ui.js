@@ -3,7 +3,6 @@ define([
     'WinJS/Core/_WinJS',
     'WinJS/VirtualizedDataSource',
     'WinJS/Vui',
-    'WinJS/Controls/ElementResizeInstrument',
     'WinJS/Controls/IntrinsicControls',
     'WinJS/Controls/ListView',
     'WinJS/Controls/FlipView',

@@ -6,15 +6,21 @@ import _ElementResizeInstrument = require('./ElementResizeInstrument/_ElementRes
 
 var module: typeof _ElementResizeInstrument = null;
 
-_Base.Namespace.define("WinJS.UI", {
+function getModule() {
+    if (!module) {
+        require(["./ElementResizeInstrument/_ElementResizeInstrument"], (m: typeof _ElementResizeInstrument) => {
+            module = m;
+        });
+    }
+    return module._ElementResizeInstrument;
+}
+
+var publicMembers = Object.create({}, {
     _ElementResizeInstrument: {
-        get: () => {
-            if (!module) {
-                require(["./ElementResizeInstrument/_ElementResizeInstrument"], (m: typeof _ElementResizeInstrument) => {
-                    module = m;
-                });
-            }
-            return module._ElementResizeInstrument;
+        get: function () {
+            return getModule();
         }
     }
 });
+
+export = publicMembers;

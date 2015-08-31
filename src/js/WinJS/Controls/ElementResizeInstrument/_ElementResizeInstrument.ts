@@ -23,15 +23,14 @@ var styleText = 'display: block; position: absolute; top: 0; left: 0; height: 10
 export class _ElementResizeInstrument {
     private _disposed: boolean;
     private _resizeHandler: () => void;
-    private _loaded: boolean;
     private _loadingSignal: _Signal<any>;
+    private _monitoringPromise: Promise<any>;
     private _pendingResizeAnimationFrameId: number;
     private _objectElementLoadHandlerBound: () => void;
     private _objectWindowResizeHandlerBound: () => void;
 
     constructor() {
         this._disposed = false;
-        this._loaded = false;
 
         var objEl = <HTMLObjectElement>_Global.document.createElement("OBJECT");
         objEl.setAttribute('style', styleText);
@@ -44,7 +43,7 @@ export class _ElementResizeInstrument {
     }
 
     /**
-     * A hidden HTMLObjectElement used to detect size changes in an arbitrary ancestor element.
+     * A hidden HTMLObjectElement used to detect size changes in its nearest positioned ancestor element.
     **/
     private _element: HTMLObjectElement;
     get element() {
@@ -52,40 +51,49 @@ export class _ElementResizeInstrument {
     }
     /**
      * Tells the _ElementResizeInstrument how to start reacting to size changes. 
-     * PRECONDIION: The _ElementResizeInstrument element should already be in the DOM as a child of the element we want to detect size changea for.
-     * @param resizeHandler the function to call whenever a size change is detected in the monitored ancestor element.
-     * @return A promise that completes once the _ElementResizeInstrument is ready to begin responding to size changes in the monitored ancestor element.
+     * PRECONDIION: When this method is called _ElementResizeInstrument element should already be in the DOM as a child of the element we want to detect size changea for.
+     * @param resizeHandler the function to call whenever a size change is detected in the nearest positioned ancestor element.
+     * @return A promise that completes once the _ElementResizeInstrument is ready to begin responding to size changes in the monitored ancestor element with the specified resizeHandler.
     **/
     monitorAncestor(resizeHandler: () => void): Promise<any> {
-        this._resizeHandler = resizeHandler;
-        var monitoringPromise = Promise.wrap();
 
-        if (!this._loaded) {
-            if (!_Global.document.body.contains(this.element)) {
+        // If a previous call to monitorAncestor was still waiting on a promise to complete. 
+        // Cancel it now notify that previously passed in resizeHandler will never be ready to fire.
+        if (this._monitoringPromise) {
+            this._monitoringPromise.cancel();
+        }
+
+        this._resizeHandler = resizeHandler;
+
+        // Start loading the <object> element's content window, if we haven't already done so.
+        if (!this._loadingSignal) {
+            this._loadingSignal = new _Signal();
+
+            var objEl = this.element;
+            if (!_Global.document.body.contains(objEl)) {
                 // TODO
                 // Throw Exception !! 
                 // IE and Edge need to be in the DOM before we try set the data property or else the element will never be loaded.
 
                 // Question for reviewers: would it be better to use the inDOM helper instead and just wait until the element is in 
-                // the DOM before trying to set data, instead of throwing an exception ?
+                // the DOM before trying to set data, instead of throwing an exception?
             }
 
             // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static.
 
-            this._loadingSignal = new _Signal();
-
-            var objEl = this.element;
             objEl.onload = this._objectElementLoadHandlerBound;
 
-            // Set the data property to trigger the <object> load event.
-            // We MUST do this after the element has been added to the DOM, otherwise some Microsoft browsers will NEVER fire the load event, 
-            // No matter what else is done to the element or its properties.
+            // Set the data property to trigger the <object> load event. We MUST do this after the element has been added to the DOM,
+            // otherwise some Microsoft browsers will NEVER fire the load event, no matter what else is done to the element or its properties.
             objEl.data = "about:blank";
-
-            monitoringPromise = this._loadingSignal.promise;
         }
 
-        return monitoringPromise;
+        // Wait until the object element has loaded before we signal that monitoring 
+        // the ancestor element with the specified resizeHandler is ready.
+        this._monitoringPromise = new Promise((c) => {
+            this._loadingSignal.promise.then(c);
+        });
+        return this._monitoringPromise;
     }
     dispose(): void {
         if (!this._disposed) {
@@ -93,13 +101,13 @@ export class _ElementResizeInstrument {
             var objWindow = this.element.contentDocument.defaultView;
             objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
             this._resizeHandler = null;
+            this._loadingSignal.cancel();
         }
     }
     private _objectElementLoadHandler(): void {
         var objEl = this.element;
         var objWindow = objEl.contentDocument.defaultView;
         objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
-        this._loaded = true;
         this._loadingSignal.complete();
     }
     private _objectWindowResizeHandler(): void {

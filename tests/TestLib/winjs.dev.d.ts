@@ -216,8 +216,6 @@ declare module WinJS {
             element: HTMLDivElement;
             monitorAncestor(resizeHandler: () => void): Promise<any>;
             dispose(): void;
-            _batchResizeEvents(handleResizeFn: () => void): void;
-            _disposed: boolean;
         }
 
         class _ParallelWorkQueue {
@@ -582,6 +580,10 @@ declare module WinJS {
                 unbind(callback: any): void;
                 dispatchEvent(type: string, eventProperties: any): boolean;
             }
+        }
+
+        class PrivateElementResizeInstrument extends WinJS.UI._ElementResizeInstrument {
+            _disposed: boolean;
         }
 
         /**
