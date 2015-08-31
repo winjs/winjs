@@ -30,6 +30,8 @@ define([
     'WinJS/Controls/SplitView/Command',
     'WinJS/Controls/ToolBar',
     'WinJS/Controls/AppBar',
+    'WinJS/Controls/MediaPlayer',
+    'WinJS/Controls/MediaPlayer/MediaElementAdapter',
     ], function (_WinJS) {
     "use strict";
 
