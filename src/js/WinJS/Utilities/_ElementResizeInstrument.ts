@@ -65,10 +65,13 @@ export class _ElementResizeInstrument {
             if (!_Global.document.body.contains(this.element)) {
                 // TODO
                 // Throw Exception !! 
-                // IE and Edge need to be in the DOM before we try the next step or else the element will never be loaded.
+                // IE and Edge need to be in the DOM before we try set the data property or else the element will never be loaded.
+
+                // Question for reviewers: would it be better to use the inDOM helper instead and just wait until the element is in 
+                // the DOM before trying to set data, instead of throwing an exception ?
             }
 
-            // TODO if(WinJS.log) verify computedStyle of parent element is positioned, not static.
+            // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static.
 
             this._loadingSignal = new _Signal();
 
@@ -87,6 +90,7 @@ export class _ElementResizeInstrument {
     }
     dispose(): void {
         if (!this._disposed) {
+            this._disposed = true;
             var objWindow = this.element.contentDocument.defaultView;
             objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
             this._resizeHandler = null;
@@ -99,7 +103,6 @@ export class _ElementResizeInstrument {
         this._loaded = true;
         this._loadingSignal.complete();
     }
-
     private _objectWindowResizeHandler(): void {
 
         this._batchResizeEvents(() => {
@@ -108,7 +111,6 @@ export class _ElementResizeInstrument {
             }
         });
     }
-
     // _batchResizeEvents is used by UnitTests
     _batchResizeEvents(handleResizeFn: () => void): void {
         // Use requestAnimationFrame to batch consecutive resize events.

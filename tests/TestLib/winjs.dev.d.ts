@@ -58,6 +58,7 @@ declare module WinJS {
             monitorAncestor(resizeHandler: () => void): Promise<any>;
             dispose(): void;
             _batchResizeEvents(handleResizeFn: () => void): void;
+            _disposed: boolean;
         }
 
         var _browserStyleEquivalents: IStyleEquivalentsMap;
