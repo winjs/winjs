@@ -58,8 +58,8 @@ export class _ElementResizeInstrument {
     **/
     monitorAncestor(callback: () => void): Promise<any> {
 
-        // If a previous call to monitorAncestor was still waiting on a promise to complete. 
-        // Cancel it now notify that the previously passed in callback will never be ready to fire.
+        // If a previous call to monitorAncestor was still waiting on the returned promise to complete, 
+        // cancel it now notify that the previously passed in callback will never be ready to fire.
         if (this._monitoringSignal) {
             this._monitoringSignal.cancel();
         }
