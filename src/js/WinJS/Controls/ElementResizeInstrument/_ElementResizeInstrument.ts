@@ -2,12 +2,14 @@
 /// <reference path="../../Core.d.ts" />
 
 import _BaseCoreUtils = require('../../Core/_BaseCoreUtils');
+import _BaseUtils = require("../../Core/_BaseUtils");
 import _Global = require('../../Core/_Global');
 import _Base = require('../../Core/_Base');
 import _WriteProfilerMark = require('../../Core/_WriteProfilerMark');
 import Promise = require('../../Promise');
 import _Signal = require('../../_Signal');
 import _ElementUtilities = require('../../Utilities/_ElementUtilities');
+import _Events = require("../../Core/_Events");
 
 "use strict";
 
@@ -16,30 +18,48 @@ var styleText = 'display: block; position: absolute; top: 0; left: 0; height: 10
 
 
 /**
- * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
+* Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
  * positioned ancestor element has its size changed. Add the instrumented element to the DOM of the element you want to generate-and-handle 
  * "resize" events for. The computed style.position of the host element must be positioned and therefore may not be "static".
 **/
 export class _ElementResizeInstrument {
     private _disposed: boolean;
     private _resizeHandler: () => void;
-    private _loadingSignal: _Signal<any>;
+    private _loadPromise: Promise<any>
     private _loaded: boolean;
-    private _monitoringSignal: _Signal<any>;
     private _pendingResizeAnimationFrameId: number;
     private _objectWindowResizeHandlerBound: () => void;
+    private _eventProxy: _Events.eventMixin;
+
+
 
     constructor() {
         this._disposed = false;
         this._loaded = false;
 
         var objEl = <HTMLObjectElement>_Global.document.createElement("OBJECT");
+        this._loadPromise = new Promise((c) => {
+            objEl.onload = () => {
+                if (!this._disposed) {
+                    var objEl = this.element;
+                    var objWindow = objEl.contentDocument.defaultView;
+                    objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
+                    this._loaded = true;
+                    c();
+                }
+            };
+        });
         objEl.setAttribute('style', styleText);
         objEl.type = 'text/html';
         objEl['winControl'] = this;
         this._element = objEl;
 
         this._objectWindowResizeHandlerBound = this._objectWindowResizeHandler.bind(this);
+
+
+        
+        //this["_listeners"] = {};
+        //this._eventProxy = <_Events.eventMixin><any>_BaseUtils._merge(this, _Events.eventMixin);
     }
 
     /**
@@ -49,71 +69,18 @@ export class _ElementResizeInstrument {
     get element() {
         return this._element;
     }
-    /**
-     * Tells the _ElementResizeInstrument to monitor the ancestor element and call the specified callback function when size changes are detected.
-     * When size changes are detected, the _ElementResizeInstrument will only use the callback specified by the most recent call to monitorAncestor().
-     * PRECONDIION: When this method is called, _ElementResizeInstrument.element should already be in the DOM as a child of the element we want to detect size changes for.
-     * @param callback the function to call whenever a size change is detected in the nearest positioned ancestor element.
-     * @return A promise that completes once the _ElementResizeInstrument is ready to begin responding to size changes in the monitored ancestor element with the specified callback.
-    **/
-    monitorAncestor(callback: () => void): Promise<any> {
-
-        // If a previous call to monitorAncestor was still waiting on the returned promise to complete, 
-        // cancel it now notify that the previously passed in callback will never be ready to fire.
-        if (this._monitoringSignal) {
-            this._monitoringSignal.cancel();
-        }
-
-        this._resizeHandler = callback;
-
-        // Start loading the <object> element's content window, if we haven't already done so.
-        if (!this._loadingSignal) {
-            this._loadingSignal = new _Signal();
-
-            var objEl = this.element;
-            if (!_Global.document.body.contains(objEl)) {
-                // TODO
-                // Throw Exception !! 
-                // IE and Edge need to be in the DOM before we try set the data property or else the element will never be loaded.
-
-                // Question for reviewers: would it be better to use the inDOM helper instead and just wait until the element is in 
-                // the DOM before trying to set data, instead of throwing an exception?
-            }
-
-            // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static.
-
-            objEl.onload = () => {
-                if (!this._disposed) {
-                    var objEl = this.element;
-                    var objWindow = objEl.contentDocument.defaultView;
-                    objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
-                    this._loaded = true;
-                    this._loadingSignal.complete();
-                }
-            }
-
+    addedToDom() {
+        if (!this._loaded) {
             // Set the data property to trigger the <object> load event. We MUST do this after the element has been added to the DOM,
             // otherwise some Microsoft browsers will NEVER fire the load event, no matter what else is done to the element or its properties.
-            objEl.data = "about:blank";
+            this.element.data = "about:blank";
         }
 
-        // Wait until the object element has loaded before we signal that monitoring 
-        // the ancestor element with the specified callback is ready.
-        this._monitoringSignal = new _Signal();
-        this._loadingSignal.promise.then(
-            () => { // Complete handler
-                this._monitoringSignal.complete();
-            },
-            () => { // Error handler
-                this._monitoringSignal.cancel();
-            });
-
-        return this._monitoringSignal.promise;
+        // TODO block events until addedToDom is called.
     }
     dispose(): void {
         if (!this._disposed) {
             this._disposed = true;
-            this._loadingSignal.cancel();
             if (this._loaded) {
                 // If we had already loaded, unhook listeners from the <object> window.
                 var objWindow = this.element.contentDocument.defaultView;
@@ -139,4 +106,36 @@ export class _ElementResizeInstrument {
             handleResizeFn();
         });
     }
+
+    /**
+     * Adds an event listener to the control.
+     * @param type The type (name) of the event.
+     * @param listener The listener to invoke when the event gets raised.
+     * @param useCapture If true, initiates capture, otherwise false.
+    **/
+    addEventListener(type: string, listener: Function, useCapture?: boolean): void {
+        // Expected to be overridden by _Event.Mixin
+    }
+
+    /**
+     * Raises an event of the specified type and with the specified additional properties.
+     * @param type The type (name) of the event.
+     * @param eventProperties The set of additional properties to be attached to the event object when the event is raised.
+     * @returns true if preventDefault was called on the event.
+    **/
+    dispatchEvent(type: string, eventProperties: any): boolean {
+        // Expected to be overridden by _Event.Mixin
+        return false;
+    }
+
+    /**
+     * Removes an event listener from the control.
+     * @param type The type (name) of the event.
+     * @param listener The listener to remove.
+     * @param useCapture true if capture is to be initiated, otherwise false.
+    **/
+    removeEventListener(type: string, listener: Function, useCapture?: boolean): void {
+        // Expected to be overridden by _Event.Mixin
+    }
 }
+_Base.Class.mix(_ElementResizeInstrument, _Events.eventMixin);
