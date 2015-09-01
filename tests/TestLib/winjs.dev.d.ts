@@ -213,8 +213,8 @@ declare module WinJS {
 
         class _ElementResizeInstrument {
             constructor();
-            element: HTMLDivElement;
-            monitorAncestor(resizeHandler: () => void): Promise<any>;
+            element: HTMLObjectElement;
+            monitorAncestor(callback: () => void): Promise<any>;
             dispose(): void;
         }
 
