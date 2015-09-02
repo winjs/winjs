@@ -214,8 +214,12 @@ declare module WinJS {
         class _ElementResizeInstrument {
             constructor();
             element: HTMLObjectElement;
-            monitorAncestor(callback: () => void): Promise<any>;
+            addedToDom(): void;
             dispose(): void;
+            addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+            removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+            dispatchEvent(type: string, eventProperties: any): boolean;
+            
         }
 
         class _ParallelWorkQueue {
