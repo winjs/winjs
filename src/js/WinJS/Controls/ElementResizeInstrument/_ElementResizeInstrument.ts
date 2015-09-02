@@ -25,41 +25,35 @@ var styleText = 'display: block; position: absolute; top: 0; left: 0; height: 10
 export class _ElementResizeInstrument {
     private _disposed: boolean;
     private _resizeHandler: () => void;
-    private _loadPromise: Promise<any>
-    private _loaded: boolean;
+    private _elementLoadPromise: Promise<any>
+    private _elementLoaded: boolean;
+    private _running: boolean;
     private _pendingResizeAnimationFrameId: number;
     private _objectWindowResizeHandlerBound: () => void;
-    private _eventProxy: _Events.eventMixin;
-
-
 
     constructor() {
         this._disposed = false;
-        this._loaded = false;
+        this._elementLoaded = false;
+        this._running = false;
+
+        this._objectWindowResizeHandlerBound = this._objectWindowResizeHandler.bind(this);
 
         var objEl = <HTMLObjectElement>_Global.document.createElement("OBJECT");
-        this._loadPromise = new Promise((c) => {
-            objEl.onload = () => {
-                if (!this._disposed) {
-                    var objEl = this.element;
-                    var objWindow = objEl.contentDocument.defaultView;
-                    objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
-                    this._loaded = true;
-                    c();
-                }
-            };
-        });
         objEl.setAttribute('style', styleText);
         objEl.type = 'text/html';
         objEl['winControl'] = this;
         this._element = objEl;
 
-        this._objectWindowResizeHandlerBound = this._objectWindowResizeHandler.bind(this);
-
-
-        
-        //this["_listeners"] = {};
-        //this._eventProxy = <_Events.eventMixin><any>_BaseUtils._merge(this, _Events.eventMixin);
+        this._elementLoadPromise = new Promise((c) => {
+            objEl.onload = () => {
+                if (!this._disposed) {
+                    var objWindow = objEl.contentDocument.defaultView;
+                    objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
+                    this._elementLoaded = true;
+                    c();
+                }
+            };
+        });
     }
 
     /**
@@ -70,33 +64,62 @@ export class _ElementResizeInstrument {
         return this._element;
     }
     addedToDom() {
-        if (!this._loaded) {
-            // Set the data property to trigger the <object> load event. We MUST do this after the element has been added to the DOM,
-            // otherwise some Microsoft browsers will NEVER fire the load event, no matter what else is done to the element or its properties.
-            this.element.data = "about:blank";
+        // _ElementResizeInstrument should block on firing any events until the Object element has loaded and the _ElementResizeInstrument addedToDom() API has been called.
+        // The former is required in order to allow us to get a handle to hook the resize event of the <object> element's content window.
+        // The latter is for cross browser consistency. Some browsers will load the <object> element sync or async as soon as its added to the Dom. 
+        // Others will not load the element until it is added to the DOM and the data property has been set on the <object>.
+
+        var objEl = this.element;
+        if (!_Global.document.body.contains(objEl)) {
+            // TODO 
+            // Throw Exception !!  
+            // IE and Edge need to be in the DOM before we try set the data property or else the element will never be loaded. 
+
+            // Question for reviewers: would it be better to use the inDOM helper instead and just wait until the element is in  
+            // the DOM before trying to set data, instead of throwing an exception? 
         }
 
-        // TODO block events until addedToDom is called.
+        // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static. .
+
+        if (!this._elementLoaded) {
+            // If we're in the DOM and the element hasn't loaded yet, some browsers rewuire setting the data property to trigger the <object> load event.
+            // We MUST only do this after the element has been added to the DOM, otherwise IE10, IE11 & Edge will NEVER fire the load event no matter
+            // what else is done to the <object> element or its properties.
+            objEl.data = "about:blank";
+        }
+
+        this._elementLoadPromise.then(() => {
+            this._running = true;
+           
+        })
     }
     dispose(): void {
         if (!this._disposed) {
             this._disposed = true;
-            if (this._loaded) {
+            // Cancel loading state
+            this._elementLoadPromise.cancel();
+            // Unhook loaded state
+            if (this._elementLoaded) {
                 // If we had already loaded, unhook listeners from the <object> window.
                 var objWindow = this.element.contentDocument.defaultView;
                 objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
                 this._resizeHandler = null;
             }
+            // Turn off running state
+            this._running = false;
         }
     }
     private _objectWindowResizeHandler(): void {
-        this._batchResizeEvents(() => {
-            if (!this._disposed) {
-                this._resizeHandler();
-            }
-        });
+        if (this._running) {
+            this._batchResizeEvents(() => {
+                if (!this._disposed) {
+                    this.dispatchEvent("resize", null);
+                }
+            });
+        }
     }
     private _batchResizeEvents(handleResizeFn: () => void): void {
+        
         // Use requestAnimationFrame to batch consecutive resize events.
         if (this._pendingResizeAnimationFrameId) {
             _Global.cancelAnimationFrame(this._pendingResizeAnimationFrameId);
@@ -114,7 +137,7 @@ export class _ElementResizeInstrument {
      * @param useCapture If true, initiates capture, otherwise false.
     **/
     addEventListener(type: string, listener: Function, useCapture?: boolean): void {
-        // Expected to be overridden by _Event.Mixin
+        // Implementation will be provided by _Events.eventMixin
     }
 
     /**
@@ -124,7 +147,7 @@ export class _ElementResizeInstrument {
      * @returns true if preventDefault was called on the event.
     **/
     dispatchEvent(type: string, eventProperties: any): boolean {
-        // Expected to be overridden by _Event.Mixin
+        // Implementation will be provided by _Events.eventMixin
         return false;
     }
 
@@ -135,7 +158,9 @@ export class _ElementResizeInstrument {
      * @param useCapture true if capture is to be initiated, otherwise false.
     **/
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void {
-        // Expected to be overridden by _Event.Mixin
+        // Implementation will be provided by _Events.eventMixin
     }
 }
+
+// addEventListener, removeEventListener, dispatchEvent
 _Base.Class.mix(_ElementResizeInstrument, _Events.eventMixin);
