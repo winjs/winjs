@@ -3,8 +3,8 @@
 
 import _BaseCoreUtils = require('../../Core/_BaseCoreUtils');
 import _BaseUtils = require("../../Core/_BaseUtils");
-import _Global = require('../../Core/_Global');
 import _Base = require('../../Core/_Base');
+import _Global = require('../../Core/_Global');
 import _WriteProfilerMark = require('../../Core/_WriteProfilerMark');
 import Promise = require('../../Promise');
 import _Signal = require('../../_Signal');

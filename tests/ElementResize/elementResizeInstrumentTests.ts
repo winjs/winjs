@@ -75,11 +75,7 @@ module CorsicaTests {
             // Verifies that when both the parent and child elements have _ElementResizeInstruments, resizing 
             // the child element will trigger child resize events, but will not trigger parent resize events.
 
-            var initializingTest = true;
-            function parentResizeHandler(): void {
-                if (initializingTest) {
-                    return;
-                }
+            function parentFailEvent(): void {
                 LiveUnit.Assert.fail("Size changes to the child element should not trigger resize events in the parent element.");
             }
 
@@ -88,18 +84,33 @@ module CorsicaTests {
             var expectedChildResizeEvents = 7;
             var childResizedSignal: WinJS._Signal<any>;
             function childResizeHandler(): void {
-                if (initializingTest) {
-                    return;
-                };
                 childResizedCounter++;
                 childResizedSignal.complete();
             }
 
+            var parentInstrument = this._parentResizeInstrument;
+            var childInstrument = this._childResizeInstrument;
+
+            var parentInitPromise = new WinJS.Promise((c) => {
+                parentInstrument.addEventListener("resize", function eatParentInitialResize() {
+                    parentInstrument.removeEventListener("resize", eatParentInitialResize);
+                    parentInstrument.addEventListener("resize", parentFailEvent);
+                    c();
+                });
+                parentInstrument.addedToDom();
+            });
+
+            var childInitPromise = new WinJS.Promise((c) => {
+                childInstrument.addEventListener("resize", function eatChildInitialResize() {
+                    childInstrument.removeEventListener("resize", eatChildInitialResize);
+                    childInstrument.addEventListener("resize", childResizeHandler);
+                    c();
+                });
+                childInstrument.addedToDom();
+            });
+
             WinJS.Promise
-                .join([
-                    this._parentResizeInstrument.monitorAncestor(parentResizeHandler),
-                    this._childResizeInstrument.monitorAncestor(childResizeHandler),
-                ])
+                .join([parentInitPromise, childInitPromise])
                 .then(() => {
                     // The first time monitorAncestor() is called, it triggers the _ElementResizeInstrument's <object> contentWindow to load.
                     // When this happens, the <object> element in some browsers will fire an initial window resize event.
@@ -107,7 +118,6 @@ module CorsicaTests {
                     return WinJS.Promise.timeout(500);
                 })
                 .then(() => {
-                    initializingTest = false;
                     childResizedSignal = new WinJS._Signal();
                     childStyle.width = "50%";
                     return childResizedSignal.promise;
@@ -154,19 +164,18 @@ module CorsicaTests {
             function childResizeHandler(): void {
                 childResizedCounter++;
             }
-            this._childResizeInstrument.monitorAncestor(childResizeHandler)
-                .then(() => {
 
-                    childStyle.width = "50%";
-                    getComputedStyle(this._child);
-                    childStyle.height = "50%";
-                    getComputedStyle(this._child);
-                    childStyle.padding = "5px";
-                    getComputedStyle(this._child);
+            this._childResizeInstrument.addEventListener("resize", childResizeHandler)
+            this._childResizeInstrument.addedToDom();
+            childStyle.width = "50%";
+            getComputedStyle(this._child);
+            childStyle.height = "50%";
+            getComputedStyle(this._child);
+            childStyle.padding = "5px";
+            getComputedStyle(this._child);
 
-                    // Wait long enough to make sure only one resize event was fired.
-                    return WinJS.Promise.timeout(500);
-                })
+            // Wait long enough to make sure only one resize event was fired.
+            WinJS.Promise.timeout(500)
                 .done(() => {
                     LiveUnit.Assert.areEqual(expectedChildResizeEvents, childResizedCounter,
                         "Batched 'resize' events should cause the event handler to fire EXACTLY once.");
@@ -196,27 +205,26 @@ module CorsicaTests {
                 childResizedSignal.complete();
             }
 
+            this._parentResizeInstrument.addEventListener("resize", parentResizeHandler);
+            this._parentResizeInstrument.addedToDom();
+            this._childResizeInstrument.addEventListener("resize", childResizeHandler);
+            this._childResizeInstrument.addedToDom();
+
+            parentResizedSignal = new WinJS._Signal();
+            childResizedSignal = new WinJS._Signal();
+
+            parentStyle.height = "50%";
+            getComputedStyle(this._parent);
+            parentStyle.width = "50%";
+            getComputedStyle(this._parent);
+
+            // Burn 500ms to make sure resize events are batched and we only get one for the parent and one for the child.
             WinJS.Promise
                 .join([
-                    this._parentResizeInstrument.monitorAncestor(parentResizeHandler),
-                    this._childResizeInstrument.monitorAncestor(childResizeHandler),
+                    parentResizedSignal.promise,
+                    childResizedSignal.promise,
+                    WinJS.Promise.timeout(500),
                 ])
-                .then(() => {
-                    parentResizedSignal = new WinJS._Signal();
-                    childResizedSignal = new WinJS._Signal();
-
-                    parentStyle.height = "50%";
-                    getComputedStyle(this._parent);
-                    parentStyle.width = "50%";
-                    getComputedStyle(this._parent);
-
-                    // Burn 500ms to make sure resize events are batched and we only get one for the parent and one for the child.
-                    return WinJS.Promise.join([
-                        parentResizedSignal.promise,
-                        childResizedSignal.promise,
-                        WinJS.Promise.timeout(500),
-                    ]);
-                })
                 .done(() => {
                     LiveUnit.Assert.areEqual(expectedParentHandlerCalls, parentHandlerCounter,
                         "Batched 'resize' events should cause the parent handler to fire EXACTLY once.");
@@ -228,120 +236,125 @@ module CorsicaTests {
         }
 
         testDispose(complete) {
-            function parentResizeHandler(): void {
+            function parentFailResizeHandler(): void {
                 LiveUnit.Assert.fail("Changes to the parent element should not fire resize events since the instrument was disposed");
             }
 
-            function childResizeHandler(): void {
+            function childFailResizeHandler(): void {
                 LiveUnit.Assert.fail("Changes to the child element should not fire resize events since the instrument was disposed");
             }
 
-            var parentPromiseCanceled = false;
-            function parentPromiseErrorHandler() {
-                parentPromiseCanceled = true;
-            }
-
-            var parentMonitoringPromise = this._parentResizeInstrument.monitorAncestor(parentResizeHandler);
-            var childMonitoringPromise = this._childResizeInstrument.monitorAncestor(childResizeHandler);
-
-            // Test disposing parent instrument immediately, while monitoring is still not ready.
-            parentMonitoringPromise.then(() => { }, parentPromiseErrorHandler);
+            // Test disposing parent instrument immediately after addedToDom is called, some browsers may still be loading the <object> element at this point and we want to
+            // make sure that we don't still try to hook the <object>'s content window asyncronously once the <object> finishes loading, if we've already been disposed.
+            this._parentResizeInstrument.addedToDom();
             this._parentResizeInstrument.dispose();
-            LiveUnit.Assert.isTrue(parentPromiseCanceled, "disposeing parent instrument should have canceled parent monitoring promise");
             LiveUnit.Assert.isTrue(this._parentResizeInstrument._disposed);
+            this._parentResizeInstrument.addEventListener("resize", parentFailResizeHandler);
 
-            // Test disposing child instrument after monitoring is ready.
-            childMonitoringPromise
-                .then(() => {
-                    this._childResizeInstrument.dispose(); 
-                    LiveUnit.Assert.isTrue(this._childResizeInstrument._disposed);
-
-                    // Now that both Instruments have been disposed, resizing the parent or child element should no longer fire events
-                    this._parent.style.height = "10px";
-                    this._child.style.height = "10px";
-
-                    // Wait long enough to ensure events aren't being handled.
-                    return WinJS.Promise.timeout(500);
-                })
-                .done(() => {
-                    // Disposing again should not cause any bad behavior
-                    this._parentResizeInstrument.dispose();
-                    this._childResizeInstrument.dispose();
-
-                    complete();
+            // Test disposing child instrument after it has completely loaded.
+            
+            new WinJS.Promise(() => {
+                var childInstrument = this._childResizeInstrument;
+                childInstrument.addEventListener("resize", function awaitInitialResize() {
+                    childInstrument.removeEventListener("resize", awaitInitialResize);
+                    childInstrument.addEventListener("resize", childFailResizeHandler);
                 });
+                childInstrument.addedToDom();
+            })
+
+            //childMonitoringPromise
+            //    .then(() => {
+            //        this._childResizeInstrument.dispose();
+            //        LiveUnit.Assert.isTrue(this._childResizeInstrument._disposed);
+
+            //        // Now that both Instruments have been disposed, resizing the parent or child element should no longer fire events
+            //        this._parent.style.height = "10px";
+            //        this._child.style.height = "10px";
+
+            //        // Wait long enough to ensure events aren't being handled.
+            //        return WinJS.Promise.timeout(500);
+            //    })
+            //    .done(() => {
+            //        // Disposing again should not cause any bad behavior
+            //        this._parentResizeInstrument.dispose();
+            //        this._childResizeInstrument.dispose();
+
+            //        complete();
+            //    });
+
+            complete();
         }
 
-        testRepeatMonitorings(complete) {
-            // Verifies that multiple calls to monitorAncestor(resizeHandlerFn) will only ever result one resize listener being fired, 
-            // and the latest resizeHandlerFn being called.
+        //    testRepeatMonitorings(complete) {
+        //        // Verifies that multiple calls to monitorAncestor(resizeHandlerFn) will only ever result one resize listener being fired, 
+        //        // and the latest resizeHandlerFn being called.
 
-            var childStyle = this._child.style;
+        //        var childStyle = this._child.style;
 
-            function firstResizeHandler(): void {
-                LiveUnit.Assert.fail("This handler should never fire! firstResizeHandler is expected to be replaced by secondResizeHandler" +
-                    " synchronously during the second call to monitorAncestor(fn)");
-            }
+        //        function firstResizeHandler(): void {
+        //            LiveUnit.Assert.fail("This handler should never fire! firstResizeHandler is expected to be replaced by secondResizeHandler" +
+        //                " synchronously during the second call to monitorAncestor(fn)");
+        //        }
 
-            var firstMonitoringCanceled = false;
-            function handleFirstMonitoringCanceled(): void {
-                firstMonitoringCanceled = true;
-            }
+        //        var firstMonitoringCanceled = false;
+        //        function handleFirstMonitoringCanceled(): void {
+        //            firstMonitoringCanceled = true;
+        //        }
 
-            var secondHandlerCounter = 0;
-            var expectedSecondHandlerCalls = 1;
-            var secondHandlerSignal: WinJS._Signal<any>;
-            function secondResizeHandler(): void {
-                secondHandlerCounter++;
-                secondHandlerSignal.complete();
-            }
+        //        var secondHandlerCounter = 0;
+        //        var expectedSecondHandlerCalls = 1;
+        //        var secondHandlerSignal: WinJS._Signal<any>;
+        //        function secondResizeHandler(): void {
+        //            secondHandlerCounter++;
+        //            secondHandlerSignal.complete();
+        //        }
 
-            var thirdHandlerCounter = 0;
-            var expectedThirdHandlerCalls = 1;
-            var thirdHandlerSignal: WinJS._Signal<any>;
-            function thirdResizeHandler(): void {
-                thirdHandlerCounter++;
-                thirdHandlerSignal.complete();
-            }
+        //        var thirdHandlerCounter = 0;
+        //        var expectedThirdHandlerCalls = 1;
+        //        var thirdHandlerSignal: WinJS._Signal<any>;
+        //        function thirdResizeHandler(): void {
+        //            thirdHandlerCounter++;
+        //            thirdHandlerSignal.complete();
+        //        }
 
-            // Call monitorAncestor twice immediately to verify that there is not a race condition where two reize handlers 
-            // get set on the <object> element's content window while waiting for the initial <object> load event.
-            var firstMonitoringPromise = this._childResizeInstrument.monitorAncestor(firstResizeHandler);
-            var secondMonitoringPromise = this._childResizeInstrument.monitorAncestor(secondResizeHandler);
+        //        // Call monitorAncestor twice immediately to verify that there is not a race condition where two reize handlers 
+        //        // get set on the <object> element's content window while waiting for the initial <object> load event.
+        //        var firstMonitoringPromise = this._childResizeInstrument.monitorAncestor(firstResizeHandler);
+        //        var secondMonitoringPromise = this._childResizeInstrument.monitorAncestor(secondResizeHandler);
 
-            // The first monitoring promise should be canceled and its resize handler should NEVER fire.
-            firstMonitoringPromise
-                .then(() => { }, handleFirstMonitoringCanceled);
+        //        // The first monitoring promise should be canceled and its resize handler should NEVER fire.
+        //        firstMonitoringPromise
+        //            .then(() => { }, handleFirstMonitoringCanceled);
 
-            secondMonitoringPromise
-                .then(() => {
-                    secondHandlerSignal = new WinJS._Signal();
-                    childStyle.width = "50%";
-                    return secondHandlerSignal.promise;
-                })
-                .then(() => {
-                    // Verify that calling monitorAncestor with a new resizeHandler after the old resizeHandler has been established 
-                    // Will successfully replace the old resizeHandler with the new one.
-                    return this._childResizeInstrument.monitorAncestor(thirdResizeHandler);
-                })
-                .then(() => {
-                    thirdHandlerSignal = new WinJS._Signal();
-                    childStyle.height = "50%";
+        //        secondMonitoringPromise
+        //            .then(() => {
+        //                secondHandlerSignal = new WinJS._Signal();
+        //                childStyle.width = "50%";
+        //                return secondHandlerSignal.promise;
+        //            })
+        //            .then(() => {
+        //                // Verify that calling monitorAncestor with a new resizeHandler after the old resizeHandler has been established 
+        //                // Will successfully replace the old resizeHandler with the new one.
+        //                return this._childResizeInstrument.monitorAncestor(thirdResizeHandler);
+        //            })
+        //            .then(() => {
+        //                thirdHandlerSignal = new WinJS._Signal();
+        //                childStyle.height = "50%";
 
-                    // Wait 500ms to ensure that the first and second handlers aren't firing.
-                    return WinJS.Promise.join([
-                        thirdHandlerSignal.promise,
-                        WinJS.Promise.timeout(500)
-                    ]);
-                })
-                .done(() => {
-                    LiveUnit.Assert.isTrue(firstMonitoringCanceled, "first monitoringAncestor promise should have been canceled");
-                    LiveUnit.Assert.areEqual(expectedSecondHandlerCalls, secondHandlerCounter, "secondResizeHandler fired incorrect amount of times");
-                    LiveUnit.Assert.areEqual(expectedThirdHandlerCalls, thirdHandlerCounter, "thirdResizeHandler fired incorrect amount of times");
+        //                // Wait 500ms to ensure that the first and second handlers aren't firing.
+        //                return WinJS.Promise.join([
+        //                    thirdHandlerSignal.promise,
+        //                    WinJS.Promise.timeout(500)
+        //                ]);
+        //            })
+        //            .done(() => {
+        //                LiveUnit.Assert.isTrue(firstMonitoringCanceled, "first monitoringAncestor promise should have been canceled");
+        //                LiveUnit.Assert.areEqual(expectedSecondHandlerCalls, secondHandlerCounter, "secondResizeHandler fired incorrect amount of times");
+        //                LiveUnit.Assert.areEqual(expectedThirdHandlerCalls, thirdHandlerCounter, "thirdResizeHandler fired incorrect amount of times");
 
-                    complete();
-                });
-        }
+        //                complete();
+        //            });
+        //    }
     }
 }
 LiveUnit.registerTestClass("CorsicaTests.ElementResizeInstrumentTests");
