@@ -50,6 +50,7 @@ module SplitViewTests {
             splitView._playHideAnimation = function () {
                 return WinJS.Promise.wrap();
             };
+            splitView._updateTabIndices = splitView._updateTabIndicesImpl;
             return splitView;
         }
         

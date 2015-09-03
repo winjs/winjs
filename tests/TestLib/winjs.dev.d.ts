@@ -270,6 +270,9 @@ declare module WinJS {
         interface ISplitViewDom {
             root: HTMLElement;
             pane: HTMLElement;
+            startPaneTab: HTMLElement;
+            endPaneTab: HTMLElement;
+            paneOutline: HTMLElement;
             paneWrapper: HTMLElement;
             panePlaceholder: HTMLElement;
             content: HTMLElement;
@@ -293,6 +296,8 @@ declare module WinJS {
             _clearAnimation(): void;
             _disposed: boolean;
             _machine: IOpenCloseMachine
+            _updateTabIndices();
+            _updateTabIndicesImpl();
         }
 
         class PrivateSplitViewPaneToggle extends WinJS.UI.SplitViewPaneToggle {
@@ -313,7 +318,7 @@ declare module WinJS {
                 _splitToggle: string;
             };
         }
-
+                
         var ScrollMode: { text: string; nonModalText: string; list: string; };
 
         class ScrollViewer {
@@ -331,7 +336,7 @@ declare module WinJS {
 
             _setActive(): any;
         }
-
+        
         interface ISelect {
             value;
             index: number;
