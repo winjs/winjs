@@ -52,6 +52,10 @@
                 grunt.fail.fatal('winjs/winjs-localization-bower must be checked out from GitHub into "' + config.localizationBowerRepo + '"');
             }
             
+            if (!process.env.GITHUB_ACCESS_TOKEN) {
+                grunt.fail.fatal('The GITHUB_ACCESS_TOKEN environment variable must be set in order to create GitHub releases');
+            }
+            
             if (!mode) {
                 grunt.log.writeln('');
                 grunt.log.writeln('Will publish version ' + pkg.version + ' of winjs and winjs-localization to npm, NuGet, etc. Double check that:');
