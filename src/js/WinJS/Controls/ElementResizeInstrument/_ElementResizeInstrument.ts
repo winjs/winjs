@@ -30,6 +30,7 @@ export class _ElementResizeInstrument {
     private _running: boolean;
     private _pendingResizeAnimationFrameId: number;
     private _objectWindowResizeHandlerBound: () => void;
+    private _objWindow: Window;
 
     constructor() {
         this._disposed = false;
@@ -47,12 +48,12 @@ export class _ElementResizeInstrument {
         this._elementLoadPromise = new Promise((c) => {
             objEl.onload = () => {
                 if (!this._disposed) {
-                    var objWindow = objEl.contentDocument.defaultView;
-                    objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
                     this._elementLoaded = true;
+                    this._objWindow = objEl.contentDocument.defaultView;
+                    this._objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
                     c();
                 }
-            };
+            }
         });
     }
 
@@ -67,7 +68,7 @@ export class _ElementResizeInstrument {
         // _ElementResizeInstrument should block on firing any events until the Object element has loaded and the _ElementResizeInstrument addedToDom() API has been called.
         // The former is required in order to allow us to get a handle to hook the resize event of the <object> element's content window.
         // The latter is for cross browser consistency. Some browsers will load the <object> element sync or async as soon as its added to the Dom. 
-        // Others will not load the element until it is added to the DOM and the data property has been set on the <object>.
+        // Other browsers will not load the element until it is added to the DOM and the data property has been set on the <object>.
 
         var objEl = this.element;
         if (!_Global.document.body.contains(objEl)) {
@@ -76,21 +77,24 @@ export class _ElementResizeInstrument {
             // IE and Edge need to be in the DOM before we try set the data property or else the element will never be loaded. 
 
             // Question for reviewers: would it be better to use the inDOM helper instead and just wait until the element is in  
-            // the DOM before trying to set data, instead of throwing an exception? 
+            // the DOM before trying to set data, instead of throwing an exception?
         }
 
-        // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static. .
+        // TODO if(WinJS.log) verify computedStyle of parent element is positioned and not static.
 
         if (!this._elementLoaded) {
-            // If we're in the DOM and the element hasn't loaded yet, some browsers rewuire setting the data property to trigger the <object> load event.
-            // We MUST only do this after the element has been added to the DOM, otherwise IE10, IE11 & Edge will NEVER fire the load event no matter
-            // what else is done to the <object> element or its properties.
+            // If we're in the DOM and the element hasn't loaded yet, some browsers rewuire setting the data property first, 
+            // in order to trigger the <object> load event. We MUST only do this after the element has been added to the DOM, 
+            // otherwise IE10, IE11 & Edge will NEVER fire the load event no matter what else is done to the <object> element 
+            // or its properties.
             objEl.data = "about:blank";
         }
 
         this._elementLoadPromise.then(() => {
+            // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
+            
             this._running = true;
-           
+            this.dispatchEvent("loaded", null);
         })
     }
     dispose(): void {
@@ -99,10 +103,9 @@ export class _ElementResizeInstrument {
             // Cancel loading state
             this._elementLoadPromise.cancel();
             // Unhook loaded state
-            if (this._elementLoaded) {
+            if (this._objWindow) {
                 // If we had already loaded, unhook listeners from the <object> window.
-                var objWindow = this.element.contentDocument.defaultView;
-                objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
+                this._objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
                 this._resizeHandler = null;
             }
             // Turn off running state
