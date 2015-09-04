@@ -2,7 +2,7 @@
   "name": "winjs",
   "title": "Windows Library for JavaScript (WinJS)",
   "description": "WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology.",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "main": "js/ui.js",
   "homepage": "http://try.buildwinjs.com/",
   "author": {
