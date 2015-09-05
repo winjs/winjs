@@ -38,8 +38,8 @@ module CorsicaTests {
         _element: HTMLElement;
         _parent: HTMLElement;
         _child: HTMLElement;
-        _parentResizeInstrument: WinJS.UI.PrivateElementResizeInstrument;
-        _childResizeInstrument: WinJS.UI.PrivateElementResizeInstrument;
+        _parentInstrument: WinJS.UI.PrivateElementResizeInstrument;
+        _childInstrument: WinJS.UI.PrivateElementResizeInstrument;
 
         setUp() {
             LiveUnit.LoggingCore.logComment("In setup");
@@ -53,7 +53,6 @@ module CorsicaTests {
 
             this._parent.appendChild(this._child);
             this._element.appendChild(this._parent);
-            //this._element.appendChild(this._child);
             document.body.appendChild(this._element);
 
             // Let host element be the nearest positioned ancestor of the parent element
@@ -64,13 +63,14 @@ module CorsicaTests {
 
             this._parent.id = "parent";
             this._parent.style.cssText = parentStyleText;
-            this._parentResizeInstrument = new _ElementResizeInstrument();
-            this._parent.appendChild(this._parentResizeInstrument.element);
+            this._parentInstrument = new _ElementResizeInstrument();
+            this._parent.appendChild(this._parentInstrument.element);
 
             this._child.id = "child";
             this._child.style.cssText = childStyleText;
-            this._childResizeInstrument = new _ElementResizeInstrument();
-            this._child.appendChild(this._childResizeInstrument.element);
+            this._childInstrument = new _ElementResizeInstrument();
+            this._child.appendChild(this._childInstrument.element);
+
         }
 
         tearDown() {
@@ -79,8 +79,8 @@ module CorsicaTests {
                 this._element = null;
                 this._parent = null;
                 this._child = null;
-                this._parentResizeInstrument = null;
-                this._childResizeInstrument = null;
+                this._parentInstrument = null;
+                this._childInstrument = null;
             }
         }
 
@@ -102,13 +102,13 @@ module CorsicaTests {
             }
 
             var parentLoadingPromise = new WinJS.Promise((c) => {
-                this._parentResizeInstrument.addEventListener("loaded", c);
-                this._parentResizeInstrument.addedToDom();
+                this._parentInstrument.addEventListener("loaded", c);
+                this._parentInstrument.addedToDom();
             });
 
             var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childResizeInstrument.addEventListener("loaded", c);
-                this._childResizeInstrument.addedToDom();
+                this._childInstrument.addEventListener("loaded", c);
+                this._childInstrument.addedToDom();
             });
             WinJS.Promise
                 .join([
@@ -117,8 +117,8 @@ module CorsicaTests {
                 ])
                 .then(awaitInitialResizeEvents)
                 .then(() => {
-                    this._childResizeInstrument.addEventListener("resize", childResizeHandler);
-                    this._parentResizeInstrument.addEventListener("resize", parentFailEvent);
+                    this._childInstrument.addEventListener("resize", childResizeHandler);
+                    this._parentInstrument.addEventListener("resize", parentFailEvent);
 
                     childResizedSignal = new WinJS._Signal();
                     childStyle.width = "50%";
@@ -168,14 +168,14 @@ module CorsicaTests {
             }
 
             var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childResizeInstrument.addEventListener("loaded", c);
-                this._childResizeInstrument.addedToDom();
+                this._childInstrument.addEventListener("loaded", c);
+                this._childInstrument.addedToDom();
             })
 
             childLoadingPromise
                 .then(awaitInitialResizeEvents)
                 .then(() => {
-                    this._childResizeInstrument.addEventListener("resize", childResizeHandler);
+                    this._childInstrument.addEventListener("resize", childResizeHandler);
                     childStyle.width = "50%";
                     getComputedStyle(this._child);
                     childStyle.height = "50%";
@@ -215,14 +215,14 @@ module CorsicaTests {
             }
 
             var parentLoadingPromise = new WinJS.Promise((c) => {
-                this._parentResizeInstrument.addEventListener("loaded", c);
-                this._parentResizeInstrument.addedToDom();
+                this._parentInstrument.addEventListener("loaded", c);
+                this._parentInstrument.addedToDom();
             });
 
             var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childResizeInstrument.addEventListener("loaded", c);
-                this._childResizeInstrument.addedToDom();
-            })
+                this._childInstrument.addEventListener("loaded", c);
+                this._childInstrument.addedToDom();
+            });
 
             WinJS.Promise
                 .join([
@@ -232,8 +232,8 @@ module CorsicaTests {
                 .then(awaitInitialResizeEvents)
                 .then(() => {
 
-                    this._parentResizeInstrument.addEventListener("resize", parentResizeHandler);
-                    this._childResizeInstrument.addEventListener("resize", childResizeHandler);
+                    this._parentInstrument.addEventListener("resize", parentResizeHandler);
+                    this._childInstrument.addEventListener("resize", childResizeHandler);
 
                     parentResizedSignal = new WinJS._Signal();
                     childResizedSignal = new WinJS._Signal();
@@ -256,17 +256,6 @@ module CorsicaTests {
                         childResizedSignal.promise,
                     ]);
                 })
-                //.then(() => {
-                //    parentResizedSignal = new WinJS._Signal();
-                //    childResizedSignal = new WinJS._Signal();
-
-                //    parentStyle.padding = "5px";
-
-                //    return WinJS.Promise.join([
-                //        parentResizedSignal.promise,
-                //        childResizedSignal.promise,
-                //    ]);
-                //})
                 .done(() => {
                     LiveUnit.Assert.areEqual(expectedParentHandlerCalls, parentHandlerCounter,
                         "Batched 'resize' events should cause the parent handler to fire EXACTLY once.");
@@ -287,21 +276,20 @@ module CorsicaTests {
 
             // Test disposing parent instrument immediately after addedToDom is called, some browsers may still be loading the <object> element at this point and we want to
             // make sure that we don't still try to hook the <object>'s content window asyncronously once the <object> finishes loading, if its already been disposed.
-            this._parentResizeInstrument.addedToDom();
-            this._parentResizeInstrument.addEventListener("resize", parentFailResizeHandler);
-            this._parentResizeInstrument.dispose();
-            LiveUnit.Assert.isTrue(this._parentResizeInstrument._disposed);
-
+            this._parentInstrument.addedToDom();
+            this._parentInstrument.addEventListener("resize", parentFailResizeHandler);
+            this._parentInstrument.dispose();
+            LiveUnit.Assert.isTrue(this._parentInstrument._disposed);
 
             // Test disposing child instrument after it has completely loaded.
             new WinJS.Promise((c) => {
-                this._childResizeInstrument.addEventListener("loaded", c);
-                this._childResizeInstrument.addedToDom();
+                this._childInstrument.addEventListener("loaded", c);
+                this._childInstrument.addedToDom();
             })
                 .then(() => {
-                    this._childResizeInstrument.addEventListener("resize", childFailResizeHandler);
-                    this._childResizeInstrument.dispose();
-                    LiveUnit.Assert.isTrue(this._childResizeInstrument._disposed);
+                    this._childInstrument.addEventListener("resize", childFailResizeHandler);
+                    this._childInstrument.dispose();
+                    LiveUnit.Assert.isTrue(this._childInstrument._disposed);
 
                     // Now that both Instruments have been disposed, resizing the parent or child element should no longer fire events
                     this._parent.style.height = "10px";
@@ -312,13 +300,257 @@ module CorsicaTests {
                 })
                 .done(() => {
                     // Disposing again should not cause any bad behavior
-                    this._parentResizeInstrument.dispose();
-                    this._childResizeInstrument.dispose();
+                    this._parentInstrument.dispose();
+                    this._childInstrument.dispose();
 
                     complete();
                 });
         }
 
+        testReAppendToDomAndResizeSynchronously(complete) {
+            // Make sure that removing and reappending an initialized _ElementResizeInstrument
+            // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
+            // This test is partially testing the browser to make sure that the "resize" listener 
+            // we've added to the <object> element's contentWindow doesn't become permanently 
+            // broken.
+            var childResizeSignal: WinJS._Signal<any>;
+            function childResizeHandler() {
+                childResizeSignal.complete();
+            }
+
+            var parentResizeSignal: WinJS._Signal<any>;
+            function parentResizeHandler() {
+                parentResizeSignal.complete();
+            }
+
+            var parent = this._parent;
+            var parentInstrument = this._parentInstrument;
+            var childInstrument = this._childInstrument;
+
+            var parentLoadingPromise = new WinJS.Promise((c) => {
+                parentInstrument.addEventListener("loaded", () => {
+                    c();
+                });
+                parentInstrument.addedToDom();
+            });
+
+            var childLoadingPromise = new WinJS.Promise((c) => {
+                childInstrument.addEventListener("loaded", () => {
+                    c();
+                });
+                childInstrument.addedToDom();
+            });
+
+            WinJS.Promise
+                .join([childLoadingPromise, parentLoadingPromise])
+                .then(awaitInitialResizeEvents)
+                .then(() => {
+                    parentInstrument.addEventListener("resize", parentResizeHandler);
+                    childInstrument.addEventListener("resize", childResizeHandler);
+
+                    // Test both instruments still fire resize after synchronously 
+                    // removing, adding and updating the height of the parent element.
+                    parentResizeSignal = new WinJS._Signal();
+                    childResizeSignal = new WinJS._Signal();
+
+                    this._element.removeChild(parent);
+                    this._element.appendChild(parent);
+                    parent.style.height = "42%"
+                    return WinJS.Promise.join([
+                        parentResizeSignal.promise,
+                        childResizeSignal.promise,
+                    ]);
+                })
+                .done(() => {
+                    complete();
+                })
+        }
+
+        testReAppendToDomAndResizeAsynchronously(complete) {
+            // Make sure that removing and reappending an initialized _ElementResizeInstrument
+            // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
+            // This test is partially testing the browser to make sure that the "resize" listener 
+            // we've added to the <object> element's contentWindow doesn't become permanently 
+            // broken.
+            var childResizeSignal: WinJS._Signal<any>;
+            function childResizeHandler() {
+                childResizeSignal.complete();
+            }
+
+            var parentResizeSignal: WinJS._Signal<any>;
+            function parentResizeHandler() {
+                parentResizeSignal.complete();
+            }
+
+            var parent = this._parent;
+            var parentInstrument = this._parentInstrument;
+            var childInstrument = this._childInstrument;
+
+            var parentLoadingPromise = new WinJS.Promise((c) => {
+                parentInstrument.addEventListener("loaded", () => {
+                    c();
+                });
+                parentInstrument.addedToDom();
+            });
+
+            var childLoadingPromise = new WinJS.Promise((c) => {
+                childInstrument.addEventListener("loaded", () => {
+                    c();
+                });
+                childInstrument.addedToDom();
+            });
+
+            WinJS.Promise
+                .join([childLoadingPromise, parentLoadingPromise])
+                .then(awaitInitialResizeEvents)
+                .then(() => {
+                    parentInstrument.addEventListener("resize", parentResizeHandler);
+                    childInstrument.addEventListener("resize", childResizeHandler);
+
+                    // Test both instruments still fire resize after asynchronously
+                    // removing, adding and updating the width of the parent element.
+                    parentResizeSignal = new WinJS._Signal();
+                    childResizeSignal = new WinJS._Signal();
+
+                    this._element.removeChild(parent);
+                    return WinJS.Promise.timeout(0);
+                })
+                .then(() => {
+                    this._element.appendChild(parent);
+                    return WinJS.Promise.timeout(0);
+                })
+                .then(() => {
+                    parent.style.width = "43%"
+                    return WinJS.Promise.join([
+                        parentResizeSignal.promise,
+                        childResizeSignal.promise,
+                    ]);
+                })
+                .done(() => {
+                    complete();
+                })
+
+        }
+
+        testInitializedOutsideDom(complete) {
+            var childResizeSignal: WinJS._Signal<any>;
+            function childResizeHandler() {
+                childResizeSignal.complete();
+            }
+
+            var parentResizeSignal: WinJS._Signal<any>;
+            function parentResizeHandler() {
+                parentResizeSignal.complete();
+            }
+
+            this._element.removeChild(this._parent);
+
+            var childLoadedPromise = new WinJS.Promise((c) => {
+                // Verify that when our ancestor isn't in the DOM at the time we call addedToDom,
+                // The _ElementResizeInstrument will still fire the loaded event after the ancestor
+                // is added to the DOM.
+                this._childInstrument.addEventListener("loaded", () => {
+                    c();
+                });
+                this._childInstrument.addedToDom();
+                this._element.appendChild(this._parent);
+            });
+            childLoadedPromise
+                .then(awaitInitialResizeEvents)
+                .then(() => {
+                    // Verify resize event works as expected.
+                    childResizeSignal = new WinJS._Signal();
+                    this._childInstrument.addEventListener("resize", childResizeHandler);
+                    this._child.style.width = "50%";
+                    return childResizeSignal.promise;
+                })
+                .then(() => {
+                    this._element.removeChild(this._parent);
+                    var parentLoadedPromise = new WinJS.Promise((c) => {
+                        // Verify that when an _ElementResizeListener's host isn't in the DOM at the time 
+                        // addedToDom is called, that the _ElementResizeInstrument will still fire the loaded 
+                        // event after host is added to the DOM.
+                        this._parentInstrument.addEventListener("loaded", () => {
+                            c();
+                        });
+                        this._parentInstrument.addedToDom();
+                        this._element.appendChild(this._parent);
+                    });
+                    return parentLoadedPromise;
+                })
+                .then(awaitInitialResizeEvents)
+                .then(() => {
+                    // Verify resize event works as expected.
+                    childResizeSignal = new WinJS._Signal();
+                    parentResizeSignal = new WinJS._Signal();
+
+                    this._parentInstrument.addEventListener("resize", parentResizeHandler);
+                    this._parent.style.width = "50%";
+                    return WinJS.Promise.join([parentResizeSignal, childResizeSignal]);
+                })
+                .done(complete);
+        }
+
+        //testInitializedOutsideDomAsync(complete) {
+        //    var childResizeSignal: WinJS._Signal<any>;
+        //    function childResizeHandler() {
+        //        childResizeSignal.complete();
+        //    }
+
+        //    var parentResizeSignal: WinJS._Signal<any>;
+        //    function parentResizeHandler() {
+        //        parentResizeSignal.complete();
+        //    }
+
+        //    this._element.removeChild(this._parent);
+
+        //    var childLoadedPromise = new WinJS.Promise((c) => {
+        //        // Verify that when our ancestor isn't in the DOM at the time we call addedToDom,
+        //        // The _ElementResizeInstrument will still fire the loaded event after the ancestor
+        //        // is added to the DOM.
+        //        this._childInstrument.addEventListener("loaded", () => {
+        //            c();
+        //        });
+        //        this._childInstrument.addedToDom();
+        //        WinJS.Promise.timeout(0).then(() => {
+        //            this._element.appendChild(this._parent);
+        //        });
+        //    });
+        //    childLoadedPromise
+        //        .then(awaitInitialResizeEvents)
+        //        .then(() => {
+        //            // Verify resize event works as expected.
+        //            childResizeSignal = new WinJS._Signal();
+        //            this._childInstrument.addEventListener("resize", childResizeHandler);
+        //            this._child.style.width = "50%";
+        //            return childResizeSignal.promise;
+        //        })
+        //        .then(() => {
+        //            this._element.removeChild(this._parent);
+        //            var parentLoadedPromise = new WinJS.Promise((c) => {
+        //                // Verify that when an _ElementResizeListener's host isn't in the DOM at the time 
+        //                // addedToDom is called, that the _ElementResizeInstrument will still fire the loaded 
+        //                // event after host is added to the DOM.
+        //                this._parentInstrument.addEventListener("loaded", () => {
+        //                    c();
+        //                });
+        //                this._parentInstrument.addedToDom();
+        //                this._element.appendChild(this._parent);
+        //            });
+        //            return parentLoadedPromise;
+        //        })
+        //        .then(awaitInitialResizeEvents)
+        //        .then(() => {
+        //            // Verify resize event works as expected.
+        //            childResizeSignal = new WinJS._Signal();
+        //            parentResizeSignal = new WinJS._Signal();
+
+        //            this._parentInstrument.addEventListener("resize", parentResizeHandler);
+        //            this._parent.style.width = "50%";
+        //            return WinJS.Promise.join([parentResizeSignal, childResizeSignal]);
+        //        })
+        //        .done(complete);
+        //}
     }
 }
 LiveUnit.registerTestClass("CorsicaTests.ElementResizeInstrumentTests");
