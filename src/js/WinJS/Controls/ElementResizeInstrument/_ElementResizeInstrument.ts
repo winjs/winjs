@@ -92,7 +92,7 @@ export class _ElementResizeInstrument {
 
         this._elementLoadPromise.then(() => {
             // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
-            
+
             this._running = true;
             this.dispatchEvent("loaded", null);
         })
@@ -122,16 +122,18 @@ export class _ElementResizeInstrument {
         }
     }
     private _batchResizeEvents(handleResizeFn: () => void): void {
-        
+
         // Use requestAnimationFrame to batch consecutive resize events.
         if (this._pendingResizeAnimationFrameId) {
-            _Global.cancelAnimationFrame(this._pendingResizeAnimationFrameId);
+            //_Global.cancelAnimationFrame(this._pendingResizeAnimationFrameId);
+            _BaseUtils._cancelAnimationFrame(this._pendingResizeAnimationFrameId);
         }
 
-        this._pendingResizeAnimationFrameId = _Global.requestAnimationFrame(() => {
-            handleResizeFn();
-        });
-    }
+        //this._pendingResizeAnimationFrameId = _Global.requestAnimationFrame(() => {
+            this._pendingResizeAnimationFrameId = _BaseUtils._requestAnimationFrame(() => {
+                handleResizeFn();
+            });
+        }
 
     /**
      * Adds an event listener to the control.
@@ -140,8 +142,8 @@ export class _ElementResizeInstrument {
      * @param useCapture If true, initiates capture, otherwise false.
     **/
     addEventListener(type: string, listener: Function, useCapture?: boolean): void {
-        // Implementation will be provided by _Events.eventMixin
-    }
+                // Implementation will be provided by _Events.eventMixin
+            }
 
     /**
      * Raises an event of the specified type and with the specified additional properties.
