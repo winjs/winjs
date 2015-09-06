@@ -24,6 +24,7 @@ define([
     '../Utilities/_TabContainer',
     '../Utilities/_UI',
     '../Utilities/_VersionManager',
+    './ElementResizeInstrument',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler',
     './ListView/_BrowseMode',
@@ -37,7 +38,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/styles-listview',
     'require-style!less/colors-listview'
-], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _ElementResizeInstrument, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     _Accents.createAccentRule(
@@ -1698,13 +1699,17 @@ define([
                         listViewHandler("FocusOut", false, false),
                         modeHandler("KeyDown"),
                         modeHandler("KeyUp"),
-                        listViewHandler("MSElementResize", false, false)
+                        //listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
                     this._onMSElementResizeBound = this._onMSElementResize.bind(this);
                     _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
+                    // jesse 
+                    this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                    this._element.appendChild(this._elementResizeInstrument.element);
+                    this._elementResizeInstrument.addedToDom();
 
                     var initiallyParented = _Global.document.body.contains(this._element);
                     _ElementUtilities._addInsertedNotifier(this._element);
