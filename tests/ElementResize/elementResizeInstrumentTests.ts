@@ -643,7 +643,7 @@ module CorsicaTests {
                 msg += report;
                 //console.log(report)
                 LiveUnit.LoggingCore.logComment(msg);
-                LiveUnit.Assert.areEqual(0, 1, msg);
+                LiveUnit.Assert.areEqual(0, msg);
                 failPromise.cancel();
                 callback();
             });
@@ -663,7 +663,7 @@ module CorsicaTests {
             .timeout(4500)
             .then(() => {
                 LiveUnit.LoggingCore.logComment(msg);
-                LiveUnit.Assert.areEqual(0, 1, msg);
+                LiveUnit.Assert.areEqual(0, msg);
                 callback();
             });
 
