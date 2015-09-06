@@ -2,7 +2,7 @@
   "name": "winjs-localization",
   "title": "Localized strings for the Windows Library for JavaScript (WinJS)",
   "description": "Provides localized versions of each string used by WinJS for each language WinJS supports.",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "homepage": "http://try.buildwinjs.com/",
   "author": {
     "name": "Microsoft Corporation and other contributors",

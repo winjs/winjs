@@ -49,6 +49,7 @@ var ClassNames = {
 
     _panePlaceholder: "win-splitview-paneplaceholder",
     _paneOutline: "win-splitview-paneoutline",
+    _tabStop: "win-splitview-tabstop",
     _paneWrapper: "win-splitview-panewrapper",
     _contentWrapper: "win-splitview-contentwrapper",
     _animating: "win-splitview-animating",
@@ -185,16 +186,21 @@ export class SplitView {
     _dom: {
         root: HTMLElement;
         pane: HTMLElement;
+        startPaneTab: HTMLElement;
+        endPaneTab: HTMLElement;
         paneOutline: HTMLElement;
         paneWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
         panePlaceholder: HTMLElement; // Shouldn't have any margin, padding, or border.
         content: HTMLElement;
         contentWrapper: HTMLElement; // Shouldn't have any margin, padding, or border.
     };
-    _dismissable: _LightDismissService.LightDismissableElement;
-    _isOpenedMode: boolean; // Is ClassNames.paneOpened present on the SplitView?
-    _rtl: boolean;
-    _cachedHiddenPaneThickness: IThickness;
+    private _dismissable: _LightDismissService.LightDismissableElement;
+    private _isOpenedMode: boolean; // Is ClassNames.paneOpened present on the SplitView?
+    private _rtl: boolean;
+    private _cachedHiddenPaneThickness: IThickness;
+    private _lowestPaneTabIndex: number;
+    private _highestPaneTabIndex: number;
+    private _updateTabIndicesThrottled: Function;
 
     constructor(element?: HTMLElement, options: any = {}) {
         /// <signature helpKeyword="WinJS.UI.SplitView.SplitView">
@@ -277,6 +283,7 @@ export class SplitView {
         // Exit the Init state.
         _ElementUtilities._inDom(this._dom.root).then(() => {
             this._rtl = _ElementUtilities._getComputedStyle(this._dom.root).direction === 'rtl';
+            this._updateTabIndices();
             this._machine.exitInit();
         });
     }
@@ -409,6 +416,13 @@ export class SplitView {
             child = sibling;
         }
         
+        var startPaneTabEl = _Global.document.createElement("div");
+        startPaneTabEl.className = ClassNames._tabStop;
+        _ElementUtilities._ensureId(startPaneTabEl);
+        var endPaneTabEl = _Global.document.createElement("div");
+        endPaneTabEl.className = ClassNames._tabStop;
+        _ElementUtilities._ensureId(endPaneTabEl);
+        
         // paneOutline's purpose is to render an outline around the pane in high contrast mode
         var paneOutlineEl = _Global.document.createElement("div");
         paneOutlineEl.className = ClassNames._paneOutline;
@@ -416,8 +430,10 @@ export class SplitView {
         // paneWrapper's purpose is to clip the pane during the pane resize animation
         var paneWrapperEl = _Global.document.createElement("div");
         paneWrapperEl.className = ClassNames._paneWrapper;
+        paneWrapperEl.appendChild(startPaneTabEl);
         paneWrapperEl.appendChild(paneEl);
         paneWrapperEl.appendChild(paneOutlineEl);
+        paneWrapperEl.appendChild(endPaneTabEl);
 
         var panePlaceholderEl = _Global.document.createElement("div");
         panePlaceholderEl.className = ClassNames._panePlaceholder;
@@ -439,12 +455,32 @@ export class SplitView {
         this._dom = {
             root: root,
             pane: paneEl,
+            startPaneTab: startPaneTabEl,
+            endPaneTab: endPaneTabEl,
             paneOutline: paneOutlineEl,
             paneWrapper: paneWrapperEl,
             panePlaceholder: panePlaceholderEl,
             content: contentEl,
             contentWrapper: contentWrapperEl
         };
+        
+        _ElementUtilities._addEventListener(paneEl, "keydown", this._onKeyDown.bind(this));
+        _ElementUtilities._addEventListener(startPaneTabEl, "focusin", this._onStartPaneTabFocusIn.bind(this));
+        _ElementUtilities._addEventListener(endPaneTabEl, "focusin", this._onEndPaneTabFocusIn.bind(this));
+    }
+    
+    private _onKeyDown(eventObject: KeyboardEvent) {
+        if (eventObject.keyCode === _ElementUtilities.Key.tab) {
+            this._updateTabIndices();
+        }
+    }
+    
+    private _onStartPaneTabFocusIn(eventObject: FocusEvent) {
+        _ElementUtilities._focusLastFocusableElement(this._dom.pane);
+    }
+    
+    private _onEndPaneTabFocusIn(eventObject: FocusEvent) {
+        _ElementUtilities._focusFirstFocusableElement(this._dom.pane);
     }
 
     private _measureElement(element: HTMLElement): IRect {
@@ -637,6 +673,20 @@ export class SplitView {
             this._clearAnimation();
         });
     }
+    
+    // _updateTabIndices and _updateTabIndicesImpl are used in tests
+    private _updateTabIndices() {
+        if (!this._updateTabIndicesThrottled) {
+            this._updateTabIndicesThrottled = _BaseUtils._throttledFunction(100, this._updateTabIndicesImpl.bind(this));
+        }
+        this._updateTabIndicesThrottled();
+    }
+    private _updateTabIndicesImpl() {
+        var tabIndex = _ElementUtilities._getHighAndLowTabIndices(this._dom.pane);
+        this._highestPaneTabIndex = tabIndex.highest;
+        this._lowestPaneTabIndex = tabIndex.lowest;
+        this._machine.updateDom();
+    }
 
     // State private to _updateDomImpl. No other method should make use of it.
     //
@@ -651,7 +701,9 @@ export class SplitView {
         panePlacement: <string>undefined,
         panePlaceholderWidth: <string>undefined,
         panePlaceholderHeight: <string>undefined,
-        isOverlayShown: <boolean>undefined
+        isOverlayShown: <boolean>undefined,
+        startPaneTabIndex: <number>undefined,
+        endPaneTabIndex: <number>undefined
     };
     private _updateDomImpl(): void {
         var rendered = this._updateDomImpl_rendered;
@@ -701,6 +753,27 @@ export class SplitView {
         }
 
         var isOverlayShown = this._isOpenedMode && this.openedDisplayMode === OpenedDisplayMode.overlay;
+        
+        var startPaneTabIndex = isOverlayShown ? this._lowestPaneTabIndex : -1;
+        var endPaneTabIndex = isOverlayShown ? this._highestPaneTabIndex : -1;
+        if (rendered.startPaneTabIndex !== startPaneTabIndex) {
+            this._dom.startPaneTab.tabIndex = startPaneTabIndex;
+            if (startPaneTabIndex === -1) {
+                this._dom.startPaneTab.removeAttribute("x-ms-aria-flowfrom");
+            } else {
+                this._dom.startPaneTab.setAttribute("x-ms-aria-flowfrom", this._dom.endPaneTab.id);
+            }
+            rendered.startPaneTabIndex = startPaneTabIndex;
+        }
+        if (rendered.endPaneTabIndex !== endPaneTabIndex) {
+            this._dom.endPaneTab.tabIndex = endPaneTabIndex;
+            if (endPaneTabIndex === -1) {
+                this._dom.endPaneTab.removeAttribute("aria-flowto");
+            } else {
+                this._dom.endPaneTab.setAttribute("aria-flowto", this._dom.startPaneTab.id);
+            }
+            rendered.endPaneTabIndex = endPaneTabIndex;
+        }
 
         // panePlaceholder's purpose is to take up the amount of space occupied by the
         // hidden pane while the pane is shown in overlay mode. Without this, the content

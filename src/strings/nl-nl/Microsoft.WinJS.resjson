@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Pagina omlaag",
+  "tv/scrollViewerPageUp": "Pagina omhoog",
   "ui/appBarAriaLabel": "App-balk",
   "ui/appBarCommandAriaLabel": "App-balkitem",
   "ui/appBarOverflowButtonAriaLabel": "Meer weergeven",

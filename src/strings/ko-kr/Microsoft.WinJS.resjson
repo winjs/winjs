@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "페이지 내리기",
+  "tv/scrollViewerPageUp": "페이지 올리기",
   "ui/appBarAriaLabel": "앱 바",
   "ui/appBarCommandAriaLabel": "앱 바 항목",
   "ui/appBarOverflowButtonAriaLabel": "자세히 보기",

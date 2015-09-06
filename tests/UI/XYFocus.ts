@@ -281,7 +281,7 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
 
-        testPreventXYFocus() {
+        testPreventXYFocusViaFocusChangingEvent() {
             var eventReceived = false;
             WinJS.UI.XYFocus.addEventListener("focuschanging", (e: WinJS.UI.XYFocus.XYFocusEvent) => {
                 LiveUnit.Assert.areEqual(layout[1], e.detail.nextFocusElement);
@@ -297,6 +297,23 @@ module WinJSTests {
             WinJS.UI.XYFocus.moveFocus("up");
             LiveUnit.Assert.areEqual(layout[3], document.activeElement);
             LiveUnit.Assert.isTrue(eventReceived);
+        }
+
+        testPreventXYFocusViaKeyDownPreventDefault() {
+            var layout = createCrossLayout(this.rootContainer);
+
+            layout[3].focus();
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
+
+            var eventReceived = false;
+            layout[3].addEventListener("keydown", e => {
+                eventReceived = true;
+                e.preventDefault()
+            });
+
+            Helper.keydown(layout[3], Keys.GamepadDPadUp);
+            LiveUnit.Assert.isTrue(eventReceived);
+            LiveUnit.Assert.areEqual(layout[3], document.activeElement);
         }
 
         testOverrideAttribute() {
@@ -730,6 +747,67 @@ module WinJSTests {
             document.body.parentElement.removeChild(body);
             Helper.keydown(document.documentElement, Keys.GamepadDPadUp);
             document.documentElement.appendChild(body);
+        }
+
+        testIFrameWithFocusableBody(complete) {
+            /*
+                [BUTTON] [IFRAME] [BUTTON]
+            */
+
+            var leftButton = createAndAppendFocusableElement(0, 0, this.rootContainer, null, "button", 200, 200);
+
+            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(210, 0, this.rootContainer, null, "iframe", 200, 200);
+            iframeEl.src = "BlankXYFocusPageWithFocusableBody.html";
+            var iframeWin = (<HTMLIFrameElement>iframeEl).contentWindow;
+
+            var rightButton = createAndAppendFocusableElement(420, 0, this.rootContainer, null, "button", 200, 200);
+
+            window.addEventListener("message", function ready(e: MessageEvent) {
+                // The first crossframe message indicates that the iframe has loaded.
+                window.removeEventListener("message", ready);
+
+                leftButton.focus();
+                LiveUnit.Assert.areEqual(leftButton, document.activeElement);
+
+                WinJS.UI.XYFocus._xyFocus("right");
+                LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
+                WinJS.Promise.timeout(500).then(function () {
+                    LiveUnit.Assert.areEqual(iframeEl, document.activeElement, "Focus should not be automatically exiting the iframe");
+                    iframeWin["WinJS"].UI.XYFocus._xyFocus("right");
+                    return waitForFocus(window, rightButton);
+                }).done(complete);
+            });
+        }
+
+        testIFrameWithUnfocusableBody(complete) {
+            /*
+                [BUTTON] [IFRAME] [BUTTON]
+            */
+
+            var leftButton = createAndAppendFocusableElement(0, 0, this.rootContainer, null, "button", 200, 200);
+
+            var iframeEl = <HTMLIFrameElement>createAndAppendFocusableElement(210, 0, this.rootContainer, null, "iframe", 200, 200);
+            iframeEl.src = "BlankXYFocusPageWithFocusableBody.html";
+            var iframeWin = (<HTMLIFrameElement>iframeEl).contentWindow;
+
+            var rightButton = createAndAppendFocusableElement(420, 0, this.rootContainer, null, "button", 200, 200);
+
+            window.addEventListener("message", function ready(e: MessageEvent) {
+                // The first crossframe message indicates that the iframe has loaded.
+                window.removeEventListener("message", ready);
+
+                // Make the body inside the iframe unfocusable
+                iframeWin.document.body.tabIndex = -1;
+
+                leftButton.focus();
+                LiveUnit.Assert.areEqual(leftButton, document.activeElement);
+
+                // Going right from the left button should focus the iframe but the iframe should immediately
+                // signal back a dFocusExit to the right which gets us to the expected right button.
+                WinJS.UI.XYFocus._xyFocus("right");
+                LiveUnit.Assert.areEqual(iframeEl, document.activeElement);
+                waitForFocus(window, rightButton).done(complete);
+            });
         }
     }
 }

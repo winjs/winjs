@@ -9,17 +9,14 @@ WinJS is a set of JavaScript toolkits that allow developers to build application
 * Provide developers with a distinctive set of UI controls with high polish and performance with fundamental support for touch, mouse, keyboard and accessibility
 * Provide developers with a cohesive set of components and utilities to build the scaffolding and infrastructure of their applications
 
-This is a first step for the WinJS project and there is still a lot of work that needs to be done. So please check out the [roadmap] to see where the project is headed or participate by [contributing][contribute] along the way.
+This is a first step for the WinJS project and there is still a lot of work that needs to be done. Feel free to participate by [contributing][contribute] along the way.
 
 # Contribute
 There are many ways to [contribute] to the project.
 
 You can contribute by reviewing and sending feedback on code checkins, suggesting and trying out new features as they are implemented, submitting bugs and helping us verify fixes as they are checked in, as well as submitting code fixes or code contributions of your own.
 
-Note that all code submissions will be rigorously reviewed and tested by the team, and only those that meet an extremely high bar for both quality and design/roadmap appropriateness will be merged into the source.
-
-# Roadmap
-The source code on this repo is under active development that will be part of our next release. For details on our planned features and future direction, please refer to our [roadmap].
+Note that all code submissions will be rigorously reviewed and tested by the team, and only those that meet an extremely high bar for both quality and design appropriateness will be merged into the source.
 
 # Build WinJS
 In order to build WinJS, ensure that you have [git](http://git-scm.com/downloads) and [Node.js](http://nodejs.org/download/) installed.
@@ -52,14 +49,15 @@ grunt
 > **Note:** You may need to use sudo (for OSX, *nix, BSD etc) or run your command shell as Administrator (for Windows) to install Grunt globally.
 
 # Tests status
-Refer to http://try.buildwinjs.com/#status for the current status of the unit tests and the list of known issues.
+Refer to http://winjs.azurewebsites.net/#status for the current status of the unit tests and the list of known issues.
 
 # Try WinJS
-Check out our online playground http://try.buildwinjs.com
+Check out our online playground at http://www.buildwinjs.com/playground/
+
+The old playground is still available at http://winjs.azurewebsites.net/
 
 # Follow Us
 Twitter https://twitter.com/BuildWinJS  
 Facebook https://www.facebook.com/buildwinjs
 
 [contribute]: https://github.com/winjs/winjs/blob/master/CONTRIBUTING.md
-[roadmap]:    https://github.com/winjs/winjs/wiki/Roadmap

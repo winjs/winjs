@@ -147,23 +147,16 @@ module Helper._CommandingSurface {
     //
     // Verify correct rendered states for opened and closed _CommandingSurface
     //
-
-    export function verifyRenderedOpened(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
-        // Verifies actionarea and overflowarea are opened. 
-        // Currently only works if there is at least one command in the actionarea and overflow area.
-
-        verifyOpened_actionArea(commandingSurface);
-        verifyOpened_overflowArea(commandingSurface);
-    };
-
-    function verifyOpened_actionArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
-
-        var commandElements = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea),
-            commandingSurfaceTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface.element),
-            actionAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.actionArea),
-            actionAreaContentBoxHeight = WinJS.Utilities._getPreciseContentHeight(commandingSurface._dom.actionArea),
-            isOverflowButtonVisible = (commandingSurface._dom.overflowButton.style.display === "none") ? false : true,
-            overflowButtonTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowButton);
+    
+    function verifyActionArea_FullyExpanded(commandingSurface: WinJS.UI.PrivateCommandingSurface){
+        // We expect the action area to be fully expanded whenever the _CommandingSurface is closed with closedDisplayMode: full,
+        // or whenever the _CommandingSurface is opened, regardless of closedDidsplayMode.  
+        var commandElements = Helper._CommandingSurface.getVisibleCommandsInElement(commandingSurface._dom.actionArea);
+        var commandingSurfaceTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface.element);
+        var actionAreaTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.actionArea);
+        var actionAreaContentBoxHeight = WinJS.Utilities._getPreciseContentHeight(commandingSurface._dom.actionArea);
+        var isOverflowButtonVisible = (commandingSurface._dom.overflowButton.style.display === "none") ? false : true;
+        var overflowButtonTotalHeight = WinJS.Utilities._getPreciseTotalHeight(commandingSurface._dom.overflowButton);
 
         var heightOfTallestChildElement: number = Array.prototype.reduce.call(commandingSurface._dom.actionArea.children, function (tallest, element) {
             return Math.max(tallest, WinJS.Utilities._getPreciseTotalHeight(element));
@@ -189,7 +182,24 @@ module Helper._CommandingSurface {
             return (label && getComputedStyle(label).display == "none");
         })) {
             LiveUnit.Assert.fail("Opened actionarea should display primary command labels");
-        }
+        }     
+    }
+
+    export function verifyRenderedOpened(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+        // Verifies actionarea and overflowarea are opened. 
+        // Currently only works if there is at least one command in the actionarea and overflow area.
+
+        verifyOpened_actionArea(commandingSurface);
+        verifyOpened_overflowArea(commandingSurface);
+    };
+
+    function verifyOpened_actionArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
+        
+        verifyActionArea_FullyExpanded(commandingSurface);
+        
+        // Verify overflow button aria-expanded
+        var overflowButton_AriaExpanded = commandingSurface._dom.overflowButton.getAttribute("aria-expanded");
+        LiveUnit.Assert.areEqual("true", overflowButton_AriaExpanded);
     };
 
     function verifyOpened_overflowArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {
@@ -264,14 +274,18 @@ module Helper._CommandingSurface {
                 break;
 
             case _CommandingSurface.ClosedDisplayMode.full:
-                // closedDisplayMode "full" actionarea, and opened actionarea, render exactly the same.
-                verifyOpened_actionArea(commandingSurface);
+                // closedDisplayMode: full should render the action area fully expanded.
+                verifyActionArea_FullyExpanded(commandingSurface);
                 break;
 
             default:
                 LiveUnit.Assert.fail("TEST ERROR: Encountered unknown ClosedDisplayMode enum value: " + closedDisplayMode);
                 break;
         }
+        
+        // Verify overflow button aria-expanded
+        var overflowButton_AriaExpanded = commandingSurface._dom.overflowButton.getAttribute("aria-expanded");
+        LiveUnit.Assert.areEqual("false", overflowButton_AriaExpanded)
     }
 
     function verifyClosed_oveflowArea(commandingSurface: WinJS.UI.PrivateCommandingSurface) {

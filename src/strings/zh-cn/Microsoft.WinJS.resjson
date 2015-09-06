@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "向下翻页",
+  "tv/scrollViewerPageUp": "向上翻页",
   "ui/appBarAriaLabel": "应用栏",
   "ui/appBarCommandAriaLabel": "应用栏条目",
   "ui/appBarOverflowButtonAriaLabel": "查看更多",

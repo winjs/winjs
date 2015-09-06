@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Strona w dół",
+  "tv/scrollViewerPageUp": "Strona w górę",
   "ui/appBarAriaLabel": "Pasek aplikacji",
   "ui/appBarCommandAriaLabel": "Element paska aplikacji",
   "ui/appBarOverflowButtonAriaLabel": "Wyświetl więcej",

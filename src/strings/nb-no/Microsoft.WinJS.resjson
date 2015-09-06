@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Side ned",
+  "tv/scrollViewerPageUp": "Side opp",
   "ui/appBarAriaLabel": "Applinje",
   "ui/appBarCommandAriaLabel": "Element på applinje",
   "ui/appBarOverflowButtonAriaLabel": "Vis flere",

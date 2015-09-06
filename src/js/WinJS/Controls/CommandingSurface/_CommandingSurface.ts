@@ -583,6 +583,7 @@ export class _CommandingSurface {
         var overflowButton = _Global.document.createElement("button");
         overflowButton.tabIndex = 0;
         overflowButton.innerHTML = "<span class='" + _Constants.ClassNames.ellipsisCssClass + "'></span>";
+        overflowButton.setAttribute("aria-label", strings.overflowButtonAriaLabel);
         _ElementUtilities.addClass(overflowButton, _Constants.ClassNames.overflowButtonCssClass);
         actionArea.appendChild(overflowButton);
         overflowButton.addEventListener("click", () => {
@@ -923,6 +924,7 @@ export class _CommandingSurface {
                     // Render opened
                     removeClass(dom.root, _Constants.ClassNames.closedClass);
                     addClass(dom.root, _Constants.ClassNames.openedClass);
+                    dom.overflowButton.setAttribute("aria-expanded", "true");
 
                     // Focus should carousel between first and last tab stops while opened.
                     dom.firstTabStop.tabIndex = 0;
@@ -933,6 +935,7 @@ export class _CommandingSurface {
                     // Render closed
                     removeClass(dom.root, _Constants.ClassNames.openedClass);
                     addClass(dom.root, _Constants.ClassNames.closedClass);
+                    dom.overflowButton.setAttribute("aria-expanded", "false");
 
                     // Focus should not carousel between first and last tab stops while closed.
                     dom.firstTabStop.tabIndex = -1;

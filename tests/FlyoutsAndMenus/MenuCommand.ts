@@ -283,10 +283,17 @@ module CorsicaTests {
             LiveUnit.LoggingCore.logComment("Test: " + msg);
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(menuCommandElement, _Constants.menuCommandFlyoutActivatedClass), msg);
 
+            msg = "subMenu should not have 'aria-expanded' attribute while closed";
+            LiveUnit.LoggingCore.logComment("Test: " + msg);
+            LiveUnit.Assert.isFalse(subMenu.element.hasAttribute("aria-expanded"), msg);
 
             function afterSubMenuShow() {
                 subMenu.removeEventListener("aftershow", afterSubMenuShow, false);
                 OverlayHelpers.Assert.verifyMenuFlyoutCommandActivated(menuCommand, msg);
+
+                msg = "subMenu should have 'aria-expanded' attribute with value === 'true' when opened by a menuCommand";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.areEqual("true", subMenu.element.getAttribute("aria-expanded"), msg);
 
                 var msg = "Hiding a Flyout MenuCommand's associated flyout, by any means, should deactivate the MenuCommand."
                 LiveUnit.LoggingCore.logComment("Test: " + msg);
@@ -296,6 +303,10 @@ module CorsicaTests {
             function afterSubMenuHide() {
                 subMenu.removeEventListener("afterhide", afterSubMenuHide, false);
                 OverlayHelpers.Assert.verifyMenuFlyoutCommandDeactivated(menuCommand, msg);
+
+                msg = "subMenu should not have 'aria-expanded' attribute while closed";
+                LiveUnit.LoggingCore.logComment("Test: " + msg);
+                LiveUnit.Assert.isFalse(subMenu.element.hasAttribute("aria-expanded"), msg);
 
                 OverlayHelpers.disposeAndRemove(subMenuElement);
                 OverlayHelpers.disposeAndRemove(menuCommandElement);

@@ -745,12 +745,6 @@ export declare function createEventProperties(...events: string[]): any;
 export declare function data(element: HTMLElement): any;
 
 /**
-    * Disposes all first-generation disposable elements that are descendents of the specified element. The specified element itself is not disposed.
-    * @param element The root element whose sub-tree is to be disposed.
-**/
-export declare function disposeSubTree(element: HTMLElement): void;
-
-/**
     * Removes all the child nodes from the specified element.
     * @param element The element.
     * @returns The element.

@@ -64,6 +64,31 @@ module SplitViewTests {
         LiveUnit.Assert.areEqual(expectedRect.width, actualRect.width, context + ": incorrect width");
         LiveUnit.Assert.areEqual(expectedRect.height, actualRect.height, context + ": incorrect height");
     }
+    
+    function verifyTabIndicesWithoutCarousel(splitView: WinJS.UI.PrivateSplitView) {
+        var startPaneTab = splitView._dom.startPaneTab;
+        var endPaneTab = splitView._dom.endPaneTab;
+        
+        LiveUnit.Assert.isFalse(startPaneTab.hasAttribute("x-ms-aria-flowfrom"), "startPaneTab shouldn't have x-ms-aria-flowfrom");
+        LiveUnit.Assert.areEqual(-1, startPaneTab.tabIndex, "startPaneTab should have tabIndex -1");
+        LiveUnit.Assert.isFalse(endPaneTab.hasAttribute("aria-flowfrom"), "endPaneTab shouldn't have aria-flowto");
+        LiveUnit.Assert.areEqual(-1, endPaneTab.tabIndex, "endPaneTab should have tabIndex -1");
+    }
+    
+    function verifyTabIndicesWithCarousel(splitView: WinJS.UI.PrivateSplitView, lowestTabIndex: number, highestTabIndex: number) {
+        var startPaneTab = splitView._dom.startPaneTab;
+        var endPaneTab = splitView._dom.endPaneTab;
+        
+        LiveUnit.Assert.areEqual(endPaneTab.id, startPaneTab.getAttribute("x-ms-aria-flowfrom"),
+            "startPaneTab has wrong value for x-ms-aria-flowfrom");
+        LiveUnit.Assert.areEqual(lowestTabIndex, startPaneTab.tabIndex,
+            "startPaneTab doesn't match content's lowest tab index");
+            
+        LiveUnit.Assert.areEqual(startPaneTab.id, endPaneTab.getAttribute("aria-flowto"),
+            "endPaneTab has wrong value for aria-flowto");
+        LiveUnit.Assert.areEqual(highestTabIndex, splitView._dom.endPaneTab.tabIndex,
+            "endPaneTab doesn't match content's highest tab index");
+    }
 
     interface ILayoutConfig {
         rootWidth: number;
@@ -303,6 +328,63 @@ module SplitViewTests {
         splitView.closePane();
         LiveUnit.Assert.areEqual(6, counter, "after closePane: wrong number of events fired");
         LiveUnit.Assert.isFalse(splitView.paneOpened, "after closePane: SplitView should be in hidden state");
+    }
+    
+    function testTabIndices(args: {
+        openedDisplayMode: string;
+        verifyTabIndicesWhenOpened: (splitView: WinJS.UI.PrivateSplitView, lowestTabIndex: number, highestTabIndex: number) => void;
+        verifyTabIndicesWhenClosed: (splitView: WinJS.UI.PrivateSplitView, lowestTabIndex: number, highestTabIndex: number) => void;
+    }) {
+        var openedDisplayMode = args.openedDisplayMode;
+        var verifyTabIndicesWhenOpened = args.verifyTabIndicesWhenOpened;
+        var verifyTabIndicesWhenClosed = args.verifyTabIndicesWhenClosed;
+        
+        var paneHTML =
+            '<div tabIndex="4">4</div>' +
+            '<div tabIndex="5">5</div>' +
+            '<div class="aParent">' +
+                '<div tabIndex="7">7</div>' +
+                '<div tabIndex="8">8</div>' + // highest
+                '<div tabIndex="6">6</div>' +
+            '</div>' +
+            '<div tabIndex="2">2</div>' + // lowest
+            '<div tabIndex="3">3</div>';
+        var contentHTML =
+            '<div tabIndex="0">0</div>' +
+            '<div tabIndex="10">10</div>';
+        var lowestTabIndex = 2;
+        var highestTabIndex = 8;
+
+        var splitView = Utils.useSynchronousAnimations(createSplitView({
+            paneHTML: paneHTML,
+            contentHTML: contentHTML,
+            openedDisplayMode: openedDisplayMode
+        }));
+        
+        verifyTabIndicesWhenClosed(splitView, lowestTabIndex, highestTabIndex);
+        splitView.openPane();
+        verifyTabIndicesWhenOpened(splitView, lowestTabIndex, highestTabIndex);
+
+        // Test that SplitView updates its tab indices after the user presses
+        // the tab key
+        //
+        lowestTabIndex = 1;
+        highestTabIndex = 9;
+        var newLowest = document.createElement("div");
+        newLowest.tabIndex = lowestTabIndex;
+        var newHighest = document.createElement("div");
+        newHighest.tabIndex = highestTabIndex;
+        splitView._dom.pane.appendChild(newHighest);
+        splitView.element.querySelector(".aParent").appendChild(newLowest);
+
+        // Tab key should cause the SplitView to update its tab indices
+        Helper.keydown(splitView._dom.pane, WinJS.Utilities.Key.tab);
+
+        verifyTabIndicesWhenOpened(splitView, lowestTabIndex, highestTabIndex);
+        splitView.closePane();
+        verifyTabIndicesWhenClosed(splitView, lowestTabIndex, highestTabIndex);
+        
+        Helper.validateUnhandledErrors();
     }
 
     export class BasicTests {
@@ -685,6 +767,62 @@ module SplitViewTests {
             testRoot.style.height = rootHeight + "px";
             testRoot.style.width = rootWidth + "px";
             testConfig(0);
+        }
+        
+        testTabIndexOfZeroIsHighest() {
+            var paneHTML =
+                '<div tabIndex="4">4</div>' +
+                '<div tabIndex="5">5</div>' +
+                '<div class="aParent">' +
+                    '<div tabIndex="7">7</div>' +
+                    '<div tabIndex="8">8</div>' +
+                    '<div tabIndex="0">0</div>' + // highest
+                    '<div tabIndex="6">6</div>' +
+                '</div>' +
+                '<div tabIndex="2">2</div>' + // lowest
+                '<div tabIndex="3">3</div>';
+            var contentHTML =
+                '<div tabIndex="0">0</div>' +
+                '<div tabIndex="10">10</div>';
+            var lowestTabIndex = 2;
+            var highestTabIndex = 0;
+
+            var splitView = Utils.useSynchronousAnimations(createSplitView({
+                paneHTML: paneHTML,
+                contentHTML: contentHTML,
+                openedDisplayMode: WinJS.UI.SplitView.OpenedDisplayMode.overlay
+            }));
+            
+            verifyTabIndicesWithoutCarousel(splitView);
+            splitView.openPane();
+            verifyTabIndicesWithCarousel(splitView, lowestTabIndex, highestTabIndex);
+            splitView.closePane();
+            verifyTabIndicesWithoutCarousel(splitView);
+            Helper.validateUnhandledErrors();
+        }
+        
+        testTabIndicesOpenedDisplayModeInline() {
+            testTabIndices({
+                openedDisplayMode: WinJS.UI.SplitView.OpenedDisplayMode.inline,
+                verifyTabIndicesWhenOpened: (splitView, lowestTabIndex, highestTabIndex) => {
+                    verifyTabIndicesWithoutCarousel(splitView);
+                },
+                verifyTabIndicesWhenClosed: (splitView, lowestTabIndex, highestTabIndex) => {
+                    verifyTabIndicesWithoutCarousel(splitView);
+                }
+            });
+        }
+        
+        testTabIndicesOpenedDisplayModeOverlay() {            
+            testTabIndices({
+                openedDisplayMode: WinJS.UI.SplitView.OpenedDisplayMode.overlay,
+                verifyTabIndicesWhenOpened: (splitView, lowestTabIndex, highestTabIndex) => {
+                    verifyTabIndicesWithCarousel(splitView, lowestTabIndex, highestTabIndex);
+                },
+                verifyTabIndicesWhenClosed: (splitView, lowestTabIndex, highestTabIndex) => {
+                    verifyTabIndicesWithoutCarousel(splitView);
+                },
+            });
         }
     }
 }

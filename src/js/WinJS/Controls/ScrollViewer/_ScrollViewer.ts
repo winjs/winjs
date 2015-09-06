@@ -1,8 +1,14 @@
+// Note: ScrollViewer is currently only used on Xbox and therefore can leverage platform specific APIs and event names
+
 import _Global = require("../../Core/_Global");
 
 import _Control = require("../../Utilities/_Control");
+import _Dispose = require("../../Utilities/_Dispose");
 import _ElementUtilities = require("../../Utilities/_ElementUtilities");
+import _Resources = require("../../Core/_Resources");
 
+import ControlProcessor = require("../../ControlProcessor");
+import Scheduler = require("../../Scheduler");
 import XYFocus = require("../../XYFocus");
 
 require(["require-style!less/styles-scrollviewer"]);
@@ -13,9 +19,13 @@ require(["require-style!less/colors-scrollviewer"]);
 var SMALL_SCROLL_AMOUNT = 200;
 var PERCENTAGE_OF_PAGE_TO_SCROLL = 0.8;
 var THRESHOLD_TO_SHOW_TOP_ARROW = 50;
-var DelayBeforeCheckingSizeOfScrollableRegion = 500;
 
 var Keys = _ElementUtilities.Key;
+
+var strings = {
+    get pageDown() { return _Resources._getWinJSString("tv/scrollViewerPageDown").value; },
+    get pageUp() { return _Resources._getWinJSString("tv/scrollViewerPageUp").value;  }
+};
 
 export var ScrollMode = {
     /// <field type="String" locid="WinJS.UI.ScrollMode.text" helpKeyword="WinJS.UI.ScrollMode.text">  
@@ -37,6 +47,7 @@ export var ScrollMode = {
 };
 
 export class ScrollViewer {
+    static isDeclarativeControlContainer = true;
     static supportedForProcessing = true;
 
     private _element: HTMLElement;
@@ -44,12 +55,16 @@ export class ScrollViewer {
     private _canScrollUp = false;
     private _disposed = false;
     private _previousFocusRoot: HTMLElement;
+    private _pendingRefresh = false;
     private _scrollingContainer: HTMLElement;
     private _scrollingIndicatorElement: HTMLElement;
     private _scrollMode: string;
     private _vuiActive = false;
     private _vuiPageUpElement: HTMLElement;
     private _vuiPageDownElement: HTMLElement;
+
+    // Used for testing
+    private _refreshDone: () => any;
 
     /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.ScrollViewer.element" helpKeyword="WinJS.UI.ScrollViewer.element">  
     /// Gets the DOM element that hosts the ScrollViewer.  
@@ -84,10 +99,10 @@ export class ScrollViewer {
 
     constructor(element?: HTMLElement, options: any = {}) {
         this._element = element || document.createElement("div");
-        options = options || {};
         this._element["winControl"] = this;
 
-        _ElementUtilities.addClass(this._element, "win-disposable win-scrollviewer");
+        _ElementUtilities.addClass(this._element, "win-disposable");
+        _ElementUtilities.addClass(this._element, "win-scrollviewer");
 
         this._handleFocus = this._handleFocus.bind(this);
         this._handleFocusOut = this._handleFocusOut.bind(this);
@@ -108,8 +123,8 @@ export class ScrollViewer {
         "  <div class='win-overlay-scrolldownindicator'></div>" +
         "</div>" +
         "<div class='win-overlay-voiceindicators'>" +
-        "  <div class='win-overlay-voice-command win-overlay-pageupindicator' aria-label='Page Up'></div>" +
-        "  <div class='win-overlay-voice-command win-overlay-pagedownindicator' aria-label='Page Down'></div>" +
+        "  <div class='win-overlay-voice-command win-overlay-pageupindicator' aria-label='" + strings.pageUp + "'></div>" +
+        "  <div class='win-overlay-voice-command win-overlay-pagedownindicator' aria-label='" + strings.pageDown + "'></div>" +
         "</div>";
         this._scrollingIndicatorElement.addEventListener("listeningstatechanged", this._handleListeningStateChanged);
 
@@ -142,8 +157,6 @@ export class ScrollViewer {
         this.scrollMode = ScrollMode.text;
         _Control.setOptions(this, options);
 
-        this._refreshVisuals();
-
         // The scroll viewer has two interaction modes:  
         //   1. Normal - In this state there is focusable content within the scrollable  
         //      region. Automatic focus handles directional navigation and scrolls  
@@ -157,14 +170,10 @@ export class ScrollViewer {
 
         // We need to wait for processAll to finish on the inner contents of the scrollable region, because we need accurate   
         // sizing information to determine if a region is scrollable or not.  
-        _Global.setTimeout(() => {
-            if (this._disposed) {
-                return;
-            }
-            this._refreshVisuals();
-        }, DelayBeforeCheckingSizeOfScrollableRegion);
+        ControlProcessor.processAll(this.element).done(() => {
+            this.refresh();
+        });
     }
-
 
     /// <signature helpKeyword="WinJS.UI.ScrollViewer.dispose">  
     /// <summary locid="WinJS.UI.ScrollViewer.dispose">  
@@ -178,7 +187,7 @@ export class ScrollViewer {
         this._disposed = true;
 
         _ElementUtilities.removeClass(this._element, "win-xyfocus-suspended");
-        _ElementUtilities.disposeSubTree(this.element);
+        _Dispose.disposeSubTree(this.element);
     }
 
     /// <signature helpKeyword="WinJS.UI.ScrollViewer.refresh">  
@@ -190,62 +199,94 @@ export class ScrollViewer {
         this._refreshVisuals();
     }
 
+    private _moveFocus(direction: string) {
+        // If we successfully move focus to a new target element, then set the ScrollViewer as inactive  
+        if (this._isActive()) {
+            var previousFocusRectangleObject = this._scrollingContainer.getBoundingClientRect();
+            var previousFocusRectangle = {
+                top: previousFocusRectangleObject.top,
+                left: previousFocusRectangleObject.left,
+                width: previousFocusRectangleObject.width,
+                height: previousFocusRectangleObject.height
+            };
+
+            var nextFocusElement = XYFocus.moveFocus(direction, { referenceRect: previousFocusRectangle });
+            if (nextFocusElement) {
+                this._setInactive();
+                // Sound: Choose one of the 4 focus sounds to play at random  
+            }
+        }
+    }
+
+    private _refreshScrollClassNames() {
+        if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
+            this._canScrollUp = true;
+        } else {
+            this._canScrollUp = false;
+        }
+        if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
+            this._canScrollDown = false;
+        } else {
+            this._canScrollDown = true;
+        }
+
+        // Note: We remove the classes in order so we can avoid labels flashing  
+        if (!this._canScrollUp && !this._canScrollDown) {
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
+
+            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        } else if (!this._canScrollUp && this._canScrollDown) {
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+        } else if (this._canScrollUp && !this._canScrollDown) {
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        } else {
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
+            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
+
+            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
+            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
+        }
+    }
+
     private _refreshVisuals() {
+        if (this._pendingRefresh) {
+            return;
+        }
+        this._pendingRefresh = true;
+        
         // We call this function any time the size of the contents within the ScrollViewer changes. This function  
         // determines if we need to display the visual treatment for "more content".
-        _Global.setTimeout(() => {
+        Scheduler.schedule(() => {
+            this._pendingRefresh = false;
+
             if (this._disposed) {
+                this._refreshDone && this._refreshDone();
                 return;
             }
 
             // Set initial visibility for the arrow indicators if the contents of the scrollable region  
             // is bigger than the viewable area.  
             if (this._scrollingContainer.clientHeight < this._scrollingContainer.scrollHeight) {
-                if (this._scrollingContainer.scrollTop > 0) {
-                    this._canScrollUp = true;
-                } else {
-                    this._canScrollUp = false;
-                }
-                if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
-                    this._canScrollDown = false;
-                } else {
-                    this._canScrollDown = true;
-                }
-
-                if (!this._canScrollUp && !this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-                    _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
-                } else if (!this._canScrollUp && this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-                    _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                } else if (this._canScrollUp && !this._canScrollDown) {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-                    _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                } else {
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-                    _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-                    _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-                    _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-                }
+                this._refreshScrollClassNames();
 
                 // We only make the ScrollViewer focusable if it has text content and the  
                 // text content does not fit on the screen. If the text content does fit  
@@ -264,7 +305,8 @@ export class ScrollViewer {
                 _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
                 _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
             }
-        });
+            this._refreshDone && this._refreshDone();
+        }, Scheduler.Priority.high, this, "ScrollViewer_refreshVisuals");
     }
 
     private _scrollDownBySmallAmount() {
@@ -358,27 +400,12 @@ export class ScrollViewer {
             case Keys.leftArrow:
             case Keys.GamepadDPadLeft:
             case Keys.GamepadLeftThumbstickLeft:
-                var direction = "left";
+                this._moveFocus("left");
+                break;
             case Keys.rightArrow:
             case Keys.GamepadDPadRight:
             case Keys.GamepadLeftThumbstickRight:
-                var direction = direction || "right";
-                // If we successfully move focus to a new target element, then set the ScrollViewer as inactive  
-                if (this._isActive()) {
-                    var previousFocusRectangleObject = this._scrollingContainer.getBoundingClientRect();
-                    var previousFocusRectangle = {
-                        top: previousFocusRectangleObject.top,
-                        left: previousFocusRectangleObject.left,
-                        width: previousFocusRectangleObject.width,
-                        height: previousFocusRectangleObject.height
-                    };
-
-                    var nextFocusElement = XYFocus.moveFocus(direction, { referenceRect: previousFocusRectangle });
-                    if (nextFocusElement) {
-                        this._setInactive();
-                        // Sound: Choose one of the 4 focus sounds to play at random  
-                    }
-                }
+                this._moveFocus("right");
                 break;
             case Keys.pageUp:
             case Keys.GamepadLeftShoulder:
@@ -410,51 +437,6 @@ export class ScrollViewer {
     }
 
     private _handleScroll(ev: MouseEvent) {
-        if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
-            this._canScrollUp = true;
-        } else {
-            this._canScrollUp = false;
-        }
-        if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
-            this._canScrollDown = false;
-        } else {
-            this._canScrollDown = true;
-        }
-
-        // Note: We remove the classes in order so we can avoid labels flashing  
-        if (!this._canScrollUp && !this._canScrollDown) {
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-
-            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        } else if (!this._canScrollUp && this._canScrollDown) {
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.addClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-        } else if (this._canScrollUp && !this._canScrollDown) {
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.removeClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.addClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        } else {
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-up");
-            _ElementUtilities.addClass(this._scrollingIndicatorElement, "win-scrollable-down");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disabledlabel");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disabledlabel");
-
-            _ElementUtilities.removeClass(this._vuiPageUpElement, "win-voice-disableoverride");
-            _ElementUtilities.removeClass(this._vuiPageDownElement, "win-voice-disableoverride");
-        }
+        this._refreshScrollClassNames();
     }
 }

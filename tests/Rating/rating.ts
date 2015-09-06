@@ -175,6 +175,16 @@ module CorsicaTests {
             }
             rating.dispose();
         }
+
+        testChangingRatingViaKeysWithoutCommitingCanReverseDirections = function () {
+            var rating = <WinJS.UI.PrivateRating> new WinJS.UI.Rating();
+
+            Helper.keydown(rating.element, WinJS.Utilities.Key.rightArrow); // 1
+            Helper.keydown(rating.element, WinJS.Utilities.Key.rightArrow); // 2
+            Helper.keydown(rating.element, WinJS.Utilities.Key.leftArrow);  // 1
+            Helper.keydown(rating.element, WinJS.Utilities.Key.enter);
+            LiveUnit.Assert.areEqual(1, rating.userRating);
+        }
     }
 }
 // register the object as a test class by passing in the name

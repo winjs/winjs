@@ -1,4 +1,6 @@
 {
+  "tv/scrollViewerPageDown": "Alt sayfa",
+  "tv/scrollViewerPageUp": "Üst sayfa",
   "ui/appBarAriaLabel": "Uygulama Çubuğu",
   "ui/appBarCommandAriaLabel": "Uygulama Çubuğu Öğesi",
   "ui/appBarOverflowButtonAriaLabel": "Daha fazlasını görüntüleyin",

@@ -23,7 +23,6 @@ import _KeyboardBehavior = require("../../Utilities/_KeyboardBehavior");
 import _Log = require("../../Core/_Log");
 import _Resources = require("../../Core/_Resources");
 import _Signal = require("../../_Signal");
-import _TabContainer = require("../../Utilities/_TabContainer");
 import _TransitionAnimation = require("../../Animations/_TransitionAnimation");
 import _WriteProfilerMark = require("../../Core/_WriteProfilerMark");
 
@@ -101,7 +100,6 @@ export class Pivot {
     _selectedIndex = 0;
     _showPivotItemAnimation = Promise.wrap<any>();
     _slideHeadersAnimation = Promise.wrap<any>();
-    _tabContainer: _TabContainer.TabContainer;
     _viewportElWidth: number;
     _winKeyboard: _KeyboardBehavior._WinKeyboard;
 
@@ -299,7 +297,6 @@ export class Pivot {
         this._headerItemsElement.appendChild(this._headersContainerElement);
         this._element.addEventListener("click", this._elementClickedHandler.bind(this));
         this._winKeyboard = new _KeyboardBehavior._WinKeyboard(this._headersContainerElement);
-        this._tabContainer = new _TabContainer.TabContainer(this._headersContainerElement);
 
         // Custom Headers
         this._customLeftHeader = _Global.document.createElement("DIV");
@@ -1073,6 +1070,7 @@ class HeaderStateBase {
         var item = this.pivot.items.getAt(index);
 
         var headerContainerEl = _Global.document.createElement("BUTTON");
+        headerContainerEl.tabIndex = -1;
         headerContainerEl.setAttribute("type", "button");
         headerContainerEl.style.marginLeft = headerContainerEl.style.marginRight = HeaderStateBase.headerHorizontalMargin + "px";
         _ElementUtilities.addClass(headerContainerEl, _Constants._ClassNames.pivotHeader);
@@ -1210,7 +1208,6 @@ class HeaderStateStatic extends HeaderStateBase {
                 }
             }
 
-            pivot._tabContainer.childFocus = <HTMLElement>pivot._headersContainerElement.children[pivot.selectedIndex];
         }
         this._firstRender = false;
     }
@@ -1227,7 +1224,6 @@ class HeaderStateStatic extends HeaderStateBase {
             this.render();
         }
         this.setActiveHeader(<HTMLElement>this.pivot._headersContainerElement.children[index]);
-        this.pivot._tabContainer.childFocus = <HTMLElement>this.pivot._headersContainerElement.children[index];
     }
 
     handleResize() {
@@ -1416,7 +1412,6 @@ class HeaderStateOverflow extends HeaderStateBase {
             pivot._nextButton.style.right = pivot._rtl ? leadingSpace + "px" : "0px";
         }
         var firstHeaderIndex = pivot._headersContainerElement.children.length > 1 ? 1 : 0;
-        pivot._tabContainer.childFocus = <HTMLElement>pivot._headersContainerElement.children[firstHeaderIndex];
         if (restoreFocus) {
             pivot._headersContainerElement.focus();
         }
