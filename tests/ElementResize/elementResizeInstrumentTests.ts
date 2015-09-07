@@ -620,7 +620,7 @@ module CorsicaTests {
 
     }
 
-    function setUpTest(ObjEl: HTMLObjectElement, scenario: number, callback: () => void) {
+    function setUpTest(ObjEl: HTMLIFrameElement, scenario: number, callback: () => void) {
 
         var loadedSync = true;
         var resizeSync = true;
@@ -674,7 +674,7 @@ module CorsicaTests {
 
     function getnewObj() {
 
-        var objEl = <HTMLObjectElement>document.createElement("OBJECT");
+        var objEl = <HTMLIframeElement>document.createElement("IFRAME");
         objEl.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
         objEl.type = 'text/html';
 
