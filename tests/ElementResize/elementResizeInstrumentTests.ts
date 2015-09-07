@@ -564,7 +564,7 @@ module CorsicaTests {
             var scenario = 2;
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.data = dataText;
+            //objEl.data = dataText;
 
             syncWorkSignal.complete();
         }
@@ -581,7 +581,7 @@ module CorsicaTests {
             this._element.parentElement.removeChild(this._element);
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.data = dataText;
+            //objEl.data = dataText;
             this._element.appendChild(objEl);
             syncWorkSignal.complete();
         }
@@ -591,7 +591,7 @@ module CorsicaTests {
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
             this._element.appendChild(objEl);
-            objEl.data = dataText;
+            //objEl.data = dataText;
             syncWorkSignal.complete();
         }
         testObjectScenario6(complete) {
@@ -605,7 +605,7 @@ module CorsicaTests {
             var scenario = 7;
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.data = dataText;
+            //objEl.data = dataText;
             this._element.appendChild(objEl);
             syncWorkSignal.complete();
         }
@@ -614,7 +614,7 @@ module CorsicaTests {
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
             this._element.appendChild(objEl);
-            objEl.data = dataText;
+            //objEl.data = dataText;
             syncWorkSignal.complete();
         }
 
@@ -674,9 +674,9 @@ module CorsicaTests {
 
     function getnewObj() {
 
-        var objEl = <HTMLIframeElement>document.createElement("IFRAME");
+        var objEl = <HTMLIFrameElement>document.createElement("IFRAME");
         objEl.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
-        objEl.type = 'text/html';
+        //objEl.type = 'text/html';
 
         return objEl;
     }
