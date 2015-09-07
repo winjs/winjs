@@ -1699,17 +1699,18 @@ define([
                         listViewHandler("FocusOut", false, false),
                         modeHandler("KeyDown"),
                         modeHandler("KeyUp"),
-                        //listViewHandler("MSElementResize", false, false)
+                        // Jesse
+                        listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
                     this._onMSElementResizeBound = this._onMSElementResize.bind(this);
                     _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
-                    // jesse 
-                    this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
-                    this._element.appendChild(this._elementResizeInstrument.element);
-                    this._elementResizeInstrument.addedToDom();
+                    // Jesse 
+                    //this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                    //this._element.appendChild(this._elementResizeInstrument.element);
+                    //this._elementResizeInstrument.addedToDom();
 
                     var initiallyParented = _Global.document.body.contains(this._element);
                     _ElementUtilities._addInsertedNotifier(this._element);
