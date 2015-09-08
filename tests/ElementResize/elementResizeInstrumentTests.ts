@@ -564,7 +564,7 @@ module CorsicaTests {
             var scenario = 2;
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            //objEl.data = dataText;
+            objEl.src = dataText;
 
             syncWorkSignal.complete();
         }
@@ -581,7 +581,7 @@ module CorsicaTests {
             this._element.parentElement.removeChild(this._element);
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            //objEl.data = dataText;
+            objEl.src = dataText;
             this._element.appendChild(objEl);
             syncWorkSignal.complete();
         }
@@ -591,7 +591,7 @@ module CorsicaTests {
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
             this._element.appendChild(objEl);
-            //objEl.data = dataText;
+            objEl.src = dataText;
             syncWorkSignal.complete();
         }
         testObjectScenario6(complete) {
@@ -605,7 +605,7 @@ module CorsicaTests {
             var scenario = 7;
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            //objEl.data = dataText;
+            objEl.src = dataText;
             this._element.appendChild(objEl);
             syncWorkSignal.complete();
         }
@@ -614,7 +614,7 @@ module CorsicaTests {
             var objEl = getnewObj();
             var syncWorkSignal = setUpTest(objEl, scenario, complete);
             this._element.appendChild(objEl);
-            //objEl.data = dataText;
+            objEl.src = dataText;
             syncWorkSignal.complete();
         }
 
