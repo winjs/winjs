@@ -16,8 +16,17 @@ import _ElementUtilities = require('../../Utilities/_ElementUtilities');
 "use strict";
 
 // We will style the _ElementResizeInstrument element to have the same height and width as it's nearest positioned ancestor.
-var styleText = 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;';
-
+var styleText =
+    'display: block;' +
+    'opacity: 0;' +
+    'position:absolute;' +
+    ' top: 0;' +
+    'left: 0;' +
+    'height: 100%;' +
+    'width: 100%;' +
+    'overflow: hidden;' +
+    'pointer-events: none;' +
+    'z-index: -1;';
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
@@ -71,33 +80,35 @@ export class _ElementResizeInstrument {
         // The latter is for cross browser consistency. Some browsers will load the <object> element sync or async as soon as its added to the Dom. 
         // Other browsers will not load the element until it is added to the DOM and the data property has been set on the <object>. If the element
         // hasn't already loaded when addedToDom is called, we can set the data property to kickstart the loading process.
+        if (!this._disposed) {
+            var objEl = this.element;
+            if (!_Global.document.body.contains(objEl)) {
+                // In IE and Edge the <object> needs to be in the DOM before we set the data property or else the element will get into state where it can never be loaded.
+                throw new _ErrorFromName("WinJS.UI._ElementResizeInstrument", "ElementResizeInstrument initialization failed");
+            } else {
 
-        var objEl = this.element;
-        if (!_Global.document.body.contains(objEl)) {
-            // In IE and Edge the <object> needs to be in the DOM before we set the data property or else the element will get into state where it can never be loaded.
-            throw new _ErrorFromName("WinJS.UI._ElementResizeInstrument", "ElementResizeInstrument initialization failed");
-        } else {
-
-            if (_Log.log && getComputedStyle(objEl.parentElement).position === "static") {
-                // Notify if the parentElement is not positioned. Technically not incorrect,
-                _Log.log("_ElementResizeInstrument can only detect size changes that are made to it's nearest positioned ancestor. " +
-                    "Its parent element is not currently positioned.")
+                if (_Log.log && _ElementUtilities._getComputedStyle(objEl.parentElement).position === "static") {
+                    // Notify if the parentElement is not positioned. It is expected that the _ElementResizeInstrument will 
+                    // be an immediate child of the element it wants to monitor for size changes.
+                    _Log.log("_ElementResizeInstrument can only detect size changes that are made to it's nearest positioned ancestor. " +
+                        "Its parent element is not currently positioned.")
             }
 
-            if (!this._elementLoaded) {
-                // If we're in the DOM and the element hasn't loaded yet, some browsers require setting the data property first, 
-                // in order to trigger the <object> load event. We MUST only do this after the element has been added to the DOM, 
-                // otherwise IE10, IE11 & Edge will NEVER fire the load event no matter what else is done to the <object> element 
-                // or its properties.
-                objEl.data = "about:blank";
+                if (!this._elementLoaded) {
+                    // If we're in the DOM and the element hasn't loaded yet, some browsers require setting the data property first, 
+                    // in order to trigger the <object> load event. We MUST only do this after the element has been added to the DOM, 
+                    // otherwise IE10, IE11 & Edge will NEVER fire the load event no matter what else is done to the <object> element 
+                    // or its properties.
+                    objEl.data = "about:blank";
+                }
+
+                this._elementLoadPromise.then(() => {
+                    // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
+
+                    this._running = true;
+                    this.dispatchEvent("loaded", null);
+                });
             }
-
-            this._elementLoadPromise.then(() => {
-                // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
-
-                this._running = true;
-                this.dispatchEvent("loaded", null);
-            })
         }
     }
     dispose(): void {
