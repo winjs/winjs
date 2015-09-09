@@ -434,126 +434,6 @@ module CorsicaTests {
 
         }
 
-        testInitializedOutsideDom(complete) {
-            var childResizeSignal: WinJS._Signal<any>;
-            function childResizeHandler() {
-                childResizeSignal.complete();
-            }
-
-            var parentResizeSignal: WinJS._Signal<any>;
-            function parentResizeHandler() {
-                parentResizeSignal.complete();
-            }
-
-            this._element.removeChild(this._parent);
-
-            var childLoadedPromise = new WinJS.Promise((c) => {
-                // Verify that when our ancestor isn't in the DOM at the time we call addedToDom,
-                // The _ElementResizeInstrument will still fire the loaded event after the ancestor
-                // is added to the DOM.
-                this._childInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                this._childInstrument.addedToDom();
-                this._element.appendChild(this._parent);
-            });
-            childLoadedPromise
-                .then(awaitInitialResizeEvents)
-                .then(() => {
-                    // Verify resize event works as expected.
-                    childResizeSignal = new WinJS._Signal();
-                    this._childInstrument.addEventListener("resize", childResizeHandler);
-                    this._child.style.width = "50%";
-                    return childResizeSignal.promise;
-                })
-                .then(() => {
-                    this._element.removeChild(this._parent);
-                    var parentLoadedPromise = new WinJS.Promise((c) => {
-                        // Verify that when an _ElementResizeListener's host isn't in the DOM at the time 
-                        // addedToDom is called, that the _ElementResizeInstrument will still fire the loaded 
-                        // event after host is added to the DOM.
-                        this._parentInstrument.addEventListener("loaded", () => {
-                            c();
-                        });
-                        this._parentInstrument.addedToDom();
-                        this._element.appendChild(this._parent);
-                    });
-                    return parentLoadedPromise;
-                })
-                .then(awaitInitialResizeEvents)
-                .then(() => {
-                    // Verify resize event works as expected.
-                    childResizeSignal = new WinJS._Signal();
-                    parentResizeSignal = new WinJS._Signal();
-
-                    this._parentInstrument.addEventListener("resize", parentResizeHandler);
-                    this._parent.style.width = "50%";
-                    return WinJS.Promise.join([parentResizeSignal, childResizeSignal]);
-                })
-                .done(complete);
-        }
-
-        testInitializedOutsideDomAsync(complete) {
-            var childResizeSignal: WinJS._Signal<any>;
-            function childResizeHandler() {
-                childResizeSignal.complete();
-            }
-
-            var parentResizeSignal: WinJS._Signal<any>;
-            function parentResizeHandler() {
-                parentResizeSignal.complete();
-            }
-
-            this._element.removeChild(this._parent);
-
-            var childLoadedPromise = new WinJS.Promise((c) => {
-                // Verify that when our ancestor isn't in the DOM at the time we call addedToDom,
-                // The _ElementResizeInstrument will still fire the loaded event after the ancestor
-                // is added to the DOM.
-                this._childInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                this._childInstrument.addedToDom();
-                WinJS.Promise.timeout(0).then(() => {
-                    this._element.appendChild(this._parent);
-                });
-            });
-            childLoadedPromise
-                .then(awaitInitialResizeEvents)
-                .then(() => {
-                    // Verify resize event works as expected.
-                    childResizeSignal = new WinJS._Signal();
-                    this._childInstrument.addEventListener("resize", childResizeHandler);
-                    this._child.style.width = "50%";
-                    return childResizeSignal.promise;
-                })
-                .then(() => {
-                    this._element.removeChild(this._parent);
-                    var parentLoadedPromise = new WinJS.Promise((c) => {
-                        // Verify that when an _ElementResizeListener's host isn't in the DOM at the time 
-                        // addedToDom is called, that the _ElementResizeInstrument will still fire the loaded 
-                        // event after host is added to the DOM.
-                        this._parentInstrument.addEventListener("loaded", () => {
-                            c();
-                        });
-                        this._parentInstrument.addedToDom();
-                        this._element.appendChild(this._parent);
-                    });
-                    return parentLoadedPromise;
-                })
-                .then(awaitInitialResizeEvents)
-                .then(() => {
-                    // Verify resize event works as expected.
-                    childResizeSignal = new WinJS._Signal();
-                    parentResizeSignal = new WinJS._Signal();
-
-                    this._parentInstrument.addEventListener("resize", parentResizeHandler);
-                    this._parent.style.width = "50%";
-                    return WinJS.Promise.join([parentResizeSignal, childResizeSignal]);
-                })
-                .done(complete);
-        }
-
         //testObjectScenario1(complete) {
         //    var scenario = 1;
         //    var objEl = getnewObj();
@@ -620,7 +500,7 @@ module CorsicaTests {
         //    syncWorkSignal.complete();
         //}
 
-    //}
+    }
 
     //function setUpTest(ObjEl: HTMLIFrameElement, scenario: number, callback: () => void) {
 
