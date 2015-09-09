@@ -35,9 +35,9 @@
           "http://127.0.0.1:9999/bin/tests/ElementResize/test.html?fastanimations=true&autostart=true"
 
     ],
-    "allWithExtendedDuration": [
-          "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
-          "http://127.0.0.1:9999/bin/tests/ListViewComponents/test.html?fastanimations=true&autostart=true&testtimeout=10000",
-          "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000"
-    ]
+     "allWithExtendedDuration": [
+         "http://127.0.0.1:9999/bin/tests/ListView/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+         "http://127.0.0.1:9999/bin/tests/ListViewComponents/test.html?fastanimations=true&autostart=true&testtimeout=10000",
+         "http://127.0.0.1:9999/bin/tests/ListViewIntegration/test.html?fastanimations=true&autostart=true&testtimeout=10000"
+     ]
 }
