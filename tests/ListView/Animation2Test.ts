@@ -309,7 +309,7 @@ module WinJSTests {
                 then(function () {
                     // Resize:
                     listViewEl.style.height = "600px";
-                    listView._onMSElementResize();
+                    listView._onElementResize();
 
                     return Helper.ListView.waitForReady(listView, -1)();
                 }).
