@@ -552,134 +552,134 @@ module CorsicaTests {
                 .done(complete);
         }
 
-        testObjectScenario1(complete) {
-            var scenario = 1;
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //testObjectScenario1(complete) {
+        //    var scenario = 1;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
 
-            syncWorkSignal.complete();
+        //    syncWorkSignal.complete();
 
-        }
-        testObjectScenario2(complete) {
-            var scenario = 2;
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.src = dataText;
+        //}
+        //testObjectScenario2(complete) {
+        //    var scenario = 2;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
 
-            syncWorkSignal.complete();
-        }
-        testObjectScenario3(complete) {
-            var scenario = 3;
-            this._element.parentElement.removeChild(this._element);
-            var objEl = getnewObj();;
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            this._element.appendChild(objEl);
-            syncWorkSignal.complete();
-        }
-        testObjectScenario4(complete) {
-            var scenario = 4;
-            this._element.parentElement.removeChild(this._element);
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.src = dataText;
-            this._element.appendChild(objEl);
-            syncWorkSignal.complete();
-        }
-        testObjectScenario5(complete) {
-            var scenario = 5;
-            this._element.parentElement.removeChild(this._element);
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            this._element.appendChild(objEl);
-            objEl.src = dataText;
-            syncWorkSignal.complete();
-        }
-        testObjectScenario6(complete) {
-            var scenario = 6;
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            this._element.appendChild(objEl);
-            syncWorkSignal.complete();
-        }
-        testObjectScenario7(complete) {
-            var scenario = 7;
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            objEl.src = dataText;
-            this._element.appendChild(objEl);
-            syncWorkSignal.complete();
-        }
-        testObjectScenario8(complete) {
-            var scenario = 8;
-            var objEl = getnewObj();
-            var syncWorkSignal = setUpTest(objEl, scenario, complete);
-            this._element.appendChild(objEl);
-            objEl.src = dataText;
-            syncWorkSignal.complete();
-        }
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario3(complete) {
+        //    var scenario = 3;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();;
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario4(complete) {
+        //    var scenario = 4;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario5(complete) {
+        //    var scenario = 5;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    objEl.src = dataText;
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario6(complete) {
+        //    var scenario = 6;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario7(complete) {
+        //    var scenario = 7;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario8(complete) {
+        //    var scenario = 8;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    objEl.src = dataText;
+        //    syncWorkSignal.complete();
+        //}
 
     }
 
-    function setUpTest(ObjEl: HTMLIFrameElement, scenario: number, callback: () => void) {
+    //function setUpTest(ObjEl: HTMLIFrameElement, scenario: number, callback: () => void) {
 
-        var loadedSync = true;
-        var resizeSync = true;
-        var signal = new WinJS._Signal();
-        var msg = scenario + "! ";
+    //    var loadedSync = true;
+    //    var resizeSync = true;
+    //    var signal = new WinJS._Signal();
+    //    var msg = scenario + "! ";
 
-        ObjEl.onload = () => {
+    //    ObjEl.onload = () => {
 
-            var report = scenario + ", loadedSync, " + loadedSync + "  X  ";
-            msg += report;
-            //console.log(report);
+    //        var report = scenario + ", loadedSync, " + loadedSync + "  X  ";
+    //        msg += report;
+    //        //console.log(report);
 
-            ObjEl.contentDocument.defaultView.addEventListener("resize", function handler() {
-                ObjEl.contentDocument.defaultView.removeEventListener("resize", handler);
-                report = scenario + ", resizeSync, " + resizeSync + "  X  "
-                msg += report;
-                //console.log(report);
-                var resizeDate = new Date();
-                report = scenario + ", ms: " + Math.abs(resizeDate.getTime() - loadedDate.getTime()) + "  X  "
-                msg += report;
-                //console.log(report)
-                LiveUnit.LoggingCore.logComment(msg);
-                LiveUnit.Assert.areEqual(0, msg);
-                failPromise.cancel();
-                callback();
-            });
+    //        ObjEl.contentDocument.defaultView.addEventListener("resize", function handler() {
+    //            ObjEl.contentDocument.defaultView.removeEventListener("resize", handler);
+    //            report = scenario + ", resizeSync, " + resizeSync + "  X  "
+    //            msg += report;
+    //            //console.log(report);
+    //            var resizeDate = new Date();
+    //            report = scenario + ", ms: " + Math.abs(resizeDate.getTime() - loadedDate.getTime()) + "  X  "
+    //            msg += report;
+    //            //console.log(report)
+    //            LiveUnit.LoggingCore.logComment(msg);
+    //            LiveUnit.Assert.areEqual(0, msg);
+    //            failPromise.cancel();
+    //            callback();
+    //        });
 
-            var loadedDate = new Date();
+    //        var loadedDate = new Date();
 
-            resizeSync = false;
+    //        resizeSync = false;
 
-        };
+    //    };
 
-        signal.promise
-            .then(() => {
-                loadedSync = false;
-            });
+    //    signal.promise
+    //        .then(() => {
+    //            loadedSync = false;
+    //        });
 
-        var failPromise = WinJS.Promise
-            .timeout(4500)
-            .then(() => {
-                LiveUnit.LoggingCore.logComment(msg);
-                LiveUnit.Assert.areEqual(0, msg);
-                callback();
-            });
+    //    var failPromise = WinJS.Promise
+    //        .timeout(4500)
+    //        .then(() => {
+    //            LiveUnit.LoggingCore.logComment(msg);
+    //            LiveUnit.Assert.areEqual(0, msg);
+    //            callback();
+    //        });
 
-        return signal;
-    }
+    //    return signal;
+    //}
 
-    var dataText = "about:blank";
+    //var dataText = "about:blank";
 
-    function getnewObj() {
+    //function getnewObj() {
 
-        var objEl = <HTMLIFrameElement>document.createElement("IFRAME");
-        objEl.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
-        //objEl.type = 'text/html';
+    //    var objEl = <HTMLIFrameElement>document.createElement("IFRAME");
+    //    objEl.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; overflow: hidden; pointer-events: none; z-index: -1;');
+    //    //objEl.type = 'text/html';
 
-        return objEl;
-    }
+    //    return objEl;
+    //}
 
 }
 LiveUnit.registerTestClass("CorsicaTests.ElementResizeInstrumentTests");
