@@ -1709,19 +1709,8 @@ define([
                     that._element.appendChild(that._elementResizeInstrument.element);
                     that._elementResizeInstrument.addEventListener("resize", that._onMSElementResizeBound);
 
-                    //var initiallyParented = _Global.document.body.contains(this._element);
-                    //_ElementUtilities._addInsertedNotifier(this._element);
-                    //this._element.addEventListener("WinJSNodeInserted", function (event) {
-                    _ElementUtilities._inDom(this.element).then(function(){
+                    _ElementUtilities._inDom(this.element).then(function () {
                             that._elementResizeInstrument.addedToDom();
-                            
-
-                            //// WinJSNodeInserted fires even if the element is already in the DOM
-                            //if (initiallyParented) {
-                            //    initiallyParented = false;
-                            //    return;
-                            //}
-                            //that._onMSElementResizeBound();
                     });
 
                     var viewportEvents = [
