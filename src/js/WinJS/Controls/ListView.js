@@ -1703,11 +1703,11 @@ define([
                     elementEvents.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
-                    this._onMSElementResizeBound = this._onMSElementResize.bind(this);
-                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
+                    this._onElementResizeBound = this._onElementResize.bind(this);
+                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._onElementResizeBound);
                     this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
                     that._element.appendChild(that._elementResizeInstrument.element);
-                    that._elementResizeInstrument.addEventListener("resize", that._onMSElementResizeBound);
+                    that._elementResizeInstrument.addEventListener("resize", that._onElementResizeBound);
 
                     _ElementUtilities._inDom(this.element).then(function () {
                             that._elementResizeInstrument.addedToDom();
@@ -2721,8 +2721,8 @@ define([
                     this._viewportHeight = _Constants._UNINITIALIZED;
                 },
 
-                _onMSElementResize: function ListView_onResize() {
-                    this._writeProfilerMark("_onMSElementResize,info");
+                _onElementResize: function ListView_onResize() {
+                    this._writeProfilerMark("_onElementResize,info");
                     Scheduler.schedule(function ListView_async_msElementResize() {
                         if (this._isZombie()) { return; }
                         // If these values are uninitialized there is already a realization pass pending.
@@ -2748,7 +2748,7 @@ define([
                                 });
                             }
                         }
-                    }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onMSElementResize");
+                    }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onElementResize");
                 },
 
                 _onFocusIn: function ListView_onFocusIn(event) {
@@ -3686,7 +3686,7 @@ define([
                             e && (e.textContent = "");
                         };
 
-                        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onMSElementResizeBound);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onElementResizeBound);
 
                         this._batchingViewUpdates && this._batchingViewUpdates.cancel();
 
