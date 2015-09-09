@@ -194,7 +194,8 @@ module CorsicaTests {
 
         testParentElementResize(complete) {
             // Verifies that changes to the dimensions of the parent element trigger resize events for both the parent and the child element.
-            // Test expects child element to be styled with percentage height and width.
+            // Test expects child element to be styled with percentage height and width and that both the child element and the parent element
+            // each have their own _ElementResizeInstrument.
 
             var parentStyle = this._parent.style;
 
