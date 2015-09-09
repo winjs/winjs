@@ -80,8 +80,8 @@ module CorsicaTests {
                 this._element = null;
                 this._parent = null;
                 this._child = null;
-                //this._parentInstrument = null;
-                //this._childInstrument = null;
+                this._parentInstrument = null;
+                this._childInstrument = null;
             }
         }
 
@@ -195,7 +195,8 @@ module CorsicaTests {
 
         testParentElementResize(complete) {
             // Verifies that changes to the dimensions of the parent element trigger resize events for both the parent and the child element.
-            // Test expects child element to be styled with percentage height and width.
+            // Test expects child element to be styled with percentage height and width and that both the child element and the parent element
+            // each have their own _ElementResizeInstrument.
 
             var parentStyle = this._parent.style;
 
@@ -553,71 +554,71 @@ module CorsicaTests {
                 .done(complete);
         }
 
-    //    testObjectScenario1(complete) {
-    //        var scenario = 1;
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //testObjectScenario1(complete) {
+        //    var scenario = 1;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
 
-    //        syncWorkSignal.complete();
+        //    syncWorkSignal.complete();
 
-    //    }
-    //    testObjectScenario2(complete) {
-    //        var scenario = 2;
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        objEl.src = dataText;
+        //}
+        //testObjectScenario2(complete) {
+        //    var scenario = 2;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
 
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario3(complete) {
-    //        var scenario = 3;
-    //        this._element.parentElement.removeChild(this._element);
-    //        var objEl = getnewObj();;
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        this._element.appendChild(objEl);
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario4(complete) {
-    //        var scenario = 4;
-    //        this._element.parentElement.removeChild(this._element);
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        objEl.src = dataText;
-    //        this._element.appendChild(objEl);
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario5(complete) {
-    //        var scenario = 5;
-    //        this._element.parentElement.removeChild(this._element);
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        this._element.appendChild(objEl);
-    //        objEl.src = dataText;
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario6(complete) {
-    //        var scenario = 6;
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        this._element.appendChild(objEl);
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario7(complete) {
-    //        var scenario = 7;
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        objEl.src = dataText;
-    //        this._element.appendChild(objEl);
-    //        syncWorkSignal.complete();
-    //    }
-    //    testObjectScenario8(complete) {
-    //        var scenario = 8;
-    //        var objEl = getnewObj();
-    //        var syncWorkSignal = setUpTest(objEl, scenario, complete);
-    //        this._element.appendChild(objEl);
-    //        objEl.src = dataText;
-    //        syncWorkSignal.complete();
-    //    }
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario3(complete) {
+        //    var scenario = 3;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();;
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario4(complete) {
+        //    var scenario = 4;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario5(complete) {
+        //    var scenario = 5;
+        //    this._element.parentElement.removeChild(this._element);
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    objEl.src = dataText;
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario6(complete) {
+        //    var scenario = 6;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario7(complete) {
+        //    var scenario = 7;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    objEl.src = dataText;
+        //    this._element.appendChild(objEl);
+        //    syncWorkSignal.complete();
+        //}
+        //testObjectScenario8(complete) {
+        //    var scenario = 8;
+        //    var objEl = getnewObj();
+        //    var syncWorkSignal = setUpTest(objEl, scenario, complete);
+        //    this._element.appendChild(objEl);
+        //    objEl.src = dataText;
+        //    syncWorkSignal.complete();
+        //}
 
     //}
 

@@ -455,7 +455,7 @@ declare module WinJS {
         }
 
         class PrivateListView<T> extends ListView<T> {
-            _onMSElementResize();
+            _onElementResize();
             _animationsDisabled;
             _view;
             _ariaStartMarker;

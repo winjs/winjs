@@ -315,8 +315,10 @@ export class Pivot {
 
         this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
         this._element.appendChild(this._elementResizeInstrument.element);
-        this._elementResizeInstrument.addedToDom();
         this._elementResizeInstrument.addEventListener("resize", this._resizeHandler);
+        _ElementUtilities._inDom(this._element).then(() => {
+            this._elementResizeInstrument.addedToDom();
+        });
         _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandler);
         this._viewportElWidth = null;
 
