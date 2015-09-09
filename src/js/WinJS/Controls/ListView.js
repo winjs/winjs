@@ -1706,20 +1706,23 @@ define([
                     this._onMSElementResizeBound = this._onMSElementResize.bind(this);
                     _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
                     this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
-                    this._element.appendChild(this._elementResizeInstrument.element);
-                    this._elementResizeInstrument.addedToDom();
-                    this._elementResizeInstrument.addEventListener("resize", this._onMSElementResizeBound);
+                    that._element.appendChild(that._elementResizeInstrument.element);
+                    that._elementResizeInstrument.addEventListener("resize", that._onMSElementResizeBound);
 
-                    var initiallyParented = _Global.document.body.contains(this._element);
-                    _ElementUtilities._addInsertedNotifier(this._element);
-                    this._element.addEventListener("WinJSNodeInserted", function (event) {
-                        // WinJSNodeInserted fires even if the element is already in the DOM
-                        if (initiallyParented) {
-                            initiallyParented = false;
-                            return;
-                        }
-                        that._onMSElementResizeBound(event);
-                    }, false);
+                    //var initiallyParented = _Global.document.body.contains(this._element);
+                    //_ElementUtilities._addInsertedNotifier(this._element);
+                    //this._element.addEventListener("WinJSNodeInserted", function (event) {
+                    _ElementUtilities._inDom(this.element).then(function(){
+                            that._elementResizeInstrument.addedToDom();
+                            
+
+                            //// WinJSNodeInserted fires even if the element is already in the DOM
+                            //if (initiallyParented) {
+                            //    initiallyParented = false;
+                            //    return;
+                            //}
+                            //that._onMSElementResizeBound();
+                    });
 
                     var viewportEvents = [
                         listViewHandler("MSManipulationStateChanged", true),
