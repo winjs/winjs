@@ -18,7 +18,6 @@ import _ElementUtilities = require('../../Utilities/_ElementUtilities');
 // We will style the _ElementResizeInstrument element to have the same height and width as it's nearest positioned ancestor.
 var styleText =
     'display: block;' +
-    'opacity: 0;' +
     'position:absolute;' +
     ' top: 0;' +
     'left: 0;' +
@@ -27,6 +26,8 @@ var styleText =
     'overflow: hidden;' +
     'pointer-events: none;' +
     'z-index: -1;';
+
+var className = "winjs-resizeinstrument";
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
@@ -53,6 +54,7 @@ export class _ElementResizeInstrument {
         objEl.setAttribute('style', styleText);
         objEl.type = 'text/html';
         objEl['winControl'] = this;
+        _ElementUtilities.addClass(objEl, className);
         this._element = objEl;
 
         this._elementLoadPromise = new Promise((c) => {
