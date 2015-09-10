@@ -20,10 +20,11 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_UI',
+    './ElementResizeInstrument',
     './Hub/_Section',
     'require-style!less/styles-hub',
     'require-style!less/colors-hub'
-], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
+], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _ElementResizeInstrument, _Section) {
     "use strict";
 
     _Accents.createAccentRule(
@@ -148,6 +149,10 @@ define([
                 _ElementUtilities.addClass(this.element, Hub._ClassName.hub);
                 _ElementUtilities.addClass(this.element, "win-disposable");
 
+                // This internally assigns this.sections which causes section to be used (even from options) before
+                // scrollPosition or sectionOnScreen.
+                this._parse();
+
                 this._viewportElement = _Global.document.createElement("DIV");
                 this._viewportElement.className = Hub._ClassName.hubViewport;
                 this._element.appendChild(this._viewportElement);
@@ -173,20 +178,36 @@ define([
                 this.runningAnimations = new Promise.wrap();
                 this._currentIndexForSezo = 0;
 
-                // This internally assigns this.sections which causes section to be used (even from options) before
-                // scrollPosition or sectionOnScreen.
-                this._parse();
-
                 _Control.setOptions(this, options);
+
+                //_ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
+                //this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
+                //this.element.addEventListener("click", this._clickHandler.bind(this));
+                //this._resizeHandlerBound = this._resizeHandler.bind(this);
+                //this.element.addEventListener("mselementresize", this._resizeHandlerBound);
+                //_ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
+                //this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
+                //this._surfaceElement.addEventListener("mselementresize", this._contentResizeHandler.bind(this));
 
                 _ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
-                this._resizeHandlerBound = this._resizeHandler.bind(this);
-                this.element.addEventListener("mselementresize", this._resizeHandlerBound);
-                _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
-                this._surfaceElement.addEventListener("mselementresize", this._contentResizeHandler.bind(this));
+
+                this._resizeHandlerBound = this._resizeHandler.bind(this);
+                this._contentResizeHandlerBound = this._contentResizeHandler.bind(this);
+                this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                this._element.appendChild(this._elementResizeInstrument.element);
+                this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
+                this._surfaceElementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                this._surfaceElement.appendChild(this._surfaceElementResizeInstrument.element);
+                this._surfaceElementResizeInstrument.addEventListener("resize", this._contentResizeHandlerBound);
+                var that = this;
+                _ElementUtilities._inDom(this.element).then(function () {
+                    that._elementResizeInstrument.addedToDom();
+                    that._surfaceElementResizeInstrument.addedToDom();
+                });
+                _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
 
                 this._handleSectionChangedBind = this._handleSectionChanged.bind(this);
                 this._handleSectionInsertedBind = this._handleSectionInserted.bind(this);
@@ -451,12 +472,15 @@ define([
                         this._updateEvents(this._sections, this._pendingSections);
                         this._sections = this._pendingSections;
                         this._pendingSections = null;
-                        // Remove any declaratively specified hub sections before attachSections.
-                        while (this.element.firstElementChild !== this._viewportElement) {
-                            var toRemove = this.element.firstElementChild;
-                            toRemove.parentNode.removeChild(toRemove);
+
+                        var childNodes = this._surfaceElement.childNodes;
+                        for (var i = childNodes.length - 1; i >= 0; i--) {
+                            var child = childNodes.item(i);
+                            if (child !== this._surfaceElementResizeInstrument.element) {
+                                this._surfaceElement.removeChild(child);
+                            }
                         }
-                        _ElementUtilities.empty(this._surfaceElement);
+                        //_ElementUtilities.empty(this._surfaceElement);
                     }
 
                     if (this._pendingHeaderTemplate) {
@@ -851,10 +875,11 @@ define([
                     }
                 },
                 _parse: function hub_parse() {
+                    // Parse and initialize any declaratively specified hub sections.
                     var hubSections = [];
                     var hubSectionEl = this.element.firstElementChild;
 
-                    while (hubSectionEl !== this._viewportElement) {
+                    while (hubSectionEl) {
                         ControlProcessor.processAll(hubSectionEl);
 
                         var hubSectionContent = hubSectionEl.winControl;
@@ -865,6 +890,7 @@ define([
                         }
 
                         var nextSectionEl = hubSectionEl.nextElementSibling;
+                        hubSectionEl.parentElement.removeChild(hubSectionEl);
                         hubSectionEl = nextSectionEl;
                     }
 

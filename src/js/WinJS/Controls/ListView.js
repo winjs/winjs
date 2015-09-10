@@ -1706,8 +1706,8 @@ define([
                     this._onElementResizeBound = this._onElementResize.bind(this);
                     _ElementUtilities._resizeNotifier.subscribe(this._element, this._onElementResizeBound);
                     this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
-                    that._element.appendChild(that._elementResizeInstrument.element);
-                    that._elementResizeInstrument.addEventListener("resize", that._onElementResizeBound);
+                    this._element.appendChild(this._elementResizeInstrument.element);
+                    this._elementResizeInstrument.addEventListener("resize", this._onElementResizeBound);
 
                     _ElementUtilities._inDom(this.element).then(function () {
                             that._elementResizeInstrument.addedToDom();
