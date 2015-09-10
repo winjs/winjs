@@ -180,15 +180,6 @@ define([
 
                 _Control.setOptions(this, options);
 
-                //_ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
-                //this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
-                //this.element.addEventListener("click", this._clickHandler.bind(this));
-                //this._resizeHandlerBound = this._resizeHandler.bind(this);
-                //this.element.addEventListener("mselementresize", this._resizeHandlerBound);
-                //_ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
-                //this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
-                //this._surfaceElement.addEventListener("mselementresize", this._contentResizeHandler.bind(this));
-
                 _ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
@@ -470,17 +461,16 @@ define([
                     if (this._pendingSections) {
                         needsToLoadSections = true;
                         this._updateEvents(this._sections, this._pendingSections);
+
+                        if (this._sections) {
+                            this._sections.forEach(function (section) {
+                                var el = section.element;
+                                el.parentElement.removeChild(el);
+                            });
+                        }
+
                         this._sections = this._pendingSections;
                         this._pendingSections = null;
-
-                        var childNodes = this._surfaceElement.childNodes;
-                        for (var i = childNodes.length - 1; i >= 0; i--) {
-                            var child = childNodes.item(i);
-                            if (child !== this._surfaceElementResizeInstrument.element) {
-                                this._surfaceElement.removeChild(child);
-                            }
-                        }
-                        //_ElementUtilities.empty(this._surfaceElement);
                     }
 
                     if (this._pendingHeaderTemplate) {
