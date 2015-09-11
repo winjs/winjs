@@ -1709,9 +1709,10 @@ define([
                     this._element.appendChild(this._elementResizeInstrument.element);
                     this._elementResizeInstrument.addEventListener("resize", this._onElementResizeBound);
 
-                    _ElementUtilities._inDom(this.element).then(function () {
+                    _ElementUtilities._inDom(this.element)
+                        .then(function () {
                             that._elementResizeInstrument.addedToDom();
-                    });
+                        });
 
                     var viewportEvents = [
                         listViewHandler("MSManipulationStateChanged", true),

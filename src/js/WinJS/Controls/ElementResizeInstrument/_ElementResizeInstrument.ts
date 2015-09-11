@@ -19,7 +19,7 @@ import _ElementUtilities = require('../../Utilities/_ElementUtilities');
 var styleText =
     'display: block;' +
     'position:absolute;' +
-    ' top: 0;' +
+    'top: 0;' +
     'left: 0;' +
     'height: 100%;' +
     'width: 100%;' +
@@ -27,7 +27,7 @@ var styleText =
     'pointer-events: none;' +
     'z-index: -1;';
 
-var className = "winjs-resizeinstrument";
+var className = "win-resizeinstrument";
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
