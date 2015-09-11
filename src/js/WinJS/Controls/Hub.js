@@ -186,17 +186,12 @@ define([
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
 
                 this._resizeHandlerBound = this._resizeHandler.bind(this);
-                this._contentResizeHandlerBound = this._contentResizeHandler.bind(this);
                 this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
                 this._element.appendChild(this._elementResizeInstrument.element);
                 this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
-                this._surfaceElementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
-                this._surfaceElement.appendChild(this._surfaceElementResizeInstrument.element);
-                this._surfaceElementResizeInstrument.addEventListener("resize", this._contentResizeHandlerBound);
                 var that = this;
                 _ElementUtilities._inDom(this.element).then(function () {
                     that._elementResizeInstrument.addedToDom();
-                    that._surfaceElementResizeInstrument.addedToDom();
                 });
                 _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
 
@@ -929,15 +924,11 @@ define([
                     }
                 },
                 _resizeHandler: function hub_resizeHandler() {
-                    // Viewport needs to be measured
+                    // Viewport, Sections and scroll length need to be measured
                     this._measured = false;
                     Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
-                _contentResizeHandler: function hub_contentResizeHandler() {
-                    // Sections and scroll length need to be measured
-                    this._measured = false;
-                    Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
-                },
+
                 _scrollHandler: function hub_scrollHandler() {
                     // Scroll location needs to be retrieved
                     this._measured = false;
