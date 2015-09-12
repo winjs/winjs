@@ -1331,13 +1331,13 @@ define([
                     _WriteProfilerMark(message);
                     _Log.log && _Log.log(message, null, "hubprofiler");
                 },
+                /// <signature helpKeyword="WinJS.UI.Hub.dispose">
+                /// <summary locid="WinJS.UI.Hub.dispose">
+                /// Disposes this control.
+                /// </summary>
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </signature>
                 dispose: function hub_dispose() {
-                    /// <signature helpKeyword="WinJS.UI.Hub.dispose">
-                    /// <summary locid="WinJS.UI.Hub.dispose">
-                    /// Disposes this control.
-                    /// </summary>
-                    /// <compatibleWith platform="Windows" minVersion="8.1"/>
-                    /// </signature>
                     if (this._disposed) {
                         return;
                     }
@@ -1351,6 +1351,17 @@ define([
                     for (var i = 0; i < this.sections.length; i++) {
                         this.sections.getAt(i).dispose();
                     }
+                },
+                /// <signature helpKeyword="WinJS.UI.Hub.forceLayout">
+                /// <summary locid="WinJS.UI.Hub.forceLayout">
+                /// Forces the Hub to update its layout.
+                /// Use this function when making the Hub visible again after you've set its style.display property to "none” or after style changes have been made that affect the size of the HubSections.
+                /// </summary>
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </signature>
+                forceLayout: function hub_forceLayout() {
+                    // Currently just the same behavior as resize.
+                    this._resizeHandler();
                 }
             }, {
                 /// <field locid="WinJS.UI.Hub.AnimationType" helpKeyword="WinJS.UI.Hub.AnimationType">
