@@ -25,11 +25,11 @@
         browserName: "googlechrome",
         platform: "Win8.1",
         version: "39"
-    }, /*{
+    }, {
         browserName: "iPhone",
         platform: "OS X 10.9",
-        version: "8.1"
-    },*/ {
+        version: "8.1",
+    }, {
         browserName: "android",
         platform: "Linux",
         version: "5.0"
