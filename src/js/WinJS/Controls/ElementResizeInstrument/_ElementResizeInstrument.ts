@@ -32,7 +32,7 @@ var className = "win-resizeinstrument";
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
  * positioned ancestor element has its size changed. Add the instrumented element to the DOM of the element you want to generate-and-handle 
- * "resize" events for. The computed style.position of the host element must be positioned and therefore may not be "static".
+ * "resize" events for. The computed style.position of the ancestor element must be positioned and therefore may not be "static".
 **/
 export class _ElementResizeInstrument {
     private _disposed: boolean;
@@ -55,6 +55,7 @@ export class _ElementResizeInstrument {
         objEl.type = 'text/html';
         objEl['winControl'] = this;
         _ElementUtilities.addClass(objEl, className);
+        _ElementUtilities.addClass(objEl, "win-disposable");
         this._element = objEl;
 
         this._elementLoadPromise = new Promise((c) => {

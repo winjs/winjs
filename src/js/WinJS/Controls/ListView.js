@@ -1711,7 +1711,9 @@ define([
 
                     _ElementUtilities._inDom(this.element)
                         .then(function () {
-                            that._elementResizeInstrument.addedToDom();
+                            if (!that._disposed) {
+                                that._elementResizeInstrument.addedToDom();
+                            }
                         });
 
                     var viewportEvents = [
@@ -3688,6 +3690,7 @@ define([
                         };
 
                         _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onElementResizeBound);
+                        this._elementResizeInstrument.dispose();
 
                         this._batchingViewUpdates && this._batchingViewUpdates.cancel();
 

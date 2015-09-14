@@ -318,7 +318,9 @@ export class Pivot {
         this._elementResizeInstrument.addEventListener("resize", this._resizeHandler);
         _ElementUtilities._inDom(this._element)
             .then(() => {
-                this._elementResizeInstrument.addedToDom();
+                if (!this._disposed) {
+                    this._elementResizeInstrument.addedToDom();
+                }
             });
         _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandler);
         this._viewportElWidth = null;
@@ -370,6 +372,7 @@ export class Pivot {
 
         this._updateEvents(this._items, null);
         _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandler);
+        this._elementResizeInstrument.dispose();
         this._headersState.exit();
 
         _Dispose._disposeElement(this._headersContainerElement);

@@ -191,7 +191,9 @@ define([
                 this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
                 var that = this;
                 _ElementUtilities._inDom(this.element).then(function () {
-                    that._elementResizeInstrument.addedToDom();
+                    if (!that._disposed) {
+                        that._elementResizeInstrument.addedToDom();
+                    }
                 });
                 _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
 
@@ -1345,6 +1347,7 @@ define([
 
                     _Global.removeEventListener('keydown', this._windowKeyDownHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandlerBound);
+                    this._elementResizeInstrument.dispose();
 
                     this._updateEvents(this._sections);
 
