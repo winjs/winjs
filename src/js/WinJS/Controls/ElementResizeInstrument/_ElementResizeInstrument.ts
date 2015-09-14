@@ -28,6 +28,18 @@ var styleText =
     'z-index: -1;';
 
 var className = "win-resizeinstrument";
+var objData = "about:blank";
+
+var _isMS: boolean;
+function isMS(): boolean {
+    // Determine if the browser enviornment is Microsoft.
+    if (typeof _isMS === "undefined") {
+        var element = _Global.document.createElement("div");
+        // msMatchesSelector is supported in IE9+
+        _isMS = (typeof element.msMatchesSelector === "function");
+    }
+    return _isMS;
+}
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
@@ -56,6 +68,9 @@ export class _ElementResizeInstrument {
         objEl['winControl'] = this;
         _ElementUtilities.addClass(objEl, className);
         _ElementUtilities.addClass(objEl, "win-disposable");
+        if (!isMS()) {
+            objEl.data = objData;
+        }
         this._element = objEl;
 
         this._elementLoadPromise = new Promise((c) => {
@@ -97,7 +112,7 @@ export class _ElementResizeInstrument {
                         "Its parent element is not currently positioned.")
             }
 
-                if (!this._elementLoaded) {
+                if (!this._elementLoaded && isMS()) {
                     // If we're in the DOM and the element hasn't loaded yet, some browsers require setting the data property first, 
                     // in order to trigger the <object> load event. We MUST only do this after the element has been added to the DOM, 
                     // otherwise IE10, IE11 & Edge will NEVER fire the load event no matter what else is done to the <object> element 
@@ -128,26 +143,7 @@ export class _ElementResizeInstrument {
             this._running = false;
         }
     }
-    private _objectWindowResizeHandler(): void {
-        if (this._running) {
-            this._batchResizeEvents(() => {
-                if (!this._disposed) {
-                    this.dispatchEvent("resize", null);
-                }
-            });
-        }
-    }
-    private _batchResizeEvents(handleResizeFn: () => void): void {
-
-        // Use requestAnimationFrame to batch consecutive resize events.
-        if (this._pendingResizeAnimationFrameId) {
-            _BaseUtils._cancelAnimationFrame(this._pendingResizeAnimationFrameId);
-        }
-
-        this._pendingResizeAnimationFrameId = _BaseUtils._requestAnimationFrame(() => {
-            handleResizeFn();
-        });
-    }
+    
 
     /**
      * Adds an event listener to the control.
@@ -178,6 +174,27 @@ export class _ElementResizeInstrument {
     **/
     removeEventListener(type: string, listener: Function, useCapture?: boolean): void {
         // Implementation will be provided by _Events.eventMixin
+    }
+
+    private _objectWindowResizeHandler(): void {
+        if (this._running) {
+            this._batchResizeEvents(() => {
+                if (!this._disposed) {
+                    this.dispatchEvent("resize", null);
+                }
+            });
+        }
+    }
+    private _batchResizeEvents(handleResizeFn: () => void): void {
+
+        // Use requestAnimationFrame to batch consecutive resize events.
+        if (this._pendingResizeAnimationFrameId) {
+            _BaseUtils._cancelAnimationFrame(this._pendingResizeAnimationFrameId);
+        }
+
+        this._pendingResizeAnimationFrameId = _BaseUtils._requestAnimationFrame(() => {
+            handleResizeFn();
+        });
     }
 }
 
