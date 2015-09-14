@@ -5400,7 +5400,7 @@ declare module WinJS.UI {
          * Forces the Hub to update its layout. 
          * Use this function when making the Hub visible again after you've set its style.display property to "none” or after style changes have been made that affect the size of the HubSections.
         **/
-        foceLayout(): void;
+        forceLayout(): void;
 
         /**
          * Removes an event handler that the addEventListener method registered.

@@ -138,8 +138,8 @@ module WinJSTests {
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(hub.element, Hub._ClassName.hubVertical));
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(hub.element, Hub._ClassName.hubHorizontal));
 
-            hub.orientation = WinJS.UI.Orientation.horizontal
-        LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(hub.element, Hub._ClassName.hubHorizontal));
+            hub.orientation = WinJS.UI.Orientation.horizontal;
+            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(hub.element, Hub._ClassName.hubHorizontal));
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(hub.element, Hub._ClassName.hubVertical));
 
             // Test taking orientation in via options.
@@ -329,14 +329,50 @@ module WinJSTests {
             });
         };
 
+        testForceLayout = function (complete) {
+            var hubWidth = 1024;
+            var hubHeight = 768;
+            var sectionWidth = 700;
+            var sectionHeight = 768;
+
+            var sectionCount = 10;
+            var hubEl = document.createElement('div');
+            var markup = getMarkupForSomeSections(sectionCount);
+            hubEl.innerHTML = markup;
+            hubEl.style.width = hubWidth + 'px';
+            hubEl.style.height = hubHeight + 'px';
+            var hubSectionEl = <HTMLElement>hubEl.firstChild;
+            while (hubSectionEl) {
+                hubSectionEl.style.width = sectionWidth + 'px';
+                hubSectionEl.style.height = sectionHeight + 'px';
+                hubSectionEl = <HTMLElement>hubSectionEl.nextSibling;
+            }
+            document.body.appendChild(hubEl);
+
+            var hub = new Hub(hubEl);
+
+            hubLoaded(hub).done(function () {
+                // Verify initial state at scroll position 0.
+                LiveUnit.Assert.areEqual(1, hub.indexOfLastVisible, "HubSection 1 should be last visible");
+                // Increase width of section 0 to push section 1 out of view
+                var section0El = hub.sections.getAt(0).element;
+                section0El.style.width = hubWidth + 1 + "px";
+                // Notify hub to re layout and verify new indexOfLastVisible.
+                hub.forceLayout();
+                LiveUnit.Assert.areEqual(0, hub.indexOfLastVisible, "HubSection 0 should be last visible");
+
+                document.body.removeChild(hubEl);
+                complete();
+            });
+        };
+
         testSectionOnScreen = function (complete) {
             sectionOnScreenTest(complete, false);
         }
 
-    testSectionOnScreenRTL = function (complete) {
+        testSectionOnScreenRTL = function (complete) {
             sectionOnScreenTest(complete, true);
         }
-
 
         testHeaderStatic = function (complete) {
             var sectionCount = 5;
