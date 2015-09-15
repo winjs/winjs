@@ -1360,7 +1360,6 @@ define([
                 /// Forces the Hub to update its layout.
                 /// Use this function when making the Hub visible again after you've set its style.display property to "none” or after style changes have been made that affect the size of the HubSections.
                 /// </summary>
-                /// <compatibleWith platform="Windows" minVersion="8.1"/>
                 /// </signature>
                 forceLayout: function hub_forceLayout() {
                     // Currently just the same behavior as resize.
