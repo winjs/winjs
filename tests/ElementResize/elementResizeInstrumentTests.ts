@@ -575,9 +575,7 @@ module CorsicaTests {
                 })
                 .then(() => {
                     this._element.appendChild(parent);
-                    return new WinJS.Promise((c) => {
-                        window.requestAnimationFrame(c);
-                    });
+                    return WinJS.Promise.timeout(100);
                 })
                 .then(() => {
                     parent.style.width = "43%"
