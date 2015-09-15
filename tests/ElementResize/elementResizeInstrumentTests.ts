@@ -370,6 +370,52 @@ module CorsicaTests {
                 });
         }
 
+        testReAppendToDom(complete) {
+            var childResizeSignal: WinJS._Signal<any>;
+            function childResizeHandler() {
+                childResizeSignal.complete();
+            }
+
+            var parentResizeSignal: WinJS._Signal<any>;
+            function parentResizeHandler() {
+                parentResizeSignal.complete();
+            }
+
+            var parent = this._parent;
+            var parentInstrument = this._parentInstrument;
+            var childInstrument = this._childInstrument;
+
+            parentInstrument.addedToDom();
+            childInstrument.addedToDom();
+            WinJS.Promise
+                .join([
+                    awaitInitialResizeEvent(this._parentInstrument),
+                    awaitInitialResizeEvent(this._childInstrument)
+                ])
+                .then(() => {
+                    // Test both instruments still fire resize after asynchronously
+                    // re-appending the parent element.
+                    this._element.removeChild(parent);
+                    return allowTimeForAdditionalResizeEvents();
+                })
+                .then(() => {
+                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
+                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
+
+                    parentResizeSignal = new WinJS._Signal();
+                    childResizeSignal = new WinJS._Signal();
+
+                    this._element.appendChild(parent);
+                    return WinJS.Promise.join([
+                        parentResizeSignal.promise,
+                        childResizeSignal.promise,
+                    ]);
+                })
+                .done(() => {
+                    complete();
+                })
+        }
+
         testReAppendToDomAndResizeSynchronously(complete) {
             // Make sure that removing and reappending an initialized _ElementResizeInstrument
             // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
