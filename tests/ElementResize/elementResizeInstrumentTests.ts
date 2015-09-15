@@ -396,7 +396,9 @@ module CorsicaTests {
                     // Test both instruments still fire resize after asynchronously
                     // re-appending the parent element.
                     this._element.removeChild(parent);
-                    return allowTimeForAdditionalResizeEvents();
+                    return new WinJS.Promise((c) => {
+                        window.requestAnimationFrame(c);
+                    });
                 })
                 .then(() => {
                     parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
@@ -447,12 +449,17 @@ module CorsicaTests {
                     parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
                     childInstrument.addEventListener(resizeEvent, childResizeHandler);
 
-                    // Test both instruments still fire resize after synchronously 
-                    // removing, adding and updating the height of the parent element.
                     parentResizeSignal = new WinJS._Signal();
                     childResizeSignal = new WinJS._Signal();
 
+                    // Test both instruments still fire resize after synchronously 
+                    // re-appending and updating the height of the parent element.
                     this._element.removeChild(parent);
+                    return new WinJS.Promise((c) => {
+                        window.requestAnimationFrame(c);
+                    });
+                })
+                .then(() => {
                     this._element.appendChild(parent);
                     parent.style.height = "42%"
                     return WinJS.Promise.join([
@@ -503,7 +510,9 @@ module CorsicaTests {
                     childResizeSignal = new WinJS._Signal();
 
                     this._element.removeChild(parent);
-                    return WinJS.Promise.timeout(0);
+                    return new WinJS.Promise((c) => {
+                        window.requestAnimationFrame(c);
+                    });
                 })
                 .then(() => {
                     this._element.appendChild(parent);
