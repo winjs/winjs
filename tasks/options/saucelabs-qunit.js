@@ -9,7 +9,7 @@
         browserName: "microsoftedge",
         platform: "Windows 10",
         version: "20.10240"
-    },{
+    }, {
         browserName: "internet explorer",
         platform: "WIN8.1",
         version: "11"
