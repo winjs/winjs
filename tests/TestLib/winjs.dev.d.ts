@@ -219,7 +219,10 @@ declare module WinJS {
             addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
             removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
             dispatchEvent(type: string, eventProperties: any): boolean;
-            
+            static EventNames: {
+                resize: string;
+                _ready: string;
+            }
         }
 
         class _ParallelWorkQueue {

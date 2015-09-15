@@ -10,6 +10,9 @@ module CorsicaTests {
 
     var _ElementResizeInstrument = <typeof WinJS.UI.PrivateElementResizeInstrument> Helper.require("WinJS/Controls/ElementResizeInstrument/_ElementResizeInstrument")._ElementResizeInstrument;
 
+    var resizeEvent = _ElementResizeInstrument.EventNames.resize;
+    var readyEvent = _ElementResizeInstrument.EventNames._ready;
+
     function disposeAndRemoveElement(element: HTMLElement) {
         if (element.winControl) {
             element.winControl.dispose();
@@ -20,10 +23,17 @@ module CorsicaTests {
         }
     }
 
-    function awaitInitialResizeEvents(): WinJS.Promise<any> {
+    function awaitInitialResizeEvent(resizeInstrument: WinJS.UI.PrivateElementResizeInstrument): WinJS.Promise<any> {
         // In some browsers, when the _ElementResizeHandler finishes loading, the underlying <object> element will fire an 
         // initial async window resize event. Burn 300ms to allow that event to fire, so we don't test against false positives
-        return WinJS.Promise.timeout(300);
+        //return WinJS.Promise.timeout(300);
+        
+        return new WinJS.Promise((c) => {
+            resizeInstrument.addEventListener(resizeEvent, function handleInitialResize() {
+                resizeInstrument.removeEventListener(resizeEvent, handleInitialResize);
+                c();
+            });
+        })
     }
 
     function allowTimeForAdditionalResizeEvents(): WinJS.Promise<any> {
@@ -43,9 +53,11 @@ module CorsicaTests {
         _childInstrument: WinJS.UI.PrivateElementResizeInstrument;
 
         setUp() {
+            // Setup creates a subTree of two elements "parent" and "child", 
+            // and gives each its own _ElementResizeInstrument.
             LiveUnit.LoggingCore.logComment("In setup");
 
-            // Host element for tests
+            // Host element for our subTree.
             this._element = document.createElement("DIV");
 
             // Create two elements (parent & child), each styled with percentage heights & widths and each with its own _ElementResizeInstrument.
@@ -59,6 +71,7 @@ module CorsicaTests {
             // Let host element be the nearest positioned ancestor of the parent element
             this._element.style.cssText = "position: relative; height: 800px; width: 800px;";
 
+            // Parent and Child need to be positioned in order to have resizes detected by the resizeInstruments. Not necessary to set CSS offsets.
             var parentStyleText = "position: relative; width: 65%; maxWidth: inherit; minWidth: inherit; height: 65%; maxHeight: inherit; minHeight: inherit; padding: 0px;";
             var childStyleText = parentStyleText;
 
@@ -85,6 +98,77 @@ module CorsicaTests {
             }
         }
 
+        testInitialResizeEvent(complete) {
+            // Verify that an _ElementResizeInstrument will asynchronously fire a "resize" event after it has 
+            // been initialized and added to the DOM.
+
+            // The _ElementResizeInstrument uses an <object> element and its contentWindow to detect resize events in whichever element the 
+            // _ElementResizeInstrument is appended to. Some browsers will fire an async "resize" event for the <object> element automatically when 
+            // it is gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial async "resize" 
+            // event is always fired in all browsers. 
+
+            var parentInstrumentReadyPromise = new WinJS.Promise((c) => {
+                this._parentInstrument.addEventListener(readyEvent, c);
+                this._parentInstrument.addedToDom();
+            })
+
+            var childInstrumentReadyPromise = new WinJS.Promise((c) => {
+                this._childInstrument.addEventListener(readyEvent, c);
+                this._childInstrument.addedToDom();
+            })
+
+            var parentInstrumentResizePromise = awaitInitialResizeEvent(this._parentInstrument);
+            var childInstrumentResizePromise = awaitInitialResizeEvent(this._childInstrument);
+
+            // The ready event is a private event used for unit tests. The ready event fires whenever the _ElementResizeInstrument's underlying 
+            // <object> element has successfully loaded and the _ElementResizeInstrument has successfully hooked up a "resize" event listener
+            // to the <object> element's contentWindow. 
+            WinJS.Promise
+                .join([
+                // Verify that everything was hooked up correctly.
+                    parentInstrumentReadyPromise,
+                    childInstrumentReadyPromise,
+                ]).then(() => {
+                    // If everything was hooked up correctly, we expect an initial resize event from both instruments.
+                    return WinJS.Promise
+                        .join([
+                            parentInstrumentResizePromise,
+                            childInstrumentResizePromise,
+                        ]);
+                }).done(complete);
+        }
+
+        testInitialResizeEventFiresOnlyOnce(complete) {
+            // Verify that in all browsers each _ElementResizeInstrument fires exactly one initial resize event.
+
+            // The _ElementResizeInstrument uses an <object> element and its contentWindow to detect resize events in whichever element the 
+            // _ElementResizeInstrument is appended to. Some browsers will fire an async "resize" event for the <object> element automatically when 
+            // it is gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial aysnc "resize" 
+            // event is always fired in all browsers. 
+
+            this._parentInstrument.addedToDom();
+            this._childInstrument.addedToDom();
+
+            var expectedResizeCount = 1;
+            var parentResizeCount = 0;
+            var childResizeCount = 0;
+
+            this._parentInstrument.addEventListener(resizeEvent, () => {
+                parentResizeCount++;
+            });
+
+            this._childInstrument.addEventListener(resizeEvent, () => {
+                childResizeCount++;
+            })
+
+            allowTimeForAdditionalResizeEvents()
+                .done(() => {
+                    LiveUnit.Assert.areEqual(expectedResizeCount, parentResizeCount, "Only 1 resize event should have been detected by the parent instrument");
+                    LiveUnit.Assert.areEqual(expectedResizeCount, childResizeCount, "Only 1 resize event should have been detected by the child instrument");
+                    complete();
+                });
+        }
+
         testChildElementResize(complete) {
             // Verifies that when both the parent and child elements have _ElementResizeInstruments, resizing 
             // the child element will trigger child resize events, but will not trigger parent resize events.
@@ -102,24 +186,16 @@ module CorsicaTests {
                 childResizedSignal.complete();
             }
 
-            var parentLoadingPromise = new WinJS.Promise((c) => {
-                this._parentInstrument.addEventListener("loaded", c);
-                this._parentInstrument.addedToDom();
-            });
-
-            var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childInstrument.addEventListener("loaded", c);
-                this._childInstrument.addedToDom();
-            });
+            this._parentInstrument.addedToDom();
+            this._childInstrument.addedToDom();
             WinJS.Promise
                 .join([
-                    parentLoadingPromise,
-                    childLoadingPromise,
+                    awaitInitialResizeEvent(this._parentInstrument),
+                    awaitInitialResizeEvent(this._childInstrument)
                 ])
-                .then(awaitInitialResizeEvents)
                 .then(() => {
-                    this._childInstrument.addEventListener("resize", childResizeHandler);
-                    this._parentInstrument.addEventListener("resize", parentFailEvent);
+                    this._childInstrument.addEventListener(resizeEvent, childResizeHandler);
+                    this._parentInstrument.addEventListener(resizeEvent, parentFailEvent);
 
                     childResizedSignal = new WinJS._Signal();
                     childStyle.width = "50%";
@@ -167,16 +243,10 @@ module CorsicaTests {
             function childResizeHandler(): void {
                 childResizedCounter++;
             }
-
-            var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childInstrument.addEventListener("loaded", c);
-                this._childInstrument.addedToDom();
-            })
-
-            childLoadingPromise
-                .then(awaitInitialResizeEvents)
+            this._childInstrument.addedToDom();
+            awaitInitialResizeEvent(this._childInstrument)
                 .then(() => {
-                    this._childInstrument.addEventListener("resize", childResizeHandler);
+                    this._childInstrument.addEventListener(resizeEvent, childResizeHandler);
                     childStyle.width = "50%";
                     getComputedStyle(this._child);
                     childStyle.height = "50%";
@@ -216,26 +286,17 @@ module CorsicaTests {
                 childResizedSignal.complete();
             }
 
-            var parentLoadingPromise = new WinJS.Promise((c) => {
-                this._parentInstrument.addEventListener("loaded", c);
-                this._parentInstrument.addedToDom();
-            });
-
-            var childLoadingPromise = new WinJS.Promise((c) => {
-                this._childInstrument.addEventListener("loaded", c);
-                this._childInstrument.addedToDom();
-            });
-
+            this._parentInstrument.addedToDom();
+            this._childInstrument.addedToDom();
             WinJS.Promise
                 .join([
-                    parentLoadingPromise,
-                    childLoadingPromise,
+                    awaitInitialResizeEvent(this._parentInstrument),
+                    awaitInitialResizeEvent(this._childInstrument)
                 ])
-                .then(awaitInitialResizeEvents)
                 .then(() => {
 
-                    this._parentInstrument.addEventListener("resize", parentResizeHandler);
-                    this._childInstrument.addEventListener("resize", childResizeHandler);
+                    this._parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
+                    this._childInstrument.addEventListener(resizeEvent, childResizeHandler);
 
                     parentResizedSignal = new WinJS._Signal();
                     childResizedSignal = new WinJS._Signal();
@@ -279,17 +340,17 @@ module CorsicaTests {
             // Test disposing parent instrument immediately after addedToDom is called, some browsers may still be loading the <object> element at this point and we want to
             // make sure that we don't still try to hook the <object>'s content window asyncronously once the <object> finishes loading, if its already been disposed.
             this._parentInstrument.addedToDom();
-            this._parentInstrument.addEventListener("resize", parentFailResizeHandler);
+            this._parentInstrument.addEventListener(resizeEvent, parentFailResizeHandler);
             this._parentInstrument.dispose();
             LiveUnit.Assert.isTrue(this._parentInstrument._disposed);
 
             // Test disposing child instrument after it has completely loaded.
             new WinJS.Promise((c) => {
-                this._childInstrument.addEventListener("loaded", c);
+                this._childInstrument.addEventListener(readyEvent, c);
                 this._childInstrument.addedToDom();
             })
                 .then(() => {
-                    this._childInstrument.addEventListener("resize", childFailResizeHandler);
+                    this._childInstrument.addEventListener(resizeEvent, childFailResizeHandler);
                     this._childInstrument.dispose();
                     LiveUnit.Assert.isTrue(this._childInstrument._disposed);
 
@@ -314,7 +375,7 @@ module CorsicaTests {
             // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
             // This test is partially testing the browser to make sure that the "resize" listener 
             // we've added to the <object> element's contentWindow doesn't become permanently 
-            // broken.
+            // broken if it leaves and renters the DOM.
             var childResizeSignal: WinJS._Signal<any>;
             function childResizeHandler() {
                 childResizeSignal.complete();
@@ -329,26 +390,16 @@ module CorsicaTests {
             var parentInstrument = this._parentInstrument;
             var childInstrument = this._childInstrument;
 
-            var parentLoadingPromise = new WinJS.Promise((c) => {
-                parentInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                parentInstrument.addedToDom();
-            });
-
-            var childLoadingPromise = new WinJS.Promise((c) => {
-                childInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                childInstrument.addedToDom();
-            });
-
+            parentInstrument.addedToDom();
+            childInstrument.addedToDom();
             WinJS.Promise
-                .join([childLoadingPromise, parentLoadingPromise])
-                .then(awaitInitialResizeEvents)
+                .join([
+                    awaitInitialResizeEvent(this._parentInstrument),
+                    awaitInitialResizeEvent(this._childInstrument)
+                ])
                 .then(() => {
-                    parentInstrument.addEventListener("resize", parentResizeHandler);
-                    childInstrument.addEventListener("resize", childResizeHandler);
+                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
+                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
 
                     // Test both instruments still fire resize after synchronously 
                     // removing, adding and updating the height of the parent element.
@@ -373,7 +424,7 @@ module CorsicaTests {
             // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
             // This test is partially testing the browser to make sure that the "resize" listener 
             // we've added to the <object> element's contentWindow doesn't become permanently 
-            // broken.
+            // broken it it leaves and renters the DOM.
             var childResizeSignal: WinJS._Signal<any>;
             function childResizeHandler() {
                 childResizeSignal.complete();
@@ -388,26 +439,17 @@ module CorsicaTests {
             var parentInstrument = this._parentInstrument;
             var childInstrument = this._childInstrument;
 
-            var parentLoadingPromise = new WinJS.Promise((c) => {
-                parentInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                parentInstrument.addedToDom();
-            });
-
-            var childLoadingPromise = new WinJS.Promise((c) => {
-                childInstrument.addEventListener("loaded", () => {
-                    c();
-                });
-                childInstrument.addedToDom();
-            });
+            parentInstrument.addedToDom();
+            childInstrument.addedToDom();
 
             WinJS.Promise
-                .join([childLoadingPromise, parentLoadingPromise])
-                .then(awaitInitialResizeEvents)
+                .join([
+                    awaitInitialResizeEvent(this._parentInstrument),
+                    awaitInitialResizeEvent(this._childInstrument)
+                ])
                 .then(() => {
-                    parentInstrument.addEventListener("resize", parentResizeHandler);
-                    childInstrument.addEventListener("resize", childResizeHandler);
+                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
+                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
 
                     // Test both instruments still fire resize after asynchronously
                     // removing, adding and updating the width of the parent element.

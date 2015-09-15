@@ -29,6 +29,20 @@ var styleText =
 
 var className = "win-resizeinstrument";
 var objData = "about:blank";
+var eventNames = {
+    /**
+     * Fires when the _ElementResizeInstrument has detected a size change in the monitored ancestor element.
+    **/
+    resize: "resize",
+    /**
+     * Fires when the internal <object> element has finished loading and we have added our own "resize" listener to its contentWindow.
+     * Used by unit tests.
+    **/ 
+    _ready: "ready",
+}
+
+// Name of the contentWindow event we listen to.
+var contentWindowResizeEvent = "resize";
 
 var _isMS: boolean;
 function isMS(): boolean {
@@ -47,6 +61,8 @@ function isMS(): boolean {
  * "resize" events for. The computed style.position of the ancestor element must be positioned and therefore may not be "static".
 **/
 export class _ElementResizeInstrument {
+    static EventNames = eventNames;
+
     private _disposed: boolean;
     private _elementLoadPromise: Promise<any>
     private _elementLoaded: boolean;
@@ -78,7 +94,7 @@ export class _ElementResizeInstrument {
                 if (!this._disposed) {
                     this._elementLoaded = true;
                     this._objWindow = objEl.contentDocument.defaultView;
-                    this._objWindow.addEventListener('resize', this._objectWindowResizeHandlerBound);
+                    this._objWindow.addEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
                     c();
                 }
             }
@@ -121,23 +137,23 @@ export class _ElementResizeInstrument {
                 }
 
                 this._elementLoadPromise.then(() => {
-                    // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
+                    // Once the element has loaded and addedToDom has been called, we can fire our ready event.
                     (() => {
 
                         var initialResizeTimeout = Promise.timeout(50);
                         var handleInitialResize = () => {
-                            this.removeEventListener("resize", handleInitialResize)
+                            this.removeEventListener(eventNames.resize, handleInitialResize)
                             initialResizeTimeout.cancel();
                         };
-                        this.addEventListener("resize", handleInitialResize);
+                        this.addEventListener(eventNames.resize, handleInitialResize);
                         initialResizeTimeout
                             .then(() => {
-                                this.dispatchEvent("resize", null);
+                                this._objectWindowResizeHandler();
                             });
                     })();
 
                     this._running = true;
-                    this.dispatchEvent("loaded", null);
+                    this.dispatchEvent(eventNames._ready, null);
                 });
             }
         }
@@ -149,14 +165,14 @@ export class _ElementResizeInstrument {
             this._elementLoadPromise.cancel();
             // Unhook loaded state
             if (this._objWindow) {
-                // If we had already loaded, unhook listeners from the <object> window.
-                this._objWindow.removeEventListener('resize', this._objectWindowResizeHandlerBound);
+                // If we had already loaded, unhook listeners from the <object> contentWindow.
+                this._objWindow.removeEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
             }
             // Turn off running state
             this._running = false;
         }
     }
-    
+
 
     /**
      * Adds an event listener to the control.
@@ -192,9 +208,7 @@ export class _ElementResizeInstrument {
     private _objectWindowResizeHandler(): void {
         if (this._running) {
             this._batchResizeEvents(() => {
-                if (!this._disposed) {
-                    this.dispatchEvent("resize", null);
-                }
+                this._fireResizeEvent();
             });
         }
     }
@@ -208,6 +222,12 @@ export class _ElementResizeInstrument {
         this._pendingResizeAnimationFrameId = _BaseUtils._requestAnimationFrame(() => {
             handleResizeFn();
         });
+    }
+
+    private _fireResizeEvent(): void {
+        if (!this._disposed) {
+            this.dispatchEvent(eventNames.resize, null);
+        }
     }
 }
 
