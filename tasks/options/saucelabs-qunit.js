@@ -6,37 +6,37 @@
     var testUrls = require("./test-urls.json");
     var reportingStatus = false;
     var browsers = [{
-        browserName: "microsoftedge",
-        platform: "Windows 10",
-        version: "20.10240"
-    }, {
-        browserName: "internet explorer",
-        platform: "WIN8.1",
-        version: "11"
-    }, {
-        browserName: "internet explorer",
-        platform: "WIN8",
-        version: "10"
-    }, {
-        browserName: "safari",
-        platform: "OS X 10.11",
-        version: "8.1"
-    }, {
-        browserName: "firefox",
-        platform: "Win8.1",
-        version: "40"
-    }, {
-        browserName: "googlechrome",
-        platform: "Win8.1",
-        version: "45"
-    }, {
-        browserName: "iphone",
+    //     browserName: "microsoftedge",
+    //     platform: "Windows 10",
+    //     version: "20.10240"
+    // },{
+    //     browserName: "internet explorer",
+    //     platform: "WIN8.1",
+    //     version: "11"
+    // }, {
+    //     browserName: "internet explorer",
+    //     platform: "WIN8",
+    //     version: "10"
+    // }, {
+    //     browserName: "safari",
+    //     platform: "OS X 10.11",
+    //     version: "8.1"
+    // }, {
+    //     browserName: "firefox",
+    //     platform: "Win8.1",
+    //     version: "40"
+    // }, {
+    //     browserName: "googlechrome",
+    //     platform: "Win8.1",
+    //     version: "45"
+    // }, {
+        browserName: "iPhone",
         platform: "OS X 10.10",
         version: "9.0",
-    }, {
-        browserName: "android",
-        platform: "Linux",
-        version: "5.1"
+    // }, {
+    //     browserName: "android",
+    //     platform: "Linux",
+    //     version: "5.1"
     }];
 
     function getBrowserIndex(browser) {
