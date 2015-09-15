@@ -122,6 +122,19 @@ export class _ElementResizeInstrument {
 
                 this._elementLoadPromise.then(() => {
                     // Once the element has loaded and addedToDom has been called, we can fire our loaded event.
+                    (() => {
+
+                        var initialResizeTimeout = Promise.timeout(50);
+                        var handleInitialResize = () => {
+                            this.removeEventListener("resize", handleInitialResize)
+                            initialResizeTimeout.cancel();
+                        };
+                        this.addEventListener("resize", handleInitialResize);
+                        initialResizeTimeout
+                            .then(() => {
+                                this.dispatchEvent("resize", null);
+                            });
+                    })();
 
                     this._running = true;
                     this.dispatchEvent("loaded", null);
