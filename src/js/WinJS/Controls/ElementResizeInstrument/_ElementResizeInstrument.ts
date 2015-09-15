@@ -64,7 +64,7 @@ export class _ElementResizeInstrument {
     static EventNames = eventNames;
 
     private _disposed: boolean;
-    private _elementLoadPromise: Promise<any>
+    private _elementLoadPromise: Promise<any>;
     private _elementLoaded: boolean;
     private _running: boolean;
     private _pendingResizeAnimationFrameId: number;
