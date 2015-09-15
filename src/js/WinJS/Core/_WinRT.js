@@ -34,6 +34,7 @@ define([
         "Windows.Storage.Search.FolderDepth",
         "Windows.Storage.Search.IndexerOption",
         "Windows.Storage.Streams.RandomAccessStreamReference",
+        "Windows.System.Profile.AnalyticsInfo",
         "Windows.UI.ApplicationSettings.SettingsEdgeLocation",
         "Windows.UI.ApplicationSettings.SettingsCommand",
         "Windows.UI.ApplicationSettings.SettingsPane",
@@ -41,7 +42,12 @@ define([
         "Windows.UI.Core.SystemNavigationManager",
         "Windows.UI.Input.EdgeGesture",
         "Windows.UI.Input.EdgeGestureKind",
+        "Windows.UI.Input.GestureRecognizer",
+        "Windows.UI.Input.GestureSettings",
         "Windows.UI.Input.PointerPoint",
+        "Windows.UI.Popups.Placement",
+        "Windows.UI.ViewManagement.ApplicationView",
+        "Windows.UI.ViewManagement.ApplicationViewState",
         "Windows.UI.ViewManagement.HandPreference",
         "Windows.UI.ViewManagement.InputPane",
         "Windows.UI.ViewManagement.UIColorType",
@@ -52,6 +58,14 @@ define([
         "Windows.UI.WebUI.Core.WebUICommandBarIconButton",
         "Windows.UI.WebUI.Core.WebUICommandBarSymbolIcon",
         "Windows.UI.WebUI.WebUIApplication",
+        "Windows.Media.ContentRestrictions.RatedContentRestrictions",
+        "Windows.Media.MediaPlaybackType",
+        "Windows.Media.MediaPlaybackStatus",
+        "Windows.Media.Casting",
+        "Windows.Media.SystemMediaTransportControls",
+        "Windows.Media.SystemMediaTransportControlsButton",
+        "Windows.Media.SystemMediaTransportControlsProperty",
+        "Windows.Xbox"
     ];
 
     // If getForCurrentView fails, it is an indication that we are running in a WebView without

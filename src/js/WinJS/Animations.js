@@ -2801,6 +2801,139 @@ define([
             animationPromises.push(transformWithTransition(overflowAreaClipper, overflowAreaClipperTransition));
             animationPromises.push(transformWithTransition(overflowArea, overflowAreaTransition));
             return Promise.join(animationPromises);
+        },
+
+        _mediaPlayerShowControlsAnimation: function Utilities__mediaPlayerShowControlsAnimation(args) {
+
+            var skipAnimations = args.skipAnimations,
+                compact = args.compact,
+                progressContainer = args.progressContainer,
+                mediacontrols = args.mediacontrols,
+                visibleTransportBarButtons = args.visibleTransportBarButtons;
+            
+            if (skipAnimations) {
+                return Promise.wrap();
+            }
+
+            // Left buttons
+            var leftButtons = [];
+            var leftButtonOffsets = [];
+
+            // Right buttons
+            var rightButtons = [];
+            var rightButtonOffsets = [];
+
+            var numberOfTransportBarButtons = visibleTransportBarButtons.length;
+            var oddNumberOfButtons = numberOfTransportBarButtons % 2 !== 0;
+
+            if (compact) {
+                // Fill in the left side
+                for (var i = numberOfTransportBarButtons - 1; i >= 0; i--) {
+                    if (visibleTransportBarButtons[i].leftOfTimelineInSingleRowLayout) {
+                        leftButtons.push(visibleTransportBarButtons[i]);
+                    }
+                }
+
+                // Now fill in the offset array
+                var leftOffset = -64;
+                for (var i = leftButtons.length; i > 0; i--) {
+                    leftButtonOffsets.push({ left: leftOffset + "px", top: "100px" });
+                    leftOffset -= (64 * (i + 1));
+                }
+
+                // Fill in the right side
+                for (var i = 0, len = numberOfTransportBarButtons; i < len; i++) {
+                    if (!visibleTransportBarButtons[i].leftOfTimelineInSingleRowLayout) {
+                        rightButtons.push(visibleTransportBarButtons[i]);
+                    }
+                }
+
+                // Fill in the offset array
+                var rightOffset = 64;
+                for (var i = rightButtons.length; i > 0; i--) {
+                    rightButtonOffsets.push({ left: rightOffset + "px", top: "100px" });
+                    rightOffset += (64 * (i + 1));
+                }
+            } else {
+                for (var i = Math.floor(numberOfTransportBarButtons / 2) - 1; i >= 0; i--) {
+                    leftButtons.push(visibleTransportBarButtons[i]);
+                }
+                // Now fill in the offset array
+                var leftOffset = -64;
+                for (var i = 0, len = leftButtons.length; i < len; i++) {
+                    leftButtonOffsets.push({ left: leftOffset + "px", top: "100px" });
+                    leftOffset -= (64 * (i + 1));
+                }
+
+                for (var i = Math.ceil(numberOfTransportBarButtons / 2), len = numberOfTransportBarButtons; i < len; i++) {
+                    rightButtons.push(visibleTransportBarButtons[i]);
+                }
+                // Fill in the offset array
+                var rightOffset = 64;
+                for (var i = 0, len = rightButtons.length; i < len; i++) {
+                    rightButtonOffsets.push({ left: rightOffset + "px", top: "100px" });
+                    rightOffset += 64 * (i + 1);
+                }
+                rightButtonOffsets.push({ left: 0 + "px", top: "100px" });
+            }
+
+            var animationPromises = [];
+            var leftElementsOffsetArray = new OffsetArray(leftButtonOffsets, null, [{ top: "100px", left: "-12px", rtlflip: true }]);
+            var rightElementsOffsetArray = new OffsetArray(rightButtonOffsets, null, [{ top: "100px", left: "12px", rtlflip: true }]);
+            // Do an animation on them
+            animationPromises.push(_TransitionAnimation.executeTransition(leftButtons, [{
+                property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
+                delay: 0,
+                duration: 500,
+                timing: "cubic-bezier(0.16, 1, 0.29, 0.99)",
+                from: translateCallback(leftElementsOffsetArray),
+                to: "none"
+            }]));
+
+            if (oddNumberOfButtons &&
+                compact) {
+                var middleButton = visibleTransportBarButtons[leftButtons.length];
+                animationPromises.push(_TransitionAnimation.executeTransition(middleButton, [{
+                    property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
+                    delay: 0,
+                    duration: 500,
+                    timing: "cubic-bezier(0.16, 1, 0.29, 0.99)",
+                    from: "translateY(100px)",
+                    to: "none"
+                }]));
+            }
+
+            animationPromises.push(_TransitionAnimation.executeTransition(rightButtons, [{
+                property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
+                delay: 0,
+                duration: 500,
+                timing: "cubic-bezier(0.16, 1, 0.29, 0.99)",
+                from: translateCallback(rightElementsOffsetArray),
+                to: "none"
+            }]));
+
+            // Animate the timeline
+            animationPromises.push(_TransitionAnimation.executeAnimation(progressContainer, [{
+                property: _BaseUtils._browserStyleEquivalents["transform"].cssName,
+                delay: 0,
+                duration: 500,
+                timing: "cubic-bezier(0.16, 1, 0.29, 0.99)",
+                from: "translateY(100px)",
+                to: "none"
+            }]));
+
+            animationPromises.push(_TransitionAnimation.executeTransition(mediacontrols, [{
+                property: "opacity",
+                delay: 0,
+                duration: 100,
+                timing: "linear",
+                from: 0,
+                to: 1
+            }]));
+
+            return Promise.join(animationPromises);
+
+            
         }
     });
 

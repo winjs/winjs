@@ -4,17 +4,16 @@
 @import "mixins.less";
 
 .win-mediaplayer {
-    height: 100%;
-    width: 100%;
-    position: relative;
+     height: 100%;
+     width: 100%;
     /* We make this a slightly strong than normal style rule so that it will override any sizes the
    developer has set. */
     &.win-mediaplayer-fullscreen {
         position: absolute;
         top: 0px;
         left: 0px;
-        height: 100vh;
-        width: 100vw;
+        height: 100%;
+        width: 100%;
     }
     /* Note: The back button will only be visible in full screen playback on platforms such as desktop where there
        is not a well known convention for back.
@@ -24,31 +23,33 @@
         top: 0;
         left: 0;
     }
+    .win-mediaplayer-hidden {
+        display: none;
+    } 
+}
 
-    .win-toolbar {
-        .win-toolbar-actionarea {
-            .win-command {
-                flex-basis: 48px;
-            }
-        }
+.win-mediaplayer-hidden {
+        display: none;
+}
+
+.win-mediaplayer-toolbar {
+   min-width: 32px;
+  /* enough to fit the overflowbutton */
+    #flex > .align-self(stretch);
+
+  /* make sure controls should be center justified */
+   .win-toolbar-actionarea {
+        #flex > .justify-content(center);
     }
-
-    button.win-command {
+   .win-toolbar-actionarea {
+      .win-command {             
+        #flex > .flex(@grow: 0; @shrink: 0; @basis: 48px);
+       }
+    }
+    .win-toolbar-actionarea button.win-command {
         height: 48px;
         width: 48px;
     }
-
-    .win-toolbar .win-toolbar-actionarea {
-        justify-content: center;
-    }
-    /* We use 2 levels of class specificity, because otherwise there is a very easy to hit case where the app developer sets a style like
-       display: flex on an item that has .win-mediaplayer-hidden and now the element is no longer hidden, which wasn't the app developer's
-       intention. */
-    .win-mediaplayer-hidden,
-    .win-menu button.win-command.win-mediaplayer-hidden {
-        display: none;
-    }
-
     .win-commandicon {
         margin: 0;
         height: 48px;
@@ -62,7 +63,33 @@
         height: 48px;
         margin: 0;
     }
+
+    /* Toolbar overrides */
+    .win-toolbar-actionarea button.win-command .win-label {
+        display: none;
+    }
+
+   .win-toolbar-actionarea .win-mediaplayer-timeline.win-command {
+        #flex > .flex(@grow: 5; @shrink: 5; @basis: auto);
+        padding: 0;
+        font-size: 15px;
+   }
+
+   /* We need to make sure timeline should not showup in the overflow area. neveroverflow is the extraClass of the timeline */
+    .win-toolbar-overflowarea .win-mediaplayer-neveroverflow.win-command {
+        display: none;
+   }  
+
+   /* override toolbar in the single row for show thumbnail above the tool bar */
+    .win-commandingsurface .win-commandingsurface-actionarea {
+        overflow: visible;
+    }
+    .win-commandingsurface .win-commandingsurface-actionareacontainer {
+        overflow: visible;
+    }
+
 }
+
 
 .win-mediaplayer-container {
     height: 100%;
@@ -94,8 +121,11 @@
         width: auto;
     }
 
-    .win-toolbar {
-        width: 100%;
+    .win-mediaplayer-transportcontrols {
+        
+        #flex > .display-flex(); 
+        
+        #flex > .flex-direction(column);
     }
     .win-mediaplayer-thumbnail {
         margin-top: -50px;
@@ -109,10 +139,9 @@
     }
 
     .win-mediaplayer-transportcontrols {
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        align-items: center;
+        #flex > .display-flex(); 
+        #flex > .flex-direction(column);
+        #flex > .align-items(center);
         height: auto;
         padding: 0 12px 24px 12px;
         width: calc(~"100% - 24px");
@@ -152,10 +181,9 @@ progress.win-mediaplayer-busy {
 .win-mediaplayer-controls {
     height: 100%;
     width: 100%;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    justify-content: flex-end;
+    #flex > .display-flex();
+    #flex > .flex-direction(column);
+    #flex > .justify-content(flex-end);
     /* These styles are needed for the controls to show up in the correct
        place for non-fullscreen mode. */
     position: absolute;
@@ -177,7 +205,7 @@ progress.win-mediaplayer-busy {
 .win-mediaplayer-transportcontrols {
     width: 100%;
     height: 48px;
-    display: flex;
+    #flex > .display-flex(); 
     min-width: 296px;
 }
 
@@ -185,19 +213,20 @@ progress.win-mediaplayer-busy {
 .win-mediaplayer-secondary {
     height: 100%;
     width: auto;
-    display: flex;
+    #flex > .display-flex(); 
 }
 
 .win-mediaplayer-timeline {
     height: 100%;
     width: 100%;
-    margin: 0 12px;
+    margin: 0 12px 3px 12px;
 }
 
 .win-mediaplayer-currenttimeindicator,
 .win-mediaplayer-timeremainingindicator,
 .win-mediaplayer-totaltimeindicator {
     display: none;
+    font-family: 'Segoe UI';
 }
 
 .win-mediaplayer-progresscontainer {
@@ -348,16 +377,15 @@ progress.win-mediaplayer-busy {
 }
 
 .win-mediaplayer-thumbnailvisual {
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
+    #flex > .display-flex();         
+    #flex > .flex-direction(column);
+    #flex > .justify-content(flex-end);
+    #flex > .align-items(center);
 }
 
 .win-mediaplayer-playbackspeedindicator {
     height: 100%;
-    align-self: flex-end;
+    #flex > .align-items(flex-end);
     padding-top: 4px;
     padding-right: 8px;
     display: none;
@@ -410,12 +438,13 @@ progress.win-mediaplayer-busy {
 /* Volume overlay */
 .win-mediaplayer-volume {
     &.win-mediaplayer-overlay {
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
+        #flex > .display-flex(); 
+
+        #flex > .flex-direction(column);
         height: 86px;
         max-width: 360px;
         padding: 12px 16px;
+        font-family: 'Segoe UI';
     }
 
     .win-mediaplayer-volume-slider {
@@ -433,15 +462,26 @@ progress.win-mediaplayer-busy {
 }
 
 .win-mediaplayer-volume-controls {
-    display: flex;
-    -ms-flex-direction: row;
-    flex-direction: row;
+    #flex > .display-flex();
+    #flex > .flex-direction(row);
 }
 
 .win-mediaplayer-volume-icon::after {
-    font-family: 'Segoe UI Symbol';
+    font-family: 'Segoe MDL2 Assets';
     font-size: 15pt;
-    content: '\E15D';
+    content: '\E767';
+}
+
+.win-mediaplayer-mute-icon::after {
+    font-family: 'Segoe MDL2 Assets';
+    font-size: 15pt;
+    content: '\E74F';
+}
+
+button.win-mediaplayer-mutebutton {
+  height: 48px;
+  width: 48px;
+  border: none;
 }
 
 /* We need to set a width explicitly on the value of the volume control
@@ -457,16 +497,6 @@ button.win-mediaplayer-mutebutton:focus {
     outline: 1px dotted;
 }
 
-/* Toolbar overrides */
-.win-mediaplayer-commands button.win-command .win-label {
-    display: none;
-}
-
-.win-toolbar .win-toolbar-actionarea .win-mediaplayer-timeline.win-command {
-    flex-grow: 5;
-    padding: 0;
-    font-size: 15px;
-}
 
 .win-mediaplayer-seektimeindicator {
     padding: 2px 6px;
@@ -475,9 +505,5 @@ button.win-mediaplayer-mutebutton:focus {
 }
 
 .win-mediaplayer-inputfeedback {
-    display: none;
-}
-
-.win-toolbar-overflowarea button.win-command.win-mediaplayer-hidden {
     display: none;
 }

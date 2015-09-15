@@ -4,8 +4,9 @@ define([
     './Core/_Base',
     './Core/_Events',
     './Core/_WriteProfilerMark',
-    './Promise'
-    ], function navigationInit(exports, _Base, _Events, _WriteProfilerMark, Promise) {
+    './Promise',
+    './Utilities/_ElementUtilities'
+    ], function navigationInit(exports, _Base, _Events, _WriteProfilerMark, Promise, _ElementUtilities) {
     "use strict";
 
     var navigatedEventName = "navigated";
@@ -287,6 +288,9 @@ define([
             /// </signature>
             listeners.removeEventListener(eventType, listener, capture);
         },
+
+        _navigationListener: new _ElementUtilities._GenericListener("Navigation", exports),
+
         /// <field type="Function" locid="WinJS.Navigation.onnavigated" helpKeyword="WinJS.Navigation.onnavigated">
         /// A page navigation event that occurs after onbeforenavigate and onnavigating. This event can be used to perform other actions after navigation is complete.
         /// </field>

@@ -7,21 +7,6 @@ define('WinJS/Controls/MediaPlayer/_MediaUI', [
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
-        /// <field locid="WinJS.UI.Layout" helpKeyword="WinJS.UI.Layout">
-        /// The UI layout for the MediaPlayer controls.
-        /// </field>
-        Layout: {
-            /// <field type="String" locid="WinJS.UI.Layout.full" helpKeyword="WinJS.UI.Layout.full">
-            /// The Media Control shows the full set of transport controls.
-            /// </field>
-            full: "full",
-
-            /// <field type="String" locid="WinJS.UI.Layout.partial" helpKeyword="WinJS.UI.Layout.partial">
-            /// The Media Control shows a partial set of transport controls.
-            /// </field>
-            partial: "partial"
-        },
-
         /// <field locid="WinJS.UI.MediaCommand" helpKeyword="WinJS.UI.MediaCommand">
         /// An enumeration of Media commands that the transport bar buttons support.
         /// </field>

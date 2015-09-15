@@ -436,5 +436,14 @@ export interface ICommandingSurfaceTransitionArgs {
     menuPositionedAbove: boolean;
 }
 
+export interface IMediaPlayerTransitionArgs {
+    skipAnimations: boolean;
+    compact: boolean;
+    progressContainer: HTMLElement;
+    mediacontrols: HTMLElement;
+    visibleTransportBarButtons: HTMLElement[];
+}
+
 export declare function _commandingSurfaceOpenAnimation(args: ICommandingSurfaceTransitionArgs): Promise<any>;
 export declare function _commandingSurfaceCloseAnimation(args: ICommandingSurfaceTransitionArgs): Promise<any>;
+export declare function _mediaPlayerShowControlsAnimation(args: IMediaPlayerTransitionArgs): Promise<any>;

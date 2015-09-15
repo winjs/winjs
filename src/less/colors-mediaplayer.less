@@ -1,40 +1,45 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
-.Colors(@theme) {
-    .colorDefinitions(@theme);
-    /* The MediaPlayer uses the same colors in light and dark themes which is why we don't use
-   the light / dark theme color values. */
-    .win-mediaplayer {
-        &.win-mediaplayer-fullscreen {
-            background-color: @baseBlack;
-        }
 
-        .win-toolbar {
-            background-color: transparent;
-        }
+#win-mediplayer {
+    .variableDefs(@theme) when (@theme = light){ 
+        @sliderDisable: #ffcccc;
     }
 
-    progress.win-mediaplayer-busy {
-        color: @baseWhite;
+    .variableDefs(@theme) when (@theme = dark){
+        @sliderDisable: #ff3333;
+    }
+    
+    .stylesForTheme(@theme) {
+        #win-mediaplayer > .variableDefs(@theme);       
+        .win-mediaplayer-seekbar-disabled .win-mediaplayer-seekprogress {
+            background-color: @sliderDisable;
+        }
+    }
+}
+
+.Colors(@theme) {
+    .colorDefinitions(@theme);   
+
+    .win-mediaplayer {
+        &.win-mediaplayer-fullscreen {
+            background-color: @chromeMid;
+        }
     }
 
     .win-mediaplayer-transportcontrols {
-        background-color: @baseBlack;
+        background-color: @chromeMid;
     }
 
     .win-mediaplayer-seekbar {
-        background-color: rgba(194, 194, 194, 0.35);
+        background-color: @baseMediumMid;
     }
 
     .win-mediaplayer-buffer {
-        background-color: @baseWhite;
-    }
-
-    .win-mediaplayer-seekbar-disabled .win-mediaplayer-seekprogress {
-        background-color: rgb(107, 107, 107);
+        background-color: @baseHigh;
     }
 
     .win-mediaplayer-seek-mark {
-        background-color: @baseBlack;
+	background-color: @chromeMid;
     }
 
     .win-mediaplayer-thumbnail {
@@ -53,16 +58,37 @@
         background-color: rgba(255, 255, 255, 0.7);
     }
 
-    .win-mediaplayer-overlay {
-        >button:hover {
-            background-color: rgb(31, 31, 31);
-        }
-    }
-
     .win-mediaplayer-seektimeindicator {
         background-color: transparent;
     }
+
+    .win-mediaplayer-toolbar .win-toolbar-actionarea {
+       background-color: transparent;
+   }
+
+   .win-mediaplayer-volume.win-mediaplayer-overlay {
+	   background-color: @chromeMid;       
+    }
+
+    button.win-mediaplayer-mutebutton {
+	background-color:transparent;
+	color:  @baseHigh;
+    }  
 }
 
+
 @media (-ms-high-contrast) {
+    .win-mediaplayer-seekbar {
+        background-color: Highlight;
+    }
+    .win-mediaplayer-seekprogress {
+        background-color: Highlight;
+    }
+    .win-mediaplayer-buffer {
+        background-color: ButtonText;
+    }	
+    .win-mediaplayer-volume-slider {
+        background-color: ButtonText;
+    }	
+
 }

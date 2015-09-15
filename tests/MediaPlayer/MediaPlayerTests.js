@@ -49,6 +49,7 @@ var CorsicaTests;
 
     function runVerifyMediaCommandExecutedEventTest(mediaCommandEnum, methodName, testCompletedFunction, playbackRate) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaPlayer.castButtonEnabled = true;
         mediaPlayer.castButtonVisible = true;
@@ -67,6 +68,7 @@ var CorsicaTests;
 
     function runIsPlayAllowedTestCase(isPlayAllowedValue, isEventExpectedToFire, testCompletedFunction) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
         mediaPlayer.mediaElementAdapter.playAllowed = isPlayAllowedValue;
@@ -90,6 +92,7 @@ var CorsicaTests;
 
     function runIsPauseAllowedTestCase(isPauseAllowedValue, isEventExpectedToFire, testCompletedFunction) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
         mediaPlayer.mediaElementAdapter.pauseAllowed = isPauseAllowedValue;
@@ -111,6 +114,7 @@ var CorsicaTests;
 
     function runIsSeekAllowedTestCase(isSeekAllowedValue, isEventExpectedToFire, testCompletedFunction) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaElement.autoplay = true;
         mediaElement.src = "notnull";
@@ -148,6 +152,7 @@ var CorsicaTests;
     function runNullMediaElementTestCase(mediaCommand) {
         var wasExceptionThrown = false;
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = null;
 
@@ -163,6 +168,7 @@ var CorsicaTests;
 
     function runNewMediaElementTestCase(mediaCommand, testCompletedFunction) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
         mockMediaElement.autoplay = true;
@@ -180,6 +186,7 @@ var CorsicaTests;
     function runNullMediaElementSrcTestCase(mediaCommand, wasExceptionExpected, testCompletedFunction) {
         var wasExceptionThrown = false;
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         mockMediaElement.src = null;
 
@@ -196,6 +203,7 @@ var CorsicaTests;
 
     function runFastForwardTestCase(initialPlaybackRate, expectedPlaybackRateAfterFastForward, startPaused) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         if (!startPaused) {
             mockMediaElement.autoplay = true;
@@ -211,6 +219,7 @@ var CorsicaTests;
 
     function runRewindTestCase(initialPlaybackRate, expectedPlaybackRateAfterRewind, startPaused) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         if (!startPaused) {
             mockMediaElement.autoplay = true;
@@ -226,6 +235,7 @@ var CorsicaTests;
 
     function runExitFastForwardOrRewindTest(mediaCommand) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
         mockMediaElement.autoplay = true;
@@ -239,6 +249,7 @@ var CorsicaTests;
 
     function runPlayPauseToggleIconTest(mediaCommand, icon, isPausedInitially) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
+        mediaPlayer._isTestMode = true;
         var mockMediaElement = new Test.MockMediaElement();
         if (!isPausedInitially) {
             mockMediaElement.autoplay = true;
@@ -247,9 +258,9 @@ var CorsicaTests;
         mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
         mediaPlayer[mediaCommand].call(mediaPlayer);
         if (icon === "pauseicon") {
-            LiveUnit.Assert.areEqual(mediaPlayer.element.querySelector(".win-mediaplayer-playpausebutton").winControl.icon, WinJS.UI.AppBarIcon.pause);
+            LiveUnit.Assert.areEqual(mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").icon, WinJS.UI.AppBarIcon.pause);
         } else {
-            LiveUnit.Assert.areEqual(mediaPlayer.element.querySelector(".win-mediaplayer-playpausebutton").winControl.icon, WinJS.UI.AppBarIcon.play);
+            LiveUnit.Assert.areEqual(mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").icon, WinJS.UI.AppBarIcon.play);
         }
         safeDispose(mediaPlayer);
     };
@@ -261,14 +272,20 @@ var CorsicaTests;
         safeDispose(mediaPlayer);
     };
 
+    function runGetControlBySelectorTestCase(buttonSelector) {
+        var mediaPlayer = new WinJS.UI.MediaPlayer();
+        var button = mediaPlayer._toolbar.getCommandById(buttonSelector);
+        LiveUnit.Assert.isNotNull(button, "UI element could not be retrieved: " + buttonSelector);
+        safeDispose(mediaPlayer);
+    };
+
     function runNoTransportBarButtonsTestCase(mediaCommand, parameter) {
         var mediaPlayer = new WinJS.UI.MediaPlayer();
 
         // Remove all the buttons
         var transportBarCommands = mediaPlayer.commands;
         for (var i = transportBarCommands.length - 1; i >= 0; i--) {
-            command = transportBarCommands.pop();
-            command.element.parentNode.removeChild(command.element);
+           command = transportBarCommands.shift();
         }
 
         try {
@@ -293,6 +310,7 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenShowControlsThenControlsVisibleIsTrue = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer._skipAnimations = true;
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement.src = "notnullstring";
             mediaPlayer.addEventListener("aftershowcontrols", function aftershowcontrols() {
@@ -307,6 +325,7 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenHideControlsThenControlsVisibleIsFalse = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer._skipAnimations = true;
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement.src = "notnullstring";
             mediaPlayer.addEventListener("aftershowcontrols", function aftershowcontrols() {
@@ -332,6 +351,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenEndTimeNotSetThenEndTimeIsDuration = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
             mediaElement.src = "notnullstring";
@@ -346,6 +366,7 @@ var CorsicaTests;
         };
         MediaPlayerTests.prototype.testWhenSetEndTimeThenCachedTotalTimeGetsUpdated = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
             mediaElement.src = "notnullstring";
@@ -452,13 +473,13 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenSetFullScreenToTrueThenToggleFullScreenIconUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.fullScreen = true;
-            LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.backtowindow, mediaPlayer.element.querySelector(".win-mediaplayer-fullscreenbutton").winControl.icon, "fullscreen toggle button icon is incorrect.");
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.backtowindow, mediaPlayer._toolbar.getCommandById("win-mediaplayer-fullscreen").icon, "fullscreen toggle button icon is incorrect.");
             safeDispose(mediaPlayer);
         };
         MediaPlayerTests.prototype.testWhenSetFullScreenToFalseThenToggleFullScreenIconUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.fullScreen = false;
-            LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.fullscreen, mediaPlayer.element.querySelector(".win-mediaplayer-fullscreenbutton").winControl.icon, "fullscreen toggle button icon is incorrect.");
+            LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.fullscreen, mediaPlayer._toolbar.getCommandById("win-mediaplayer-fullscreen").icon, "fullscreen toggle button icon is incorrect.");
             safeDispose(mediaPlayer);
         };
 
@@ -489,9 +510,10 @@ var CorsicaTests;
         // markers
         MediaPlayerTests.prototype.testWhenAddMarkerThenMarkersContainsNewMarkerAndNewMarkerPropertiesAreCorrect = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var newMarkerTime = 15;
-            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MarkerType.chapter, "Hello World!", "win-displaynone");
+            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Hello World!", "win-displaynone");
 
             // Search for the marker we just added
             var markers = mediaPlayer._markers;
@@ -500,7 +522,7 @@ var CorsicaTests;
                 if (markers[i].time === newMarkerTime) {
                     foundMarker = true;
                     LiveUnit.Assert.areEqual(newMarkerTime, markers[i].time, "The marker time did not match.");
-                    LiveUnit.Assert.areEqual(WinJS.UI.MarkerType.chapter, markers[i].type, "The marker type did not match.");
+                    LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.MarkerType.chapter, markers[i].type, "The marker type did not match.");
                     LiveUnit.Assert.areEqual("Hello World!", markers[i].data, "The marker data field did not match.");
                     LiveUnit.Assert.areEqual("win-displaynone", markers[i].extraClass, "The marker extraClass field did not match.");
                 }
@@ -514,9 +536,10 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndTypeIsChapterAndExtraClassIsNotSpecifiedThenMarkersContainsNewMarkerAndExtraClassIsDefaultChapterMarkerExtraClass = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var newMarkerTime = 15;
-            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MarkerType.chapter, "Hello World!");
+            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Hello World!");
             var markers = mediaPlayer._markers;
             var foundMarker = false;
 
@@ -535,19 +558,21 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkerAt1SecondWhenAddNewMarkerAt1SecondThenMarkersContainTheNewMarkerAndTheOldOneIsOverriden = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
-            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, "Marker 1");
-            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, "Marker 2");
+            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, "Marker 1");
+            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, "Marker 2");
             LiveUnit.Assert.areNotEqual(2, mediaPlayer._markers.length, "The old marker did not get removed.");
             LiveUnit.Assert.areEqual("Marker 2", mediaPlayer._markers[0].data, "The old marker was not overriden.");
         };
 
         MediaPlayerTests.prototype.testGivenValidMarkerAtPoint5SecondsWhenCurrentTimeReachesPoint5SecondsThenMarkerReachedContainsCorrectProperties = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0.5;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -571,10 +596,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMarkerAt1SecondWhenCurrentTimeReaches1SecondThenMarkerReachedEventFires = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 1;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -598,10 +624,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMarkerAt0SecondsWhenCurrentTimeReaches0SecondsThenMarkerReachedEventFires = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -625,12 +652,13 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMarkerAtEndOfVideoWhenCurrentTimeReachesEndOfVideoThenMarkerReachedEventFires = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
 
             var expectedTime = mockMediaElement.duration;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -653,10 +681,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMarkerAtPoint7SecondsWhenMarkerIsRemovedAndCurrentTimeReachesPoint7SecondsThenMarkerreachedEventDoesNotFire = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0.7;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -676,8 +705,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkerWhenRemoveMarkerThenMarkersDoesNotContainRemovedMarker = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
-            mediaPlayer.addMarker(11, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(11, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             var markers = mediaPlayer._markers;
             mediaPlayer.removeMarker(11);
             var markers = mediaPlayer._markers;
@@ -696,10 +726,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.GivenNoSrcSetWhenAddMarkerThenDoesNotThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(12, WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker(12, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -712,11 +743,12 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenaddMarkerAndTimeIsNotANumberThenThrowsAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
 
             var threwException = false;
             try {
-                mediaPlayer.addMarker("foo", WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker("foo", WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -729,10 +761,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerWithNegativeTimeFieldThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(-1, WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker(-1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -744,10 +777,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndTimeIsGreaterThanEndTimeThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(mediaPlayer.endTime + 10, WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker(mediaPlayer.endTime + 10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -760,10 +794,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndTimeIsLessThanStartTimeThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(mediaPlayer.startTime - 10, WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker(mediaPlayer.startTime - 10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -777,10 +812,11 @@ var CorsicaTests;
         // Add two markers at the same time & it's fine
         MediaPlayerTests.prototype.testWhenAddMarkerAndTimeIsNullThenThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(null, WinJS.UI.MarkerType.chapter, {});
+                mediaPlayer.addMarker(null, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -793,6 +829,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndTypeIsNotValidEnumThenThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
@@ -809,6 +846,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndTypeIsNullThenDoesNotThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
@@ -825,14 +863,16 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerAndtypeIsNotspecifiedThenDefaultsToChapter = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             mediaPlayer.addMarker(12);
-            LiveUnit.Assert.areEqual(WinJS.UI.MarkerType.chapter, mediaPlayer.markers[0].type);
+            LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.MarkerType.chapter, mediaPlayer.markers[0].type);
             safeDispose(mediaPlayer);
         };
 
         MediaPlayerTests.prototype.testWhenremoveMarker_called_on_non_existant_markerThenDoesNotThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
@@ -852,7 +892,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = document.createElement("video");
             var threwException = false;
             try {
-                mediaPlayer.addMarker(12, WinJS.UI.MarkerType.chapter, {}, null);
+                mediaPlayer.addMarker(12, WinJS.UI.MediaPlayer.MarkerType.chapter, {}, null);
             } catch (exception) {
                 threwException = true;
             }
@@ -873,12 +913,13 @@ var CorsicaTests;
             var marker3Reached = false;
 
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
 
             var expectedTime = mockMediaElement.duration;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -922,10 +963,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkerWhenSeekPastMarkerThenMarkerreachedEventDoesNotFire = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 1;
-            var expectedType = WinJS.UI.MarkerType.chapter;
+            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -945,6 +987,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkerWhenSeekToVeryCloseBeforeTheMarkerThenMarkerreachedEventFires = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 1;
@@ -965,6 +1008,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkerWhenSeekVeryCloseBeforeMarkerThenMarkerreachedEventFires = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             var expectedTime = 1;
@@ -983,6 +1027,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenVideoEmptiedEventThenoldMarkersAreRemoved = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
 
             mediaPlayer.addMarker(1);
@@ -998,12 +1043,13 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkersButMediaNotLoadedWhenMediaElementAdapterChangesThenOldMarkersNotRemoved = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
 
-            mediaPlayer.addMarker(0, WinJS.UI.MarkerType.chapter, {});
-            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, {});
-            mediaPlayer.addMarker(2, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(0, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(2, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             mediaPlayer.mediaElementAdapter = {};
             LiveUnit.Assert.isTrue(mediaPlayer.markers.length > 0);
             safeDispose(mediaPlayer);
@@ -1011,6 +1057,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenDefaultChapterMarkersWhenCurrentTimePassesDefaultMarkerThenMarkerreachedEventDoesNotFire = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.addEventListener("markerreached", function markerReached(ev) {
                 mediaPlayer.removeEventListener("markerreached", markerReached);
@@ -1018,6 +1065,8 @@ var CorsicaTests;
             }, false);
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
             mediaPlayer.endTime = mediaPlayer._MINIMUM_MEDIA_LENGTH_FOR_DEFAULT_MARKERS + 1;
             mockMediaElement.src = "notnullstring";
             mockMediaElement.currentTime = mediaPlayer._defaultChapterMarkers[0].time;
@@ -1027,18 +1076,20 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenDefaultChapterMarkersWhenChapterMarkerAddedThenDefaultChapterMarkersAreCleared = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
             mediaPlayer.endTime = mediaPlayer._MINIMUM_MEDIA_LENGTH_FOR_DEFAULT_MARKERS + 1;
             mockMediaElement.src = "notnullstring";
-            mediaPlayer.addMarker(10, WinJS.UI.MarkerType.chapter);
+            mediaPlayer.addMarker(10, WinJS.UI.MediaPlayer.MarkerType.chapter);
             LiveUnit.Assert.isFalse(mediaPlayer._defaultChapterMarkers.length);
             safeDispose(mediaPlayer);
         };
 
         MediaPlayerTests.prototype.testGivenMediaUnder1MinuteWhenvideoIsLoadedThenDefaultChapterMarkersAreNotAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -1050,10 +1101,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenAddMarkerCalledAndMarkersAreInsertedOutOfOrderThenMarkersArrayIsSorted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
-            mediaPlayer.addMarker(20, WinJS.UI.MarkerType.chapter, {});
-            mediaPlayer.addMarker(10, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(20, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             var markers = mediaPlayer._markers;
             LiveUnit.Assert.areEqual(markers[0].time, 10, "The markers array was not sorted properly.");
             LiveUnit.Assert.areEqual(markers[1].time, 20, "The markers array was not sorted properly.");
@@ -1062,6 +1114,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGiven3MarkersWithin200MilisecondsWhenCurrentTimeIsCloseToMarkersTheAllMarkerreachedEventsFire = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
 
@@ -1104,6 +1157,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenMediaLoadedThenMarkersAreGone = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -1123,6 +1177,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNoMarkerAtTheSpecifiedTimeWhenRemoveMarkerAndNoMarkerIsRemovedThenNoExceptionIsThrown = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             var wasExceptionThrown = false;
             try {
@@ -1137,9 +1192,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenSetMarkersWithValidMarkersCollectionThenMarkersAreAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             var myMarkers = [
-                { time: 1, type: WinJS.UI.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
-                { time: 3, type: WinJS.UI.MarkerType.advertsing, data: {} }
+                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
+                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.advertsing, data: {} }
             ];
             mediaPlayer.markers = myMarkers;
             LiveUnit.Assert.isTrue(compareArrays(myMarkers, mediaPlayer.markers), "MediaPlayer.markers does not contain the same values we added to it.");
@@ -1152,8 +1207,8 @@ var CorsicaTests;
 
             var myMarkers = [
                 { invalidFieldName: "invalid" },
-                { bar: 1, foo: WinJS.UI.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MarkerType.custom }
+                { bar: 1, foo: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom }
             ];
 
             try {
@@ -1182,9 +1237,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenSetMarkersWithEmptyArrayThenPreviousMarkersAreCleared = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.markers = [
-                { time: 1, type: WinJS.UI.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
-                { time: 3, type: WinJS.UI.MarkerType.advertsing, data: {} }
+                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
+                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.advertsing, data: {} }
             ];
             var myMarkers = [];
             mediaPlayer.markers = myMarkers;
@@ -1207,9 +1262,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenSetMarkersAnUnsortedMarkerCollectionThenMarkersAreSorted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             var myUnsortedMarkers = [
-                { time: 3, type: WinJS.UI.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
-                { time: 1, type: WinJS.UI.MarkerType.advertisement, data: {} }
+                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
+                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.advertisement, data: {} }
             ];
             var mySortedMarkers = myUnsortedMarkers.sort(function (first, next) {
                 return first.time - next.time;
@@ -1221,7 +1276,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenSetMarkersThenOldMarkersAreRemoved = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             mediaPlayer.markers = [];
             LiveUnit.Assert.areEqual(0, mediaPlayer.markers.length, "The old markers were not removed.");
             safeDispose(mediaPlayer);
@@ -1229,12 +1284,13 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMarkersArrayIsSetWhenVideoLoadedThenMarkersArrayIsPersisted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             var markers = [
-                { time: 3, type: WinJS.UI.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
-                { time: 1, type: WinJS.UI.MarkerType.advertisement, data: {} }
+                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
+                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.advertisement, data: {} }
             ];
             mediaPlayer.markers = markers;
             mockMediaElement.autoplay = true;
@@ -1280,6 +1336,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenVideoTagWithLoopAndEndTimeSetWhenCurrentTimeReachesEndTimeThenVideoStartsPlayingFromTheBeginning = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.loop = true;
@@ -1296,6 +1353,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenVideoTagWithAutoplayAndStartTimeSetWhenVideoIsloadedThenVideoStartsPlaying = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -1339,13 +1397,14 @@ var CorsicaTests;
         // Chapter skip tests
         MediaPlayerTests.prototype.testGiveninTheMiddleOfTheMediaWhenChapterSkipForwardThenCurrentTimeIsAtTheNextChapter = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
             mockMediaElement.duration = 60;
             mockMediaElement.currentTime = mockMediaElement.duration / 2;
             var nextMarkerTime = mediaPlayer.mediaElementAdapter.mediaElement.duration * 0.6;
-            mediaPlayer.addMarker(nextMarkerTime, WinJS.UI.MarkerType.chapter, "Next chapter");
+            mediaPlayer.addMarker(nextMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Next chapter");
             mediaPlayer.chapterSkipForward();
             LiveUnit.Assert.areEqual(nextMarkerTime, mockMediaElement.currentTime);
             safeDispose(mediaPlayer);
@@ -1353,6 +1412,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenLessThanOneChapterFromTheEndWhenChapterSkipForwardThenPositionIsAtTheEndOfTheVideo = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1365,6 +1425,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAtTheEndWhenChapterSkipForwardThenPositionIsAtTheEnd = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1377,6 +1438,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenOnlySlightlyPastAnExistingMarkerWhenChapterSkipBackThenPositionJumpsBackTwoMarkersInsteadOfOne = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1391,6 +1453,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenInTheMiddleWhenChapterSkipBackThenPositionIsAtThePreviousChapter = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterBackwardForwardButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1406,6 +1471,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenLessThanOneChapterFromTheBeginningWhenChapterSkipBackThenIsAtTheBeginningOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1420,6 +1486,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAtTheBeginningWhenChapterSkipBackThenPositionIsAtTheBeginning = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1433,6 +1500,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenOnlySlightlyBeforeAnExistingMarkerWhenChapterSkipForwardThenPositionJumpsForwardTwoMarkersInsteadOfOne = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1448,6 +1518,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMediaWithNoChapterMarkersWhenMediaPlayerIsinitializedThenCorrectNumberOfDefaultMarkersAreAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 3;
@@ -1459,6 +1532,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenTextTrackWhereKindIsChaptersWhenInitializedThenDeafultChapterMarkersAreNotAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.textTracks = [{
                 id: "control1",
@@ -1477,6 +1551,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGiventextTrackWhereKindIsNotChaptersWhenInitializedThenChapterMarkersAreNotAddedForThatTextTrack = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.textTracks = [{
                 id: "control1",
@@ -1495,6 +1570,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAMarkerPastTheEndTimeWhenMediaPlayerIsInitializedThenTheMarkerIsAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.endTime = 10;
@@ -1505,6 +1581,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAtartTimeIsSetWhenMediaPlayerMarkerAddedBeforeStartTimeThenTheMarkerIsAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.startTime = 10;
@@ -1515,8 +1592,11 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenOnTheFirstChapterMarkerWhenChapterSkipBackThenCurrentTimeDdoesNotChange = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             mockMediaElement.duration = 90;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
@@ -1529,6 +1609,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenOnTheFirstChapterMarkerWhenChapterSkipBackThenCurrentTimeDoesNotChange = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -1543,6 +1626,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenOnTheLastChapterMarkerWhenChapterSkipForwardThenCurrentTimeDoesNotChange = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -1557,6 +1643,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeAndEndTimeSetSuchThatTotalTimeIsLessThanMinimumTimeForChaptermarkersWhenMediaPlayerIsinitializedThenNoDefaultMarkersAreAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -1570,6 +1657,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNoChaptermarkersWhenMediaPlayerChapterSkipForwardThenCurrentTimeIsTheEndOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -1581,6 +1669,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNoChaptermarkersWhenMediaPlayerChapterSkipBackThenCurrentTimeIsTheBeginningOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -1594,6 +1683,7 @@ var CorsicaTests;
         // hideControls events
         MediaPlayerTests.prototype.testGivenControlsVisibleWhenVideControlsThenTheAfterHideControlsEventFiresAndControlsAreHidden = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1610,6 +1700,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenControlsVisibleWhenBeforeHideControlsEventFiresAndPreventDefaultThenAndControlsAreVisible = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1628,6 +1719,7 @@ var CorsicaTests;
         // showControls events
         MediaPlayerTests.prototype.testGivenControlsHiddenWhenBeforeShowcontrolsEventFiresAndPreventDefaultThenAndControlsAreHidden = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1644,6 +1736,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenControlsHiddenWhenShowControlsThenAfterShowcontrolsEventFiresAndControlsAreVisible = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1659,6 +1752,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenControlsHiddenWhenHideControlsThenBeforehidecontrolsEventDoesNotFire = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1673,6 +1767,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenControlsVisibleWhenShowControlsThenBeforeshowcontrolsEventDoesNotFire = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1688,6 +1783,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenControlsHiddenWhenShowControlsThenTheAfterShowcontrolsEventFiresAndcontrolsArevisible = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1702,39 +1798,40 @@ var CorsicaTests;
         };
 
         MediaPlayerTests.prototype.testWhenChapterSkipBackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.chapterSkipBack, "chapterSkipBack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.chapterSkipBack, "chapterSkipBack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenChapterSkipForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.chapterSkipForward, "chapterSkipForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.chapterSkipForward, "chapterSkipForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenFastForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.fastForward, "fastForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.fastForward, "fastForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenNextTrackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.nextTrack, "nextTrack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.nextTrack, "nextTrack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPreviousTrackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.previousTrack, "previousTrack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.previousTrack, "previousTrack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPlayThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.play, "play", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.play, "play", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPauseThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.pause, "pause", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.pause, "pause", complete);
         };
 
         MediaPlayerTests.prototype.testWhenRewindThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.rewind, "rewind", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.rewind, "rewind", complete);
         };
 
         MediaPlayerTests.prototype.testWhenSeekThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -1748,39 +1845,39 @@ var CorsicaTests;
         };
 
         MediaPlayerTests.prototype.testWhenTimeSkipBackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.timeSkipBack, "timeSkipBack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.timeSkipBack, "timeSkipBack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenTimeSkipForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.timeSkipForward, "timeSkipForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.timeSkipForward, "timeSkipForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenAudioTracksThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.audioTracks, "_onAudioTracksCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.audioTracks, "_onAudioTracksCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenCastThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
             if (WinJS.Utilities.hasWinRT) {
-                runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.cast, "_onCastCommandInvoked", complete);
+                runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.cast, "_onCastCommandInvoked", complete);
             } else {
                 complete();
             }
         };
 
         MediaPlayerTests.prototype.testWhenClosedCaptionsThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.closedCaptions, "_onClosedCaptionsCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.closedCaptions, "_onClosedCaptionsCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPlaybackRateThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.playbackRate, "_onPlaybackRateCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.playbackRate, "_onPlaybackRateCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenVolumeThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.volume, "_onVolumeCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.volume, "_onVolumeCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenZoomThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.zoom, "_onZoomCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.zoom, "_onZoomCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testGivenPausedAndIsPlayAllowedIsTrueWhenPlayThenMediaIsPlaying = function (complete) {
@@ -1861,6 +1958,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNullMediaElementWhenSeekThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.mediaElementAdapter.mediaElement = null;
@@ -1911,6 +2009,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNewMediaElementWhenSeekThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             try {
@@ -1959,6 +2058,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMediaElementSrcIsNullWhenSeekThenDoesNotThrowsAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = null;
@@ -2001,6 +2101,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMediaElementWhenSrcSetToNewSrcThenEndTimeIsUpdated = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.duration = 10;
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2011,6 +2112,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMediaElementWithMetadataAlreadyLoadedWhenSetMediaPlayerMediaElementThenStartTimeAndEndTimeAreCorrectlyUpdated = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement1 = new Test.MockMediaElement();
             mockMediaElement1.initialTime = 1;
             mockMediaElement1.duration = 2;
@@ -2028,6 +2130,7 @@ var CorsicaTests;
         // Playback tests
         MediaPlayerTests.prototype.testGivenMediaPlayerPlayingWhenPauseThenPlaybackRateIsPaused = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
@@ -2039,6 +2142,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenMediaPlayerPausedWhenPlayThenPlaybackRateIsPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.src = "notnull";
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2181,6 +2285,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenFastforwardWhenPauseThenPause = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.src = "notnull";
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2192,6 +2297,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindWhenPauseThenPause = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.src = "notnull";
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2251,6 +2357,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenFastforwardWhenFastForwardingThenControlsRemainVisible = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.src = "notnull";
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2262,6 +2369,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindWhenRewindingThenControlsRemainVisible = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.src = "notnull";
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
@@ -2357,21 +2465,22 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPausedWhenPlaybackRateIsincreasedToGreaterThanTheDefaultPlaybackRateOnTheVideoTagThenPlaypauseToggleIsPlayIcon = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
             mockMediaElement.playbackRate = 2;
-            LiveUnit.Assert.areEqual(mediaPlayer.element.querySelector(".win-mediaplayer-playpausebutton").winControl.icon, WinJS.UI.AppBarIcon.play);
+            LiveUnit.Assert.areEqual(mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").icon, WinJS.UI.AppBarIcon.play);
             safeDispose(mediaPlayer);
         };
 
         MediaPlayerTests.prototype.testWhenSetLayoutToFullThenLayoutIsFull = function () {
-            runSetMediaPlayerPropertyCase("layout", WinJS.UI.Layout.full, false);
+            runSetMediaPlayerPropertyCase("layout", WinJS.UI.MediaPlayer.Layout.full, false);
         };
 
         MediaPlayerTests.prototype.testWhenSetLayoutTopartialThenLayoutIsPartial = function () {
-            runSetMediaPlayerPropertyCase("layout", WinJS.UI.Layout.partial, false);
+            runSetMediaPlayerPropertyCase("layout", WinJS.UI.MediaPlayer.Layout.partial, false);
         };
 
         MediaPlayerTests.prototype.testWhenSetLayoutToInvalidValueThenThrowsAnException = function () {
@@ -2384,6 +2493,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToBeginningThenCurrentTimeIsZero = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2394,6 +2504,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToEndThenCurrentTimeIsEqualToDuration = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2405,6 +2516,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToMiddleThenCurrentTimeIsEqualHalfOfDuration = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2416,6 +2528,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToFractionalValueThenSeekIsSuccessful = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2427,6 +2540,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToNegativeTimeThenCurrentTimeIsEqualToZero = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2437,6 +2551,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToPastTheEndOfTheMediaThenCurrentTimeIsEqualToTheMediaDuration = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2448,6 +2563,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenInvalidParameterPassedToSeekThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
 
@@ -2461,6 +2577,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenNullPassedToSeekThenDoesNotThrowAnException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
 
@@ -2474,6 +2591,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPausedWhenSeekThenPaused = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2484,6 +2602,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPlayingWhenSeekThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2495,6 +2614,7 @@ var CorsicaTests;
         };
         MediaPlayerTests.prototype.testGivenFastforwardingWhenSeekThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2508,6 +2628,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindingWhenSeekThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2521,6 +2642,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToBeforeStartTimeThenCurrentTimeIsStartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2534,6 +2656,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSeekToAfterEndTimeThenCurrentTimeIsEndTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2619,6 +2742,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenTimeSkipBackThenCurrentTimeAtThestartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2633,6 +2757,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAtTheEndOfTheMediaWhenTimeSkipForwardThenCurrentTimeIsTheEndOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2647,13 +2772,14 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetAndFirstChaptermarkerIsBeforeTheStartTimeWhenChapterSkipBackThenDoesNotskipToTheMarkerBeforeTheStartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
             mediaPlayer.startTime = 5;
-            mediaPlayer.addMarker(mediaPlayer.startTime - 1, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(mediaPlayer.startTime - 1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             mediaPlayer.currentTime = mediaPlayer.startTime;
             mediaPlayer.chapterSkipBack();
             LiveUnit.Assert.areEqual(mediaPlayer.startTime, mockMediaElement.currentTime);
@@ -2662,13 +2788,14 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenEndTimeIsSetAndLastChapterMarkerIsafterTheEndTimeWhenChapterSkipForwardThenDoesNotskipToTheMarkerPastTheEndTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
             mediaPlayer.endTime = 5;
-            mediaPlayer.addMarker(mediaPlayer.endTime + 1, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(mediaPlayer.endTime + 1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
             mediaPlayer.currentTime = mediaPlayer.endTime;
             mediaPlayer.chapterSkipForward();
             LiveUnit.Assert.areEqual(mediaPlayer.endTime, mockMediaElement.currentTime);
@@ -2677,6 +2804,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenEndTimeIsSetWhenAttmeptToFastForwardPastTheEndTimeThenDoesNotFastForwardPastEndTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2694,6 +2822,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenAttmeptToRewindBeforeTheStartTimeThenDoesNotRewindBeforeStartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2711,6 +2840,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenDefaultChapterMarkersWhenStartTimeIsSetThenFirstDefaultChapterMarkerIsNowAtTheStartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -2723,6 +2855,9 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenDefaultChapterMarkersWhenEndTimeIsSetThenLastDefaultChapterMarkerIsNowAtTheEndTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
+            mediaPlayer.chapterSkipForwardButtonVisible = true;
+            mediaPlayer.chapterSkipBackButtonVisible = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -2735,6 +2870,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.test_GIVENTotalVideoDurationLongEnoughForDefaultChaptermarkersWhenEndTimeSetSoDurationIsTooShortThenNodefaultChapterMarkers = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 90;
@@ -2747,6 +2883,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenMediaCurrentTimeIsSetToBeforeStartTimeThenCurrentTimeIsStartTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2760,6 +2897,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenEndTimeIsSetWhenMediaCurrentTimeIsSetToAfterEndTimeThenCurrentTimeIsEndTime = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2773,6 +2911,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenhideControlsThenStillSubscribedToTimeupdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2797,6 +2936,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenVideoLoadedThenStartTimeIsPersisted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2809,6 +2949,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenEndTimeIsSetWhenvideoLoadedThenendTimeIsPersisted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2821,6 +2962,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenStartTimeIsSetWhenMediaElementSourceChangesTheNoldstartTimeIscleared = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2834,6 +2976,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenEndTimeIsSetWhenMediaElementSourceChangesThenOldEndTimeIsCleared = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2847,6 +2990,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenFastforwardingWhenTimePassesThenTargetCurrentTimeUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2864,6 +3008,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindingWhenTimePassesThenTargetCurrentTimeUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2881,6 +3026,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenNullTimeFormatterFunctionWhenShowControlsThenTimeFormatterFunctionIsNotnull = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.timeFormatter = null;
@@ -2894,6 +3040,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenValidTimeFormatterFunctionWhenShowControlsThenDoesNotThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.timeFormatter = function (time) { return "Custom Text." };
@@ -2908,6 +3055,7 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testGiventTimeFormatterThatIsNotAFunctionWhenShowControlsThenThrowsAnException = function () {
             var wasExceptionThrown = false;
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.timeFormatter = 1;
@@ -2932,6 +3080,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenTimeSkipForwardThenCurrentTimeIsIncremented = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -2944,6 +3093,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenTimeSkipBackThenCurrentTimeIsDecremented = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2957,6 +3107,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenCurrentTimeIslessThan30SecondsFromTheEndWhenTimeSkipForwardThenCurrentTimeIsAtTheEndOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2969,6 +3120,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenCurrentTimeIsLessThanTheskipBackAmountFromTheBeginningWhenTimeSkipBackThenCurrentTimeIsAtBeginningOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -2980,6 +3132,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPlayingWhenTimeSkipBackThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -2991,6 +3144,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPausedWhenTimeSkipBackThenPaused = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -3001,6 +3155,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenFastforwardingWhenTimeSkipBackThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -3013,6 +3168,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindingWhenTimeSkipBackThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -3025,6 +3181,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPlayingWhenTimeSkipForwardThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -3036,6 +3193,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenPausedWhenTimeSkipForwardThenPaused = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.src = "notnull";
@@ -3046,6 +3204,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenFastforwardingWhenTimeSkipForwardThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -3058,6 +3217,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenRewindingWhenTimeSkipForwardThenPlaying = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.autoplay = true;
@@ -3070,6 +3230,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenAtTheBeginningOfTheMediaWhenTimeSkipBackThenCurrentTimeIstheBeginningOfTheMedia = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.readyState = 4;
@@ -3087,71 +3248,67 @@ var CorsicaTests;
         };
 
         MediaPlayerTests.prototype.testWhenGetPlayfrombeginningbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-playfrombeginningbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-playfrombeginning");
         };
 
         MediaPlayerTests.prototype.testWhenGetChapterskipbackbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-chapterskipbackbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-chapterskipback");
         };
 
         MediaPlayerTests.prototype.testWhenGetRewindbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-rewindbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-rewind");
         };
 
         MediaPlayerTests.prototype.testWhenGetTimeskipbackbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-timeskipbackbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-timeskipback");
         };
 
         MediaPlayerTests.prototype.testWhenGetPlaypausebuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-playpausebutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-playpause");
         };
 
         MediaPlayerTests.prototype.testWhenGetTimeSkipforwardbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-timeskipforwardbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-timeskipforward");
         };
 
         MediaPlayerTests.prototype.testWhenGetFastforwardbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-fastforwardbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-fastforward");
         };
 
         MediaPlayerTests.prototype.testWhenGetChapterskipforwardbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-chapterskipforwardbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-chapterskipforward");
         };
 
         MediaPlayerTests.prototype.testWhenGetZoombuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-zoombutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-zoom");
         };
 
         MediaPlayerTests.prototype.testWhenGetLivebuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-livebutton");
-        };
-
-        MediaPlayerTests.prototype.testWhenGetZoombuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-zoombutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-live");
         };
 
         MediaPlayerTests.prototype.testWhenGetPlayonremotedevicebuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-playonremotedevicebutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-playonremotedevice");
         };
 
         MediaPlayerTests.prototype.testWhenGetClosedcaptionsbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-closedcaptionsbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-closedcaptions");
         };
 
         MediaPlayerTests.prototype.testWhenGetVolumebuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-volumebutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-volume");
         };
 
         MediaPlayerTests.prototype.testWhenGetAudiotracksbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-audiotracksbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-audiotracks");
         };
 
         MediaPlayerTests.prototype.testWhenGetFullscreenbuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-fullscreenbutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-fullscreen");
         };
 
         MediaPlayerTests.prototype.testWhenGetPlaybackratebuttonElementByClassNameThenReturnsTheElement = function () {
-            runGetButtonBySelectorTestCase(".win-mediaplayer-playbackratebutton");
+            runGetControlBySelectorTestCase("win-mediaplayer-playbackrate");
         };
 
         MediaPlayerTests.prototype.testGivenNoTransportBarButttonsWhenAddMarkerThenDoesNotThrowAnException = function () {
@@ -3213,6 +3370,7 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenWindowResizeThenDoesNotThrowException = function () {
             var wasExceptionThrown = false;
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             try {
                 mediaPlayer._windowResizeCallback();
@@ -3231,6 +3389,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenWinjsWhenMediaPlayerIsInstantiatedProgramaticallyWithVideoWithValidSourceThenDefaultValuesForMediaPlayerPropertiesAreCorrect = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var video = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = video;
             video.src = "http://lizard.dns.microsoft.com/WMV/Halo4TrailerSmall.wmv";
@@ -3257,7 +3416,7 @@ var CorsicaTests;
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "MediaPlayer.mediaElementAdapter was null.");
             LiveUnit.Assert.areEqual(true, mediaPlayer.thumbnailEnabled, "mediaPlayer.thumbnailEnabled was not 'true'.");
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "mediaPlayer.mediaElementAdapter was null.");
-            LiveUnit.Assert.areEqual(WinJS.UI.Layout.full, mediaPlayer.layout, "mediaPlayer.layout was not 'WinJS.UI.Layout.full'.");
+            LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.Layout.full, mediaPlayer.layout, "mediaPlayer.layout was not 'WinJS.UI.MediaPlayer.Layout.full'.");
             LiveUnit.Assert.areEqual(0, mediaPlayer.startTime, "mediaPlayer.startTime was not 0.");
             LiveUnit.Assert.areEqual(0, mediaPlayer.startTime, "mediaPlayer.startTime was not 0.");
             LiveUnit.Assert.isNotNull(mediaPlayer.timeFormatter, "mediaPlayer.timeFormatter was was null.");
@@ -3321,6 +3480,7 @@ var CorsicaTests;
         // Thumbnail events
         MediaPlayerTests.prototype.testGivenWinJSWhenFastFowardingAndThumbnailEnabledThenRaiseThumbnailrequestEvent = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3338,6 +3498,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenWinJSWhenRewindingAndthumbnailEnabledThenRaiseThumbnailrequestEvent = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3354,6 +3515,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenWinJSWhenFastFowardingAndnotThumbnailEnabledThenNothumbnailrequestEvent = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3371,6 +3533,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenWinJSWhenRewindingAndNotThumbnailEnabledThenNoThumbnailrequestEvent = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3389,6 +3552,7 @@ var CorsicaTests;
         // targetratechange event
         MediaPlayerTests.prototype.testGivenWinJSWhenFastForwardThenTargetratechangedEvent = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3406,6 +3570,7 @@ var CorsicaTests;
         // targettimeupdate event
         MediaPlayerTests.prototype.testGivenWinJSWhenFastForwardThenTargettimeupdateEvent = function (complete) {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mockMediaElement.duration = 10;
@@ -3423,6 +3588,7 @@ var CorsicaTests;
         // Regression test cases - all the following test cases are based on real bugs found in production
         MediaPlayerTests.prototype.testWhenSrcSetToNullThenStartTimeAndEndTimeUpdate = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.autoplay = true;
             mockMediaElement.duration = 10;
@@ -3438,17 +3604,19 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenSetButtonsToDisabledAndSrcSetThenDisabledButtonStatePreserved = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mockMediaElement.autoplay = true;
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
-            mediaPlayer.element.querySelector(".win-mediaplayer-playpausebutton").disabled = true;
+            mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").disabled = true;
             mockMediaElement.src = "notnull";
-            LiveUnit.Assert.isTrue(mediaPlayer.element.querySelector(".win-mediaplayer-playpausebutton").disabled);
+            LiveUnit.Assert.isTrue(mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").disabled);
             safeDispose(mediaPlayer);
         };
 
         MediaPlayerTests.prototype.testWhenFocusInOverlayAndSpaceOrGamepadAThenControlsDontShowControls = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             var overlay = document.createElement("button");
             mockMediaElement.autoplay = true;
@@ -3466,6 +3634,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testWhenaddMarkerWithTimeZeroThenDoesNotThrowException = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
+            mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             try {
@@ -3482,16 +3651,6 @@ var CorsicaTests;
                 mediaPlayer.setContentMetadata({}, {});
             } catch (ex) {
                 LiveUnit.Assert.fail("Calling setContentMetadata with null should not throw an exception.");
-            }
-            safeDispose(mediaPlayer);
-        };
-
-        MediaPlayerTests.prototype.testWhenSuspendThenDoesNotThrowException = function () {
-            var mediaPlayer = new WinJS.UI.MediaPlayer();
-            try {
-                mediaPlayer._handleCheckpointCallback();
-            } catch (ex) {
-                LiveUnit.Assert.fail("Suspending the MediaPlayer should not throw an exception.");
             }
             safeDispose(mediaPlayer);
         };

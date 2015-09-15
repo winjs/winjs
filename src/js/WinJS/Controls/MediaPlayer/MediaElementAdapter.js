@@ -265,8 +265,7 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
                 throw new _ErrorFromName("WinJS.UI.MediaElementAdapter.nullParameter", strings.mediaElementAdapterConstructorNullParameter);
             }
 
-            if (utilities.hasWinRT &&
-                _WinRT.Windows.Media.SystemMediaTransportControls) {
+            if (_WinRT.Windows.Media.SystemMediaTransportControls) {
                 this._smtControls = _WinRT.Windows.Media.SystemMediaTransportControls.getForCurrentView();
             }
 

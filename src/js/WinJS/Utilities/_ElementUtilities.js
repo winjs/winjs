@@ -16,7 +16,8 @@ define([
     }
 
     var _zoomToDuration = 167;
-
+    var _noOpListener = { addEventListener: function () { }, removeEventListener: function () { } };
+    
     // Firefox's implementation of getComputedStyle returns null when called within
     // an iframe that is display:none. This is a bug: https://bugzilla.mozilla.org/show_bug.cgi?id=548397
     // _getComputedStyle is a helper which is guaranteed to return an object whose keys
@@ -812,7 +813,6 @@ define([
         },
         {
             addEventListener: function GenericListener_addEventListener(element, name, listener, capture) {
-                name = name.toLowerCase();
                 var handlers = this._getHandlers(capture);
                 var handler = handlers[name];
 
@@ -833,7 +833,6 @@ define([
                 addClass(element, this._getClassName(name, capture));
             },
             removeEventListener: function GenericListener_removeEventListener(element, name, listener, capture) {
-                name = name.toLowerCase();
                 var handlers = this._getHandlers(capture);
                 var handler = handlers[name];
 
@@ -1279,10 +1278,16 @@ define([
 
         _GenericListener: GenericListener,
         _globalListener: new GenericListener("Global", _Global, { registerThruWinJSCustomEvents: true }),
-        _documentElementListener: new GenericListener("DocumentElement", _Global.document.documentElement, { registerThruWinJSCustomEvents: true }),
+        _documentListener: new GenericListener("Document", _Global.document, { registerThruWinJSCustomEvents: true }),
         _inputPaneListener: _WinRT.Windows.UI.ViewManagement.InputPane ?
             new GenericListener("InputPane", _WinRT.Windows.UI.ViewManagement.InputPane.getForCurrentView()) :
-            { addEventListener: function () { }, removeEventListener: function () { } },
+            _noOpListener,
+        _webUIApplicationListener: _WinRT.Windows.UI.WebUI.WebUIApplication ?
+            new GenericListener("WebUIApplication", _WinRT.Windows.UI.WebUI.WebUIApplication) :
+            _noOpListener,
+        _smtcListener: _WinRT.Windows.Media.SystemMediaTransportControls ?
+            new GenericListener("SystemMediaTransportControls", _WinRT.Windows.Media.SystemMediaTransportControls.getForCurrentView()) :
+            _noOpListener,
 
         // Appends a hidden child to the given element that will listen for being added
         // to the DOM. When the hidden element is added to the DOM, it will dispatch a
