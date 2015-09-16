@@ -77,16 +77,8 @@ module WinJSTests {
         };
     }
 
-    //function ensureResize() {
-    //    if (!canElementResize) {
-    //        WinJS.Utilities._resizeNotifier._handleResize();
-    //    }
-    //}
-
     var testRootEl;
     var defaultChunkSize, defaultMaxTime, defaultPagesToPrefetch;
-
-    //var canElementResize = null;
 
     function validateFlatTree(listView, expectedItemsPerBlock?) {
         expectedItemsPerBlock = expectedItemsPerBlock || STRUCTURENODE_SIZE;
@@ -701,11 +693,6 @@ module WinJSTests {
             defaultIsiOS = WinJS.Utilities._isiOS;
 
             completed();
-
-            //Helper.detectMsElementResize(function (canResize) {
-            //    canElementResize = canResize;
-            //    completed();
-            //});
         }
 
         tearDown = function () {
@@ -1581,7 +1568,6 @@ module WinJSTests {
                 listView._raiseViewLoading();
                 // Trigger resize handler
                 placeholder.style.height = "530px";
-                //ensureResize();
                 expectedItemsPerBlock = 10;
 
                 return Helper.ListView.waitForReady(listView, 50)();
@@ -1591,7 +1577,6 @@ module WinJSTests {
                     listView._raiseViewLoading();
                     // Trigger resize handler
                     placeholder.style.height = "430px";
-                    //ensureResize();
                     expectedItemsPerBlock = 8;
 
                     return Helper.ListView.waitForReady(listView, 50)();
@@ -1657,7 +1642,6 @@ module WinJSTests {
 
                 // Trigger resize handler
                 placeholder.style.height = "280px";
-                //ensureResize();
                 listView._raiseViewLoading();
 
                 return Helper.ListView.waitForReady(listView, -1)();
@@ -1790,7 +1774,6 @@ module WinJSTests {
 
                         // Trigger resize handler
                         placeholder.style.height = "400px";
-                        //ensureResize();
                         // listView height = 400px, container height = 100px
                         itemsPerColumn = 4;
                         return true;
