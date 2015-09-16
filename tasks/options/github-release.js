@@ -39,7 +39,6 @@
                 },
                 release: {
                     tag_name: 'v<%= pkg.version %>', // Must follow semver syntax in order for bower to pick it up
-                    target_commitish: currentGitCommitHash,
                     name: '<%= pkg.version %>',
                     body:
                         'Release of winjs <%= pkg.version %>.\n' +

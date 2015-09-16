@@ -574,7 +574,7 @@ module WinJSTests {
             LiveUnit.LoggingCore.logComment("Test Tear Down...");
             Helper.ListView.Utils.resetDOM();
         }
-
+        
         /// -----------------------------------------------------------------------------------------------
         //  Test Methods
         /// -----------------------------------------------------------------------------------------------
@@ -870,10 +870,12 @@ module WinJSTests {
     };
     generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("ListLayout");
     generateDataSourceChangeSetFocusOnInvalidIndexAndHeightChange("GridLayout");
-
-    if (!Helper.Browser.isIE11) {
-        Helper.disableTest(ListViewDSTestClass, "testNoKeyDSSimulateLiveMailSendListLayout");
-    }
+    
+    var disabledTestRegistry = {
+        testNoKeyDSSimulateLiveMailSendListLayout: Helper.BrowserCombos.allButIE11
+    };
+    Helper.disableTests(ListViewDSTestClass, disabledTestRegistry);
+    
 
 }
 // register the object as a test class by passing in the fully qualified name
