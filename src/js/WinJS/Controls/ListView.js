@@ -2726,7 +2726,7 @@ define([
 
                 _onElementResize: function ListView_onResize() {
                     this._writeProfilerMark("_onElementResize,info");
-                    Scheduler.schedule(function ListView_async_msElementResize() {
+                    Scheduler.schedule(function ListView_async_elementResize() {
                         if (this._isZombie()) { return; }
                         // If these values are uninitialized there is already a realization pass pending.
                         if (this._viewportWidth !== _Constants._UNINITIALIZED && this._viewportHeight !== _Constants._UNINITIALIZED) {

@@ -790,7 +790,7 @@ module WinJSTests {
             }
 
             function cleanUp() {
-                lv._elementResizeInstrument.removeEventListener("mselementresize", onResize);
+                lv._elementResizeInstrument.removeEventListener("resize", onResize);
                 unparent();
             }
 
