@@ -24,10 +24,8 @@ module CorsicaTests {
     }
 
     function awaitInitialResizeEvent(resizeInstrument: WinJS.UI.PrivateElementResizeInstrument): WinJS.Promise<any> {
-        // In some browsers, when the _ElementResizeHandler finishes loading, the underlying <object> element will fire an 
-        // initial async window resize event. Burn 300ms to allow that event to fire, so we don't test against false positives
-        //return WinJS.Promise.timeout(300);
-        
+        // When the _ElementResizeHandler finishes loading, it will fire an initial resize event. Some tests may want
+        // to account for that to avoid false positives in tests.
         return new WinJS.Promise((c) => {
             resizeInstrument.addEventListener(resizeEvent, function handleInitialResize() {
                 resizeInstrument.removeEventListener(resizeEvent, handleInitialResize);
@@ -39,7 +37,7 @@ module CorsicaTests {
     function allowTimeForAdditionalResizeEvents(): WinJS.Promise<any> {
         // Helper function used to let enough time pass for a resize event to occur, 
         // usually this is to capture any additional resize events that may have been pending,
-        // particularly when we want to verify that no redundant events have been triggered.
+        // particularly when we want to verify that no redundant events will be fired.
         return WinJS.Promise.timeout(300);
     }
 
@@ -104,7 +102,7 @@ module CorsicaTests {
 
             // The _ElementResizeInstrument uses an <object> element and its contentWindow to detect resize events in whichever element the 
             // _ElementResizeInstrument is appended to. Some browsers will fire an async "resize" event for the <object> element automatically when 
-            // it is gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial async "resize" 
+            // it gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial async "resize" 
             // event is always fired in all browsers. 
 
             var parentInstrumentReadyPromise = new WinJS.Promise((c) => {
@@ -117,19 +115,19 @@ module CorsicaTests {
                 this._childInstrument.addedToDom();
             })
 
-            var parentInstrumentResizePromise = awaitInitialResizeEvent(this._parentInstrument);
-            var childInstrumentResizePromise = awaitInitialResizeEvent(this._childInstrument);
-
             // The ready event is a private event used for unit tests. The ready event fires whenever the _ElementResizeInstrument's underlying 
             // <object> element has successfully loaded and the _ElementResizeInstrument has successfully hooked up a "resize" event listener
             // to the <object> element's contentWindow. 
             WinJS.Promise
                 .join([
-                // Verify that everything was hooked up correctly.
+                    // Verify that everything was hooked up correctly.
                     parentInstrumentReadyPromise,
                     childInstrumentReadyPromise,
                 ]).then(() => {
                     // If everything was hooked up correctly, we expect an initial resize event from both instruments.
+                    var parentInstrumentResizePromise = awaitInitialResizeEvent(this._parentInstrument);
+                    var childInstrumentResizePromise = awaitInitialResizeEvent(this._childInstrument);
+
                     return WinJS.Promise
                         .join([
                             parentInstrumentResizePromise,
@@ -143,7 +141,7 @@ module CorsicaTests {
 
             // The _ElementResizeInstrument uses an <object> element and its contentWindow to detect resize events in whichever element the 
             // _ElementResizeInstrument is appended to. Some browsers will fire an async "resize" event for the <object> element automatically when 
-            // it is gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial aysnc "resize" 
+            // it gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that an initial aysnc "resize" 
             // event is always fired in all browsers. 
 
             this._parentInstrument.addedToDom();
@@ -330,21 +328,22 @@ module CorsicaTests {
 
         testDispose(complete) {
             function parentFailResizeHandler(): void {
-                LiveUnit.Assert.fail("Changes to the parent element should not fire resize events since the instrument was disposed");
+                LiveUnit.Assert.fail("disposed parentIstrument should never fire resize events");
             }
 
             function childFailResizeHandler(): void {
-                LiveUnit.Assert.fail("Changes to the child element should not fire resize events since the instrument was disposed");
+                LiveUnit.Assert.fail("disposed childInstrument should never fires resize events");
             }
 
             // Test disposing parent instrument immediately after addedToDom is called, some browsers may still be loading the <object> element at this point and we want to
             // make sure that we don't still try to hook the <object>'s content window asyncronously once the <object> finishes loading, if its already been disposed.
-            this._parentInstrument.addedToDom();
+            // Verify that the parent instrument never fires an initial resize event.
             this._parentInstrument.addEventListener(resizeEvent, parentFailResizeHandler);
+            this._parentInstrument.addedToDom();
             this._parentInstrument.dispose();
             LiveUnit.Assert.isTrue(this._parentInstrument._disposed);
 
-            // Test disposing child instrument after it has completely loaded.
+            // Test disposing child instrument after it is ready, wont fire initial resize event.
             new WinJS.Promise((c) => {
                 this._childInstrument.addEventListener(readyEvent, c);
                 this._childInstrument.addedToDom();

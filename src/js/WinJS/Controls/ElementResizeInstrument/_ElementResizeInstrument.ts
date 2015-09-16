@@ -44,16 +44,8 @@ var eventNames = {
 // Name of the contentWindow event we listen to.
 var contentWindowResizeEvent = "resize";
 
-var _isMS: boolean;
-function isMS(): boolean {
-    // Determine if the browser enviornment is IE or Edge
-    if (typeof _isMS === "undefined") {
-        var element = _Global.document.createElement("div");
-        // msMatchesSelector is supported in IE9+
-        _isMS = (typeof element.msMatchesSelector === "function");
-    }
-    return _isMS;
-}
+// Determine if the browser enviornment is IE or Edge
+var isMS: boolean = ("msMatchesSelector" in document.documentElement);
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 
@@ -80,17 +72,17 @@ export class _ElementResizeInstrument {
 
         var objEl = <HTMLObjectElement>_Global.document.createElement("OBJECT");
         objEl.setAttribute('style', styleText);
-        if (isMS()) {
+        if (isMS) {
             // <object> element shows an outline visual that can't be styled away in MS browsers.
             // Using visibility hidden everywhere will stop some browsers from sending resize events, 
             // but we can use is in MS browsers to achieve the visual we want without losing resize events.
             objEl.style.visibility = "hidden";
         } else {
             // Some browsers like iOS and Safari will never load the <object> element's content window
-            // if the <object> element is in the Dom before its data property was set. 
-            // IE and Edge on the other hand are the exat opposite and won't ever load unless you append the 
-            // element to the Dom before the data property was set.  We expect a later call to addedToDom() will 
-            // set the data property after the element is in the Dom for IE and Edge.
+            // if the <object> element is in the DOM before its data property was set. 
+            // IE and Edge on the other hand are the exact opposite and won't ever load unless you append the 
+            // element to the DOM before the data property was set.  We expect a later call to addedToDom() will 
+            // set the data property after the element is in the DOM for IE and Edge.
             objEl.data = objData;
         }
         objEl.type = 'text/html';
@@ -122,7 +114,7 @@ export class _ElementResizeInstrument {
     addedToDom() {
         // _ElementResizeInstrument should block on firing any events until the Object element has loaded and the _ElementResizeInstrument addedToDom() API has been called.
         // The former is required in order to allow us to get a handle to hook the resize event of the <object> element's content window.
-        // The latter is for cross browser consistency. Some browsers will load the <object> element sync or async as soon as its added to the Dom. 
+        // The latter is for cross browser consistency. Some browsers will load the <object> element sync or async as soon as its added to the DOM. 
         // Other browsers will not load the element until it is added to the DOM and the data property has been set on the <object>. If the element
         // hasn't already loaded when addedToDom is called, we can set the data property to kickstart the loading process. The function is only expected to be called once.
         if (!this._disposed) {
@@ -139,7 +131,7 @@ export class _ElementResizeInstrument {
                         "Its parent element is not currently positioned.")
             }
 
-                if (!this._elementLoaded && isMS()) {
+                if (!this._elementLoaded && isMS) {
                     // If we're in the DOM and the element hasn't loaded yet, some browsers require setting the data property first, 
                     // in order to trigger the <object> load event. We MUST only do this after the element has been added to the DOM, 
                     // otherwise IE10, IE11 & Edge will NEVER fire the load event no matter what else is done to the <object> element 
@@ -155,14 +147,14 @@ export class _ElementResizeInstrument {
 
                     // The _ElementResizeInstrument uses an <object> element and its contentWindow to detect resize events in whichever element the 
                     // _ElementResizeInstrument is appended to. Some browsers will fire an async "resize" event for the <object> element automatically when 
-                    // it is gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that exactly one async "resize" 
+                    // it gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that exactly one async "resize" 
                     // is always fired in all browsers. 
 
-                    // If we don't see a resize event from the <object> contentWindow within 50ms, assume this enviornemnt won't fire one and dispatch our own.
+                    // If we don't see a resize event from the <object> contentWindow within 50ms, assume this enviornment won't fire one and dispatch our own.
                     var initialResizeTimeout = Promise.timeout(50);
                     var handleInitialResize = () => {
-                        this.removeEventListener(eventNames.resize, handleInitialResize)
-                            initialResizeTimeout.cancel();
+                        this.removeEventListener(eventNames.resize, handleInitialResize);
+                        initialResizeTimeout.cancel();
                     };
                     this.addEventListener(eventNames.resize, handleInitialResize);
                     initialResizeTimeout
