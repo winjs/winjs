@@ -38,14 +38,15 @@ var eventNames = {
      * Fires when the internal <object> element has finished loading and we have added our own "resize" listener to its contentWindow.
      * Used by unit tests.
     **/
-    _ready: "ready",
+    _ready: "_ready",
 }
 
-// Name of the contentWindow event we listen to.
+// Name of the <object> contentWindow event we listen to.
 var contentWindowResizeEvent = "resize";
 
-// Determine if the browser enviornment is IE or Edge
-var isMS: boolean = ("msMatchesSelector" in document.documentElement);
+// Determine if the browser enviornment is IE or Edge.
+// "msHightContrastAdjust" is availble in IE10+
+var isMS: boolean = ("msHighContrastAdjust" in document.documentElement.style);
 
 /**
  * Creates a hidden <object> instrumentation element that is used to automatically generate and handle "resize" events whenever the nearest 

@@ -494,7 +494,6 @@ declare module WinJS {
             _versionManager;
             _scrollLength;
             _onPropertyChange;
-            _measureItem;
 
             ensureVisible(itemIndex: number): void;
             ensureVisible(itemIndex: IListViewEntity): void;
