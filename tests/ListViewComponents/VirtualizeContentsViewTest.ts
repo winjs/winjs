@@ -77,16 +77,16 @@ module WinJSTests {
         };
     }
 
-    function ensureResize() {
-        if (!canElementResize) {
-            WinJS.Utilities._resizeNotifier._handleResize();
-        }
-    }
+    //function ensureResize() {
+    //    if (!canElementResize) {
+    //        WinJS.Utilities._resizeNotifier._handleResize();
+    //    }
+    //}
 
     var testRootEl;
     var defaultChunkSize, defaultMaxTime, defaultPagesToPrefetch;
 
-    var canElementResize = null;
+    //var canElementResize = null;
 
     function validateFlatTree(listView, expectedItemsPerBlock?) {
         expectedItemsPerBlock = expectedItemsPerBlock || STRUCTURENODE_SIZE;
@@ -700,10 +700,12 @@ module WinJSTests {
             defaultDisableCustomPagesPrefetch = WinJS.UI._VirtualizeContentsView._disableCustomPagesPrefetch;
             defaultIsiOS = WinJS.Utilities._isiOS;
 
-            Helper.detectMsElementResize(function (canResize) {
-                canElementResize = canResize;
-                completed();
-            });
+            completed();
+
+            //Helper.detectMsElementResize(function (canResize) {
+            //    canElementResize = canResize;
+            //    completed();
+            //});
         }
 
         tearDown = function () {
@@ -1577,8 +1579,9 @@ module WinJSTests {
                 validateGroupedTree(listView, expectedItemsPerBlock);
 
                 listView._raiseViewLoading();
+                // Trigger resize handler
                 placeholder.style.height = "530px";
-                ensureResize();
+                //ensureResize();
                 expectedItemsPerBlock = 10;
 
                 return Helper.ListView.waitForReady(listView, 50)();
@@ -1586,8 +1589,9 @@ module WinJSTests {
                     validateGroupedTree(listView, expectedItemsPerBlock);
 
                     listView._raiseViewLoading();
+                    // Trigger resize handler
                     placeholder.style.height = "430px";
-                    ensureResize();
+                    //ensureResize();
                     expectedItemsPerBlock = 8;
 
                     return Helper.ListView.waitForReady(listView, 50)();
@@ -1651,8 +1655,9 @@ module WinJSTests {
                     LiveUnit.Assert.areEqual(WinJS.UI._LayoutCommon._barsPerItemsBlock, itemsContainer.itemsBlocks[i].items.length);
                 }
 
+                // Trigger resize handler
                 placeholder.style.height = "280px";
-                ensureResize();
+                //ensureResize();
                 listView._raiseViewLoading();
 
                 return Helper.ListView.waitForReady(listView, -1)();
@@ -1783,8 +1788,9 @@ module WinJSTests {
                     function () {
                         verifyTree();
 
+                        // Trigger resize handler
                         placeholder.style.height = "400px";
-                        ensureResize();
+                        //ensureResize();
                         // listView height = 400px, container height = 100px
                         itemsPerColumn = 4;
                         return true;
