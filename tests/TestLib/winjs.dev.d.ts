@@ -459,6 +459,7 @@ declare module WinJS {
 
         class PrivateListView<T> extends ListView<T> {
             _onElementResize();
+            _elementResizeInstrument: _ElementResizeInstrument;
             _animationsDisabled;
             _view;
             _ariaStartMarker;
@@ -493,6 +494,7 @@ declare module WinJS {
             _versionManager;
             _scrollLength;
             _onPropertyChange;
+            _measureItem;
 
             ensureVisible(itemIndex: number): void;
             ensureVisible(itemIndex: IListViewEntity): void;
@@ -510,6 +512,8 @@ declare module WinJS {
             _measuringPromise;
             _envInfo;
             _sizes;
+            _measureItem;
+            _measureElements;
         }
 
         class PrivateGridLayout extends GridLayout {
