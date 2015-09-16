@@ -343,7 +343,8 @@ module CorsicaTests {
             this._parentInstrument.dispose();
             LiveUnit.Assert.isTrue(this._parentInstrument._disposed);
 
-            // Test disposing child instrument after it is ready, wont fire initial resize event.
+            // Test that by disposing the child instrument after it is ready, 
+            // it wont fire an initial resize event.
             new WinJS.Promise((c) => {
                 this._childInstrument.addEventListener(readyEvent, c);
                 this._childInstrument.addedToDom();
@@ -369,172 +370,20 @@ module CorsicaTests {
                 });
         }
 
-        testReAppendToDom(complete) {
-            var childResizeSignal: WinJS._Signal<any>;
-            function childResizeHandler() {
-                childResizeSignal.complete();
-            }
-
-            var parentResizeSignal: WinJS._Signal<any>;
-            function parentResizeHandler() {
-                parentResizeSignal.complete();
-            }
-
-            var parent = this._parent;
-            var parentInstrument = this._parentInstrument;
-            var childInstrument = this._childInstrument;
-
-            parentInstrument.addedToDom();
-            childInstrument.addedToDom();
-            WinJS.Promise
-                .join([
-                    awaitInitialResizeEvent(this._parentInstrument),
-                    awaitInitialResizeEvent(this._childInstrument)
-                ])
-                .then(() => {
-                    // Test both instruments still fire resize after asynchronously
-                    // re-appending the parent element.
-                    this._element.removeChild(parent);
-                    return new WinJS.Promise((c) => {
-                        window.requestAnimationFrame(c);
-                    });
-                })
-                .then(() => {
-                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
-                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
-
-                    parentResizeSignal = new WinJS._Signal();
-                    childResizeSignal = new WinJS._Signal();
-
-                    this._element.appendChild(parent);
-                    return WinJS.Promise.join([
-                        parentResizeSignal.promise,
-                        childResizeSignal.promise,
-                    ]);
-                })
-                .done(() => {
-                    complete();
-                });
-        }
-
-        testReAppendToDomAndResizeSynchronously(complete) {
-            // Make sure that removing and reappending an initialized _ElementResizeInstrument
-            // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
-            // This test is partially testing the browser to make sure that the "resize" listener 
-            // we've added to the <object> element's contentWindow doesn't become permanently 
-            // broken if it leaves and renters the DOM.
-            var childResizeSignal: WinJS._Signal<any>;
-            function childResizeHandler() {
-                childResizeSignal.complete();
-            }
-
-            var parentResizeSignal: WinJS._Signal<any>;
-            function parentResizeHandler() {
-                parentResizeSignal.complete();
-            }
-
-            var parent = this._parent;
-            var parentInstrument = this._parentInstrument;
-            var childInstrument = this._childInstrument;
-
-            parentInstrument.addedToDom();
-            childInstrument.addedToDom();
-            WinJS.Promise
-                .join([
-                    awaitInitialResizeEvent(this._parentInstrument),
-                    awaitInitialResizeEvent(this._childInstrument)
-                ])
-                .then(() => {
-                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
-                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
-
-                    parentResizeSignal = new WinJS._Signal();
-                    childResizeSignal = new WinJS._Signal();
-
-                    // Test both instruments still fire resize after synchronously 
-                    // re-appending and updating the height of the parent element.
-                    this._element.removeChild(parent);
-                    return new WinJS.Promise((c) => {
-                        window.requestAnimationFrame(c);
-                    });
-                })
-                .then(() => {
-                    this._element.appendChild(parent);
-                    parent.style.height = "42%"
-                    return WinJS.Promise.join([
-                        parentResizeSignal.promise,
-                        childResizeSignal.promise,
-                    ]);
-                })
-                .done(() => {
-                    complete();
-                });
-        }
-
-        testReAppendToDomAndResizeAsynchronously(complete) {
-            // Make sure that removing and reappending an initialized _ElementResizeInstrument
-            // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
-            // This test is partially testing the browser to make sure that the "resize" listener 
-            // we've added to the <object> element's contentWindow doesn't become permanently 
-            // broken it it leaves and renters the DOM.
-            var childResizeSignal: WinJS._Signal<any>;
-            function childResizeHandler() {
-                childResizeSignal.complete();
-            }
-
-            var parentResizeSignal: WinJS._Signal<any>;
-            function parentResizeHandler() {
-                parentResizeSignal.complete();
-            }
-
-            var parent = this._parent;
-            var parentInstrument = this._parentInstrument;
-            var childInstrument = this._childInstrument;
-
-            parentInstrument.addedToDom();
-            childInstrument.addedToDom();
-
-            WinJS.Promise
-                .join([
-                    awaitInitialResizeEvent(this._parentInstrument),
-                    awaitInitialResizeEvent(this._childInstrument)
-                ])
-                .then(() => {
-                    parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
-                    childInstrument.addEventListener(resizeEvent, childResizeHandler);
-
-                    // Test both instruments still fire resize after asynchronously
-                    // removing, adding and updating the width of the parent element.
-                    parentResizeSignal = new WinJS._Signal();
-                    childResizeSignal = new WinJS._Signal();
-
-                    this._element.removeChild(parent);
-                    return new WinJS.Promise((c) => {
-                        window.requestAnimationFrame(c);
-                    });
-                })
-                .then(() => {
-                    this._element.appendChild(parent);
-                    return WinJS.Promise.timeout(0);
-                })
-                .then(() => {
-                    parent.style.width = "43%"
-                    return WinJS.Promise.join([
-                        parentResizeSignal.promise,
-                        childResizeSignal.promise,
-                    ]);
-                })
-                .done(() => {
-                    complete();
-                });
-        }
-
         testReAppendToDomAndResizeAsynchronouslyExtended(complete) {
             // Make sure that removing and reappending an initialized _ElementResizeInstrument
             // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
             // This test is partially testing the browser to make sure that the "resize" listener 
             // we've added to the <object> element's contentWindow doesn't become permanently 
-            // broken it it leaves and renters the DOM.
+            // broken if it leaves and renters the DOM.
+
+            // We understand that right now there is a period of time after the control has 
+            // been re-appended into the DOM before it will start responding to size change 
+            // events. The period of time varies depending on the browser, presumably this 
+            // is because the browser hasn't run layout yet. We expect that developers can call
+            // forceLayout() on any controls using _ElementResizeListeners to force the control 
+            // to respond to size changes during this period of time where resize events are not
+            // fired when size changes are made immediately after appending it to the DOM.
             var childResizeSignal: WinJS._Signal<any>;
             function childResizeHandler() {
                 childResizeSignal.complete();
@@ -561,8 +410,8 @@ module CorsicaTests {
                     parentInstrument.addEventListener(resizeEvent, parentResizeHandler);
                     childInstrument.addEventListener(resizeEvent, childResizeHandler);
 
-                    // Test both instruments still fire resize after asynchronously
-                    // removing, adding and updating the width of the parent element.
+                    // Test both instruments still fire "resize" after re-appending them to the
+                    // DOM and then asynchronously updating the width of the parent element. 
                     parentResizeSignal = new WinJS._Signal();
                     childResizeSignal = new WinJS._Signal();
 
