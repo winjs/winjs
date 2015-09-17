@@ -798,6 +798,12 @@ declare module WinJS {
             public dispatchEvent(type: string, eventProperties: any): boolean;
         }
 
+        class PrivateViewBox extends WinJS.UI.ViewBox {
+            _disposed: boolean;
+            _elementResizeInstrument: _ElementResizeInstrument;
+            _layoutCompleteCallback(): any;
+        }
+
         class PrivateItemContainer extends WinJS.UI.ItemContainer {
             _selectionMode: WinJS.UI.SelectionMode;
             _onFocusIn();

@@ -11,8 +11,9 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
+    './ElementResizeInstrument',
     'require-style!less/styles-viewbox'
-    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable) {
+    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ElementResizeInstrument) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -36,24 +37,6 @@ define([
                 get invalidViewBoxChildren() { return "ViewBox expects to be provided with only one child element"; },
             };
 
-            function onresize(control) {
-                if (control && !control._resizing) {
-                    control._resizing = control._resizing || 0;
-                    control._resizing++;
-                    try {
-                        control._updateLayout();
-                    } finally {
-                        control._resizing--;
-                    }
-                }
-            }
-
-            function onresizeBox(ev) {
-                if (ev.target) {
-                    onresize(ev.target.winControl);
-                }
-            }
-
             var ViewBox = _Base.Class.define(function ViewBox_ctor(element) {
                 /// <signature helpKeyword="WinJS.UI.ViewBox.ViewBox">
                 /// <summary locid="WinJS.UI.ViewBox.constructor">Initializes a new instance of the ViewBox control</summary>
@@ -74,12 +57,13 @@ define([
                 _ElementUtilities.addClass(box, "win-viewbox");
 
                 // Sign up for resize events.
-                _ElementUtilities._resizeNotifier.subscribe(box, onresizeBox);
+                this._handleResizeBound = this._handleResize.bind(this);
+                _ElementUtilities._resizeNotifier.subscribe(box, this._handleResizeBound);
                 this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
                 box.appendChild(this._elementResizeInstrument.element);
-                this._elementResizeInstrument.addEventListener("resize", onresizeBox);
+                this._elementResizeInstrument.addEventListener("resize", this._handleResizeBound);
                 var that = this;
-                _ElementUtilities.inDom(box).then(function () {
+                _ElementUtilities._inDom(box).then(function () {
                     if (!that._disposed) {
                         that._elementResizeInstrument.addedToDom();
                     }
@@ -103,9 +87,9 @@ define([
                     }
                 },
 
-                _initialize: function () {
+                _initialize: function ViewBox() {
                     var box = this.element;
-                    var children = box.children;
+                    var children = Array.prototype.slice.call(box.children);
 
                     // Make sure we contain our elementResizeInstrument. 
                     if (children.indexOf(this._elementResizeInstrument.element) < 0) {
@@ -115,7 +99,7 @@ define([
                     // Make sure we contain a sizer
                     var that = this;
                     if(children.indexOf(this._sizer) < 0){
-                        var sizers = Array.prototype.filter.call(children, function (element) {
+                        var sizers = children.filter(function (element) {
                             return (element !== that._elementResizeInstrument.element);
                         });
 
@@ -157,6 +141,24 @@ define([
                         this._sizer.style[_BaseUtils._browserStyleEquivalents["transform"].scriptName] = "translate(" + (rtl ? "-" : "") + transX + "px," + transY + "px) scale(" + mRatio + ")";
                         this._sizer.style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = rtl ? "top right" : "top left";
                     }
+
+                    this._layoutCompleteCallback();
+                },
+
+                _handleResize: function () {
+                    if (!this._resizing) {
+                        this._resizing = this._resizing || 0;
+                        this._resizing++;
+                        try {
+                            this._updateLayout();
+                        } finally {
+                            this._resizing--;
+                        }
+                    }
+                },
+
+                _layoutCompleteCallback: function (){
+                    // Overwritten by unit tests.
                 },
 
                 dispose: function () {
@@ -170,7 +172,7 @@ define([
                     }
 
                     if (this.element) {
-                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, onresizeBox);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._handleResizeBound);
                     }
 
                     this._elementResizeInstrument.dispose();
