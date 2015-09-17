@@ -130,7 +130,7 @@ export class _ElementResizeInstrument {
                     // be an immediate child of the element it wants to monitor for size changes.
                     _Log.log("_ElementResizeInstrument can only detect size changes that are made to it's nearest positioned ancestor. " +
                         "Its parent element is not currently positioned.")
-            }
+                }
 
                 if (!this._elementLoaded && isMS) {
                     // If we're in the DOM and the element hasn't loaded yet, some browsers require setting the data property first, 
