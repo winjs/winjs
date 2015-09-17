@@ -174,7 +174,8 @@ export class _ElementResizeInstrument {
             // Unhook loaded state
             if (this._objWindow) {
                 // If we had already loaded, unhook listeners from the <object> contentWindow.
-                this._objWindow.removeEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
+                //this._objWindow.removeEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
+                Object.getPrototypeOf(this._objWindow).removeEventListener.call(this._objWindow, contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
             }
             // Turn off running state
             this._running = false;
