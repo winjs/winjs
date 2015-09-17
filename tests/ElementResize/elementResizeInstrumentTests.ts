@@ -370,7 +370,7 @@ module CorsicaTests {
                 });
         }
 
-        testReAppendToDomAndResizeAsynchronouslyExtended(complete) {
+        testReAppendToDomAndResizeAsynchronously(complete) {
             // Make sure that removing and reappending an initialized _ElementResizeInstrument
             // Doesn't permanently stop our _ElementResizeInstrument from firing resize events.
             // This test is partially testing the browser to make sure that the "resize" listener 
@@ -430,6 +430,32 @@ module CorsicaTests {
                         parentResizeSignal.promise,
                         childResizeSignal.promise,
                     ]);
+                })
+                .done(() => {
+                    complete();
+                });
+        }
+
+        testDisposeDoesntThrowAnException(complete) {
+            // Make sure that disposing a fully loaded  _ElementResizeListener while 
+            // its no longer in the DOM, doesn't throw an exception. There is an issue
+            // in Safari and iOS where the <object> element's contentWindow and contentDocument
+            // properties are no longer accessible and any previous stored references to either
+            // object will have have lost their prototype chains. When we would try to unregister
+            // we would try to unregister the contentWindow "resize" handler a DOM exception would
+            // be thrown because contentWindow's in iOS and Safari don't have add and remove event
+            // listener methods while they are not in the DOM.
+            // https://bugs.webkit.org/show_bug.cgi?id=149251
+            var readyPromise = new WinJS.Promise((c) => {
+                this._parentInstrument.addEventListener(readyEvent, c);
+                this._parentInstrument.addedToDom();
+            });
+
+            readyPromise
+                .then(() => {
+                    this._element.removeChild(this._parent);
+                    this._parentInstrument.dispose();
+                    return WinJS.Promise.timeout(0);
                 })
                 .done(() => {
                     complete();

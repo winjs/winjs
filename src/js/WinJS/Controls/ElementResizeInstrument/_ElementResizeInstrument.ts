@@ -174,7 +174,8 @@ export class _ElementResizeInstrument {
             // Unhook loaded state
             if (this._objWindow) {
                 // If we had already loaded, unhook listeners from the <object> contentWindow.
-                //this._objWindow.removeEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
+                // Call it explicitly from the prototype to to avoid an exception in iOS and Safari if we're not currently in the DOM.
+                // https://bugs.webkit.org/show_bug.cgi?id=149251
                 Object.getPrototypeOf(this._objWindow).removeEventListener.call(this._objWindow, contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
             }
             // Turn off running state
