@@ -87,7 +87,7 @@ define([
                     }
                 },
 
-                _initialize: function ViewBox() {
+                _initialize: function () {
                     var box = this.element;
                     var children = Array.prototype.slice.call(box.children);
 

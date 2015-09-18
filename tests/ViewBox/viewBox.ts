@@ -399,13 +399,11 @@ module CorsicaTests {
                     });
                     return nextLayoutCompletePromise;
                 }).
-                then(() => {
+                done(() => {
                     LiveUnit.Assert.areEqual("translate(75px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
-                }).
-                then(() => {
                     document.body.removeChild(container);
-                }).
-                then(completed);
+                    completed();
+                });
         }
     }
 }
