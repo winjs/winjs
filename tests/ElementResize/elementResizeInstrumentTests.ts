@@ -31,7 +31,7 @@ module CorsicaTests {
                 resizeInstrument.removeEventListener(resizeEvent, handleInitialResize);
                 c();
             });
-        })
+        });
     }
 
     function allowTimeForAdditionalResizeEvents(): WinJS.Promise<any> {
