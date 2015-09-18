@@ -20,10 +20,11 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
     '../Utilities/_UI',
+    './ElementResizeInstrument',
     './Hub/_Section',
     'require-style!less/styles-hub',
     'require-style!less/colors-hub'
-], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _Section) {
+], function hubInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, ControlProcessor, Promise, _Signal, Scheduler, _Control, _ElementUtilities, _Hoverable, _UI, _ElementResizeInstrument, _Section) {
     "use strict";
 
     _Accents.createAccentRule(
@@ -148,6 +149,10 @@ define([
                 _ElementUtilities.addClass(this.element, Hub._ClassName.hub);
                 _ElementUtilities.addClass(this.element, "win-disposable");
 
+                // This internally assigns this.sections which causes section to be used (even from options) before
+                // scrollPosition or sectionOnScreen.
+                this._parse();
+
                 this._viewportElement = _Global.document.createElement("DIV");
                 this._viewportElement.className = Hub._ClassName.hubViewport;
                 this._element.appendChild(this._viewportElement);
@@ -173,20 +178,24 @@ define([
                 this.runningAnimations = new Promise.wrap();
                 this._currentIndexForSezo = 0;
 
-                // This internally assigns this.sections which causes section to be used (even from options) before
-                // scrollPosition or sectionOnScreen.
-                this._parse();
-
                 _Control.setOptions(this, options);
 
                 _ElementUtilities._addEventListener(this.element, "focusin", this._focusin.bind(this), false);
                 this.element.addEventListener("keydown", this._keyDownHandler.bind(this));
                 this.element.addEventListener("click", this._clickHandler.bind(this));
-                this._resizeHandlerBound = this._resizeHandler.bind(this);
-                this.element.addEventListener("mselementresize", this._resizeHandlerBound);
-                _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
                 this._viewportElement.addEventListener("scroll", this._scrollHandler.bind(this));
-                this._surfaceElement.addEventListener("mselementresize", this._contentResizeHandler.bind(this));
+
+                this._resizeHandlerBound = this._resizeHandler.bind(this);
+                this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                this._element.appendChild(this._elementResizeInstrument.element);
+                this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
+                var that = this;
+                _ElementUtilities._inDom(this.element).then(function () {
+                    if (!that._disposed) {
+                        that._elementResizeInstrument.addedToDom();
+                    }
+                });
+                _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandlerBound);
 
                 this._handleSectionChangedBind = this._handleSectionChanged.bind(this);
                 this._handleSectionInsertedBind = this._handleSectionInserted.bind(this);
@@ -449,14 +458,16 @@ define([
                     if (this._pendingSections) {
                         needsToLoadSections = true;
                         this._updateEvents(this._sections, this._pendingSections);
+
+                        if (this._sections) {
+                            this._sections.forEach(function (section) {
+                                var el = section.element;
+                                el.parentElement.removeChild(el);
+                            });
+                        }
+
                         this._sections = this._pendingSections;
                         this._pendingSections = null;
-                        // Remove any declaratively specified hub sections before attachSections.
-                        while (this.element.firstElementChild !== this._viewportElement) {
-                            var toRemove = this.element.firstElementChild;
-                            toRemove.parentNode.removeChild(toRemove);
-                        }
-                        _ElementUtilities.empty(this._surfaceElement);
                     }
 
                     if (this._pendingHeaderTemplate) {
@@ -851,10 +862,11 @@ define([
                     }
                 },
                 _parse: function hub_parse() {
+                    // Parse and initialize any declaratively specified hub sections.
                     var hubSections = [];
                     var hubSectionEl = this.element.firstElementChild;
 
-                    while (hubSectionEl !== this._viewportElement) {
+                    while (hubSectionEl) {
                         ControlProcessor.processAll(hubSectionEl);
 
                         var hubSectionContent = hubSectionEl.winControl;
@@ -865,6 +877,7 @@ define([
                         }
 
                         var nextSectionEl = hubSectionEl.nextElementSibling;
+                        hubSectionEl.parentElement.removeChild(hubSectionEl);
                         hubSectionEl = nextSectionEl;
                     }
 
@@ -913,15 +926,11 @@ define([
                     }
                 },
                 _resizeHandler: function hub_resizeHandler() {
-                    // Viewport needs to be measured
+                    // Viewport, Sections and scroll length need to be measured
                     this._measured = false;
                     Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
                 },
-                _contentResizeHandler: function hub_contentResizeHandler() {
-                    // Sections and scroll length need to be measured
-                    this._measured = false;
-                    Scheduler.schedule(this._updateSnapList.bind(this), Scheduler.Priority.idle);
-                },
+
                 _scrollHandler: function hub_scrollHandler() {
                     // Scroll location needs to be retrieved
                     this._measured = false;
@@ -1324,13 +1333,13 @@ define([
                     _WriteProfilerMark(message);
                     _Log.log && _Log.log(message, null, "hubprofiler");
                 },
+                /// <signature helpKeyword="WinJS.UI.Hub.dispose">
+                /// <summary locid="WinJS.UI.Hub.dispose">
+                /// Disposes this control.
+                /// </summary>
+                /// <compatibleWith platform="Windows" minVersion="8.1"/>
+                /// </signature>
                 dispose: function hub_dispose() {
-                    /// <signature helpKeyword="WinJS.UI.Hub.dispose">
-                    /// <summary locid="WinJS.UI.Hub.dispose">
-                    /// Disposes this control.
-                    /// </summary>
-                    /// <compatibleWith platform="Windows" minVersion="8.1"/>
-                    /// </signature>
                     if (this._disposed) {
                         return;
                     }
@@ -1338,12 +1347,23 @@ define([
 
                     _Global.removeEventListener('keydown', this._windowKeyDownHandlerBound);
                     _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandlerBound);
+                    this._elementResizeInstrument.dispose();
 
                     this._updateEvents(this._sections);
 
                     for (var i = 0; i < this.sections.length; i++) {
                         this.sections.getAt(i).dispose();
                     }
+                },
+                /// <signature helpKeyword="WinJS.UI.Hub.forceLayout">
+                /// <summary locid="WinJS.UI.Hub.forceLayout">
+                /// Forces the Hub to update its layout.
+                /// Use this function when making the Hub visible again after you've set its style.display property to "none” or after style changes have been made that affect the size of the HubSections.
+                /// </summary>
+                /// </signature>
+                forceLayout: function hub_forceLayout() {
+                    // Currently just the same behavior as resize.
+                    this._resizeHandler();
                 }
             }, {
                 /// <field locid="WinJS.UI.Hub.AnimationType" helpKeyword="WinJS.UI.Hub.AnimationType">

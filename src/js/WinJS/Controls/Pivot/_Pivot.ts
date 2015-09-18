@@ -13,6 +13,8 @@ import _Base = require("../../Core/_Base");
 import _BaseUtils = require("../../Core/_BaseUtils");
 import _Control = require("../../Utilities/_Control");
 import _Dispose = require("../../Utilities/_Dispose");
+import _ElementResizeInstrument = require("../ElementResizeInstrument");
+import _IElementResizeInstrument = require("../ElementResizeInstrument/_ElementResizeInstrument");
 import _ElementUtilities = require("../../Utilities/_ElementUtilities");
 import _ErrorFromName = require("../../Core/_ErrorFromName");
 import _Events = require("../../Core/_Events");
@@ -82,6 +84,7 @@ export class Pivot {
     _animateToPrevious: boolean;
     _disposed = false;
     _elementPointerDownPoint: { x: number; y: number; type: string; inHeaders: boolean; time: number; };
+    _elementResizeInstrument: _IElementResizeInstrument._ElementResizeInstrument;
     _firstLoad = true;
     _headerItemsElWidth: number;
     private _headersState: HeaderStateBase; // Must be private since HeaderStateBase type is not exported
@@ -309,7 +312,16 @@ export class Pivot {
         this._element.appendChild(this._viewportElement);
         this._viewportElement.setAttribute("role", "group");
         this._viewportElement.setAttribute("aria-label", strings.pivotViewportAriaLabel);
-        this.element.addEventListener("mselementresize", this._resizeHandler);
+
+        this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+        this._element.appendChild(this._elementResizeInstrument.element);
+        this._elementResizeInstrument.addEventListener("resize", this._resizeHandler);
+        _ElementUtilities._inDom(this._element)
+            .then(() => {
+                if (!this._disposed) {
+                    this._elementResizeInstrument.addedToDom();
+                }
+            });
         _ElementUtilities._resizeNotifier.subscribe(this.element, this._resizeHandler);
         this._viewportElWidth = null;
 
@@ -360,6 +372,7 @@ export class Pivot {
 
         this._updateEvents(this._items, null);
         _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._resizeHandler);
+        this._elementResizeInstrument.dispose();
         this._headersState.exit();
 
         _Dispose._disposeElement(this._headersContainerElement);

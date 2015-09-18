@@ -6,6 +6,7 @@
 .win-hub {
     height: 100%;
     width: 100%;
+    /* Necessary for detecting when this element has resized */
     position: relative;
 }
 .win-hub-progress {
@@ -52,7 +53,7 @@
     vertical-align: top;
     white-space: normal;
 }
-.win-hub-horizontal {    
+.win-hub-horizontal {
     .win-hub-section {
         height: 100%;
         padding-right: 24px;
@@ -68,7 +69,7 @@
         margin-top: 62px;
     }
 }
-.win-hub-vertical {    
+.win-hub-vertical {
     .win-hub-section {
         width: 100%;
         padding-top: 24px; /* Keep in sync w/ hub-surface margin-top */
