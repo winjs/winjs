@@ -44,7 +44,7 @@ var eventNames = {
 // Name of the <object> contentWindow event we listen to.
 var contentWindowResizeEvent = "resize";
 
-// Determine if the browser enviornment is IE or Edge.
+// Determine if the browser environment is IE or Edge.
 // "msHightContrastAdjust" is availble in IE10+
 var isMS: boolean = ("msHighContrastAdjust" in document.documentElement.style);
 
@@ -118,6 +118,7 @@ export class _ElementResizeInstrument {
         // https://bugs.webkit.org/show_bug.cgi?id=149251
 
         // Return the contentWindow if it exists, else null.
+        // If the <object> element hasn't loaded yet, some browsers will throw an exception if you try to read the contentDocument property.
         return this._elementLoaded && this._element.contentDocument && this._element.contentDocument.defaultView || null;
     }
     addedToDom() {
@@ -159,7 +160,7 @@ export class _ElementResizeInstrument {
                     // it gets added to the DOM, others won't. In both cases it is up to the _ElementResizeHandler to make sure that exactly one async "resize" 
                     // is always fired in all browsers. 
 
-                    // If we don't see a resize event from the <object> contentWindow within 50ms, assume this enviornment won't fire one and dispatch our own.
+                    // If we don't see a resize event from the <object> contentWindow within 50ms, assume this environment won't fire one and dispatch our own.
                     var initialResizeTimeout = Promise.timeout(50);
                     var handleInitialResize = () => {
                         this.removeEventListener(eventNames.resize, handleInitialResize);
@@ -180,7 +181,7 @@ export class _ElementResizeInstrument {
             // Cancel loading state
             this._elementLoadPromise.cancel();
             // Unhook loaded state
-            if (this._elementLoaded && this._objWindow) {
+            if (this._objWindow) {
                 // If we had already loaded and can still get a reference to the contentWindow,
                 // unhook our listener from the <object>'s contentWindow to reduce any future noise.
                 this._objWindow.removeEventListener.call(this._objWindow, contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
