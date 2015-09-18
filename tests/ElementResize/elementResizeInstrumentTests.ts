@@ -446,9 +446,9 @@ module CorsicaTests {
             // while they are not in the DOM. https://bugs.webkit.org/show_bug.cgi?id=149251
 
             // Make sure that disposing a fully loaded _ElementResizeInstrument while its no longer in the DOM,
-            // doesn't throw an exception. Additionally, even ifwe were unable to unregister the event handler 
-            // from the contentWindow, make sure that reappending the dispose _ElementResizeInstrument and 
-            // resizing it will not cause it to fire its own resize event after it has been disposed.
+            // doesn't throw an exception. Additionally, even if we were unable to unregister the event handler 
+            // from the contentWindow, make sure that re-appending a disposed _ElementResizeInstrument and 
+            // resizing it will not cause it to notify listeners of any resize events, since it has been disposed.
 
             function parentFailResizeHandler(): void {
                 LiveUnit.Assert.fail("disposed parentIstrument should never fire resize events");
