@@ -6,30 +6,30 @@
     var testUrls = require("./test-urls.json");
     var reportingStatus = false;
     var browsers = [{
-    //      browserName: "internet explorer",
-    //      platform: "WIN8.1",
-    //      version: "11"
-    //  },{
+         browserName: "internet explorer",
+         platform: "WIN8.1",
+         version: "11"
+     },{
         browserName: "internet explorer",
         platform: "WIN8",
         version: "10"
        }, {
-    //     browserName: "safari",
-    //     platform: "OS X 10.10",
-    //     version: "8"
-    //  }, {
-    //      browserName: "firefox",
-    //      platform: "Win8.1",
-    //      version: "34"
-    //  }, {
-    //      browserName: "googlechrome",
-    //      platform: "Win8.1",
-    //      version: "39"
-    //  }, /*{
+        browserName: "safari",
+        platform: "OS X 10.10",
+        version: "8"
+     }, {
+         browserName: "firefox",
+         platform: "Win8.1",
+         version: "34"
+     }, {
+         browserName: "googlechrome",
+         platform: "Win8.1",
+         version: "39"
+     }, /*{
          browserName: "iPhone",
          platform: "OS X 10.9",
          version: "8.1"
-     }, {
+     },*/ {
          browserName: "android",
          platform: "Linux",
          version: "5.0"
