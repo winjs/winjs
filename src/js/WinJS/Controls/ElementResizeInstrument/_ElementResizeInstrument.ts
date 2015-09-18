@@ -62,7 +62,7 @@ export class _ElementResizeInstrument {
     private _running: boolean;
     private _pendingResizeAnimationFrameId: number;
     private _objectWindowResizeHandlerBound: () => void;
-    private _objWindow: Window;
+    //private _objWindow: Window;
 
     constructor() {
         this._disposed = false;
@@ -97,7 +97,6 @@ export class _ElementResizeInstrument {
             objEl.onload = () => {
                 if (!this._disposed) {
                     this._elementLoaded = true;
-                    this._objWindow = objEl.contentDocument.defaultView;
                     this._objWindow.addEventListener(contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
                     c();
                 }
@@ -111,6 +110,16 @@ export class _ElementResizeInstrument {
     private _element: HTMLObjectElement;
     get element() {
         return this._element;
+    }
+
+    // Getter for the <object>'s contentWindow.
+    private get _objWindow(): Window {
+        // Property may be undefined if the element hans't loaded yet.
+        // Property may be undefined in Safari if the element has been removed from the DOM.
+        // https://bugs.webkit.org/show_bug.cgi?id=149251
+
+        // Return the contentWindow if it exists, else null.
+        return this._elementLoaded && this._element.contentDocument && this._element.contentDocument.defaultView || null;
     }
     addedToDom() {
         // _ElementResizeInstrument should block on firing any events until the Object element has loaded and the _ElementResizeInstrument addedToDom() API has been called.
@@ -141,8 +150,8 @@ export class _ElementResizeInstrument {
                 }
 
                 this._elementLoadPromise.then(() => {
-                    
-                    // Once the element has loaded and addedToDom has been called, we can fire our private ready event.
+
+                    // Once the element has loaded and addedToDom has been called, we can fire our private "_ready" event.
                     this._running = true;
                     this.dispatchEvent(eventNames._ready, null);
 
@@ -172,17 +181,15 @@ export class _ElementResizeInstrument {
             // Cancel loading state
             this._elementLoadPromise.cancel();
             // Unhook loaded state
-            if (this._objWindow) {
-                // If we had already loaded, unhook listeners from the <object> contentWindow.
-                // Call it explicitly from the prototype to to avoid an exception in iOS and Safari if we're not currently in the DOM.
-                // https://bugs.webkit.org/show_bug.cgi?id=149251
-                Object.getPrototypeOf(this._objWindow).removeEventListener.call(this._objWindow, contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
+            if (this._elementLoaded && this._objWindow) {
+                // If we had already loaded and can still get a reference to the contentWindow,
+                // unhook our listener from the <object>'s contentWindow to reduce any future noise.
+                this._objWindow.removeEventListener.call(this._objWindow, contentWindowResizeEvent, this._objectWindowResizeHandlerBound);
             }
             // Turn off running state
             this._running = false;
         }
     }
-
 
     /**
      * Adds an event listener to the control.
