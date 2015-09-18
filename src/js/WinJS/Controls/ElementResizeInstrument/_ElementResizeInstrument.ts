@@ -62,7 +62,6 @@ export class _ElementResizeInstrument {
     private _running: boolean;
     private _pendingResizeAnimationFrameId: number;
     private _objectWindowResizeHandlerBound: () => void;
-    //private _objWindow: Window;
 
     constructor() {
         this._disposed = false;
@@ -114,7 +113,7 @@ export class _ElementResizeInstrument {
 
     // Getter for the <object>'s contentWindow.
     private get _objWindow(): Window {
-        // Property may be undefined if the element hans't loaded yet.
+        // Property may be undefined if the element hasn't loaded yet.
         // Property may be undefined in Safari if the element has been removed from the DOM.
         // https://bugs.webkit.org/show_bug.cgi?id=149251
 
