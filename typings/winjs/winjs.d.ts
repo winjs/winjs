@@ -6283,33 +6283,14 @@ declare module WinJS.UI {
         /**
          * Gets or sets a value that specifies whether the pause method can be executed.
         **/
-        pauseAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
-        **/
         isPauseAllowed: boolean;
-
         /**
          * Gets or sets a value that specifies whether the play method can be executed.
-        **/
-        playAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
         **/
         isPlayAllowed: boolean;
 
         /**
          * Gets or sets a value that specifies whether the seek method can be executed.
-        **/
-        seekAllowed: boolean;
-
-        /**
-         * The following property only exists to make it easier for app developers who created apps prior 
-         * to Windows 10 to migrate to Windows 10. Developers are recommended to use the above property instead.
         **/
         isSeekAllowed: boolean;
 

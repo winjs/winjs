@@ -45,7 +45,7 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
         },
 
         isLive: {
-            /// <field type="Object" locid="WinJS.UI.MediaElementAdapter.isLive" helpKeyword="WinJS.UI.MediaElementAdapter.isLive">
+            /// <field type="Boolean" locid="WinJS.UI.MediaElementAdapter.isLive" helpKeyword="WinJS.UI.MediaElementAdapter.isLive">
             /// Gets or sets whether the content is a live stream.
             /// </field>
 
@@ -58,8 +58,8 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
             },
         },
 
-        pauseAllowed: {
-            /// <field type="Object" locid="WinJS.UI.MediaElementAdapter.pauseAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.pauseAllowed">
+        isPauseAllowed: {
+            /// <field type="Boolean" locid="WinJS.UI.MediaElementAdapter.isPauseAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.isPauseAllowed">
             /// Gets or sets a value that specifies whether the pause method can be executed.
             /// </field>
 
@@ -85,20 +85,8 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
             },
         },
 
-        // The folloiwng property is purposedly not documented. It only exists to make it easier for app developers who created
-        // apps prior to Windows 10 to migrate to Windows 10. The property forwards to the real property above.
-        isPauseAllowed: {
-            get: function () {
-                return this.pauseAllowed;
-            },
-
-            set: function (value) {
-                this.pauseAllowed = value;
-            },
-        },
-
-        playAllowed: {
-            /// <field type="Object" locid="WinJS.UI.MediaElementAdapter.playAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.playAllowed">
+        isPlayAllowed: {
+            /// <field type="Boolean" locid="WinJS.UI.MediaElementAdapter.isPlayAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.isPlayAllowed">
             /// Gets or sets a value that specifies whether the play method can be executed.
             /// </field>
 
@@ -124,20 +112,8 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
             },
         },
 
-        // The folloiwng property is purposedly not documented. It only exists to make it easier for app developers who created
-        // apps prior to Windows 10 to migrate to Windows 10. The property forwards to the real property above.
-        isPlayAllowed: {
-            get: function () {
-                return this.playAllowed;
-            },
-
-            set: function (value) {
-                this.playAllowed = value;
-            },
-        },
-
-        seekAllowed: {
-            /// <field type="Object" locid="WinJS.UI.MediaElementAdapter.seekAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.seekAllowed">
+        isSeekAllowed: {
+            /// <field type="Boolean" locid="WinJS.UI.MediaElementAdapter.isSeekAllowed" helpKeyword="WinJS.UI.MediaElementAdapter.isSeekAllowed">
             /// Gets or sets a value that specifies whether the seek method can be executed.
             /// </field>
 
@@ -148,71 +124,39 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
             set: function (value) {
 
                 this._seekAllowed = value;
+                var seekEnabled = !!value;
+                var seekDisabled = !seekEnabled;
+
+                if (this._mediaPlayer._chapterSkipBackButton) {
+                    this._mediaPlayer._chapterSkipBackButton.disabled = seekDisabled;
+                }
+                if (this._mediaPlayer._chapterSkipForwardButton) {
+                    this._mediaPlayer._chapterSkipForwardButton.disabled = seekDisabled;
+                }
+                if (this._mediaPlayer._fastForwardButton) {
+                    this._mediaPlayer._fastForwardButton.disabled = seekDisabled;
+                    if (this._smtControls) {
+                        this._smtControls.isFastForwardEnabled = seekEnabled;
+                    }
+                }
+                if (this._mediaPlayer._rewindButton) {
+                    this._mediaPlayer._rewindButton.disabled = seekDisabled;
+                    if (this._smtControls) {
+                        this._smtControls.isRewindEnabled = seekEnabled;
+                    }
+                }
+                if (this._mediaPlayer._timeSkipBackButton) {
+                    this._mediaPlayer._timeSkipBackButton.disabled = seekDisabled;
+                }
+                if (this._mediaPlayer._timeSkipForwardButton) {
+                    this._mediaPlayer._timeSkipForwardButton.disabled = seekDisabled;
+                }
+
                 if (value) {
-                    if (this._mediaPlayer._chapterSkipBackButton) {
-                        this._mediaPlayer._chapterSkipBackButton.disabled = false;
-                    }
-                    if (this._mediaPlayer._chapterSkipForwardButton) {
-                        this._mediaPlayer._chapterSkipForwardButton.disabled = false;
-                    }
-                    if (this._mediaPlayer._fastForwardButton) {
-                        this._mediaPlayer._fastForwardButton.disabled = false;
-                        if (this._smtControls) {
-                            this._smtControls.isFastForwardEnabled = true;
-                        }
-                    }
-                    if (this._mediaPlayer._rewindButton) {
-                        this._mediaPlayer._rewindButton.disabled = false;
-                        if (this._smtControls) {
-                            this._smtControls.isRewindEnabled = true;
-                        }
-                    }
-                    if (this._mediaPlayer._timeSkipBackButton) {
-                        this._mediaPlayer._timeSkipBackButton.disabled = false;
-                    }
-                    if (this._mediaPlayer._timeSkipForwardButton) {
-                        this._mediaPlayer._timeSkipForwardButton.disabled = false;
-                    }
                     utilities.removeClass(this._mediaPlayer._element, "win-mediaplayer-seekbar-disabled");
                 } else {
-                    if (this._mediaPlayer._chapterSkipBackButton) {
-                        this._mediaPlayer._chapterSkipBackButton.disabled = true;
-                    }
-                    if (this._mediaPlayer._chapterSkipForwardButton) {
-                        this._mediaPlayer._chapterSkipForwardButton.disabled = true;
-                    }
-                    if (this._mediaPlayer._fastForwardButton) {
-                        this._mediaPlayer._fastForwardButton.disabled = true;
-                        if (this._smtControls) {
-                            this._smtControls.isFastForwardEnabled = false;
-                        }
-                    }
-                    if (this._mediaPlayer._rewindButton) {
-                        this._mediaPlayer._rewindButton.disabled = true;
-                        if (this._smtControls) {
-                            this._smtControls.isRewindEnabled = false;
-                        }
-                    }
-                    if (this._mediaPlayer._timeSkipBackButton) {
-                        this._mediaPlayer._timeSkipBackButton.disabled = true;
-                    }
-                    if (this._mediaPlayer._timeSkipForwardButton) {
-                        this._mediaPlayer._timeSkipForwardButton.disabled = true;
-                    }
                     utilities.addClass(this._mediaPlayer._element, "win-mediaplayer-seekbar-disabled");
                 }
-            },
-        },
-
-        // The folloiwng property is purposedly not documented. It only exists to make it easier for app developers who created
-        // apps prior to Windows 10 to migrate to Windows 10. The property forwards to the real property above.
-        isSeekAllowed: {
-            get: function () {
-                return this.seekAllowed;
-            },
-
-            set: function (value) {
-                this.seekAllowed = value;
             },
         },
 
@@ -389,8 +333,6 @@ define('WinJS/Controls/MediaPlayer/MediaElementAdapter', [
     });
 
     _Base.Namespace.define("WinJS.UI", {
-        // ErrorFromName establishes a simple pattern for returning error codes.
-        //
         MediaElementAdapter: MediaElementAdapter
     });
 

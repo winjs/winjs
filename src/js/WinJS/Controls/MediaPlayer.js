@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
+// Note: We should not call the API directly from mediaElement object.We should always call those API (like play, pause etc) from mediaElementAdapter. Otherwise functionality might breaks
+// if someone implemented custom mediaElementAdapters.
 // Media Player
 define('WinJS/Controls/MediaPlayer', [
     'exports',
@@ -74,6 +75,7 @@ define('WinJS/Controls/MediaPlayer', [
                 get mediaPlayerLayvolumeoutUnsupportedValue() { return "Invalid argument: The value for XboxJS.UI.MediaPlayer.layout is not supported."; },
                 get mediaPlayerInvalidTimeValue() { return "Invalid argument: Time must be a number."; },
                 get mediaPlayerNullContentType() { return "Invalid argument: contentType cannot be null."; },
+                get unSupportedOperation() { return "UnSupported Operation: Cannot possible set the compact after setting Commands property"; },
                 get mediaPlayerNullMetadata() { return "Invalid argument: metadata cannot be null."; },
                 get mediaPlayerSetContentMetadataInvalidContentRating() { return "Invalid argument: contentRating is empty or incorrectly formatted."; },
                 get nextTrackMediaCommandDisplayText() { return _Resources._getWinJSString("ui/nextTrackMediaCommandDisplayText").value; },
@@ -142,7 +144,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 utilities.addClass(element, "win-disposable");
                 utilities.addClass(element, "win-mediaplayer");
-                utilities.addClass(element, "win-mediaplayer-doublerow"); 
+                utilities.addClass(element, "win-mediaplayer-doublerow");
 
                 // Private fields.
                 this._adjustedContentType = null;
@@ -159,9 +161,8 @@ define('WinJS/Controls/MediaPlayer', [
                 if (_WinRT.Windows.Media.ContentRestrictions.RatedContentRestrictions) {
                     this._contentRestrictions = new _WinRT.Windows.Media.ContentRestrictions.RatedContentRestrictions();
                 }
-                this._checkPremiumVideoPrivilegeBind = this._checkPremiumVideoPrivilege.bind(this);
                 this._checkParentalControlsBind = this._checkParentalControls.bind(this);
-                this._checkPremiumVideoAndParentalControlsBind = this._checkPremiumVideoAndParentalControls.bind(this);
+                this._checkParentalControlsAvailableBind = this._checkParentalControlsAvailable.bind(this);
                 this._controlHideTimeout = null;
                 this._controls = null;
                 this._controlsKeyupInputHandler = null;
@@ -180,6 +181,8 @@ define('WinJS/Controls/MediaPlayer', [
                 // We need to keep track of whether the endTime was reached so we can set button state appropriately
                 this._endTimeReached = false;
                 this._errorFlyout = null;
+                this._audioTracksFlyout = null;
+                this._closedCaptionsFlyout = null;
                 this._errorText = null;
                 this._fastForwardButton = null;
                 this._fastForwardOrRewindTimer = null;
@@ -193,8 +196,11 @@ define('WinJS/Controls/MediaPlayer', [
                         _WinRT.Windows.UI.Input.GestureSettings.manipulationTranslateY;
                 }
                 this._goToLiveButton = null;
+                this._handleFlyoutOpenCallbackBind = null;
+                this._handleFlyoutCloseCallbackBind = null;
                 this._handleSeekedAfterExitFastForwardOrRewindBind = null;
                 this._handleSystemTransportControlsButtonPressedBind = null;
+                this._handleloadTextTrackCallbackBind = null;
                 this._handleTransportBarButtonFocus = null;
                 this._handleVoiceEngagedBind = null;
                 this._handleVoiceDisengagedBind = null;
@@ -212,12 +218,13 @@ define('WinJS/Controls/MediaPlayer', [
                 this._compact = false;
                 this._controlsVisible = false;
                 this._isInFastForwardOrRewindMode = false;
+                this._isFlyoutOpen = false;
                 this._fullScreen = false;
                 this._handleTimelineArrowKeyDownBind = this._handleTimelineArrowKeyDown.bind(this);
                 this._isHandAtLeftEdge = false;
                 this._isHandAtRightEdge = false;
                 this._isPointerDown = false;
-                this._isThumbnailEnabled = true;
+                this._simulatedFastForwardMode = true;
                 this._isThumbGrabbed = false;
                 this._keydownInputHandler = null;
                 this._keyupInputHandler = null;
@@ -227,7 +234,6 @@ define('WinJS/Controls/MediaPlayer', [
                 this._lastFastForwardOrRewindTimerTime = 0;
                 this._lastPointerPosition = "0,0";
                 this._lastPosition = 0;
-                this._loadTextTrackCallback = null;
                 this._markers = [];
                 this._mediaCommandFeedbackText = null;
                 this._mediaElementAdapter = null;
@@ -266,7 +272,6 @@ define('WinJS/Controls/MediaPlayer', [
                 this._seekTimeIndicator = null;
                 this._seekWindowLeftEdgeElement = null;
                 this._seekWindowRightEdgeElement = null;
-                this._smartGlassInputHandler = null;
                 this._startOffsetX = 0;
                 this._startTime = 0;
                 this._stopButton = null;
@@ -508,7 +513,7 @@ define('WinJS/Controls/MediaPlayer', [
                                tooltip: strings.mediaPlayerPreviousTrackButtonLabel,
                                section: 'primary',
                                priority: 15,
-                               icon: "refresh",
+                               icon: "previous",
                                hidden: true,
                                onclick: this._onPlayFromBeginningCommandInvoked.bind(this)
                            }
@@ -737,6 +742,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 this._playPauseCompactIndex = 0;
                 this._playPauseFullIndex = -1; // default -1 indicates missing PlayPauseButton
+                this._isCommandsSetByUser = false;
 
                 //PlayPause Index in the builtInButtonsList
                 for (var i = 0, len = this._builtInButtonsList.length; i < len; i++) {
@@ -763,8 +769,8 @@ define('WinJS/Controls/MediaPlayer', [
                                                    _Global.document.mozFullScreenElement ||
                                                    _Global.document.webkitFullscreenElement;
                     if (!fullScreenElement && that.isFullScreen) {
-                            // make sure MediaPlayer also exits the fullscreen, since we exited the fullscreen thru other means like escape key
-                            that.isFullScreen = false;
+                        // make sure MediaPlayer also exits the fullscreen, since we exited the fullscreen thru other means like escape key
+                        that.isFullScreen = false;
                     }
                 };
 
@@ -832,11 +838,11 @@ define('WinJS/Controls/MediaPlayer', [
                         that._seekBarLeftOffset = that._seekBar.offsetLeft;
                         that._thumbElementWidthDividedByTwo = that._thumbElement.clientWidth / 2;
                         that._thumbImageElementWidthDividedByTwo = that._thumbnailImage.clientWidth / 2;
-                    }, Scheduler.Priority.normal, this);
+                    }, Scheduler.Priority.normal, this, "WinJS.UI.MediaPlayer._updateTimelineSizes");
                 };
                 _ElementUtilities._resizeNotifier.subscribe(this._element, this._windowResizeCallback);
 
-                this._updateDomElements();
+                this._initializeDomElements();
 
                 // Set the rest of the options
                 if (options) {
@@ -856,14 +862,14 @@ define('WinJS/Controls/MediaPlayer', [
                 this._handleBeforeNavigatedCallback = function () {
                     that._handleBeforeNavigated();
                 };
-                
-                nav._navigationListener.addEventListener(this.element,"beforenavigate", this._handleBeforeNavigatedCallback);
+
+                nav._navigationListener.addEventListener(this.element, "beforenavigate", this._handleBeforeNavigatedCallback);
 
                 // Set a timer to report state to SmartGlass periodically
                 this._updateMediaStateBind = this._updateMediaState.bind(this);
                 this._updateMediaStateTimerCookie = _Global.setInterval(this._updateMediaStateBind, this._REPORT_MEDIA_STATE_INTERVAL);
 
-                utilities._webUIApplicationListener.addEventListener(this.element, "resuming", this._checkPremiumVideoAndParentalControlsBind);
+                utilities._webUIApplicationListener.addEventListener(this.element, "resuming", this._checkParentalControlsAvailableBind);
 
                 if (this._contentRestrictions) {
                     this._contentRestrictions.addEventListener("restrictionschanged", this._checkParentalControlsBind, false);
@@ -880,9 +886,10 @@ define('WinJS/Controls/MediaPlayer', [
                     this._handleSystemTransportControlsButtonPressedBind = this._handleSystemTransportControlsButtonPressed.bind(this);
                     this._handleSystemTransportControlsPropertyChangedBind = this._handleSystemTransportControlsPropertyChanged.bind(this);
                     utilities._smtcListener.addEventListener(this.element, "buttonpressed", this._handleSystemTransportControlsButtonPressedBind);
-                    utilities._smtcListener.addEventListener(this.element,"propertychanged", this._handleSystemTransportControlsPropertyChangedBind);
+                    utilities._smtcListener.addEventListener(this.element, "propertychanged", this._handleSystemTransportControlsPropertyChangedBind);
                 }
 
+                this._handleloadTextTrackCallbackBind = this._handleloadTextTrackCallback.bind(this);
                 _WriteProfilerMark("WinJS.UI.MediaPlayer:constructor,StopTM");
             },
             {
@@ -895,6 +902,10 @@ define('WinJS/Controls/MediaPlayer', [
 
                     set: function (value) {
                         if (this._disposed) {
+                            return;
+                        }
+                        // we are already in same state.
+                        if (this._isBusyInternal === value) {
                             return;
                         }
 
@@ -1043,71 +1054,6 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                // Checks if the right conditions are met such that the user can stream video
-                _checkPremiumVideoPrivilege: function () {
-                    var that = this;
-                    return new Promise(function (complete, error) {
-
-                        // If there is no requiresPremiumVideoPrivilege field, that means that developer is telling us not to do a premium video
-                        // check. If we not running on Xbox, we don't do the check.
-                        if (!that._mediaMetadata ||
-                            !that._mediaMetadata.requiresPremiumVideoPrivilege ||
-                            !_WinRT.Windows.Xbox) {
-                            complete(true);
-                            return;
-                        }
-
-                        // We wait on all outstanding promises
-                        var hasPremiumVideoPriviledgePromises = [];
-                        var numberOfSignedInNonGuestUsers = 0;
-                        var isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
-                        // '224' is the privilege for premium video
-                        var premiumVideoPrivilegeId = 224;
-                        var noIssueResult = _WinRT.Windows.Xbox.ApplicationModel.Store.PrivilegeCheckResult.noIssue;
-                        // We do this check asynchronously. It makes a service call so it could take a while to return.
-                        // We allow the video to play, but will return an error if it comes back false.
-                        var users = _WinRT.Windows.Xbox.System.User.users;
-                        for (var i = 0, len = users.size; i < len; i++) {
-                            if (users[i].isSignedIn &&
-                                !users[i].isGuest) {
-                                hasPremiumVideoPriviledgePromises.push(_WinRT.Windows.Xbox.ApplicationModel.Store.Product.checkPrivilegeAsync(users[i], premiumVideoPrivilegeId, true, null));
-                                numberOfSignedInNonGuestUsers++;
-                            }
-                        }
-
-                        // Listen for the promises to return
-                        for (var i = 0, len = numberOfSignedInNonGuestUsers; i < len; i++) {
-                            if (hasPremiumVideoPriviledgePromises.length) {
-                                hasPremiumVideoPriviledgePromises[i].then(function (result) {
-                                    if (result === noIssueResult) {
-                                        isAllowedToViewContentBasedOnPremiumVideoPriviledge = true;
-                                    } else {
-                                        isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
-                                    }
-                                });
-                            }
-                        }
-
-                        if (numberOfSignedInNonGuestUsers === 0) {
-                            isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
-                        }
-
-                        Promise.join(hasPremiumVideoPriviledgePromises)
-                            .then(
-                                function () {
-                                    if (isAllowedToViewContentBasedOnPremiumVideoPriviledge) {
-                                        complete(true);
-                                    } else {
-                                        complete(false);
-                                    }
-                                },
-                        function unknownError() {
-                            // We should never hit this case, but if we do call the error handler
-                            error();
-                        });
-                    });
-                },
-
                 // Checks if the content restrictions are such that the user is allowed to stream video
                 _checkParentalControls: function () {
                     // If contentRating has been set to a valid contentRating, then
@@ -1145,27 +1091,14 @@ define('WinJS/Controls/MediaPlayer', [
                     return this._contentRestrictions.requestContentAccessAsync(contentDescription);
                 },
 
-                _checkPremiumVideoAndParentalControls: function () {
+                _checkParentalControlsAvailable: function () {
                     if (this._disposed) {
                         return;
                     }
 
                     var that = this;
 
-                    var hasPremiumVideoPriviledge = false;
                     var hasParentalControlsPrivilege = false;
-                    var checkPremiumVideoPromise = this._checkPremiumVideoPrivilegeBind()
-                        .then(
-                            function afterPriviledgeCheck(result) {
-                                if (result) {
-                                    hasPremiumVideoPriviledge = true;
-                                } else {
-                                    hasPremiumVideoPriviledge = false;
-                                }
-                            },
-                            function error() {
-                                hasPremiumVideoPriviledge = false;
-                            });
                     var checkParentalControlsPromise = this._checkParentalControlsBind()
                         .then(
                             function afterParentalControlsCheck(result) {
@@ -1179,11 +1112,10 @@ define('WinJS/Controls/MediaPlayer', [
                                 hasParentalControlsPrivilege = false;
                             });
 
-                    Promise.join([checkPremiumVideoPromise, checkParentalControlsPromise])
+                    Promise.join(checkParentalControlsPromise)
                         .then(
                             function afterPriviledgeChecksHaveCompleted() {
-                                if (hasPremiumVideoPriviledge &&
-                                    hasParentalControlsPrivilege) {
+                                if (hasParentalControlsPrivilege) {
                                     // No-op - continue video playback
                                 } else {
                                     // The expected behavior is to navigate back, or if there is no back stack, pause the media
@@ -1339,7 +1271,7 @@ define('WinJS/Controls/MediaPlayer', [
                         utilities.removeClass(this._element, "win-mediaplayer-fastforward");
                     }
 
-                    if (this._isThumbnailEnabled &&
+                    if (this._simulatedFastForwardMode &&
                         this._mediaElementAdapter &&
                         this._isFastForwardOrRewind(this._targetPlaybackRate)) {
                         if (this._mediaElementAdapter &&
@@ -1608,7 +1540,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     // If we are in fast forward / rewind mode, then exit to playing
                                     if (this._isInFastForwardOrRewindMode) {
 
-                                        if (!this._isThumbnailEnabled) {
+                                        if (!this._simulatedFastForwardMode) {
                                             this._isInFastForwardOrRewindMode = false;
                                             this._mediaElementAdapter.mediaElement.playbackRate = this._mediaElementAdapter.mediaElement.defaultPlaybackRate;
                                         }
@@ -1761,7 +1693,7 @@ define('WinJS/Controls/MediaPlayer', [
                     var defaultNotPrevented = this._dispatchCancellableEvent("beforehidecontrols", {});
 
                     if (defaultNotPrevented) {
-                        if (!this._isInFastForwardOrRewindMode &&
+                        if (!this._isInFastForwardOrRewindMode && !this._isFlyoutOpen &&
                             !this._areControlsHiding) {
 
                             // We hide the back button for all platforms except the desktop and tablet where there is no hardware
@@ -1867,6 +1799,25 @@ define('WinJS/Controls/MediaPlayer', [
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:_initializeChapterMarkers,StopTM");
                 },
 
+                _handleloadTextTrackCallback: function (eventObject) {
+                    var textTrackCueList = eventObject;
+                    var textTrackCueListLength = textTrackCueList.length;
+                    for (var j = 0; j < textTrackCueListLength; j++) {
+                        this.addMarker(textTrackCueList[j].startTime, markerType.chapter, textTrackCueList[j].text);
+                    }
+                },
+
+                _handleFlyoutOpenCallback: function () {
+                    // enable the flag to make sure won't hide.
+                    this._isFlyoutOpen = true;
+                },
+
+                _handleFlyoutCloseCallback: function () {
+                    // disable the flag to  hide.
+                    this._isFlyoutOpen = false;
+                    this._hideControls();
+                },
+
                 _initializeCustomChapterMarkers: function (mediaElement) {
 
                     // Remove default chapter markers
@@ -1877,23 +1828,12 @@ define('WinJS/Controls/MediaPlayer', [
                     var tracksLength = tracks.length;
                     for (var i = 0; i < tracksLength; i++) {
                         if (tracks[i].kind === "chapters") {
-
-                            // Note: We need to mark the track as "HIDDEN" otherwise we will not receive cue-related events.
-                            textTracks[i].mode = textTracks[i].HIDDEN;
-
-                            var that = this;
-                            this._loadTextTrackCallback = function handleLoadTextTrack() {
-                                var textTrackCueList = this.track.cues;
-
-                                var textTrackCueListLength = textTrackCueList.length;
-                                for (var j = 0; j < textTrackCueListLength; j++) {
-                                    that.addMarker(textTrackCueList[j].startTime, markerType.chapter, textTrackCueList[j].text);
-                                }
-                            };
-
-                            tracks[i].addEventListener("load", this._loadTextTrackCallback, false);
+                            // Note: We need to mark the track as "hidden" otherwise we will not receive cue-related events.
+                            textTracks[i].mode = "hidden";
+                            tracks[i].addEventListener("load", this._handleloadTextTrackCallbackBind, false);
                         }
                     }
+                    this._isChapterMarkerVisualsDirty = true;
                 },
 
                 _initializeDefaultChapterMarkers: function () {
@@ -1939,6 +1879,8 @@ define('WinJS/Controls/MediaPlayer', [
                         this._audioTracksButton.flyout = this._audioTracksFlyout;
                         flyoutElement.style.display = "none";
                         _Global.document.body.appendChild(flyoutElement);
+                        this._audioTracksFlyout.addEventListener("beforeshow", this._handleFlyoutOpenCallbackBind, false);
+                        this._audioTracksFlyout.addEventListener("afterhide", this._handleFlyoutCloseCallbackBind, false);
                     }
 
                     // Show the flyout
@@ -2019,6 +1961,8 @@ define('WinJS/Controls/MediaPlayer', [
                         this._closedCaptionsButton.flyout = this._closedCaptionsFlyout;
                         flyoutElement.style.display = "none";
                         _Global.document.body.appendChild(flyoutElement);
+                        this._closedCaptionsFlyout.addEventListener("beforeshow", this._handleFlyoutOpenCallbackBind, false);
+                        this._closedCaptionsFlyout.addEventListener("afterhide", this._handleFlyoutCloseCallbackBind, false);
                     }
 
                     // Show the flyout
@@ -2090,12 +2034,12 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                // This function is called after the video has 
+                // This function is called after the video has ended.
                 _onEnded: function () {
 
                     this._exitFastForwardOrRewind(false);
 
-                    // Reset this value to value because there is code in _handleEndTimeReached that sets checks if the
+                    // Reset this value to false because there is code in _handleEndTimeReached that checks if the
                     // end time was reached or not to prevent _handleEndTimeReached from being called again.
                     this._endTimeReached = false;
 
@@ -2123,6 +2067,8 @@ define('WinJS/Controls/MediaPlayer', [
                         flyoutElement.style.display = "none";
                         _Global.document.body.appendChild(flyoutElement);
                         this._errorText = flyoutElement.querySelector(".win-mediaplayer-errortext");
+                        this._errorFlyout.addEventListener("beforeshow", this._handleFlyoutOpenCallbackBind, false);
+                        this._errorFlyout.addEventListener("afterhide", this._handleFlyoutCloseCallbackBind, false);
                     }
 
                     // Show the flyout
@@ -2181,6 +2127,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._mediaElementAdapter.mediaElement) {
 
                         var mediaElement = this._mediaElementAdapter.mediaElement;
+                        var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
 
                         var startTime = this._startTime;
                         var endTime = this._endTime;
@@ -2211,13 +2158,12 @@ define('WinJS/Controls/MediaPlayer', [
                                 // Otherwise if we're at an edge of the timeline, we move the triangle independently of the image
                                 var leftEdgeOfTheSeekbar = this._thumbImageElementWidthDividedByTwo;
                                 var rightEdgeOfTheSeekbar = this._totalSeekBarWidth - this._thumbImageElementWidthDividedByTwo;
-                                var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
                                 if (newProgressLeftOffset < leftEdgeOfTheSeekbar) {
                                     var seekMarkOffset = 1 * (newProgressLeftOffset - leftEdgeOfTheSeekbar);
                                     if (seekMarkOffset < -1 * this._thumbImageElementWidthDividedByTwo) {
                                         seekMarkOffset = -1 * this._thumbImageElementWidthDividedByTwo;
                                     }
-                                    this._seekMark.style.transform = "translateX(" + seekMarkOffset + "px)";
+                                    this._seekMark.style[transformName] = "translateX(" + seekMarkOffset + "px)";
                                     this._thumbElement.style[transformName] = "translate(" + (seekMarkOffset) + "px, 3px)";
                                     utilities.addClass(this._thumbElement, "win-mediaplayer-thumbnail-lefttriangle");
                                     this._currentTimeVisualElements.style[transformName] = "translateX(" + leftEdgeOfTheSeekbar + "px)";
@@ -2226,19 +2172,19 @@ define('WinJS/Controls/MediaPlayer', [
                                     if (seekMarkOffset > this._thumbImageElementWidthDividedByTwo) {
                                         seekMarkOffset = this._thumbImageElementWidthDividedByTwo;
                                     }
-                                    this._seekMark.style.transform = "translateX(" + seekMarkOffset + "px)";
+                                    this._seekMark.style[transformName] = "translateX(" + seekMarkOffset + "px)";
                                     this._thumbElement.style[transformName] = "translate(" + (seekMarkOffset - 14) + "px, 6px)";
                                     utilities.addClass(this._thumbElement, "win-mediaplayer-thumbnail-righttriangle");
-                                    this._currentTimeVisualElements.style.transform = "translateX(" + rightEdgeOfTheSeekbar + "px)";
+                                    this._currentTimeVisualElements.style[transformName] = "translateX(" + rightEdgeOfTheSeekbar + "px)";
                                 } else {
-                                    this._seekMark.style.transform = "none";
+                                    this._seekMark.style[transformName] = "none";
                                     utilities.removeClass(this._thumbElement, "win-mediaplayer-thumbnail-lefttriangle");
                                     utilities.removeClass(this._thumbElement, "win-mediaplayer-thumbnail-righttriangle");
                                     this._thumbElement.style[transformName] = "rotate(45deg)";
-                                    this._currentTimeVisualElements.style.transform = "translateX(" + newProgressLeftOffset + "px)";
+                                    this._currentTimeVisualElements.style[transformName] = "translateX(" + newProgressLeftOffset + "px)";
                                 }
                             }
-                            this._progress.style.transform = "scaleX(" + newProgress + ")";
+                            this._progress.style[transformName] = "scaleX(" + newProgress + ")";
 
                             this._updateTimeDisplay();
 
@@ -2254,19 +2200,11 @@ define('WinJS/Controls/MediaPlayer', [
                         // It's possible to get into a non-paused state, if the user starts FF or RR while a seek is in progress.
                         // The seek will finish and start the video playing, but if the user is in the FF or RR state we want
                         // the media to be paused.
-                        if (this._isThumbnailEnabled &&
+                        if (this._simulatedFastForwardMode &&
                             mediaElement.playbackRate !== 0) {
                             this._previousPlaybackRate = mediaElement.playbackRate;
                             mediaElement.playbackRate = 0;
                         }
-                    }
-                },
-
-                _onGoToFullScreenCommandInvoked: function () {
-                    if (_WinRT.Windows.Xbox && _WinRT.Windows.UI.ViewManagement.ApplicationView) {
-                        _WinRT.Windows.UI.ViewManagement.ApplicationView.tryUnsnapToFullscreen();
-                    } else {
-                        _WinRT.Windows.UI.ViewManagement.ApplicationView.tryUnsnap();
                     }
                 },
 
@@ -2378,7 +2316,9 @@ define('WinJS/Controls/MediaPlayer', [
                     // Keep track of the last pointer position allows us to see if the pointer had the same X, Y on
                     // pointer up (meaning the pointer was tapped as opposed to dragged). If the pointer was tapped
                     // then we dismiss the controls.
-                    this._lastPointerPosition = ev.x + "," + ev.y;
+                    if (ev.x && ev.y) {
+                        this._lastPointerPosition = ev.x + "," + ev.y;
+                    }
 
                     // When the user presses anywhere on the video if we are FF'ing or RR'ing
                     // we should exit FF or RR mode and play.
@@ -2389,10 +2329,6 @@ define('WinJS/Controls/MediaPlayer', [
                     } else {
                         this._showControls();
                     }
-                },
-
-                _onInputHandlerPointerHover: function () {
-                    this._showControls();
                 },
 
                 // Handles the pointer move event on the input Handler element
@@ -2519,10 +2455,9 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // We wait until the first custom marker is added before subscribing to time updates
                     // That way we won't be listening to time updates when we don't need to.
-                    if (!this._hasCustomMarkers) {
+                    if (this._hasCustomMarkers) {
 
                         this._subscribeToTimeUpdates();
-                        this._hasCustomMarkers = true;
                     }
 
                     this._isChapterMarkerVisualsDirty = true;
@@ -2598,7 +2533,8 @@ define('WinJS/Controls/MediaPlayer', [
                         this._playbackRateButton.flyout = this._playbackRateFlyout;
                         flyoutElement.style.display = "none";
                         _Global.document.body.appendChild(flyoutElement);
-
+                        this._playbackRateFlyout.addEventListener("beforeshow", this._handleFlyoutOpenCallbackBind, false);
+                        this._playbackRateFlyout.addEventListener("afterhide", this._handleFlyoutCloseCallbackBind, false);
                         // Set up the event listeners on the buttons
                         var that = this;
                         var playbackRateOptions = flyoutElement.querySelectorAll("button");
@@ -2651,7 +2587,7 @@ define('WinJS/Controls/MediaPlayer', [
                             // If we are in fast forward / rewind mode, then exit to playing
                             if (this._isInFastForwardOrRewindMode) {
 
-                                if (!this._isThumbnailEnabled) {
+                                if (!this._simulatedFastForwardMode) {
                                     this._isInFastForwardOrRewindMode = false;
                                     this._mediaElementAdapter.mediaElement.playbackRate = this._mediaElementAdapter.mediaElement.defaultPlaybackRate;
                                 }
@@ -2706,6 +2642,7 @@ define('WinJS/Controls/MediaPlayer', [
                         var mediaElement = this._mediaElementAdapter.mediaElement;
                         var currentTime = mediaElement.currentTime;
                         var indexOfBufferRangeToDisplay = -1;
+                        var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
                         for (var i = mediaElement.buffered.length - 1; i >= 0; i--) {
                             if (currentTime >= mediaElement.buffered.start(i) &&
                                 currentTime <= mediaElement.buffered.end(i)) {
@@ -2715,17 +2652,17 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         if (indexOfBufferRangeToDisplay !== -1) {
-                            var firstBufferedIndex = mediaElement.buffered.length - 1;
-                            var bufferedStart = mediaElement.buffered.start(firstBufferedIndex);
-                            var bufferedEnd = mediaElement.buffered.end(firstBufferedIndex);
+                            indexOfBufferRangeToDisplay = mediaElement.buffered.length - 1;
+                            var bufferedStart = mediaElement.buffered.start(indexOfBufferRangeToDisplay);
+                            var bufferedEnd = mediaElement.buffered.end(indexOfBufferRangeToDisplay);
 
                             var bufferedRangeAsPercentOfDuration = (bufferedEnd - bufferedStart) / this._totalTime;
                             var bufferPixelLeftOffset = (bufferedStart / this._totalTime) * this._totalSeekBarWidth;
 
-                            this._buffer.style.transform = "scaleX(" + bufferedRangeAsPercentOfDuration + ") translateX(" + bufferPixelLeftOffset + "px)";
+                            this._buffer.style[transformName] = "scaleX(" + bufferedRangeAsPercentOfDuration + ") translateX(" + bufferPixelLeftOffset + "px)";
                         } else {
                             // Don't show buffering visuals
-                            this._buffer.style.transform = "scaleX(" + 0 + ")";
+                            this._buffer.style[transformName] = "scaleX(" + 0 + ")";
                         }
                     }
                 },
@@ -2736,7 +2673,7 @@ define('WinJS/Controls/MediaPlayer', [
                     // is not going to correspond to the perceived playbackRate in the UI.
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.mediaElement &&
-                        !this._isThumbnailEnabled) {
+                        !this._simulatedFastForwardMode) {
                         if (this._mediaElementAdapter.mediaElement.playbackRate === this._mediaElementAdapter.mediaElement.defaultPlaybackRate) {
                             this._isInFastForwardOrRewindMode = false;
                             this._showPauseButton();
@@ -2779,8 +2716,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                         if (this._controlsVisible) {
                             // After a seek, clear any transforms on the currentTime circle visual
-                            if (this._isThumbnailEnabled) {
-                                this._seekMark.style.transform = "none";
+                            if (this._simulatedFastForwardMode) {
+                                this._seekMark.style[_BaseUtils._browserStyleEquivalents["transform"].scriptName] = "none";
                             }
                             this._updateTimelineVisuals();
                         }
@@ -2834,27 +2771,24 @@ define('WinJS/Controls/MediaPlayer', [
                 // Handles the pointer move event on the input handler element when thumb bar is held down
                 _onThumbDrag: function (ev) {
                     if (this._mediaElementAdapter &&
-                       !this._mediaElementAdapter.seekAllowed) {
+                       !this._mediaElementAdapter.isSeekAllowed && !ev.pageX) {
                         return;
                     }
 
                     // Calculate how far the user moved since last time & remember
                     // the current X coordinate of the pointer.
                     var newX = ev.pageX;
-
+                    var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
                     // Need to account for the Window offset
                     var seekbarRect = this._seekBar.getBoundingClientRect();
                     if (newX < seekbarRect.left) {
                         newX = seekbarRect.left;
                     } else if (newX > seekbarRect.right) {
                         newX = seekbarRect.right;
-                    } else {
-                        newX -= seekbarRect.left;
                     }
 
-                    var seekBarOffset = 0;
+                    var seekBarOffset = newX;
                     var progress = newX / this._totalSeekBarWidth;
-                    seekBarOffset = progress * this._totalSeekBarWidth;
 
                     // Clamp the progress to the timeline
                     if (progress < 0) {
@@ -2863,7 +2797,7 @@ define('WinJS/Controls/MediaPlayer', [
                         progress = 1;
                     }
 
-                    this._progress.style.transform = "scaleX(" + progress + ")";
+                    this._progress.style[transformName] = "scaleX(" + progress + ")";
 
                     if (this._thumbnailImage) {
                         if (seekBarOffset < 0) {
@@ -2884,25 +2818,25 @@ define('WinJS/Controls/MediaPlayer', [
                             if (seekMarkOffset < -1 * this._thumbImageElementWidthDividedByTwo) {
                                 seekMarkOffset = -1 * this._thumbImageElementWidthDividedByTwo;
                             }
-                            this._seekMark.style.transform = "translateX(" + seekMarkOffset + "px)";
-                            this._thumbElement.style.transform = "translate(" + (seekMarkOffset) + "px, 3px)";
+                            this._seekMark.style[transformName] = "translateX(" + seekMarkOffset + "px)";
+                            this._thumbElement.style[transformName] = "translate(" + (seekMarkOffset) + "px, 3px)";
                             utilities.addClass(this._thumbElement, "win-mediaplayer-thumbnail-lefttriangle");
-                            this._currentTimeVisualElements.style.transform = "translateX(" + leftEdgeOfTheSeekbar + "px)";
+                            this._currentTimeVisualElements.style[transformName] = "translateX(" + leftEdgeOfTheSeekbar + "px)";
                         } else if (seekBarOffset > rightEdgeOfTheSeekbar) {
                             var seekMarkOffset = seekBarOffset - rightEdgeOfTheSeekbar;
                             if (seekMarkOffset > this._thumbImageElementWidthDividedByTwo) {
                                 seekMarkOffset = this._thumbImageElementWidthDividedByTwo;
                             }
-                            this._seekMark.style.transform = "translateX(" + seekMarkOffset + "px)";
-                            this._thumbElement.style.transform = "translate(" + (seekMarkOffset - 14) + "px, 6px)";
+                            this._seekMark.style[transformName] = "translateX(" + seekMarkOffset + "px)";
+                            this._thumbElement.style[transformName] = "translate(" + (seekMarkOffset - 14) + "px, 6px)";
                             utilities.addClass(this._thumbElement, "win-mediaplayer-thumbnail-righttriangle");
-                            this._currentTimeVisualElements.style.transform = "translateX(" + rightEdgeOfTheSeekbar + "px)";
+                            this._currentTimeVisualElements.style[transformName] = "translateX(" + rightEdgeOfTheSeekbar + "px)";
                         } else {
-                            this._seekMark.style.transform = "none";
-                            this._thumbElement.style.transform = "rotate(45deg)";
+                            this._seekMark.style[transformName] = "none";
+                            this._thumbElement.style[transformName] = "rotate(45deg)";
                             utilities.removeClass(this._thumbElement, "win-mediaplayer-thumbnail-righttriangle");
                             utilities.removeClass(this._thumbElement, "win-mediaplayer-thumbnail-lefttriangle");
-                            this._currentTimeVisualElements.style.transform = "translateX(" + seekBarOffset + "px)";
+                            this._currentTimeVisualElements.style[transformName] = "translateX(" + seekBarOffset + "px)";
                         }
                     }
 
@@ -2932,8 +2866,8 @@ define('WinJS/Controls/MediaPlayer', [
                                 var markerOffset = this._seekCurrentTime / this._totalTime;
 
                                 // Snap the UI to the marker location
-                                this._progress.style.transform = "scaleX(" + markerOffset + "px)";
-                                this._currentTimeVisualElements.style.transform = "translateX(" + markerOffset + "px)";
+                                this._progress.style[transformName] = "scaleX(" + markerOffset + "px)";
+                                this._currentTimeVisualElements.style[transformName] = "translateX(" + markerOffset + "px)";
 
                                 break;
                             }
@@ -2953,7 +2887,7 @@ define('WinJS/Controls/MediaPlayer', [
                 _onThumbDragStop: function (ev) {
 
                     if (this._mediaElementAdapter &&
-                       !this._mediaElementAdapter.seekAllowed) {
+                       !this._mediaElementAdapter.isSeekAllowed) {
                         return;
                     }
 
@@ -2961,6 +2895,7 @@ define('WinJS/Controls/MediaPlayer', [
                     utilities.removeClass(this._transportControls, "win-invisible");
 
                     var mediaElement = this._mediaElementAdapter.mediaElement;
+                    var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
 
                     // Hide the cursor while the user is scrubbing
                     if (_WinRT.Windows.Xbox) {
@@ -2971,8 +2906,8 @@ define('WinJS/Controls/MediaPlayer', [
                         utilities.addClass(this._thumbElement, "win-mediaplayer-hidden");
                         utilities.addClass(this._thumbnailImage, "win-mediaplayer-hidden");
 
-                        this._seekMark.style.transform = "none";
-                        this._thumbElement.style.transform = "rotate(45deg)";
+                        this._seekMark.style[transformName] = "none";
+                        this._thumbElement.style[transformName] = "rotate(45deg)";
                     }
 
                     utilities.removeClass(this._element, "win-mediaplayer-scrubbing");
@@ -2997,7 +2932,7 @@ define('WinJS/Controls/MediaPlayer', [
                 // Handles the pointer down event on the seek bar thumb 
                 _onThumbStartDrag: function (ev) {
                     if (!this._mediaElementAdapter ||
-                        !this._mediaElementAdapter.seekAllowed ||
+                        !this._mediaElementAdapter.isSeekAllowed ||
                         !this._mediaElementAdapter.mediaElement) {
                         return;
                     }
@@ -3184,7 +3119,7 @@ define('WinJS/Controls/MediaPlayer', [
                             if (this._mediaElementAdapter.mediaElement.volume === 0) {
                                 utilities.addClass(this._muteButton, "win-mediaplayer-mute-icon");
                             } else {
-                                    utilities.addClass(this._muteButton, "win-mediaplayer-volume-icon");
+                                utilities.addClass(this._muteButton, "win-mediaplayer-volume-icon");
                             }
                         }
                         this._volumeSlider = flyoutElement.querySelector(".win-mediaplayer-volume-slider");
@@ -3192,6 +3127,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                         // Attach overlay event handlers
                         this._volumeFlyout.addEventListener("aftershow", this._handleVolumeFlyoutShowCallback, false);
+                        this._volumeFlyout.addEventListener("beforeshow", this._handleFlyoutOpenCallbackBind, false);
+                        this._volumeFlyout.addEventListener("afterhide", this._handleFlyoutCloseCallbackBind, false);
                         this._volumeSlider.addEventListener("change", this._handleVolumeSliderChangeCallback, false);
                         this._addButtonEventHandler(this._muteButton, "click", this._onMuteCommandInvoked);
                     }
@@ -3274,7 +3211,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._seekBarLeftOffset = this._seekBar.offsetLeft;
                         this._thumbElementWidthDividedByTwo = this._thumbElement.clientWidth / 2;
                         this._thumbImageElementWidthDividedByTwo = this._thumbnailImage.clientWidth / 2;
-                    }, Scheduler.Priority.normal, this);
+                    }, Scheduler.Priority.normal, this, "WinJS.UI.MediaPlayer._recalculateCachedUIElementSizes");
                 },
 
                 _refreshAudioTracksMenu: function () {
@@ -3300,9 +3237,9 @@ define('WinJS/Controls/MediaPlayer', [
                             }
                             audioTrackOption.addEventListener("click", (function generatedClickHandler(metadata) {
                                 return function handleClick() {
-                                    if (currentTrack &&
-                                        !currentTrack.enabled) {
-                                        currentTrack.enabled = true;
+                                    if (metadata &&
+                                        !metadata.enabled) {
+                                        metadata.enabled = true;
                                         this._refreshAudioTracksMenu();
                                     }
                                 }.bind(this);
@@ -3325,7 +3262,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                         for (var i = 0, len = textTracks.length; i < len; i++) {
                             var currentTrack = textTracks[i];
-                            if (currentTrack.kind === "caption" ||
+                            if (currentTrack.kind === "captions" ||
                                 currentTrack.kind === "subtitles") {
                                 var closedCaptionsOption = _Global.document.createElement("button");
                                 closedCaptionsOption.textContent = currentTrack.label;
@@ -3405,7 +3342,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                // Resets both the controls timer and the seekbar timer if available
+                // Resets both the controls timer 
                 _resetAutoHideTimers: function () {
 
                     this._resetAutoHideControlsTimer();
@@ -3422,8 +3359,6 @@ define('WinJS/Controls/MediaPlayer', [
                     this._defaultChapterMarkers = [];
                     this._endTime = 0;
                     this._endTimeReached = false;
-                    this._FAST_FORWARD_OR_REWIND_TIMER_INTERVAL = 250;
-                    this._handleTransportBarButtonFocus = null;
                     this._hasCustomMarkers = false;
                     this._lastFastForwardOrRewindTimerTime = 0;
                     this._fastForwardOrRewindTimerElapsedTime = 0;
@@ -3441,14 +3376,14 @@ define('WinJS/Controls/MediaPlayer', [
                     this._wasTimeClampedToEndTime = false;
 
                     // Reset the progress bar
-                    this._progress.style.transform = "scaleX(0)";
+                    this._progress.style[_BaseUtils._browserStyleEquivalents["transform"].scriptName] = "scaleX(0)";
                 },
 
                 _seekInternal: function (newTime, wasCalledProgrammatically) {
 
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.seek &&
-                        this._mediaElementAdapter.seekAllowed) {
+                        this._mediaElementAdapter.isSeekAllowed) {
 
                         this._exitFastForwardOrRewind(true);
 
@@ -3523,7 +3458,7 @@ define('WinJS/Controls/MediaPlayer', [
                         this._mediaElementAdapter.mediaElement) {
                         var currentPlaybackRate = this._PLAYBACKRATE_NOT_PLAYING;
 
-                        if (this._isThumbnailEnabled) {
+                        if (this._simulatedFastForwardMode) {
                             currentPlaybackRate = this._targetPlaybackRate;
                         } else {
                             currentPlaybackRate = this._mediaElementAdapter.mediaElement.playbackRate;
@@ -3584,16 +3519,11 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         this._recalculateCachedUIElementSizes();
-                        // If the video is in "full screen" mode, then we insert the video tag as the first child of the body
-                        // so that we can use Trident's optimal video rendering path.
                         var elementToInsertMediaElementBefore = null;
-                        if (this._fullScreen) {
-                            elementToInsertMediaElementBefore = this._element.querySelector(".win-mediaplayer");
-                        } else {
-                            elementToInsertMediaElementBefore = this._element.querySelector(".win-mediaplayer-controls");
-                        }
+                        elementToInsertMediaElementBefore = this._element.querySelector(".win-mediaplayer-controls");
+                       
                         if (elementToInsertMediaElementBefore &&
-                            elementToInsertMediaElementBefore.parentNode &&  
+                            elementToInsertMediaElementBefore.parentNode &&
                             !this._isTestMode) { // The last clause is added for testing so we don't have to have an actual DOM element when running unit tests
                             elementToInsertMediaElementBefore.parentNode.insertBefore(newMediaElement, elementToInsertMediaElementBefore);
                         }
@@ -3675,6 +3605,7 @@ define('WinJS/Controls/MediaPlayer', [
                 },
 
                 // Show the controls bar, controls bar will slide/fade in, but will auto hide automatically.
+                // force tried to alway show controls irrespective playback happening or not.
                 _showControls: function (force, doNotAutoHide) {
 
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:_showControls,StartTM");
@@ -3743,12 +3674,12 @@ define('WinJS/Controls/MediaPlayer', [
                                 mediacontrols: this._controls,
                                 visibleTransportBarButtons: visibleAllTransportBarButtons
                             }).then(function () {
-                                    if (that._disposed) {
-                                        return;
-                                    }
-                                    _WriteProfilerMark("WinJS.UI.MediaPlayer:_showControls,StopTM");
-                                    that.dispatchEvent("aftershowcontrols", {});
-                                });
+                                if (that._disposed) {
+                                    return;
+                                }
+                                _WriteProfilerMark("WinJS.UI.MediaPlayer:_showControls,StopTM");
+                                that.dispatchEvent("aftershowcontrols", {});
+                            });
 
                             if ((!wuiv.ApplicationView ||
                                 (wuiv.ApplicationView && wuiv.ApplicationView.value !== wuiv.ApplicationViewState.snapped)) &&
@@ -3775,9 +3706,7 @@ define('WinJS/Controls/MediaPlayer', [
                     var visibleTransportBarButtons = [];
                     for (var i = 0, len = allTransportBarButtons.length; i < len; i++) {
                         var currentButton = allTransportBarButtons[i];
-                        if (!utilities.hasClass(currentButton) &&
-                            currentButton.style.display !== "none" &&
-                            currentButton.style.visibility !== "hidden") {
+                        if (currentButton.winControl && !currentButton.winControl.hidden) {
                             visibleTransportBarButtons.push(allTransportBarButtons[i]);
                         }
                     }
@@ -3880,7 +3809,6 @@ define('WinJS/Controls/MediaPlayer', [
                 // Turns the playpause toggle button into a play button
                 _showPlayButton: function () {
                     this._playPauseButton.icon = _Icon.play;
-                    // TODO - update tooltips, etc
                     if (this._smtControls) {
                         this._smtControls.isPauseEnabled = false;
                         this._smtControls.isPlayEnabled = true;
@@ -3966,6 +3894,7 @@ define('WinJS/Controls/MediaPlayer', [
                     });
 
                     this._addMediaEventListener(mediaElement, "removetrack", function () {
+                        that._updateAudioTracksButtonStateBind();
                         that._updateClosedCaptionsButtonStateBind();
                     });
 
@@ -3991,6 +3920,7 @@ define('WinJS/Controls/MediaPlayer', [
                         var startTime = this._startTime;
                         var endTime = this._endTime;
                         var currentTime = mediaElement.currentTime - startTime;
+                        var transformName = _BaseUtils._browserStyleEquivalents["transform"].scriptName;
 
                         var progress = 0;
                         if (!this._mediaElementAdapter.mediaElement.paused || force) {
@@ -4004,7 +3934,7 @@ define('WinJS/Controls/MediaPlayer', [
                                 }
                                 progress = currentTime / this._totalTime;
                                 var amountToMoveSeekVisuals = progress * this._totalSeekBarWidth;
-                                this._currentTimeVisualElements.style.transform = "translateX(" + amountToMoveSeekVisuals + "px)";
+                                this._currentTimeVisualElements.style[transformName] = "translateX(" + amountToMoveSeekVisuals + "px)";
                             }
 
                             if (currentTime > endTime) {
@@ -4014,11 +3944,11 @@ define('WinJS/Controls/MediaPlayer', [
                             if (this._progress &&
                                 !this._isThumbGrabbed) {
                                 if (this._totalTime !== 0) {
-                                    this._progress.style.transform = "scaleX(" + progress + ")";
+                                    this._progress.style[transformName] = "scaleX(" + progress + ")";
                                 } else {
                                     // If the totalTime is zero (this typically happens while the video is buffering for the 1st time)
                                     // then instead of showing a full progress bar (0/0) we show an empty one.
-                                    this._progress.style.transform = "scaleX(0)";
+                                    this._progress.style[transformName] = "scaleX(0)";
                                 }
                             }
                         }
@@ -4070,15 +4000,15 @@ define('WinJS/Controls/MediaPlayer', [
                 },
 
                 _updateAudioTracksButtonState: function () {
-                    // If there are any text tracks then enable and show the closed captions button
+                    // If there are any text tracks then enable and show the audio tracks button
+                    var hasAtLeastTwoAudioTracksTrack = false;
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.mediaElement &&
                         this._mediaElementAdapter.mediaElement.audioTracks &&
                         this._mediaElementAdapter.mediaElement.audioTracks.length > 1) {
-                        utilities.removeClass(this._audioTracksButton, "win-mediaplayer-hidden");
-                    } else {
-                        utilities.addClass(this._audioTracksButton, "win-mediaplayer-hidden");
+                        hasAtLeastTwoAudioTracksTrack = true;
                     }
+                    this._audioTracksButton.hidden = !hasAtLeastTwoAudioTracksTrack;
                 },
 
                 // This method actually updates all marker visuals, not just chapter marker visuals
@@ -4113,7 +4043,7 @@ define('WinJS/Controls/MediaPlayer', [
                             // Note: We check if currentMarkerTime is 'null' rather than checking "if (currentMarkerTime)", 
                             // because currentMarkerTime with a value of zero is valid.
                             if (markers[i].extraClass &&
-                                currentMarkerTime !== null) {
+                                typeof currentMarkerTime === "number") {
 
                                 // The totalSeekBarWidth is sometimes calculated when controls are shown for the 1st time.
                                 // That means it is possible that the seek bar width has not been calculated and we need to calculate it.
@@ -4126,7 +4056,8 @@ define('WinJS/Controls/MediaPlayer', [
                                 // Create a DOM element for each marker
                                 var marker = _Global.document.createElement("div");
                                 marker.id = "ms__marker" + (currentMarkerTime.toString()).replace(".", "_");
-                                utilities.addClass(marker, "win-mediaplayer-marker " + markers[i].extraClass);
+                                utilities.addClass(marker, "win-mediaplayer-marker ");
+                                utilities.addClass(marker, markers[i].extraClass);
 
                                 var percentageTime = currentMarkerTime / this._totalTime;
                                 var currentTimeLeftOffset = percentageTime * this._totalSeekBarWidth;
@@ -4156,7 +4087,7 @@ define('WinJS/Controls/MediaPlayer', [
                         var textTracks = this._mediaElementAdapter.mediaElement.textTracks;
                         for (var i = 0, len = textTracks.length; i < len; i++) {
                             var currentTrack = textTracks[i];
-                            if (currentTrack.kind === "caption" ||
+                            if (currentTrack.kind === "captions" ||
                                 currentTrack.kind === "subtitles") {
                                 hasAtLeastOneCaptionsTrack = true;
                                 break;
@@ -4207,9 +4138,9 @@ define('WinJS/Controls/MediaPlayer', [
                 },
 
                 // When the DOM for the MediaPlayer changes, call this function to re-attach event listeners
-                _updateDomElements: function () {
+                _initializeDomElements: function () {
 
-                    _WriteProfilerMark("WinJS.UI.MediaPlayer:_updateDomElements,StartTM");
+                    _WriteProfilerMark("WinJS.UI.MediaPlayer:_initializeDomElements,StartTM");
 
                     this._removeButtonEventHandlers();
 
@@ -4270,8 +4201,11 @@ define('WinJS/Controls/MediaPlayer', [
                         that.forceLayout();
                     };
                     _ElementUtilities._resizeNotifier.subscribe(this._toolbar, this._toolbarResizeCallback);
-
-                    this._updateTransportBarButtons();
+                    this._handleFlyoutOpenCallbackBind = this._handleFlyoutOpenCallback.bind(this);
+                    this._handleFlyoutCloseCallbackBind = this._handleFlyoutCloseCallback.bind(this);
+                    this._toolbar.addEventListener("beforeopen", this._handleFlyoutOpenCallbackBind, false);
+                    this._toolbar.addEventListener("afterclose", this._handleFlyoutCloseCallbackBind, false);
+                    this._initializeTransportBarButtons();
                     var that = this;
                     // Note: the order the buttons are created in code will be the order they show up in the UI.
                     if (this._transportControls) {
@@ -4291,12 +4225,12 @@ define('WinJS/Controls/MediaPlayer', [
                         // Because we don't key click events on gamepadA
                         this._handleTransportBarButtonKeyDown = function transportBarButtonKeyDownHandler(ev) {
                             if (ev.key === "GamepadA") {
-                                utilities.addClass(ev.srcElement, "win-mediaplayer-transportbarbutton-active");
+                                utilities.addClass(ev.target, "win-mediaplayer-transportbarbutton-active");
                             }
                         };
                         this._handleTransportBarButtonKeyUp = function transportBarButtonKeyUpHandler(ev) {
                             if (ev.key === "GamepadA") {
-                                utilities.removeClass(ev.srcElement, "win-mediaplayer-transportbarbutton-active");
+                                utilities.removeClass(ev.target, "win-mediaplayer-transportbarbutton-active");
                             }
                         };
                     }
@@ -4347,7 +4281,6 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     this._inputHandlerPointerDownCallback = this._onInputHandlerPointerDown.bind(this);
-                    this._inputHandlerPointerHoverCallback = this._onInputHandlerPointerHover.bind(this);
                     this._inputHandlerPointerMoveCallback = this._onInputHandlerPointerMove.bind(this);
                     this._inputHandlerPointerUpCallback = this._onInputHandlerPointerUp.bind(this);
                     this._inputHandlerClickCallback = this._onInputHandlerClick.bind(this);
@@ -4375,14 +4308,15 @@ define('WinJS/Controls/MediaPlayer', [
                         this._addGestureEventHandler(this._inputHandlerElement, "pointerup", this._handlePointerUp);
                     } else {
                         this._addGestureEventHandler(this._mediaPlayerContainer, "click", this._inputHandlerClickCallback);
-                        this._addGestureEventHandler(this._progressContainer, "mousedown", this._inputHandlerPointerDownCallback);
-                        this._addGestureEventHandler(this._progressContainer, "mouseover", this._handlePointerHover);
-                        this._addGestureEventHandler(_Global.window, "mousemove", this._inputHandlerPointerMoveCallback);
-                        this._addGestureEventHandler(this._progressContainer, "mouseup", this._inputHandlerPointerUpCallback);
+                        this._addGestureEventHandler(this._progressContainer, "pointerdown", this._inputHandlerPointerDownCallback);
+                        this._addGestureEventHandler(this._progressContainer, "pointerover", this._handlePointerHover);
+                        _ElementUtilities._globalListener.addEventListener(this.element, "pointermove", this._inputHandlerPointerMoveCallback);
+                        _ElementUtilities._globalListener.addEventListener(this.element, "pointerup", this._inputHandlerMouseUpCallback);
+                        this._addGestureEventHandler(this._progressContainer, "pointerup", this._inputHandlerPointerUpCallback);
 
-                        this._addGestureEventHandler(this._progressContainer, "mousedown", this._inputHandlerMouseDownCallback);
-                        this._addGestureEventHandler(_Global.document, "mouseout", this._inputHandlerMouseOutCallback);
-                        this._addGestureEventHandler(_Global.window, "mouseup", this._inputHandlerMouseUpCallback);
+                        this._addGestureEventHandler(this._progressContainer, "pointerdown", this._inputHandlerMouseDownCallback);
+                        utilities._documentListener.addEventListener(this.element, "pointerout", this._inputHandlerMouseOutCallback);
+                        
                     }
 
                     // Listen for clicks on the seek bar
@@ -4395,7 +4329,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                     _Res.processAll(this._element);
 
-                    _WriteProfilerMark("WinJS.UI.MediaPlayer:_updateDomElements,StopTM");
+                    _WriteProfilerMark("WinJS.UI.MediaPlayer:_initializeDomElements,StopTM");
 
                 },
 
@@ -4424,19 +4358,12 @@ define('WinJS/Controls/MediaPlayer', [
                     this._updateMediaState(false);
                 },
 
-                _updateFullScreenButtonVisuals: function () {
-                    if (this.isFullScreenn) {
-                        this._toggleFullScreenButton.icon = "backtowindow";
-                    } else {
-                        this._toggleFullScreenButton.icon = "fullscreen";
-                    }
-                },
-
                 _updateInfoDisplay: function (mediaCommand) {
 
                     this._mediaCommandFeedbackText.textContent = mediaCommand;
                 },
 
+                // This function updates the state of the SystemMediaTarnsportControls
                 _updateMediaState: function (isStopped) {
 
                     // Return if we are running in an iframe or not on an Xbox
@@ -4517,7 +4444,7 @@ define('WinJS/Controls/MediaPlayer', [
                     if (updater.type === _WinRT.Windows.Media.MediaPlaybackType.video) {
                         updater.videoProperties.mediaStart = 0;
                         if (this._mediaElementAdapter &&
-                            this._mediaElementAdapter.seekAllowed) {
+                            this._mediaElementAdapter.isSeekAllowed) {
                             if (isFinite(this._startTime)) {
                                 updater.videoProperties.minSeek = this._startTime * numberOfMilisecondsInASecond;
                             }
@@ -4593,7 +4520,7 @@ define('WinJS/Controls/MediaPlayer', [
                     this._updateTimeDisplay();
                 },
 
-                _updateTransportBarButtons: function () {
+                _initializeTransportBarButtons: function () {
 
                     var newCommandsBindingList = new BindingList.List();
                     for (var i = 0, len = this._builtInButtonsList.length; i < len; i++) {
@@ -4634,7 +4561,7 @@ define('WinJS/Controls/MediaPlayer', [
                         return this._controlsVisible;
                     }
                 },
-                
+
 
                 /// <field type="Object" locid="WinJS.UI.MediaPlayer.endTime" helpKeyword="WinJS.UI.MediaPlayer.endTime">
                 /// Gets or sets maximum playback position of the media. By default, the value is the duration of the media.
@@ -4690,7 +4617,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.MediaPlayer.commands" helpKeyword="WinJS.UI.MediaPlayer.commands">
+                /// <field type="Object" hidden="true" locid="WinJS.UI.MediaPlayer.commands" helpKeyword="WinJS.UI.MediaPlayer.commands">
                 /// Gets or sets the commands that appear in the transport controls. The collection is a binding list of WinJS.UI.Command objects.
                 /// </field>
                 commands: {
@@ -4700,10 +4627,11 @@ define('WinJS/Controls/MediaPlayer', [
 
                     set: function (value) {
                         this._toolbar.data = value;
+                        this._isCommandsSetByUser = true;
                     }
                 },
 
-                /// <field type="HTMLElement" domElement="true" hidden="true" locid="WinJS.UI.MediaPlayer.compact" helpKeyword="WinJS.UI.MediaPlayer.compact">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.compact" helpKeyword="WinJS.UI.MediaPlayer.compact">
                 /// Gets or sets a value indicating whether the MediaPlayer is using a layout that minimized space used, but only has room for a limited number of
                 /// commands or a layout that has room for a lot of commands, but takes up more space.
                 /// </field>
@@ -4717,11 +4645,13 @@ define('WinJS/Controls/MediaPlayer', [
                         if (this._compact === value) {
                             return;
                         }
-
+                        if (this._isCommandsSetByUser) {
+                            throw new _ErrorFromName("WinJS.UI.MediaPlayer.unSupportedOperation", strings.unSupportedOperation);
+                        }
                         this._compact = value;
                         if (this._compact) {
                             // Put the timeline in the toolbar. The timeline must be a valid winControl to be put in the toolbar so we
-                            // call turn it into one if it is not already.
+                            // turn it into one if it is not already.
                             var timelineCommand = null;
                             if (!this._timeline.winControl) {
                                 var timelineCommand = new _Command.Command(this._timeline, { type: 'content', priority: 2, extraClass: 'win-mediaplayer-neveroverflow' });
@@ -4732,12 +4662,10 @@ define('WinJS/Controls/MediaPlayer', [
                             // Remove the TimeLine from top of the toolbar.
                             this._timeline.parentNode.removeChild(this._timeline);
                             var toolbarCommands = this._toolbar.data;
+                            toolbarCommands.splice(0, 0, timelineCommand);
                             if (this._playPauseFullIndex >= 0) {
-                                toolbarCommands.move(this._playPauseFullIndex, this._playPauseCompactIndex);
+                                toolbarCommands.move(this._playPauseFullIndex+1, this._playPauseCompactIndex);
                             }
-                            toolbarCommands.push(timelineCommand);
-                            // move the toolbar at second position
-                            toolbarCommands.move(toolbarCommands.length - 1, this._playPauseFullIndex >= 0 ? 1 : 0);
 
                             utilities.removeClass(this._element, "win-mediaplayer-doublerow");
                             utilities.addClass(this._element, "win-mediaplayer-singlerow");
@@ -4759,7 +4687,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.isFullScreen" helpKeyword="WinJS.UI.MediaPlayer.isFullScreen">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.isFullScreen" helpKeyword="WinJS.UI.MediaPlayer.isFullScreen">
                 /// Gets or sets a value indicating whether the MediaPlayer is full screen.
                 /// </field>
                 isFullScreen: {
@@ -4857,14 +4785,14 @@ define('WinJS/Controls/MediaPlayer', [
                                     _Global.document.webkitCancelFullScreen();
                                 }
                             }
-                            
+
                             if (this._originalParent) {
                                 // Reset back to the original parent
                                 if (this._nextSibiling) {
                                     this._originalParent.insertBefore(this._element, this._nextSibiling);
                                     this._nextSibiling = null;
                                 } else {
-                                    this._originalParent.appendChild(this._element);                                    
+                                    this._originalParent.appendChild(this._element);
                                 }
                                 this._originalParent = null;
                             }
@@ -4875,7 +4803,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.isThumbnailEnabled" helpKeyword="WinJS.UI.MediaPlayer.isThumbnailEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.isThumbnailEnabled" helpKeyword="WinJS.UI.MediaPlayer.isThumbnailEnabled">
                 /// Gets or sets a value indicating whether to use thumbnails for fast forward, rewind and scrubbing. If true, the fast forward, rewind and scrub operations
                 /// will pause the mediaElement and cycle thumbnails as the user changes position. If false, the fast forward, rewind operations will increase or decrease
                 /// the mediaElement's playbackRate and the scrub operation will move the position.
@@ -4893,8 +4821,6 @@ define('WinJS/Controls/MediaPlayer', [
                             utilities.removeClass(this._timeline, "win-mediaplayer-thumbnailmode");
                         }
                         this._thumbnailEnabled = value;
-                        // Although it is implemented, we never go into a true FF / RR state.
-                        this._isThumbnailEnabled = true;
                     },
                 },
 
@@ -4925,6 +4851,8 @@ define('WinJS/Controls/MediaPlayer', [
                         if (!this._markers.length) {
                             this._hasCustomMarkers = false;
                             this._unsubscribeFromTimeUpdates();
+                        }  else {
+                            this._hasCustomMarkers = true;
                         }
 
                         this._onMarkerCollectionChanged();
@@ -4995,8 +4923,6 @@ define('WinJS/Controls/MediaPlayer', [
                         // we don't have the possibility of going before the startTime. This is because playback is always in the forward direction. In the RR case,
                         // we already subscribe to time updates when entering the fast forward or rewind state, so we don't have to do it again here.
 
-                        this._subscribeToTimeUpdates();
-
                         // Update the time display
                         this._updateTimelineVisuals();
 
@@ -5006,7 +4932,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 /// <field type="Object" locid="WinJS.UI.MediaPlayer.targetCurrentTime" helpKeyword="WinJS.UI.MediaPlayer.targetCurrentTime">
                 /// Gets the current time as it is represented in the UI. While fast forwarding or rewinding, this property may be different than the video or audio
-                /// tag's 'currentTime' property. This is because during an fast forward or rewind operation, the media is paused while the timeline animates to
+                /// tag's 'currentTime' property. This is because during a fast forward or rewind operation, the media is paused while the timeline animates to
                 /// simulate a fast forward or rewind operation.
                 /// </field>
                 targetCurrentTime: {
@@ -5015,7 +4941,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                         var targetCurrentTime = 0;
 
-                        if (this._isThumbnailEnabled &&
+                        if (this._simulatedFastForwardMode &&
                             this._isInFastForwardOrRewindMode) {
                             targetCurrentTime = this._targetCurrentTime;
                         } else {
@@ -5031,7 +4957,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                 /// <field type="Object" locid="WinJS.UI.MediaPlayer.targetPlaybackRate" helpKeyword="WinJS.UI.MediaPlayer.targetPlaybackRate">
                 /// Gets the playbackRate as it is represented in the UI. While fast forwarding or rewinding, this property may be different than the video or audio
-                /// tag's 'playbackRate' property. This is because during an fast forward or rewind operation, the media is paused while the timeline animates to
+                /// tag's 'playbackRate' property. This is because during a fast forward or rewind operation, the media is paused while the timeline animates to
                 /// simulate a fast forward or rewind operation.
                 /// </field>
                 targetPlaybackRate: {
@@ -5040,7 +4966,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                         var targetPlaybackRate = 0;
 
-                        if (this._isThumbnailEnabled &&
+                        if (this._simulatedFastForwardMode &&
                             this._isInFastForwardOrRewindMode) {
                             targetPlaybackRate = this._targetPlaybackRate;
                         } else {
@@ -5083,7 +5009,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.castButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.castButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.castButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.castButtonVisible">
                 /// Gets or sets whether the CAST button is visible.
                 /// </field>
                 castButtonVisible: {
@@ -5098,7 +5024,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.castButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.castButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.castButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.castButtonEnabled">
                 /// Gets or sets whether the cast button is enabled.
                 /// </field>
                 castButtonEnabled: {
@@ -5116,7 +5042,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonVisible">
                 /// Gets or sets whether the chapter skip back button is visible.
                 /// </field>
                 chapterSkipBackButtonVisible: {
@@ -5130,7 +5056,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipBackButtonEnabled">
                 /// Gets or sets whether the chapter skip back button is enabled.
                 /// </field>
                 chapterSkipBackButtonEnabled: {
@@ -5148,7 +5074,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonVisible">
                 /// Gets or sets whether the chapter skip forward button is visible.
                 /// </field>
                 chapterSkipForwardButtonVisible: {
@@ -5162,7 +5088,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.chapterSkipForwardButtonEnabled">
                 /// Gets or sets whether the chapter skip forward button is enabled.
                 /// </field>
                 chapterSkipForwardButtonEnabled: {
@@ -5180,7 +5106,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonVisible">
                 /// Gets or sets whether the fast forward button is visible.
                 /// </field>
                 fastForwardButtonVisible: {
@@ -5194,7 +5120,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fastForwardButtonEnabled">
                 /// Gets or sets whether the fast forward button is enabled.
                 /// </field>
                 fastForwardButtonEnabled: {
@@ -5212,7 +5138,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonVisible">
                 /// Gets or sets whether the full screen button is visible.
                 /// </field>
                 fullscreenButtonVisible: {
@@ -5226,7 +5152,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.fullscreenButtonEnabled">
                 /// Gets or sets whether the more button is enabled.
                 /// </field>
                 fullscreenButtonEnabled: {
@@ -5244,7 +5170,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonVisible">
                 /// Gets or sets whether the LIVE button is visible.
                 /// </field>
                 goToLiveButtonVisible: {
@@ -5258,7 +5184,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.goToLiveButtonEnabled">
                 /// Gets or sets whether the LIVE button is enabled.
                 /// </field>
                 goToLiveButtonEnabled: {
@@ -5276,7 +5202,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonVisible">
                 /// Gets or sets whether the next track button is visible.
                 /// </field>
                 nextTrackButtonVisible: {
@@ -5290,7 +5216,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.nextTrackButtonEnabled">
                 /// Gets or sets whether the next track button is enabled.
                 /// </field>
                 nextTrackButtonEnabled: {
@@ -5309,7 +5235,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonVisible">
                 /// Gets or sets whether the play from beginning button is visible.
                 /// </field>
                 playFromBeginningButtonVisible: {
@@ -5323,7 +5249,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playFromBeginningButtonEnabled">
                 /// Gets or sets whether the play from beginning button is enabled.
                 /// </field>
                 playFromBeginningButtonEnabled: {
@@ -5341,7 +5267,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonVisible">
                 /// Gets or sets whether the play / pause button is visible.
                 /// </field>
                 playPauseButtonVisible: {
@@ -5355,7 +5281,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playPauseButtonEnabled">
                 /// Gets or sets whether the play / pause button is enabled.
                 /// </field>
                 playPauseButtonEnabled: {
@@ -5373,7 +5299,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonVisible">
                 /// Gets or sets whether the playback rate button is visible.
                 /// </field>
                 playbackRateButtonVisible: {
@@ -5387,7 +5313,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.playbackRateButtonEnabled">
                 /// Gets or sets whether the playback rate button is enabled.
                 /// </field>
                 playbackRateButtonEnabled: {
@@ -5405,7 +5331,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonVisible">
                 /// Gets or sets whether the previous track button is visible.
                 /// </field>
                 previousTrackButtonVisible: {
@@ -5419,7 +5345,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.previousTrackButtonEnabled">
                 /// Gets or sets whether the previous track button is enabled.
                 /// </field>
                 previousTrackButtonEnabled: {
@@ -5437,7 +5363,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.rewindButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.rewindButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.rewindButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.rewindButtonVisible">
                 /// Gets or sets whether the rewind button is visible.
                 /// </field>
                 rewindButtonVisible: {
@@ -5451,7 +5377,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.rewindButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.rewindButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.rewindButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.rewindButtonEnabled">
                 /// Gets or sets whether the rewind button is enabled.
                 /// </field>
                 rewindButtonEnabled: {
@@ -5469,7 +5395,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.seekBarVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.seekBarVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.seekBarVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.seekBarVisible">
                 /// Gets or sets whether the seek bar is visible.
                 /// </field>
                 seekBarVisible: {
@@ -5487,13 +5413,13 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.seekingEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.seekingEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.seekingEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.seekingEnabled">
                 /// Gets or sets whether the seeking is enabled.
                 /// </field>
                 seekingEnabled: {
                     get: function () {
                         if (this._mediaElementAdapter) {
-                            return this._mediaElementAdapter.seekAllowed;
+                            return this._mediaElementAdapter.isSeekAllowed;
                         }
                         return false;
                     },
@@ -5501,15 +5427,15 @@ define('WinJS/Controls/MediaPlayer', [
                     set: function (value) {
                         if (this._mediaElementAdapter) {
                             if (value) {
-                                this._mediaElementAdapter.seekAllowed = true;
+                                this._mediaElementAdapter.isSeekAllowed = true;
                             } else {
-                                this._mediaElementAdapter.seekAllowed = false;
+                                this._mediaElementAdapter.isSeekAllowed = false;
                             }
                         }
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.stopButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.stopButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.stopButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.stopButtonVisible">
                 /// Gets or sets whether the stop button is visible.
                 /// </field>
                 stopButtonVisible: {
@@ -5523,7 +5449,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.stopButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.stopButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.stopButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.stopButtonEnabled">
                 /// Gets or sets whether the stop button is enabled.
                 /// </field>
                 stopButtonEnabled: {
@@ -5541,7 +5467,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonVisible">
                 /// Gets or sets whether the time skip back button is visible.
                 /// </field>
                 timeSkipBackButtonVisible: {
@@ -5555,7 +5481,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipBackButtonEnabled">
                 /// Gets or sets whether the time skip back button is enabled.
                 /// </field>
                 timeSkipBackButtonEnabled: {
@@ -5573,7 +5499,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonVisible">
                 /// Gets or sets whether the time skip forward button is visible.
                 /// </field>
                 timeSkipForwardButtonVisible: {
@@ -5587,7 +5513,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.timeSkipForwardButtonEnabled">
                 /// Gets or sets whether the time skip forward button is enabled.
                 /// </field>
                 timeSkipForwardButtonEnabled: {
@@ -5605,7 +5531,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.volumeButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.volumeButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.volumeButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.volumeButtonVisible">
                 /// Gets or sets whether the volume button is visible.
                 /// </field>
                 volumeButtonVisible: {
@@ -5619,7 +5545,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.volumeButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.volumeButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.volumeButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.volumeButtonEnabled">
                 /// Gets or sets whether the volume button is enabled.
                 /// </field>
                 volumeButtonEnabled: {
@@ -5637,7 +5563,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.zoomButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.zoomButtonVisible">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.zoomButtonVisible" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.zoomButtonVisible">
                 /// Gets or sets whether the zoom button is visible.
                 /// </field>
                 zoomButtonVisible: {
@@ -5651,7 +5577,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
                 },
 
-                /// <field type="Object" locid="WinJS.UI.MediaPlayer.TransportControls.zoomButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.zoomButtonEnabled">
+                /// <field type="Boolean" locid="WinJS.UI.MediaPlayer.TransportControls.zoomButtonEnabled" helpKeyword="WinJS.UI.MediaPlayer.TransportControls.zoomButtonEnabled">
                 /// Gets or sets whether the zoom button is enabled.
                 /// </field>
                 zoomButtonEnabled: {
@@ -5709,12 +5635,12 @@ define('WinJS/Controls/MediaPlayer', [
 
                     if (type !== markerType.advertisement &&
                         type !== markerType.chapter &&
-                        type !== MediaPlayer.MarkerType.custom) {
+                        type !== markerType.custom) {
                         throw new _ErrorFromName("WinJS.UI.MediaPlayer.InvalidMarkerType", strings.mediaPlayerAddMarkerErrorInvalidMarkerType);
                     }
 
                     // If it's a chapter marker, clear out the default chapter markers
-                    if (type === MediaPlayer.MarkerType.chapter) {
+                    if (type === markerType.chapter) {
                         if (!extraClass) {
                             extraClass = "win-mediaplayer-chaptermarker";
                         }
@@ -5722,7 +5648,7 @@ define('WinJS/Controls/MediaPlayer', [
                         if (this._defaultChapterMarkers.length) {
                             this._clearDefaultChapterMarkers();
                         }
-                    } else if (type === MediaPlayer.MarkerType.advertisement) {
+                    } else if (type === markerType.advertisement) {
                         if (!extraClass) {
                             extraClass = "win-mediaplayer-advertisementmarker";
                         }
@@ -5743,14 +5669,16 @@ define('WinJS/Controls/MediaPlayer', [
 
                     this._markers.push({ time: time, type: type, data: data, extraClass: extraClass });
                     // Also make a call to add the marker to the browser
-
-
+                    
                     // Setting this value ensures that if the developer has added custom markers before the media's 'loadstart' event, the 'loadstart'
                     // will not delete those markers.
                     if (!this._mediaElementAdapter ||
                         !this._mediaElementAdapter.mediaElement ||
                         this._mediaElementAdapter.mediaElement.readyState < this._MediaReadyState.MediaReadyState_Have_Metadata) {
                         this._doMarkersNeedResetting = false;
+                    }
+                    if (!this._hasCustomMarkers) {
+                        this._hasCustomMarkers = true;
                     }
 
                     this._onMarkerCollectionChanged();
@@ -5788,8 +5716,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                         var chapterMarkersLength = chapterMarkers.length;
                         for (var i = chapterMarkersLength - 1; i >= 0; i--) {
-                            if ((chapterMarkers[i].type === MediaPlayer.MarkerType.chapter ||
-                                chapterMarkers[i].type === MediaPlayer.MarkerType.advertisement) &&
+                            if ((chapterMarkers[i].type === markerType.chapter ||
+                                chapterMarkers[i].type === markerType.advertisement) &&
                                 chapterMarkers[i].time + this._CHAPTER_SKIP_THRESHOLD < currentTime) {
                                 newSeekTime = chapterMarkers[i].time;
                                 break;
@@ -5836,8 +5764,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                         var chapterMarkersLength = chapterMarkers.length;
                         for (var i = 0; i < chapterMarkersLength; i++) {
-                            if ((chapterMarkers[i].type === MediaPlayer.MarkerType.chapter ||
-                                chapterMarkers[i].type === MediaPlayer.MarkerType.advertisement) &&
+                            if ((chapterMarkers[i].type === markerType.chapter ||
+                                chapterMarkers[i].type === markerType.advertisement) &&
                                 chapterMarkers[i].time - this._CHAPTER_SKIP_THRESHOLD > currentTime) {
                                 newSeekTime = chapterMarkers[i].time;
                                 break;
@@ -5878,10 +5806,13 @@ define('WinJS/Controls/MediaPlayer', [
                     _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._windowResizeCallback);
                     this._windowResizeCallback = null;
 
-                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._toolbarResizeCallback);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._toolbar, this._toolbarResizeCallback);
                     this._toolbarResizeCallback = null;
 
-                    utilities._webUIApplicationListener.removeEventListener(this.element, "resuming", this._checkPremiumVideoAndParentalControlsBind);
+                    this._toolbar.removeEventListener("beforeopen", this._handleFlyoutOpenCallbackBind);
+                    this._toolbar.removeEventListener("afterclose", this._handleFlyoutCloseCallbackBind);
+
+                    utilities._webUIApplicationListener.removeEventListener(this.element, "resuming", this._checkParentalControlsAvailableBind);
 
                     if (this._contentRestrictions) {
                         this._contentRestrictions.removeEventListener("restrictionschanged", this._checkParentalControlsBind);
@@ -5912,17 +5843,15 @@ define('WinJS/Controls/MediaPlayer', [
                     this._handleSystemTransportControlsPropertyChangedBind = null;
                     this._smtControls = null;
 
+                    utilities._documentListener.removeEventListener(this.element, "pointerout", this._inputHandlerMouseOutCallback);
+                    _ElementUtilities._globalListener.removeEventListener(this.element, "pointermove", this._inputHandlerPointerMoveCallback);
+                    _ElementUtilities._globalListener.removeEventListener(this.element, "pointerup", this._inputHandlerMouseUpCallback);
+
                     if (this._element) {
                         this._element.removeEventListener("keydown", this._keydownInputHandler);
                         this._element.removeEventListener("keyup", this._keyupInputHandler);
                         this._keydownInputHandler = null;
                         this._keyupInputHandler = null;
-
-                        if (SmartGlass &&
-                            SmartGlass.removeEventListener) {
-                            SmartGlass.removeEventListener("message", this._smartGlassInputHandler);
-                        }
-                        this._smartGlassInputHandler = null;
                     }
 
                     nav._navigationListener.removeEventListener(this.element, "beforenavigate", this._handleBeforeNavigatedCallback);
@@ -5938,6 +5867,8 @@ define('WinJS/Controls/MediaPlayer', [
 
                     if (this._volumeFlyout) {
                         this._volumeFlyout.removeEventListener("aftershow", this._handleVolumeFlyoutShowCallback);
+                        this._volumeFlyout.removeEventListener("beforeshow", this._handleFlyoutOpenCallbackBind);
+                        this._volumeFlyout.removeEventListener("afterhide", this._handleFlyoutCloseCallbackBind);
                     }
                     if (this._volumeSlider) {
                         this._volumeSlider.removeEventListener("change", this._handleVolumeSliderChangeCallback);
@@ -5945,19 +5876,32 @@ define('WinJS/Controls/MediaPlayer', [
 
                     // Remove any dynamically inserted elements from the DOM
                     if (this._audioTracksFlyout) {
+                        this._audioTracksFlyout.removeEventListener("beforeshow", this._handleFlyoutOpenCallbackBind);
+                        this._audioTracksFlyout.removeEventListener("afterhide", this._handleFlyoutCloseCallbackBind);
                         _Global.document.body.removeChild(this._audioTracksFlyout.element);
+                        this._audioTracksFlyout.dispose();
                     }
                     if (this._closedCaptionsFlyout) {
+                        this._closedCaptionsFlyout.removeEventListener("beforeshow", this._handleFlyoutOpenCallbackBind);
+                        this._closedCaptionsFlyout.removeEventListener("afterhide", this._handleFlyoutCloseCallbackBind);
                         _Global.document.body.removeChild(this._closedCaptionsFlyout.element);
+                        this._closedCaptionsFlyout.dispose();
                     }
                     if (this._errorFlyout) {
+                        this._errorFlyout.removeEventListener("beforeshow", this._handleFlyoutOpenCallbackBind);
+                        this._errorFlyout.removeEventListener("afterhide", this._handleFlyoutCloseCallbackBind);
                         _Global.document.body.removeChild(this._errorFlyout);
+                        this._errorFlyout.dispose();
                     }
                     if (this._playbackRateFlyout) {
+                        this._playbackRateFlyout.removeEventListener("beforeshow", this._handleFlyoutOpenCallbackBind);
+                        this._playbackRateFlyout.removeEventListener("afterhide", this._handleFlyoutCloseCallbackBind);
                         _Global.document.body.removeChild(this._playbackRateFlyout);
+                        this._playbackRateFlyout.dispose();
                     }
                     if (this._volumeFlyout) {
                         _Global.document.body.removeChild(this._volumeFlyout.element);
+                        this._volumeFlyout.dispose();
                     }
 
                     // Clear timers
@@ -5989,12 +5933,14 @@ define('WinJS/Controls/MediaPlayer', [
                             var tracksLength = tracks.length;
                             for (var i = 0; i < tracksLength; i++) {
                                 if (tracks[i].kind === "chapters") {
-                                    tracks[i].removeEventListener("load", this._loadTextTrackCallback);
+                                    tracks[i].removeEventListener("load", this._handleloadTextTrackCallbackBind);
                                 }
                             }
                         }
                     }
-
+                    this._handleFlyoutOpenCallbackBind = null;
+                    this._handleFlyoutCloseCallbackBind = null;
+                    this._handleloadTextTrackCallbackBind = null;
                     this._adjustedContentType = null;
                     this._audioTracksButton = null;
                     this._audioTracksFlyout = null;
@@ -6004,9 +5950,8 @@ define('WinJS/Controls/MediaPlayer', [
                     this._castButton = null;
                     this._chapterSkipBackButton = null;
                     this._chapterSkipForwardButton = null;
-                    this._checkPremiumVideoPrivilegeBind = null;
                     this._checkParentalControlsBind = null;
-                    this._checkPremiumVideoAndParentalControlsBind = null;
+                    this._checkParentalControlsAvailableBind = null;
                     this._closedCaptionsButton = null;
                     this._closedCaptionsFlyout = null;
                     this._contentRestrictions = null;
@@ -6023,7 +5968,7 @@ define('WinJS/Controls/MediaPlayer', [
                     this._fastForwardButton = null;
                     this._fastForwardOrRewindTimer = null;
                     this._fastForwardOrRewindTimerElapsedTime = null;
-                    this._gestureRecognizer = null;                    
+                    this._gestureRecognizer = null;
                     this._goToLiveButton = null;
                     this._handleBeforeNavigatedCallback = null;
                     this._handleTransportBarButtonClick = null;
@@ -6040,7 +5985,6 @@ define('WinJS/Controls/MediaPlayer', [
                     this._lastControlsResetTimeStamp = null;
                     this._lastPointerPosition = null;
                     this._lastPosition = null;
-                    this._loadTextTrackCallback = null;
                     this._markers = null;
                     this._mediaCommandFeedbackText = null;
 
@@ -6112,9 +6056,6 @@ define('WinJS/Controls/MediaPlayer', [
                     this._updateAudioTracksButtonStateBind = null;
                     this._updateClosedCaptionsButtonStateBind = null;
                     this._volumeButton = null;
-                    if (this._volumeFlyout) {
-                        this._volumeFlyout.dispose();
-                    }
                     this._volumeFlyout = null;
                     this._volumeSlider = null;
                     this._volumeValue = null;
@@ -6182,7 +6123,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         var currentPlaybackRate = null;
-                        if (this._isThumbnailEnabled) {
+                        if (this._simulatedFastForwardMode) {
                             currentPlaybackRate = this._targetPlaybackRate;
                         } else {
                             currentPlaybackRate = this._mediaElementAdapter.mediaElement.playbackRate;
@@ -6213,11 +6154,11 @@ define('WinJS/Controls/MediaPlayer', [
                             newPlaybackRate = this._PLAYBACKRATE_PLAYING;
                         } else if (currentPlaybackRate < this._PLAYBACKRATE_REWIND_2X &&
                                    currentPlaybackRate >= this._PLAYBACKRATE_REWIND_MAX_RATE) {
-                            newPlaybackRate = Math.floor(currentPlaybackRate) / 2;
+                            newPlaybackRate = Math.max(Math.floor(currentPlaybackRate) / 2, this._PLAYBACKRATE_REWIND_MAX_RATE);
                         }
 
                         if (newPlaybackRate) {
-                            if (this._isThumbnailEnabled) {
+                            if (this._simulatedFastForwardMode) {
                                 if (this._isFastForwardOrRewind(newPlaybackRate)) {
                                     var oldPlaybackRate = currentPlaybackRate;
                                     this._targetPlaybackRate = newPlaybackRate;
@@ -6301,9 +6242,9 @@ define('WinJS/Controls/MediaPlayer', [
 
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.pause) {
-
-                        if (this._isThumbnailEnabled &&
-                            !this._isFastForwardOrRewind) {
+                        // if currently FF/RR mode then we should exit the mode with pause.
+                        if (this._simulatedFastForwardMode &&
+                            this._isFastForwardOrRewind(this.targetPlaybackRate)) {
                             this._exitFastForwardOrRewind(false);
                         } else {
                             this._mediaElementAdapter.pause();
@@ -6325,7 +6266,7 @@ define('WinJS/Controls/MediaPlayer', [
                     if (this._mediaElementAdapter &&
                         this._mediaElementAdapter.play) {
 
-                        if (this._isThumbnailEnabled &&
+                        if (this._simulatedFastForwardMode &&
                             this._isInFastForwardOrRewindMode) {
                             this._exitFastForwardOrRewind(true);
                         } else if (this._mediaElementAdapter.mediaElement &&
@@ -6343,7 +6284,7 @@ define('WinJS/Controls/MediaPlayer', [
                 previousTrack: function () {
                     /// <signature helpKeyword="WinJS.UI.MediaPlayer.previousTrack">
                     /// <summary locid="WinJS.UI.MediaPlayer.previousTrack">
-                    /// Plays the next track.
+                    /// Plays the previous track.
                     /// </summary>
                     /// </signature>
 
@@ -6387,9 +6328,8 @@ define('WinJS/Controls/MediaPlayer', [
                     // then we need to reset _nextCustomMarkerTime and _previousCustomMarkerTime. Otherwise we could fire
                     // an event for a non-existent marker.
                     if (this._nextCustomMarkerTime === time) {
-                        if (this._nextCustomMarkerIndex < markersLength - 1 &&
-                            this._markers[this._nextCustomMarkerIndex]) {
-                            this._nextCustomMarkerIndex++;
+                        if (this._nextCustomMarkerIndex < markersLength &&
+                                this._markers[this._nextCustomMarkerIndex]) {
                             this._nextCustomMarkerTime = this._markers[this._nextCustomMarkerIndex].time;
                         } else {
                             this._nextCustomMarkerIndex = -1;
@@ -6413,7 +6353,7 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     this._isChapterMarkerVisualsDirty = true;
-                    this._updateChapterMarkerVisuals();
+                    this._onMarkerCollectionChanged();
 
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:removeMarker,StopTM");
                 },
@@ -6447,7 +6387,7 @@ define('WinJS/Controls/MediaPlayer', [
                         }
 
                         var currentPlaybackRate = this._PLAYBACKRATE_NOT_PLAYING;
-                        if (this._isThumbnailEnabled) {
+                        if (this._simulatedFastForwardMode) {
                             currentPlaybackRate = this._targetPlaybackRate;
                         } else {
                             currentPlaybackRate = this._mediaElementAdapter.mediaElement.playbackRate;
@@ -6480,11 +6420,11 @@ define('WinJS/Controls/MediaPlayer', [
                             newPlaybackRate = this._PLAYBACKRATE_PLAYING;
                         } else if (currentPlaybackRate > this._PLAYBACKRATE_FAST_FORWARD_2X &&
                                    currentPlaybackRate <= this._PLAYBACKRATE_FAST_FORWARD_MAX_RATE) {
-                            newPlaybackRate = Math.floor(currentPlaybackRate) / 2;
+                            newPlaybackRate = Math.min(Math.floor(currentPlaybackRate) / 2, this._PLAYBACKRATE_FAST_FORWARD_MAX_RATE);
                         }
 
                         if (newPlaybackRate) {
-                            if (this._isThumbnailEnabled) {
+                            if (this._simulatedFastForwardMode) {
                                 if (this._isFastForwardOrRewind(newPlaybackRate)) {
                                     var oldPlaybackRate = currentPlaybackRate;
                                     this._targetPlaybackRate = newPlaybackRate;
@@ -6532,6 +6472,10 @@ define('WinJS/Controls/MediaPlayer', [
                     /// <param name="metadata" type="Object" locid="WinJS.UI.MediaPlayer.setContentMetadata:metadata">
                     /// A collection of name value pairs that provide additional information about the current media.
                     /// </param>
+                    /// <returns type="WinJS.Promise" locid="WinJS.UI.MediaPlayer.setContentMetadata_returnValue"> 
+                    /// A promise which is successfully update the Content Metadata.The completion value indicates
+                    /// content allowed to view based on family safety policy. Otherwise promise returns an error.
+                    /// </returns>
                     /// </signature>
 
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:setContentMetadata,StartTM");
@@ -6569,22 +6513,12 @@ define('WinJS/Controls/MediaPlayer', [
                     }
 
                     var that = this;
-                    var isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
                     var isAllowedToViewContentBasedOnFamilySafetyPolicy = false;
 
                     _WriteProfilerMark("WinJS.UI.MediaPlayer:setContentMetadata,StopTM");
 
                     return new Promise(function (complete, error, progress) {
 
-                        var checkPremiumVideoPromise = that._checkPremiumVideoPrivilege()
-                            .then(
-                                function afterPriviledgeCheck(result) {
-                                    if (result) {
-                                        isAllowedToViewContentBasedOnPremiumVideoPriviledge = true;
-                                    } else {
-                                        isAllowedToViewContentBasedOnPremiumVideoPriviledge = false;
-                                    }
-                                });
                         var checkParentalControlsPromise = that._checkParentalControls()
                             .then(
                                 function afterContentRatingCheckReturns(result) {
@@ -6595,20 +6529,17 @@ define('WinJS/Controls/MediaPlayer', [
                                     }
                                 });
 
-                        Promise.join([checkPremiumVideoPromise, checkParentalControlsPromise])
+                        Promise.join(checkParentalControlsPromise)
                             .then(
                                 function success() {
-                                    if (isAllowedToViewContentBasedOnPremiumVideoPriviledge &&
-                                        isAllowedToViewContentBasedOnFamilySafetyPolicy) {
+                                    if (isAllowedToViewContentBasedOnFamilySafetyPolicy) {
                                         complete();
                                     } else {
                                         error();
-                                        return;
                                     }
                                 },
                                 function errorHandler() {
                                     error();
-                                    return;
                                 });
                     });
                 },
@@ -6626,7 +6557,7 @@ define('WinJS/Controls/MediaPlayer', [
                 forceLayout: function () {
                     /// <signature helpKeyword="WinJS.UI.MediaPlayer.forceLayout">
                     /// <summary locid="WinJS.UI.MediaPlayer.forceLayout">
-                    /// Forces the update its layout and redraws the control.
+                    /// Forces the toolbar update its layout and redraws the control.
                     /// </summary>
                     /// </signature>
                     if (this._toolbar) {
@@ -6674,13 +6605,15 @@ define('WinJS/Controls/MediaPlayer', [
                         this._seekInternal(newTime, false);
 
                         this._updateUIAndRaiseEvents(mediaCommandEnum.timeSkipBack, strings.timeSkipBackMediaCommandDisplayText);
+
+                        _WriteProfilerMark("WinJS.UI.MediaPlayer:timeSkipBack,StopTM");
                     }
                 },
 
                 timeSkipForward: function () {
                     /// <signature helpKeyword="WinJS.UI.MediaPlayer.timeSkipForward">
                     /// <summary locid="WinJS.UI.MediaPlayer.timeSkipForward">
-                    /// Moves the current timeline position forward short interval.
+                    /// Moves the current timeline position forward a short interval.
                     /// </summary>
                     /// </signature>
 
@@ -6706,7 +6639,7 @@ define('WinJS/Controls/MediaPlayer', [
 
                         _WriteProfilerMark("WinJS.UI.MediaPlayer:timeSkipForward,StopTM");
                     }
-                },                
+                },
                 _MediaReadyState: {
                     MediaReadyState_Have_Nothing: 0,
                     MediaReadyState_Have_Metadata: 1,
@@ -6716,18 +6649,18 @@ define('WinJS/Controls/MediaPlayer', [
                 }
             },
                 {
-                // keep it for Xbox Legacy..
-                _sounds: {
-                    initialized: false,
-                    elementFocus1: null,
-                    elementFocus2: null,
-                    elementFocus3: null,
-                    elementFocus4: null,
-                    selectButtonClick: null,
-                    overlayIn: null,
-                    overlayOut: null,
-                },
-            });
+                    // keep it for Xbox Legacy..
+                    _sounds: {
+                        initialized: false,
+                        elementFocus1: null,
+                        elementFocus2: null,
+                        elementFocus3: null,
+                        elementFocus4: null,
+                        selectButtonClick: null,
+                        overlayIn: null,
+                        overlayOut: null,
+                    },
+                });
             _Base.Class.mix(MediaPlayer, _Events.createEventProperties(
                "beforeshowcontrols",
                "aftershowcontrols",
@@ -6742,4 +6675,4 @@ define('WinJS/Controls/MediaPlayer', [
             return MediaPlayer;
         })
     });
-})
+});
