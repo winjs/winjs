@@ -13,7 +13,7 @@ define([
     '../Utilities/_Hoverable',
     './ElementResizeInstrument',
     'require-style!less/styles-viewbox'
-    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ElementResizeInstrument) {
+], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ElementResizeInstrument) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -98,7 +98,7 @@ define([
 
                     // Make sure we contain a sizer
                     var that = this;
-                    if(children.indexOf(this._sizer) < 0){
+                    if (children.indexOf(this._sizer) < 0) {
                         var sizers = children.filter(function (element) {
                             return (element !== that._elementResizeInstrument.element);
                         });
@@ -157,7 +157,7 @@ define([
                     }
                 },
 
-                _layoutCompleteCallback: function (){
+                _layoutCompleteCallback: function () {
                     // Overwritten by unit tests.
                 },
 
