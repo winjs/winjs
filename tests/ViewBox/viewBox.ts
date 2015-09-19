@@ -5,7 +5,6 @@
 
 module CorsicaTests {
 
-    var canElementResize: boolean = null;
     // note: the .win-viewbox style comes from ui-dark.css or ui-light.css
     //      "<style>.win-viewbox { width:100%; height:100%; position:relative; }</style>";
     var square = "<div data-win-control='WinJS.UI.ViewBox'><div class='sizer' style='width:100px;height:100px;'>Content</div></div>";
@@ -21,11 +20,15 @@ module CorsicaTests {
             }
         }
 
-        setUp(completed) {
-            Helper.detectMsElementResize((canResize) => {
-                canElementResize = canResize;
-                completed();
-            });
+        _viewBox: WinJS.UI.PrivateViewBox;
+        setup() {
+            this._viewBox = null;
+        }
+
+        tearDown() {
+            if (this._viewBox) {
+                this._viewBox.dispose();
+            };
         }
 
         testScalingSquare(completed) {
@@ -38,21 +41,23 @@ module CorsicaTests {
                 container.style.height = "50px";
 
                 WinJS.UI.processAll(container);
+                this._viewBox = <WinJS.UI.PrivateViewBox>container.querySelector(".win-viewbox").winControl;
+
                 var sizer = <HTMLElement>container.querySelector(".sizer");
                 LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
 
-                container.style.height = "300px";
-
-                if (!canElementResize) {
-                    WinJS.Utilities._resizeNotifier._handleResize();
-                }
-
-                WinJS.Promise.timeout(16).then(function () {
-                    LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
-                    document.body.removeChild(container);
-                }).
-                    then(null, this.unhandledTestError).
-                    then(completed);
+                var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                    this._viewBox._layoutCompleteCallback = c;
+                    // Trigger the resize handler.
+                    container.style.height = "300px";
+                });
+                nextLayoutCompletePromise
+                    .then(() => {
+                        LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+                        document.body.removeChild(container);
+                    })
+                    .then(null, this.unhandledTestError)
+                    .then(completed);
             } catch (ex) {
                 document.body.removeChild(container);
                 LiveUnit.Assert.fail("unhandled exception: " + ex);
@@ -70,19 +75,20 @@ module CorsicaTests {
                 container.style.height = "50px";
 
                 WinJS.UI.processAll(container);
+                this._viewBox = <WinJS.UI.PrivateViewBox>container.querySelector(".win-viewbox").winControl;
                 var sizer = <HTMLElement>container.querySelector(".sizer");
                 LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
 
-                container.style.height = "300px";
-
-                if (!canElementResize) {
-                    WinJS.Utilities._resizeNotifier._handleResize();
-                }
-
-                WinJS.Promise.timeout(16).then(function () {
-                    LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
-                }).
-                    then(function () {
+                var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                    this._viewBox._layoutCompleteCallback = c;
+                    // Trigger the resize handler.
+                    container.style.height = "300px";
+                });
+                nextLayoutCompletePromise.
+                    then(() => {
+                        LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+                    }).
+                    then(() => {
                         var box = <HTMLElement>document.querySelector(".sizer").parentNode;
                         var newChild = document.createElement("div");
                         newChild.className = "sizer";
@@ -91,13 +97,20 @@ module CorsicaTests {
                         box.removeChild(sizer);
                         box.appendChild(newChild);
                         sizer = newChild;
-                        box.winControl.forceLayout();
-                        return WinJS.Promise.timeout(16);
+
+                        var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                            this._viewBox._layoutCompleteCallback = c;
+                            // Trigger the resize handler.
+                            box.winControl.forceLayout();
+                        });
+
+                        return nextLayoutCompletePromise;
+
                     }).
-                    then(function () {
+                    then(() => {
                         LiveUnit.Assert.areEqual("translate(75px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                     }).
-                    then(function () {
+                    then(() => {
                         document.body.removeChild(container);
                     }).
                     then(null, this.unhandledTestError).
@@ -165,8 +178,8 @@ module CorsicaTests {
             }
         }
 
-    // if WinJS.validation=false, viewbox should not throw exception if wrapping > 1 child elements
-    test2containersWithoutValidation() {
+        // if WinJS.validation=false, viewbox should not throw exception if wrapping > 1 child elements
+        test2containersWithoutValidation() {
             var container = document.createElement("div");
             var squareHTML = "<div id='testDiv' data-win-control='WinJS.UI.ViewBox'><div id='secondViewBoxChild'></div><div class='sizer' style='width:200px;height:200px;background:white;'><div class='inner' style='width:100px;height:100px;background:green;'>C</div></div></div>";
             var viewboxExceptionCaught = false;
@@ -195,7 +208,7 @@ module CorsicaTests {
             }
         }
 
-    testHTMLScaling() {
+        testHTMLScaling() {
             try {
                 var container = document.createElement("div");
                 var squareHTML = "<div id='testDiv' data-win-control='WinJS.UI.ViewBox'><div class='sizer' style='width:200px;height:200px;background:white;'><div class='inner' style='width:100px;height:100px;background:green;'>C</div></div></div>";
@@ -249,33 +262,34 @@ module CorsicaTests {
                 container.style.height = "50px";
 
                 WinJS.UI.processAll(container).
-                    then(function () {
+                    then(() => {
+                        this._viewBox = <WinJS.UI.PrivateViewBox>container.querySelector(".win-viewbox").winControl;
                         var sizer = <HTMLElement>container.querySelector(".sizer");
                         LiveUnit.Assert.areEqual("", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
-                        document.body.appendChild(container);
-                        if (!canElementResize) {
-                            WinJS.Utilities._resizeNotifier._handleResize();
-                        }
-                        return WinJS.Promise.timeout();
+
+                        var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                            this._viewBox._layoutCompleteCallback = c;
+                            document.body.appendChild(container);
+                        });
+                        return nextLayoutCompletePromise;
                     }).
-                    then(function () {
+                    then(() => {
                         var sizer = <HTMLElement>container.querySelector(".sizer");
                         LiveUnit.Assert.areEqual("translate(125px, 0px) scale(0.5)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
 
-                        container.style.height = "300px";
-                        if (!canElementResize) {
-                            WinJS.Utilities._resizeNotifier._handleResize();
-                        }
+                        var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                            this._viewBox._layoutCompleteCallback = c;
+                            // Trigger the resize handler.
+                            container.style.height = "300px";
+                        });
+                        return nextLayoutCompletePromise;
                     }).
-                    then(function () {
-                        return WinJS.Promise.timeout(16);
-                    }).
-                    then(function () {
+                    then(() => {
                         var sizer = <HTMLElement>container.querySelector(".sizer");
                         LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
                     }).
                     then(null, this.unhandledTestError).
-                    then(function () {
+                    then(() => {
                         document.body.removeChild(container);
                     }).
                     then(completed);
@@ -321,7 +335,7 @@ module CorsicaTests {
             }
         }
 
-    testViewBoxDispose() {
+        testViewBoxDispose() {
             var vb = new WinJS.UI.ViewBox();
             LiveUnit.Assert.isTrue(vb.dispose);
             LiveUnit.Assert.isFalse((<any>vb)._disposed);
@@ -342,6 +356,54 @@ module CorsicaTests {
             LiveUnit.Assert.isTrue(sentinel.disposed);
             LiveUnit.Assert.isTrue((<any>vb)._disposed);
             vb.dispose();
+        }
+
+        // ViewBox can only detect size changes to the box element. If the sizer element's size is changed through a DOM API, 
+        // Verify that calling forceLayout on the ViewBox should layout the control correctly.
+        testViewBoxSizerResized(completed) {
+            var container = document.createElement("div");
+
+            document.body.appendChild(container);
+            container.innerHTML = square;
+            container.style.width = "300px";
+            container.style.height = "300px";
+
+            WinJS.UI.processAll(container);
+            this._viewBox = <WinJS.UI.PrivateViewBox>container.querySelector(".win-viewbox").winControl;
+            var sizer = <HTMLElement>container.querySelector(".sizer");
+            LiveUnit.Assert.areEqual("translate(0px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+
+
+            // Wait for the ViewBox's initial layout passes to settle before resuming testing. 
+            // We expect its element resize instrument to asynchronously fire a resize event after construction
+            var initialResizePromise = new WinJS.Promise((c) => {
+                this._viewBox._elementResizeInstrument.addEventListener("resize", c);
+            });
+
+            var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                this._viewBox._layoutCompleteCallback = c;
+            });
+
+            WinJS.Promise.
+                join([initialResizePromise, nextLayoutCompletePromise]).
+                then(() => {
+
+                    var box = <HTMLElement>document.querySelector(".sizer").parentNode;
+                    sizer.style.width = "50px";
+                    sizer.style.height = "100px";
+
+                    var nextLayoutCompletePromise = new WinJS.Promise((c) => {
+                        this._viewBox._layoutCompleteCallback = c;
+                        // Developers can call force layout to adjust to changes made to the sizer.
+                        box.winControl.forceLayout();
+                    });
+                    return nextLayoutCompletePromise;
+                }).
+                done(() => {
+                    LiveUnit.Assert.areEqual("translate(75px, 0px) scale(3)", sizer.style[WinJS.Utilities._browserStyleEquivalents["transform"].scriptName]);
+                    document.body.removeChild(container);
+                    completed();
+                });
         }
     }
 }

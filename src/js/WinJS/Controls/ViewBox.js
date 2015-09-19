@@ -11,8 +11,9 @@ define([
     '../Utilities/_Dispose',
     '../Utilities/_ElementUtilities',
     '../Utilities/_Hoverable',
+    './ElementResizeInstrument',
     'require-style!less/styles-viewbox'
-    ], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable) {
+], function viewboxInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Resources, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ElementResizeInstrument) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -33,32 +34,8 @@ define([
         ViewBox: _Base.Namespace._lazy(function () {
 
             var strings = {
-                get invalidViewBoxChildren() { return "ViewBox expects to only have one child element"; },
+                get invalidViewBoxChildren() { return "ViewBox expects to be provided with only one child element"; },
             };
-
-            function onresize(control) {
-                if (control && !control._resizing) {
-                    control._resizing = control._resizing || 0;
-                    control._resizing++;
-                    try {
-                        control._updateLayout();
-                    } finally {
-                        control._resizing--;
-                    }
-                }
-            }
-
-            function onresizeBox(ev) {
-                if (ev.target) {
-                    onresize(ev.target.winControl);
-                }
-            }
-
-            function onresizeSizer(ev) {
-                if (ev.target) {
-                    onresize(ev.target.parentElement.winControl);
-                }
-            }
 
             var ViewBox = _Base.Class.define(function ViewBox_ctor(element) {
                 /// <signature helpKeyword="WinJS.UI.ViewBox.ViewBox">
@@ -78,6 +55,20 @@ define([
                 box.winControl = this;
                 _ElementUtilities.addClass(box, "win-disposable");
                 _ElementUtilities.addClass(box, "win-viewbox");
+
+                // Sign up for resize events.
+                this._handleResizeBound = this._handleResize.bind(this);
+                _ElementUtilities._resizeNotifier.subscribe(box, this._handleResizeBound);
+                this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                box.appendChild(this._elementResizeInstrument.element);
+                this._elementResizeInstrument.addEventListener("resize", this._handleResizeBound);
+                var that = this;
+                _ElementUtilities._inDom(box).then(function () {
+                    if (!that._disposed) {
+                        that._elementResizeInstrument.addedToDom();
+                    }
+                });
+
                 this.forceLayout();
             }, {
                 _sizer: null,
@@ -98,23 +89,31 @@ define([
 
                 _initialize: function () {
                     var box = this.element;
-                    if (box.firstElementChild !== this._sizer) {
+                    var children = Array.prototype.slice.call(box.children);
+
+                    // Make sure we contain our elementResizeInstrument. 
+                    if (children.indexOf(this._elementResizeInstrument.element) === -1) {
+                        box.appendChild(this._elementResizeInstrument.element);
+                    }
+
+                    // Make sure we contain a single sizer
+                    var that = this;
+                    if (children.indexOf(this._sizer) === -1) {
+                        var sizers = children.filter(function (element) {
+                            return (element !== that._elementResizeInstrument.element);
+                        });
+
                         if (_BaseUtils.validation) {
-                            if (box.childElementCount !== 1) {
+                            if (sizers.length !== 1) {
                                 throw new _ErrorFromName("WinJS.UI.ViewBox.InvalidChildren", strings.invalidViewBoxChildren);
                             }
                         }
                         if (this._sizer) {
                             this._sizer.onresize = null;
                         }
-                        var sizer = box.firstElementChild;
+                        var sizer = sizers[0];
                         this._sizer = sizer;
-                        if (sizer) {
-                            _ElementUtilities._resizeNotifier.subscribe(box, onresizeBox);
-                            box.addEventListener("mselementresize", onresizeBox);
-                            _ElementUtilities._resizeNotifier.subscribe(sizer, onresizeSizer);
-                            sizer.addEventListener("mselementresize", onresizeSizer);
-                        }
+
                         if (box.clientWidth === 0 && box.clientHeight === 0) {
                             var that = this;
                             // Wait for the viewbox to get added to the DOM. It should be added
@@ -142,6 +141,24 @@ define([
                         this._sizer.style[_BaseUtils._browserStyleEquivalents["transform"].scriptName] = "translate(" + (rtl ? "-" : "") + transX + "px," + transY + "px) scale(" + mRatio + ")";
                         this._sizer.style[_BaseUtils._browserStyleEquivalents["transform-origin"].scriptName] = rtl ? "top right" : "top left";
                     }
+
+                    this._layoutCompleteCallback();
+                },
+
+                _handleResize: function () {
+                    if (!this._resizing) {
+                        this._resizing = this._resizing || 0;
+                        this._resizing++;
+                        try {
+                            this._updateLayout();
+                        } finally {
+                            this._resizing--;
+                        }
+                    }
+                },
+
+                _layoutCompleteCallback: function () {
+                    // Overwritten by unit tests.
                 },
 
                 dispose: function () {
@@ -155,11 +172,10 @@ define([
                     }
 
                     if (this.element) {
-                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, onresizeBox);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this.element, this._handleResizeBound);
                     }
-                    if (this._sizer) {
-                        _ElementUtilities._resizeNotifier.unsubscribe(this._sizer, onresizeSizer);
-                    }
+
+                    this._elementResizeInstrument.dispose();
 
                     this._disposed = true;
                     _Dispose.disposeSubTree(this._element);
