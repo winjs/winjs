@@ -92,13 +92,13 @@ define([
                     var children = Array.prototype.slice.call(box.children);
 
                     // Make sure we contain our elementResizeInstrument. 
-                    if (children.indexOf(this._elementResizeInstrument.element) < 0) {
+                    if (children.indexOf(this._elementResizeInstrument.element) === -1) {
                         box.appendChild(this._elementResizeInstrument.element);
                     }
 
-                    // Make sure we contain a sizer
+                    // Make sure we contain a single sizer
                     var that = this;
-                    if (children.indexOf(this._sizer) < 0) {
+                    if (children.indexOf(this._sizer) === -1) {
                         var sizers = children.filter(function (element) {
                             return (element !== that._elementResizeInstrument.element);
                         });
