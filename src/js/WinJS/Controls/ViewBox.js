@@ -101,7 +101,7 @@ define([
                     if (children.indexOf(this._sizer) === -1) {
                         var sizers = children.filter(function (element) {
                             return (element !== that._elementResizeInstrument.element);
-                        });
+                        }); 
 
                         if (_BaseUtils.validation) {
                             if (sizers.length !== 1) {
