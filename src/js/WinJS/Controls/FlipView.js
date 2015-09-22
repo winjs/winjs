@@ -713,7 +713,7 @@ define([
 
                     var notifiedInDom = false; /* We want to notify our _elementResizeInstrument the first time it is in the DOM. */
                     var skipResizeOnNextInsertion = false; 
-                    var initiallyParented = _Global.document.body.contains(this._flipviewDiv)
+                    var initiallyParented = _Global.document.body.contains(this._flipviewDiv);
                     if (initiallyParented) {
                         this._elementResizeInstrument.addedToDom();
                         notifiedInDom = true;
