@@ -211,6 +211,20 @@ declare module WinJS {
             export var _isDarkTheme: boolean;
         }
 
+        class _ElementResizeInstrument {
+            constructor();
+            element: HTMLObjectElement;
+            addedToDom(): void;
+            dispose(): void;
+            addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
+            removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
+            dispatchEvent(type: string, eventProperties: any): boolean;
+            static EventNames: {
+                resize: string;
+                _ready: string;
+            }
+        }
+
         class _ParallelWorkQueue {
             constructor(maxRunning: number);
             sort(sortFunc: (a: any, b: any) => number);
@@ -444,7 +458,8 @@ declare module WinJS {
         }
 
         class PrivateListView<T> extends ListView<T> {
-            _onMSElementResize();
+            _onElementResize();
+            _elementResizeInstrument: _ElementResizeInstrument;
             _animationsDisabled;
             _view;
             _ariaStartMarker;
@@ -496,6 +511,8 @@ declare module WinJS {
             _measuringPromise;
             _envInfo;
             _sizes;
+            _measureItem;
+            _measureElements;
         }
 
         class PrivateGridLayout extends GridLayout {
@@ -596,6 +613,10 @@ declare module WinJS {
                 unbind(callback: any): void;
                 dispatchEvent(type: string, eventProperties: any): boolean;
             }
+        }
+
+        class PrivateElementResizeInstrument extends WinJS.UI._ElementResizeInstrument {
+            _disposed: boolean;
         }
 
         /**
@@ -775,6 +796,12 @@ declare module WinJS {
             public addEventListener(eventName: string, eventHandler: Function, useCapture?: boolean): void;
             public removeEventListener(eventName: string, eventCallback: Function, useCapture?: boolean): void;
             public dispatchEvent(type: string, eventProperties: any): boolean;
+        }
+
+        class PrivateViewBox extends WinJS.UI.ViewBox {
+            _disposed: boolean;
+            _elementResizeInstrument: _ElementResizeInstrument;
+            _layoutCompleteCallback(): any;
         }
 
         class PrivateItemContainer extends WinJS.UI.ItemContainer {

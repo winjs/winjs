@@ -695,14 +695,14 @@ module WinJSTests {
             }
 
             function cleanUp() {
-                lv.element.removeEventListener("mselementresize", onResize);
+                lv._elementResizeInstrument.removeEventListener("resize", onResize);
                 unparent();
             }
 
             var div = document.createElement("DIV"),
                 unparent = parent(div),
                 myData = [],
-                lv;
+                lv: WinJS.UI.PrivateListView<any>;
 
             div.style.width = "500px";
             div.style.height = "100px";
@@ -715,17 +715,17 @@ module WinJSTests {
                 });
             }
 
-            lv = new WinJS.UI.ListView(div, {
+            lv = <WinJS.UI.PrivateListView<any>> new WinJS.UI.ListView(div, {
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
                 itemTemplate: Helper.ListView.templates.syncJSTemplate,
                 layout: makeLayout()
             });
 
             Helper.ListView.waitForReady(lv)().then(function () {
-                var layout = lv.layout,
+                var layout = <WinJS.UI.PrivateListLayout>lv.layout,
                     origMeasureItem = layout._measureItem;
 
-                lv.element.addEventListener("mselementresize", onResize);
+                lv._elementResizeInstrument.addEventListener("resize", onResize);
                 // Hook the measuring function so that we can cause resize handlers to run in the middle of it.
                 layout._measureItem = function () {
                     layout._measureItem = origMeasureItem;
@@ -790,14 +790,14 @@ module WinJSTests {
             }
 
             function cleanUp() {
-                lv.element.removeEventListener("mselementresize", onResize);
+                lv._elementResizeInstrument.removeEventListener("resize", onResize);
                 unparent();
             }
 
             var div = document.createElement("DIV"),
                 unparent = parent(div),
                 myData = [],
-                lv;
+                lv: WinJS.UI.PrivateListView<any>;
 
             div.style.width = "500px";
             div.style.height = "100px";
@@ -810,17 +810,17 @@ module WinJSTests {
                 });
             }
 
-            lv = new WinJS.UI.ListView(div, {
+            lv = <WinJS.UI.PrivateListView<any>> new WinJS.UI.ListView(div, {
                 itemDataSource: new WinJS.Binding.List(myData).dataSource,
                 itemTemplate: Helper.ListView.templates.syncJSTemplate,
                 layout: makeLayout()
             });
 
             Helper.ListView.waitForReady(lv)().then(function () {
-                var layout = lv.layout,
+                var layout = <WinJS.UI.PrivateListLayout>lv.layout,
                     origMeasureElements = layout._measureElements;
 
-                lv.element.addEventListener("mselementresize", onResize);
+                lv._elementResizeInstrument.addEventListener("resize", onResize);
                 // Hook the measuring function so that we can cause resize handlers to run in the middle of it.
                 layout._measureElements = function () {
                     layout._measureElements = origMeasureElements;

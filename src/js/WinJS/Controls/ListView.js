@@ -24,6 +24,7 @@ define([
     '../Utilities/_TabContainer',
     '../Utilities/_UI',
     '../Utilities/_VersionManager',
+    './ElementResizeInstrument',
     './ItemContainer/_Constants',
     './ItemContainer/_ItemEventsHandler',
     './ListView/_BrowseMode',
@@ -37,7 +38,7 @@ define([
     './ListView/_VirtualizeContentsView',
     'require-style!less/styles-listview',
     'require-style!less/colors-listview'
-], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
+], function listViewImplInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, _Accents, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Signal, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _SafeHtml, _TabContainer, _UI, _VersionManager, _ElementResizeInstrument, _Constants, _ItemEventsHandler, _BrowseMode, _ErrorMessages, _GroupFocusCache, _GroupsContainer, _Helpers, _ItemsContainer, _Layouts, _SelectionManager, _VirtualizeContentsView) {
     "use strict";
 
     _Accents.createAccentRule(
@@ -1698,24 +1699,22 @@ define([
                         listViewHandler("FocusOut", false, false),
                         modeHandler("KeyDown"),
                         modeHandler("KeyUp"),
-                        listViewHandler("MSElementResize", false, false)
                     ];
                     elementEvents.forEach(function (eventHandler) {
                         _ElementUtilities._addEventListener(that._element, eventHandler.name, eventHandler.handler, !!eventHandler.capture);
                     });
-                    this._onMSElementResizeBound = this._onMSElementResize.bind(this);
-                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._onMSElementResizeBound);
+                    this._onElementResizeBound = this._onElementResize.bind(this);
+                    _ElementUtilities._resizeNotifier.subscribe(this._element, this._onElementResizeBound);
+                    this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                    this._element.appendChild(this._elementResizeInstrument.element);
+                    this._elementResizeInstrument.addEventListener("resize", this._onElementResizeBound);
 
-                    var initiallyParented = _Global.document.body.contains(this._element);
-                    _ElementUtilities._addInsertedNotifier(this._element);
-                    this._element.addEventListener("WinJSNodeInserted", function (event) {
-                        // WinJSNodeInserted fires even if the element is already in the DOM
-                        if (initiallyParented) {
-                            initiallyParented = false;
-                            return;
-                        }
-                        that._onMSElementResizeBound(event);
-                    }, false);
+                    _ElementUtilities._inDom(this.element)
+                        .then(function () {
+                            if (!that._disposed) {
+                                that._elementResizeInstrument.addedToDom();
+                            }
+                        });
 
                     var viewportEvents = [
                         listViewHandler("MSManipulationStateChanged", true),
@@ -2725,9 +2724,9 @@ define([
                     this._viewportHeight = _Constants._UNINITIALIZED;
                 },
 
-                _onMSElementResize: function ListView_onResize() {
-                    this._writeProfilerMark("_onMSElementResize,info");
-                    Scheduler.schedule(function ListView_async_msElementResize() {
+                _onElementResize: function ListView_onResize() {
+                    this._writeProfilerMark("_onElementResize,info");
+                    Scheduler.schedule(function ListView_async_elementResize() {
                         if (this._isZombie()) { return; }
                         // If these values are uninitialized there is already a realization pass pending.
                         if (this._viewportWidth !== _Constants._UNINITIALIZED && this._viewportHeight !== _Constants._UNINITIALIZED) {
@@ -2752,7 +2751,7 @@ define([
                                 });
                             }
                         }
-                    }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onMSElementResize");
+                    }, Scheduler.Priority.max, this, "WinJS.UI.ListView._onElementResize");
                 },
 
                 _onFocusIn: function ListView_onFocusIn(event) {
@@ -3690,7 +3689,8 @@ define([
                             e && (e.textContent = "");
                         };
 
-                        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onMSElementResizeBound);
+                        _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onElementResizeBound);
+                        this._elementResizeInstrument.dispose();
 
                         this._batchingViewUpdates && this._batchingViewUpdates.cancel();
 

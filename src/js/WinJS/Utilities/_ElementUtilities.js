@@ -16,7 +16,7 @@ define([
     }
 
     var _zoomToDuration = 167;
-    
+
     // Firefox's implementation of getComputedStyle returns null when called within
     // an iframe that is display:none. This is a bug: https://bugzilla.mozilla.org/show_bug.cgi?id=548397
     // _getComputedStyle is a helper which is guaranteed to return an object whose keys
@@ -648,7 +648,7 @@ define([
         focusin: {
             register: registerBubbleListener,
             unregister: removeListenerFromEventMap
-        }
+        },
     };
     if (!_Global.PointerEvent) {
         var pointerEventEntry = {
@@ -790,7 +790,7 @@ define([
             _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
-
+   
     // - object: The object on which GenericListener will listen for events.
     // - objectName: A string representing the name of *object*. This will be
     //   incorporated into the names of the events and classNames created by
@@ -1169,7 +1169,7 @@ define([
         },
 
         _MSPointerEvent: _MSPointerEvent,
-        
+
         _getComputedStyle: _getComputedStyle,
 
         _zoomToDuration: _zoomToDuration,
@@ -2533,12 +2533,12 @@ define([
             callback();
             exports._trySetActiveOnAnyElement(focusedElement);
         },
-        
+
         // Tries to give focus to an element (even if its tabIndex is -1) via setActive.
         _trySetActiveOnAnyElement: function Utilities_trySetActiveOnAnyElement(element, scroller) {
             return exports._tryFocusOnAnyElement(element, true, scroller);
         },
-        
+
         // Tries to give focus to an element (even if its tabIndex is -1).
         _tryFocusOnAnyElement: function Utilities_tryFocusOnAnyElement(element, useSetActive, scroller) {
             var previousActiveElement = _Global.document.activeElement;
@@ -2546,22 +2546,22 @@ define([
             if (element === previousActiveElement) {
                 return true;
             }
-            
+
             if (useSetActive) {
                 exports._setActive(element, scroller);
             } else {
                 element.focus();
             }
-            
+
             return previousActiveElement !== _Global.document.activeElement;
         },
-        
+
         // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0)
         // via setActive.
         _trySetActive: function Utilities_trySetActive(elem, scroller) {
             return this._tryFocus(elem, true, scroller);
         },
-        
+
         // Tries to give focus to an element which is a tabstop (i.e. tabIndex >= 0).
         _tryFocus: function Utilities_tryFocus(elem, useSetActive, scroller) {
             var previousActiveElement = _Global.document.activeElement;

@@ -86,7 +86,7 @@ define([
 
     var ScrollToPriority = {
         uninitialized: 0,
-        low: 1,             // used by layoutSite.invalidateLayout, forceLayout, _processReload, _update and _onMSElementResize - operations that preserve the scroll position
+        low: 1,             // used by layoutSite.invalidateLayout, forceLayout, _processReload, _update and _onElementResize - operations that preserve the scroll position
         medium: 2,          // used by dataSource change, layout change and etc - operations that reset the scroll position to 0
         high: 3             // used by indexOfFirstVisible, ensureVisible, scrollPosition - operations in which the developer explicitly sets the scroll position
     };
