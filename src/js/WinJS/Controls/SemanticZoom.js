@@ -17,9 +17,10 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_ElementListUtilities',
     '../Utilities/_Hoverable',
+    './ElementResizeInstrument',
     'require-style!less/styles-semanticzoom',
     'require-style!less/colors-semanticzoom'
-    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable) {
+    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _ElementResizeInstrument) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -137,10 +138,10 @@ define([
             var origin = { x: 0, y: 0 };
 
             function onSemanticZoomResize(ev) {
-                var control = ev.target && ev.target.winControl;
-                if (control && !control._resizing) {
-                    control._onResize();
-                }
+                //var control = ev.target && ev.target.winControl;
+                //if (control && !control._resizing) {
+                //    control._onResize();
+                //}
             }
 
             function onSemanticZoomPropertyChanged(list) {
@@ -220,7 +221,10 @@ define([
                 this._configure();
 
                 // Register event handlers
-
+                this._onResizeBound = this._onResize.bind(this);
+                //this._elemenetResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                //this._element.appendChild(this._elementRsizeInstrument.element);
+                //this._elementRsizeInstrument.addEventListener("resize", this._onResizeBound);
                 var initiallyParented = _Global.document.body.contains(this._element);
                 _ElementUtilities._addInsertedNotifier(this._element);
                 this._element.addEventListener("WinJSNodeInserted", function (event) {
@@ -229,10 +233,11 @@ define([
                         initiallyParented = false;
                         return;
                     }
-                    onSemanticZoomResize(event);
+                    this._onResizeBound(event);
                 }, false);
-                this._element.addEventListener("mselementresize", onSemanticZoomResize);
-                _ElementUtilities._resizeNotifier.subscribe(this._element, onSemanticZoomResize);
+                // this._element.addEventListener("mselementresize", onSemanticZoomResize);
+
+                _ElementUtilities._resizeNotifier.subscribe(this._element, this._onResizeBound);
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
@@ -371,7 +376,7 @@ define([
                     }
 
                     this._disposed = true;
-                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, onSemanticZoomResize);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onResizeBound);
                     _Dispose._disposeElement(this._elementIn);
                     _Dispose._disposeElement(this._elementOut);
 
