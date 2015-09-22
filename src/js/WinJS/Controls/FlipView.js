@@ -18,11 +18,12 @@ define([
     '../Utilities/_Hoverable',
     '../Utilities/_ItemsManager',
     '../Utilities/_UI',
+    './ElementResizeInstrument',
     './FlipView/_Constants',
     './FlipView/_PageManager',
     'require-style!less/styles-flipview',
     'require-style!less/colors-flipview'
-], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _Constants, _PageManager) {
+], function flipperInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, BindingList, Promise, Scheduler, _Control, _Dispose, _ElementUtilities, _Hoverable, _ItemsManager, _UI, _ElementResizeInstrument, _Constants, _PageManager) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -84,14 +85,6 @@ define([
                         that._rtl = _ElementUtilities._getComputedStyle(that._flipviewDiv, null).direction === "rtl";
                         that._setupOrientation();
                     }
-                }
-            }
-
-            function flipviewResized(e) {
-                var that = e.target && e.target.winControl;
-                if (that && that instanceof FlipView) {
-                    _WriteProfilerMark("WinJS.UI.FlipView:resize,StartTM");
-                    that._resize();
                 }
             }
 
@@ -206,7 +199,8 @@ define([
 
                     _ElementUtilities._globalListener.removeEventListener(this._flipviewDiv, 'wheel', this._windowWheelHandlerBound);
                     _ElementUtilities._globalListener.removeEventListener(this._flipviewDiv, 'mousewheel', this._windowWheelHandlerBound);
-                    _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, flipviewResized);
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._flipviewDiv, this._resizeHandlerBound);
+                    this._elementResizeInstrument.dispose();
 
 
                     this._disposed = true;
@@ -652,9 +646,6 @@ define([
                     new _ElementUtilities._MutationObserver(flipViewPropertyChanged).observe(this._flipviewDiv, { attributes: true, attributeFilter: ["dir", "style"] });
                     this._cachedStyleDir = this._flipviewDiv.style.direction;
 
-                    this._flipviewDiv.addEventListener("mselementresize", flipviewResized);
-                    _ElementUtilities._resizeNotifier.subscribe(this._flipviewDiv, flipviewResized);
-
                     this._contentDiv.addEventListener("mouseleave", function () {
                         that._mouseInViewport = false;
                     }, false);
@@ -714,19 +705,41 @@ define([
                         }
                     }, true);
 
-                    // Scroll position isn't maintained when an element is added/removed from
-                    // the DOM so every time we are placed back in, let the PageManager
-                    // fix the scroll position.
+                    this._resizeHandlerBound = this._resizeHandler.bind(this);
+                    this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                    this._flipviewDiv.appendChild(this._elementResizeInstrument.element);
+                    this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
+                    _ElementUtilities._resizeNotifier.subscribe(this._flipviewDiv, this._resizeHandlerBound);
+
+                    var notifiedInDom = false; /* We want to notify our _elementResizeInstrument the first time it is in the DOM. */
+                    var skipResizeOnNextInsertion = false; 
                     var initiallyParented = _Global.document.body.contains(this._flipviewDiv);
+                    if (initiallyParented) {
+                        this._elementResizeInstrument.addedToDom();
+                        notifiedInDom = true;
+
+                        skipResizeOnNextInsertion = true;
+                    }
+
                     _ElementUtilities._addInsertedNotifier(this._flipviewDiv);
+                    // WinJSNodeInserted fires even if the element was already in the DOM
                     this._flipviewDiv.addEventListener("WinJSNodeInserted", function (event) {
-                        // WinJSNodeInserted fires even if the element is already in the DOM
-                        if (initiallyParented) {
-                            initiallyParented = false;
+                        if (!notifiedInDom) {
+                            notifiedInDom = true;
+                            that._elementResizeInstrument.addedToDom();
+                        }
+
+                        if (skipResizeOnNextInsertion) {
+                            skipResizeOnNextInsertion = false;
                             return;
                         }
+                        // Scroll position isn't maintained when an element is added/removed from
+                        // the DOM so every time we are placed back in, let the PageManager
+                        // fix the scroll position.
                         that._pageManager.resized();
                     }, false);
+
+
 
                     this._flipviewDiv.addEventListener("keydown", function (event) {
                         if (that._disposed) {
@@ -879,6 +892,11 @@ define([
                         }
                     }
                     return false;
+                },
+
+                _resizeHandler: function FlipView_resizeHandler() {
+                    _WriteProfilerMark("WinJS.UI.FlipView:resize,StartTM");
+                    this._pageManager.resized();
                 },
 
                 _refreshHandler: function FlipView_refreshHandler() {
@@ -1082,10 +1100,6 @@ define([
                         this._animationsFinished();
                     }
                     this._completeJumpPending = false;
-                },
-
-                _resize: function FlipView_resize() {
-                    this._pageManager.resized();
                 },
 
                 _setCurrentIndex: function FlipView_setCurrentIndex(index) {
