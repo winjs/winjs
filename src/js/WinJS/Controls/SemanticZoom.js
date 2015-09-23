@@ -378,6 +378,7 @@ define([
                     }
 
                     this._disposed = true;
+                    this._elementResizeInstrument.dispose();
                     _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onResizeBound);
                     _Dispose._disposeElement(this._elementIn);
                     _Dispose._disposeElement(this._elementOut);
