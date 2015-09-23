@@ -247,18 +247,6 @@ define([
                     }
                 }, false);
 
-                //var initiallyParented = _Global.document.body.contains(this._element);
-                //_ElementUtilities._addInsertedNotifier(this._element);
-                //this._element.addEventListener("WinJSNodeInserted", function (event) {
-                //    // WinJSNodeInserted fires even if the element is already in the DOM
-                //    if (initiallyParented) {
-                //        initiallyParented = false;
-                //        return;
-                //    }
-                //    this._onResizeBound(event);
-                //}, false);
-                // this._element.addEventListener("mselementresize", onSemanticZoomResize);
-
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
@@ -344,7 +332,7 @@ define([
                         var newValue = _ElementUtilities._clamp(value, minZoomFactor, maxZoomFactor, defaultZoomFactor);
                         if (oldValue !== newValue) {
                             this._zoomFactor = newValue;
-                            this._onResize();
+                            this._onResizeBound();
                         }
                     }
                 },
