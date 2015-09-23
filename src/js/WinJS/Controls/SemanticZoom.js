@@ -225,19 +225,40 @@ define([
                 this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
                 this._element.appendChild(this._elementResizeInstrument.element);
                 this._elementResizeInstrument.addEventListener("resize", this._onResizeBound);
+                _ElementUtilities._resizeNotifier.subscribe(this._element, this._onResizeBound);
+
                 var initiallyParented = _Global.document.body.contains(this._element);
+                if (initiallyParented) {
+                    this._elementResizeInstrument.addedToDom();
+                }
+
                 _ElementUtilities._addInsertedNotifier(this._element);
+                var initialTrigger = true;
                 this._element.addEventListener("WinJSNodeInserted", function (event) {
-                    // WinJSNodeInserted fires even if the element is already in the DOM
-                    if (initiallyParented) {
-                        initiallyParented = false;
-                        return;
+                    // WinJSNodeInserted fires even if the element was already in the DOM
+                    if (initialTrigger) {
+                        initialTrigger = false;
+                        if (!initiallyParented) {
+                            that._elementResizeInstrument.addedToDom();
+                            that._onResizeBound();
+                        }
+                    } else {
+                        that._onResizeBound();
                     }
-                    this._onResizeBound(event);
                 }, false);
+
+                //var initiallyParented = _Global.document.body.contains(this._element);
+                //_ElementUtilities._addInsertedNotifier(this._element);
+                //this._element.addEventListener("WinJSNodeInserted", function (event) {
+                //    // WinJSNodeInserted fires even if the element is already in the DOM
+                //    if (initiallyParented) {
+                //        initiallyParented = false;
+                //        return;
+                //    }
+                //    this._onResizeBound(event);
+                //}, false);
                 // this._element.addEventListener("mselementresize", onSemanticZoomResize);
 
-                _ElementUtilities._resizeNotifier.subscribe(this._element, this._onResizeBound);
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
