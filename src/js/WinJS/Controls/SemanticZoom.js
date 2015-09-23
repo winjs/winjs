@@ -137,13 +137,6 @@ define([
 
             var origin = { x: 0, y: 0 };
 
-            function onSemanticZoomResize(ev) {
-                //var control = ev.target && ev.target.winControl;
-                //if (control && !control._resizing) {
-                //    control._onResize();
-                //}
-            }
-
             function onSemanticZoomPropertyChanged(list) {
                 // This will only be called for "aria-checked" changes
                 var control = list[0].target && list[0].target.winControl;
