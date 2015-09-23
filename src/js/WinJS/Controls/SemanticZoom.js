@@ -222,9 +222,9 @@ define([
 
                 // Register event handlers
                 this._onResizeBound = this._onResize.bind(this);
-                //this._elemenetResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
-                //this._element.appendChild(this._elementRsizeInstrument.element);
-                //this._elementRsizeInstrument.addEventListener("resize", this._onResizeBound);
+                this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                this._element.appendChild(this._elementResizeInstrument.element);
+                this._elementResizeInstrument.addEventListener("resize", this._onResizeBound);
                 var initiallyParented = _Global.document.body.contains(this._element);
                 _ElementUtilities._addInsertedNotifier(this._element);
                 this._element.addEventListener("WinJSNodeInserted", function (event) {
