@@ -711,32 +711,27 @@ define([
                     this._elementResizeInstrument.addEventListener("resize", this._resizeHandlerBound);
                     _ElementUtilities._resizeNotifier.subscribe(this._flipviewDiv, this._resizeHandlerBound);
 
-                    var notifiedInDom = false; /* We want to notify our _elementResizeInstrument the first time it is in the DOM. */
-                    var skipResizeOnNextInsertion = false; 
                     var initiallyParented = _Global.document.body.contains(this._flipviewDiv);
                     if (initiallyParented) {
                         this._elementResizeInstrument.addedToDom();
-                        notifiedInDom = true;
-
-                        skipResizeOnNextInsertion = true;
                     }
 
+                    // Scroll position isn't maintained when an element is added/removed from
+                    // the DOM so every time we are placed back in, let the PageManager
+                    // fix the scroll position.
                     _ElementUtilities._addInsertedNotifier(this._flipviewDiv);
-                    // WinJSNodeInserted fires even if the element was already in the DOM
+                    var initialTrigger = true;
                     this._flipviewDiv.addEventListener("WinJSNodeInserted", function (event) {
-                        if (!notifiedInDom) {
-                            notifiedInDom = true;
-                            that._elementResizeInstrument.addedToDom();
+                        // WinJSNodeInserted fires even if the element was already in the DOM
+                        if (initialTrigger) {
+                            initialTrigger = false;
+                            if (!initiallyParented) {
+                                that._elementResizeInstrument.addedToDom();
+                                that._pageManager.resized();
+                            }
+                        } else { 
+                            that._pageManager.resized();
                         }
-
-                        if (skipResizeOnNextInsertion) {
-                            skipResizeOnNextInsertion = false;
-                            return;
-                        }
-                        // Scroll position isn't maintained when an element is added/removed from
-                        // the DOM so every time we are placed back in, let the PageManager
-                        // fix the scroll position.
-                        that._pageManager.resized();
                     }, false);
 
 
