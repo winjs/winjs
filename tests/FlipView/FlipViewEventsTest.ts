@@ -17,11 +17,11 @@ module WinJSTests {
         flipView.itemTemplate.verifyOutput(getDisplayedElement(flipView), rawData);
     }
 
-    function eventsTest(element, flipView, rawData, complete, useL0DomEvent) {
-        var gotVisibilityChangedTrue,
-            gotVisibilityChangedFalse,
-            outgoingElement,
-            expectedIncomingElement;
+    function eventsTest(element, flipView, rawData, complete, useL0DomEvent, pageAlreadyCompleted: boolean) {
+        var gotVisibilityChangedTrue;
+        var gotVisibilityChangedFalse;
+        var outgoingElement;
+        var expectedIncomingElement;
 
         function resetResults() {
             gotVisibilityChangedTrue = false;
@@ -116,7 +116,7 @@ module WinJSTests {
             }
         ];
 
-        runFlipViewTests(flipView, tests);
+        runFlipViewTests(flipView, tests, pageAlreadyCompleted);
     }
 
 
@@ -143,16 +143,32 @@ module WinJSTests {
 
     }
 
-    function generate(name, testFunction) {
+    function generate(name, executeTest: Function) {
         function generateTest(orientation, useL0DomEvent) {
             FlipViewEventsTests.prototype[name + "_" + orientation + (useL0DomEvent ? "_useL0DomEvent" : "")] = function (complete) {
-                var element = document.getElementById("BasicFlipView"),
-                    testData = createArraySource(COUNT, ["400px"], ["400px"]),
-                    rawData = testData.rawData,
-                    options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
-
-                var flipView = new WinJS.UI.FlipView(element, options);
-                testFunction(element, flipView, rawData, complete, useL0DomEvent);
+                var element = document.getElementById("BasicFlipView");
+                var testData = createArraySource(COUNT, ["400px"], ["400px"]);
+                var rawData = testData.rawData;
+                var options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
+                var flipView: WinJS.UI.PrivateFlipView<any>;
+                // Creating a new FlipView in the DOM will result in it handling an initial async resize event.
+                // Wait for this to fire before continuing the test, so we don't detect any false positives
+                // caused by resize handling code running in the middle of a test.
+                flipView = <WinJS.UI.PrivateFlipView<any>> new WinJS.UI.FlipView(element, options);
+                var initialResizePromise = new WinJS.Promise((c) => {
+                    flipView._elementResizeInstrument.addEventListener("resize", c);
+                });
+                var pageCompletedPromise = new WinJS.Promise((c) => {
+                    flipView.addEventListener("pagecompleted", c);
+                });
+                WinJS.Promise
+                    .join([
+                        initialResizePromise,
+                        pageCompletedPromise
+                    ])
+                    .then(() => {
+                        executeTest(element, flipView, rawData, complete, useL0DomEvent, /* pageAlreadyCompleted */ true);
+                    });
             };
         }
 
