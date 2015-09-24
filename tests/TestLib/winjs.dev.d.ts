@@ -436,6 +436,7 @@ declare module WinJS {
         class PrivateFlipView<T> extends FlipView<T> {
             _pageManager;
             _animating: boolean;
+            _elementResizeInstrument: _ElementResizeInstrument;
         }
 
         class PrivateSemanticZoom extends SemanticZoom {
