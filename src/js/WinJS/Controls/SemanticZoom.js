@@ -17,9 +17,10 @@ define([
     '../Utilities/_ElementUtilities',
     '../Utilities/_ElementListUtilities',
     '../Utilities/_Hoverable',
+    './ElementResizeInstrument',
     'require-style!less/styles-semanticzoom',
     'require-style!less/colors-semanticzoom'
-    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable) {
+    ], function semanticZoomInit(_Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Resources, _WriteProfilerMark, Animations, _TransitionAnimation, ControlProcessor, Promise, _Control, _Dispose, _ElementUtilities, _ElementListUtilities, _Hoverable, _ElementResizeInstrument) {
     "use strict";
 
     _Base.Namespace.define("WinJS.UI", {
@@ -136,13 +137,6 @@ define([
 
             var origin = { x: 0, y: 0 };
 
-            function onSemanticZoomResize(ev) {
-                var control = ev.target && ev.target.winControl;
-                if (control && !control._resizing) {
-                    control._onResize();
-                }
-            }
-
             function onSemanticZoomPropertyChanged(list) {
                 // This will only be called for "aria-checked" changes
                 var control = list[0].target && list[0].target.winControl;
@@ -220,19 +214,32 @@ define([
                 this._configure();
 
                 // Register event handlers
+                this._onResizeBound = this._onResize.bind(this);
+                this._elementResizeInstrument = new _ElementResizeInstrument._ElementResizeInstrument();
+                this._element.appendChild(this._elementResizeInstrument.element);
+                this._elementResizeInstrument.addEventListener("resize", this._onResizeBound);
+                _ElementUtilities._resizeNotifier.subscribe(this._element, this._onResizeBound);
 
                 var initiallyParented = _Global.document.body.contains(this._element);
+                if (initiallyParented) {
+                    this._elementResizeInstrument.addedToDom();
+                }
+
                 _ElementUtilities._addInsertedNotifier(this._element);
+                var initialTrigger = true;
                 this._element.addEventListener("WinJSNodeInserted", function (event) {
-                    // WinJSNodeInserted fires even if the element is already in the DOM
-                    if (initiallyParented) {
-                        initiallyParented = false;
-                        return;
+                    // WinJSNodeInserted fires even if the element was already in the DOM
+                    if (initialTrigger) {
+                        initialTrigger = false;
+                        if (!initiallyParented) {
+                            that._elementResizeInstrument.addedToDom();
+                            that._onResizeBound();
+                        }
+                    } else {
+                        that._onResizeBound();
                     }
-                    onSemanticZoomResize(event);
                 }, false);
-                this._element.addEventListener("mselementresize", onSemanticZoomResize);
-                _ElementUtilities._resizeNotifier.subscribe(this._element, onSemanticZoomResize);
+
                 new _ElementUtilities._MutationObserver(onSemanticZoomPropertyChanged).observe(this._element, { attributes: true, attributeFilter: ["aria-checked"] });
 
                 if (!isPhone) {
@@ -318,7 +325,7 @@ define([
                         var newValue = _ElementUtilities._clamp(value, minZoomFactor, maxZoomFactor, defaultZoomFactor);
                         if (oldValue !== newValue) {
                             this._zoomFactor = newValue;
-                            this._onResize();
+                            this.forceLayout();
                         }
                     }
                 },
@@ -371,7 +378,8 @@ define([
                     }
 
                     this._disposed = true;
-                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, onSemanticZoomResize);
+                    this._elementResizeInstrument.dispose();
+                    _ElementUtilities._resizeNotifier.unsubscribe(this._element, this._onResizeBound);
                     _Dispose._disposeElement(this._elementIn);
                     _Dispose._disposeElement(this._elementOut);
 
@@ -631,7 +639,9 @@ define([
                 },
 
                 _onResize: function () {
-                    this._onResizeImpl();
+                    if (!this._resizing) {
+                        this._onResizeImpl();
+                    }
                 },
 
                 _onMouseMove: function (ev) {
