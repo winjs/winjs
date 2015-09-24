@@ -325,7 +325,7 @@ define([
                         var newValue = _ElementUtilities._clamp(value, minZoomFactor, maxZoomFactor, defaultZoomFactor);
                         if (oldValue !== newValue) {
                             this._zoomFactor = newValue;
-                            this._onResizeBound();
+                            this.forceLayout();
                         }
                     }
                 },
@@ -639,7 +639,9 @@ define([
                 },
 
                 _onResize: function () {
-                    this._onResizeImpl();
+                    if (!this._resizing) {
+                        this._onResizeImpl();
+                    }
                 },
 
                 _onMouseMove: function (ev) {
