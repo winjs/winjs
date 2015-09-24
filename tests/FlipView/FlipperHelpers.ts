@@ -125,8 +125,8 @@ var basicInstantRenderer:any = function basicInstantRenderer(itemPromise) {
                 rootElement.style.width = itemData.data.width;
                 rootElement.style.height = itemData.data.height;
                 rootElement.textContent = "";
-                var titleElement = document.createElement("div"),
-                    dataElement = document.createElement("div");
+                var titleElement = document.createElement("div");
+                var dataElement = document.createElement("div");
                 titleElement.textContent = itemData.data.title;
                 dataElement.textContent = itemData.data.data1;
                 rootElement.appendChild(titleElement);
@@ -162,9 +162,9 @@ var alternateBasicInstantRenderer:any = function alternateBasicInstantRenderer(i
             rootElement.style.height = itemData.data.height;
             rootElement.id = itemData.data.itemId;
             rootElement.textContent = "";
-            var titleElement = document.createElement("div"),
-                dataElement = document.createElement("div"),
-                dataElement2 = document.createElement("div");
+            var titleElement = document.createElement("div");
+            var dataElement = document.createElement("div");
+            var dataElement2 = document.createElement("div");
             titleElement.textContent = "ALT" + itemData.data.title;
             dataElement.textContent = "ALT" + itemData.data.data1,
             dataElement2.textContent = "ALT" + itemData.data.data2;
@@ -179,9 +179,9 @@ var alternateBasicInstantRenderer:any = function alternateBasicInstantRenderer(i
 alternateBasicInstantRenderer.verifyOutput = function (renderedItem, rawData) {
     LiveUnit.LoggingCore.logComment("Verifying item matches what should have been rendered");
     LiveUnit.Assert.areEqual(renderedItem.id, rawData.itemId);
-    var titleElement = renderedItem.firstElementChild,
-        dataElement = titleElement.nextElementSibling,
-        dataElement2 = dataElement.nextElementSibling;
+    var titleElement = renderedItem.firstElementChild;
+    var dataElement = titleElement.nextElementSibling;
+    var dataElement2 = dataElement.nextElementSibling;
 
     LiveUnit.Assert.areEqual(titleElement.textContent, "ALT" + rawData.title);
     LiveUnit.Assert.areEqual(dataElement.textContent, "ALT" + rawData.data1);
@@ -190,13 +190,13 @@ alternateBasicInstantRenderer.verifyOutput = function (renderedItem, rawData) {
 };
 
 function verifyFlipViewPagePositions(flipView) {
-    var width:number = flipView._flipviewDiv.offsetWidth,
-        height:number = flipView._flipviewDiv.offsetHeight,
-        scrollPosition = WinJS.Utilities.getScrollPosition(flipView._panningDivContainer),
-        horizontal:boolean = flipView.orientation === "horizontal",
-        itemSpacing:number = flipView.itemSpacing,
-        pages = [],
-        currentPageIndex = -1;
+    var width: number = flipView._flipviewDiv.offsetWidth;
+    var height: number = flipView._flipviewDiv.offsetHeight;
+    var scrollPosition = WinJS.Utilities.getScrollPosition(flipView._panningDivContainer);
+    var horizontal: boolean = flipView.orientation === "horizontal";
+    var itemSpacing: number = flipView.itemSpacing;
+    var pages = [];
+    var currentPageIndex = -1;
 
     LiveUnit.Assert.areEqual(0, (scrollPosition[(horizontal ? "scrollTop" : "scrollLeft")]));
     flipView._pageManager._forEachPage(function (curr) {
@@ -216,8 +216,8 @@ function verifyFlipViewPagePositions(flipView) {
 
     var currentPageLocation:number = (horizontal ? pages[currentPageIndex].pageRoot.offsetLeft : pages[currentPageIndex].pageRoot.offsetTop);
     for (var i = 0; i < currentPageIndex; i++) {
-        var pageLeft = pages[i].pageRoot.offsetLeft,
-            pageTop = pages[i].pageRoot.offsetTop;
+        var pageLeft = pages[i].pageRoot.offsetLeft;
+        var pageTop = pages[i].pageRoot.offsetTop;
 
         LiveUnit.Assert.isFalse(nodeInView(flipView, pages[i]));
         LiveUnit.Assert.areEqual(0, (horizontal ? pageTop : pageLeft));
@@ -237,7 +237,8 @@ function verifyFlipViewPagePositions(flipView) {
     }
 }
 
-function runFlipViewTests(flipView, tests) {
+function runFlipViewTests(flipView, tests, pageAlreadyCompleted?: boolean) {
+
     var currentTest = 0;
 
     function runNextTest() {
@@ -257,6 +258,11 @@ function runFlipViewTests(flipView, tests) {
     }
 
     flipView.addEventListener("pagecompleted", pageEventHandler, false);
+
+    if (pageAlreadyCompleted) {
+        runNextTest();
+    } 
+    // else wait for the pagecompleted handler to fire
 }
 
 function quickNext(curr, next, horizontal) {
