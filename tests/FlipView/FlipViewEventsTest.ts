@@ -151,9 +151,9 @@ module WinJSTests {
                 var rawData = testData.rawData;
                 var options = { itemDataSource: testData.dataSource, itemTemplate: basicInstantRenderer, orientation: orientation };
                 var flipView: WinJS.UI.PrivateFlipView<any>;
-                // Creating a new FlipView in the DOM will result in it handling an initial resize event.
-                // Wait for this to fire before continuing the test, so we don't detect any false 
-                // positives caused by resize code running in the middle of a test.
+                // Creating a new FlipView in the DOM will result in it handling an initial async resize event.
+                // Wait for this to fire before continuing the test, so we don't detect any false positives
+                // caused by resize handling code running in the middle of a test.
                 flipView = <WinJS.UI.PrivateFlipView<any>> new WinJS.UI.FlipView(element, options);
                 var initialResizePromise = new WinJS.Promise((c) => {
                     flipView._elementResizeInstrument.addEventListener("resize", c);
@@ -168,7 +168,7 @@ module WinJSTests {
                     ])
                     .then(() => {
                         executeTest(element, flipView, rawData, complete, useL0DomEvent, /* pageAlreadyCompleted */ true);
-                    })
+                    });
             };
         }
 
