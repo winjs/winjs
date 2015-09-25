@@ -13,6 +13,108 @@ require(["require-style!less/styles-lightdismissservice"]);
 
 "use strict";
 
+//
+// Implementation Overview
+//
+// The _LightDismissService was designed to coordinate light dismissables. A light
+// dismissable is an element which, when shown, can be dismissed due to a variety of
+// cues (listed in LightDismissalReasons):
+//   - Clicking/tapping outside of the light dismissable
+//   - Focus leaving the light dismissable
+//   - User pressing the escape key
+//   - User pressing the hardware back button
+//   - User resizing the window
+//   - User focusing on a different app
+//
+// The _LightDismissService's responsibilites have grown so that it can manage more than
+// just light dismissables (e.g. modals which ignore most of the light dismiss cues). Its
+// responsibilities include:
+//   - Rendering the dismissables in the correct z-order. The most recently opened dismissable
+//     is the topmost one. In order for this requirement to be fulfilled, apps must make
+//     dismissables direct children of the body. For details, see:
+//     https://github.com/winjs/winjs/wiki/Dismissables-and-Stacking-Contexts
+//   - When a different dismissable becomes the topmost, giving that dismissable focus.
+//   - Informing dismissables when a dismiss cue occurs so they can dismiss if they want to
+//   - Propagating keyboard events which occur within a dismissable to dismissables underneath
+//     it in the stack. When a modal dialog is in the stack, this enables the modal to prevent
+//     any keyboard events from escaping the light dismiss stack. Consequently, global
+//     hotkeys such as the WinJS BackButton's global back hotkey will be disabled while a
+//     modal dialog is in the stack.
+//   - Disabling SearchBox's type to search feature while any dismissable is in the stack.
+//     Consequently, type to search can only be used in the body -- it cannot be used inside
+//     of dismissables. If the _LightDismissService didn't do this, typing within any light
+//     dismissable would cause focus to move into the SearchBox in the body and for all light
+//     dismissables to lose focus and thus close. Type to search is provided by the event
+//     requestingFocusOnKeyboardInput.
+//
+// Controls which want to utilize the _LightDismissService must implement ILightDismissable.
+// The _LightDismissService provides a couple of classes which controls can utilize that
+// implement most of the methods of ILightDismissable:
+//   - LightDismissableElement. Used by controls which are light dismissable. These include:
+//     - AppBar/ToolBar
+//     - Flyout
+//     - Menu
+//     - SplitView
+//   - ModalElement. Used by controls which are modal. These include:
+//     - ContentDialog
+//
+// Debugging tip.
+//   Call WinJS.UI._LightDismissService._setDebug(true)
+//   This disables the "window blur" light dismiss cue. It enables you to move focus
+//   to the debugger or DOM explorer without causing the light dismissables to close.
+// 
+// Example usage of _LightDismissService
+//   To implement a new light dismissable, you just need to:
+//     - Tell the service when you are shown
+//     - Tell the service when you are hidden
+//     - Create an object which implements ILightDismissable. In most cases, you will
+//       utilize the LightDismissableElement or ModalElement helper which only requires
+//       you to provide a DOM element, a tab index for that element, and an
+//       implementation of onLightDismiss.
+//
+//   Here's what a basic light dismissable looks like in code:
+//
+//     var SimpleOverlay = _Base.Class.define(function (element) {
+//         var that = this; 
+//         this.element = element || document.createElement("div"); 
+//         this.element.winControl = this; 
+//         _ElementUtilities.addClass(this.element, "simpleoverlay");
+//
+//         this._dismissable = new _LightDismissService.LightDismissableElement({ 
+//             element: this.element,
+//             tabIndex: this.element.hasAttribute("tabIndex") ? this.element.tabIndex : -1,
+//             onLightDismiss: function () { 
+//                 that.hide(); 
+//             } 
+//         }); 
+//     }, {
+//         show: function () {
+//             _ElementUtilities.addClass(this.element, "simpleoverlay-shown"); 
+//             _LightDismissService.shown(this._dismissable);
+//         },
+//         hide: function () {
+//             _ElementUtilities.removeClass(this.element, "simpleoverlay-shown"); 
+//             _LightDismissService.hidden(this._dismissable);
+//         }
+//     });
+//
+//   When using LightDismissableElement/ModalElement, you may optionally override:
+//     - onShouldLightDismiss: This enables you to specify which light dismiss cues
+//       should trigger a light dismiss for your control. The defaults are:
+//       - LightDismissableElement: Essentially all cues trigger a dismiss.
+//       - ModalElement: Only the escape key and hardware back button trigger a
+//         dismiss.
+//     - onTakeFocus: This enables you to specify which element within your control
+//       should receive focus when it becomes the topmost dismissable. When overriding
+//       this method, it's common to start by calling this.restoreFocus, a helper
+//       provided by LightDismissableElement/ModalElement, to restore focus to the
+//       element within the dismissable which most recently had it. By default,
+//       onTakeFocus tries to give focus to elements in the following order:
+//       - Tries to restore focus to the element that previously had focus
+//       - Tries to give focus to the first focusable element in the dismissable.
+//       - Tries to give focus to the root element of the dismissable.
+//
+
 var baseZIndex = 1000;
 
 var Strings = {
@@ -203,6 +305,11 @@ class AbstractDismissableElement implements ILightDismissable {
         this._ldeOnKeyPressBound = this._ldeOnKeyPress.bind(this);
     }
     
+    // Helper which can be called when implementing onTakeFocus. Restores focus to
+    // whatever element within the dismissable previously had focus. Returns true
+    // if focus was successfully restored and false otherwise. In the false case,
+    // onTakeFocus implementers typically try to give focus to either the first
+    // focusable element in the dismissable or to the root element of the dismissable.
     restoreFocus(): boolean {
         var activeElement = <HTMLElement>_Global.document.activeElement;
         if (activeElement && this.containsElement(activeElement)) {
@@ -403,6 +510,10 @@ class LightDismissService implements ILightDismissService {
         this._updateDom();
     }
     
+    // Dismissables should call keyDown, keyUp, and keyPress when such an event occurs within the dismissable. The
+    // _LightDismissService takes these events and propagates them to other ILightDismissables in the stack by calling
+    // onKeyInStack on them. LightDismissableElement and ModalElement call keyDown, keyUp, and keyPress for you so
+    // if you use them while implementing an ILightDismissable, you don't have to worry about this responsibility.
     keyDown(client: ILightDismissable, eventObject: KeyboardEvent) {
         if (eventObject.keyCode === _ElementUtilities.Key.escape) {
             this._escapePressed(eventObject);
@@ -410,11 +521,9 @@ class LightDismissService implements ILightDismissService {
             this._dispatchKeyboardEvent(client, KeyboardInfoType.keyDown, eventObject);
         }
     }
-    
     keyUp(client: ILightDismissable, eventObject: KeyboardEvent) {
         this._dispatchKeyboardEvent(client, KeyboardInfoType.keyUp, eventObject);
     }
-    
     keyPress(client: ILightDismissable, eventObject: KeyboardEvent) {
         this._dispatchKeyboardEvent(client, KeyboardInfoType.keyPress, eventObject);
     }

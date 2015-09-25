@@ -21,6 +21,67 @@ require(["require-style!less/colors-splitview"]);
 
 "use strict";
 
+//
+// Implementation Overview
+//
+// SplitView's responsibilities are divided into the following:
+//
+//   Open/close state management
+//     This involves firing the beforeopen, afteropen, beforeclose, and afterclose events.
+//     It also involves making sure the control behaves properly when things happen in a
+//     variety of states such as:
+//       - open is called while the control is already open
+//       - close is called while the control is in the middle of opening
+//       - dispose is called within a beforeopen event handler
+//     The SplitView relies on the _OpenCloseMachine component for most of this
+//     state management. The contract is:
+//       - The SplitView is responsible for specifying how to play the open and close
+//         animations
+//       - The _OpenCloseMachine is responsible for everything else including:
+//         - Ensuring that these animations get run at the appropriate times
+//         - Tracking the current state of the control and ensuring the right thing happens
+//           when a method is called
+//         - Firing the events
+//  
+//   Light dismiss
+//     The SplitView's pane is light dismissable when the pane is open and the SplitView
+//     is configured to openedDisplayMode:overlay. This means that the pane can be closed
+//     thru a variety of cues such as tapping off of the pane, pressing the escape key,
+//     and resizing the window. SplitView relies on the _LightDismissService component for
+//     most of this functionality. The only pieces the SplitView is responsible for are:
+//       - Describing what happens when a light dismiss is triggered on the SplitView.
+//       - Describing how the SplitView should take/restore focus when it becomes the
+//         topmost light dismissable.
+//
+//   Open/close animations
+//    Much of the SplitView's implementation is dedicated to playing the open and close
+//    animations. The general approach is for the SplitView to calculate the current and
+//    final sizes and positions of its pane and content elements. Then it creates a CSS
+//    transition to animate the control between these two visual states.
+//
+//    One tricky part of the animation is that the SplitView creates an animation that looks
+//    like the pane is changing its width/height. You cannot animate width/height changes in CSS
+//    so this animation is actually an illusion. It involves animating 2 elements, one which
+//    clips the other, to give the illusion that an element is resizing. This logic is carried
+//    out by Animations._resizeTransition. Take a look at that method for more details.
+//
+//   Update DOM
+//     SplitView follows the Update DOM pattern. For more information about this pattern, see:
+//     https://github.com/winjs/winjs/wiki/Update-DOM-Pattern
+//
+//     Note that the SplitView reads from the DOM when it needs to measure the position and size
+//     of its pane and content elements. When possible, it caches this information and reads from
+//     the cache instead of the DOM. This minimizes the performance cost.
+//
+//     Outside of updateDom, SplitView writes to the DOM in a couple of places:
+//       - The initializeDom function runs during construction and creates the
+//         initial version of the SplitView's DOM.
+//       - During animations, the animations take ownership of the DOM and turn
+//         updateDom into a no-op. When the animation completes, updateDom begins
+//         running again. This disabling of updateDom during animations is carried
+//         out by _OpenCloseMachine.
+//
+
 interface IRect {
     left: number;
     top: number;

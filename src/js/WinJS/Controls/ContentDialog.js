@@ -24,6 +24,54 @@ define([
     "use strict";
 
     _Accents.createAccentRule(".win-contentdialog-dialog", [{ name: "outline-color", value: _Accents.ColorTypes.accent }]);
+    
+    //
+    // Implementation Overview
+    //
+    // ContentDialog's responsibilities are divided into the following:
+    //
+    //   Show/hide state management
+    //     This involves firing the beforeshow, aftershow, beforehide, and afterhide events.
+    //     It also involves making sure the control behaves properly when things happen in a
+    //     variety of states such as:
+    //       - show is called while the control is already shown
+    //       - hide is called while the control is in the middle of showing
+    //       - dispose is called within a beforeshow event handler
+    //     The ContentDialog solves these problems by being implemented around a state machine.
+    //     The states are defined in a variable called *States* and the ContentDialog's *_setState*
+    //     method is used to change states. See the comments above the *States* variable for details.
+    //  
+    //   Modal
+    //     The ContentDialog is a modal. It must coordinate with other dismissables (e.g. Flyout,
+    //     AppBar). Specifically, it must coordinate moving focus as well as ensuring that it is
+    //     drawn at the proper z-index relative to the other dismissables. The ContentDialog
+    //     relies on the _LightDismissService for all of this coordination. The only pieces the
+    //     ContentDialog is responsible for are:
+    //       - Describing what happens when a light dismiss is triggered on the ContentDialog.
+    //       - Describing how the ContentDialog should take/restore focus when it becomes the
+    //         topmost dismissable.
+    //     Other functionality that the ContentDialog gets from the _LightDismissService is around
+    //     the eating of keyboard events. While a ContentDialog is shown, keyboard events should
+    //     not escape the ContentDialog. This prevents global hotkeys such as the WinJS BackButton's
+    //     global back hotkey from triggering while a ContentDialog is shown.
+    //
+    //   Positioning and sizing of the dialog
+    //     It was a goal of the ContentDialog's positioning and sizing implementation that the
+    //     dialog's position and size could respond to changes to the dialog's content without
+    //     the app having to be aware of or notify the dialog of the change. For example, suppose
+    //     the dialog is shown and the user expands an accordion control within the dialog. Now
+    //     that the dialog's content has changed size, the dialog should automatically adjust its
+    //     size and position.
+    //     To achieve this goal, the ContentDialog's positioning and sizing implementation is done
+    //     entirely in LESS/CSS rather than in JavaScript. At the time, there was no cross browser
+    //     element resize event so this was the only option. This solution resulted in LESS/CSS
+    //     that is quite tricky. See styles-contentdialog.less for details.
+    //
+    //   Responding to the input pane
+    //     The ContentDialog's general strategy for getting out of the way of the input pane is to
+    //     adhere to its normal positioning and sizing rules but to only use the visible portion
+    //     of the window rather than the entire height of the window.
+    //
 
     _Base.Namespace.define("WinJS.UI", {
         /// <field>
