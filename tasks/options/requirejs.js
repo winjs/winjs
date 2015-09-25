@@ -195,6 +195,41 @@
                     end: footerWithoutExport("tv")
                 }
             }
+        }),
+        
+        // MediaPlayer
+        //   The reason MediaPlayer is split into 2 modules, one for JS and one for CSS,
+        //   is to avoid including redundant CSS in the MediaPlayer's CSS files. If we
+        //   were to include them in a single module, the MediaPlayer's CSS files would
+        //   include all of the CSS for all of the JS files the MediaPlayer included
+        //   (e.g. ToolBar's CSS). By splitting them into 2 modules, the MediaPlayer's
+        //   CSS files only include CSS for the MediaPlayer and all of the LESS files it
+        //   @imports.
+        //
+        
+        // MediaPlayer CSS
+        mediaplayerCss: defaults('mediaplayerCss', {
+            options: {
+                target: "mediaplayer",
+                cssOutputSuffix: "-mediaplayer",
+                exclude: ['./base', './ui'],
+                wrap: {
+                    start: header("mediaplayerCss", ['./base', './ui']),
+                    end: footerWithoutExport("mediaplayerCss")
+                }
+            }
+        }),
+        // MediaPlayer JavaScript
+        mediaplayerJs: defaults('mediaplayerJs', {
+            options: {
+                target: "mediaplayer",
+                cssOutputSuffix: "-mediaplayer",
+                exclude: ['./base', './ui'],
+                wrap: {
+                    start: header("mediaplayerJs", ['./base', './ui']),
+                    end: footerWithoutExport("mediaplayerJs")
+                }
+            }
         })
     };
 

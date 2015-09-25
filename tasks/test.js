@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 (function () {
     "use strict";
+    
+    var stylesForDir = {
+        TV: "    <link type='text/css' rel='stylesheet' href='../../$(TargetFramework)/css/ui-dark-tv.css' />",
+        MediaPlayer: "    <link type='text/css' rel='stylesheet' href='../../$(TargetFramework)/css/ui-dark-mediaplayer.css' />",
+    };
+    
     function formatString(string) {
         var args = arguments;
         if (args.length > 1) {
@@ -168,6 +174,7 @@
     <script src="../../$(TargetFramework)/js/base.js"></script>                                                             \r\n\
     <script src="../../$(TargetFramework)/js/ui.js"></script>                                                               \r\n\
     <script src="../../$(TargetFramework)/js/tv.js"></script>                                                               \r\n\
+    <script src="../../$(TargetFramework)/js/mediaplayer.js"></script>                                                      \r\n\
     <script src="../../$(TargetFramework)/js/en-US/ui.strings.js"></script>                                                 \r\n\
                                                                                                                             \r\n\
     <!-- Test framework references -->                                                                                      \r\n\
@@ -209,7 +216,7 @@
 
                 var html = testPageTemplate;
                 html = html.replace("@@TITLE", dir);
-                html = html.replace("@@ADDITIONAL_STYLES", dir === "TV" ? "    <link type='text/css' rel='stylesheet' href='../../$(TargetFramework)/css/ui-dark-tv.css' />" : "");
+                html = html.replace("@@ADDITIONAL_STYLES", stylesForDir[dir] || "");
 
                 var testReferences = "";
 

@@ -19,6 +19,10 @@
         intrinsics: {
             src: [config.desktopOutput + "js/intrinsics.js"],
             dest: config.desktopOutput + "js/intrinsics.min.js"
+        },
+        mediaplayer: {
+            src: [config.desktopOutput + "js/mediaplayer.js"],
+            dest: config.desktopOutput + "js/mediaplayer.min.js"
         }
     };
 })();

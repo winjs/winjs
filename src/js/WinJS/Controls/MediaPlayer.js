@@ -33,8 +33,7 @@ define('WinJS/Controls/MediaPlayer', [
     '../Controls/ToolBar/_ToolBar',
     '../Utilities/_ElementUtilities',
     '../Controls/MediaPlayer/_MediaUI',
-    'require-style!less/styles-mediaplayer',
-    'require-style!less/colors-mediaplayer'
+    // Put references to styles in src/mediaPlayerCss.js
 ], function mediaPlayerInit(exports, _Global, _WinRT, _Base, _BaseUtils, _Events, _ErrorFromName, _Res, _Resources, _WriteProfilerMark, Promise, _Signal, Scheduler, Application, BindingList, _Accents, Animations, _TransitionAnimation, Navigation, _Dispose, _Control, _ControlProcessor, _Command, _Icon, MediaElementAdapter, BackButton, _Flyout, _ToolBar, _ElementUtilities, _MediaUI) {
     "use strict";
 
@@ -4736,7 +4735,7 @@ define('WinJS/Controls/MediaPlayer', [
                                     utilities._documentListener.addEventListener(this._element, "mozfullscreenerror", this._fullScreenErrorHandler);
                                 } else if (elementToMakeFullscreen.webkitRequestFullscreen) {
                                     elementToMakeFullscreen.webkitRequestFullscreen();
-                                    utilities._documentListener.addEventListener(_this._element, "webkitfullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.addEventListener(this._element, "webkitfullscreenchange", this._fullScreenChangeHandler);
                                     utilities._documentListener.addEventListener(this._element, "webkitfullscreenerror", this._fullScreenErrorHandler);
                                 }
                             }
