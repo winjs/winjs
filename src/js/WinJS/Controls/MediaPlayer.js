@@ -3083,7 +3083,7 @@ define('WinJS/Controls/MediaPlayer', [
                 },
 
                 _onToggleFullscreenCommandInvoked: function () {
-                    if (this.isFullScreenn) {
+                    if (this.isFullScreen) {
                         this.isFullScreen = false;
                     } else {
                         this.isFullScreen = true;
@@ -3516,6 +3516,7 @@ define('WinJS/Controls/MediaPlayer', [
                             this.isFullScreen = true;
                         } else {
                             this.isFullScreen = false;
+                            utilities.addClass(this.element, "win-focusable");
                         }
 
                         this._recalculateCachedUIElementSizes();
@@ -4723,20 +4724,20 @@ define('WinJS/Controls/MediaPlayer', [
                             } else {
                                 if (elementToMakeFullscreen.requestFullscreen) {
                                     elementToMakeFullscreen.requestFullscreen();
-                                    utilities._documentListener.addEventListener(_Global.document, "fullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.addEventListener(_Global.document, "fullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.addEventListener(this._element, "fullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.addEventListener(this._element, "fullscreenerror", this._fullScreenErrorHandler);
                                 } else if (elementToMakeFullscreen.msRequestFullscreen) {
                                     elementToMakeFullscreen.msRequestFullscreen();
-                                    utilities._documentListener.addEventListener(_Global.document, "MSFullscreenChange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.addEventListener(_Global.document, "MSFullscreenError", this._fullScreenErrorHandler);
+                                    utilities._documentListener.addEventListener(this._element, "MSFullscreenChange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.addEventListener(this._element, "MSFullscreenError", this._fullScreenErrorHandler);
                                 } else if (elementToMakeFullscreen.mozRequestFullScreen) {
                                     elementToMakeFullscreen.mozRequestFullScreen();
-                                    utilities._documentListener.addEventListener(_Global.document, "mozfullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.addEventListener(_Global.document, "mozfullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.addEventListener(this._element, "mozfullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.addEventListener(this._element, "mozfullscreenerror", this._fullScreenErrorHandler);
                                 } else if (elementToMakeFullscreen.webkitRequestFullscreen) {
                                     elementToMakeFullscreen.webkitRequestFullscreen();
-                                    utilities._documentListener.addEventListener(_Global.document, "webkitfullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.addEventListener(_Global.document, "webkitfullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.addEventListener(_this._element, "webkitfullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.addEventListener(this._element, "webkitfullscreenerror", this._fullScreenErrorHandler);
                                 }
                             }
 
@@ -4768,20 +4769,20 @@ define('WinJS/Controls/MediaPlayer', [
                                 applicationView.exitFullScreenMode();
                             } else {
                                 if (_Global.document.exitFullscreen) {
-                                    utilities._documentListener.removeEventListener(_Global.document, "fullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.removeEventListener(_Global.document, "fullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "fullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "fullscreenerror", this._fullScreenErrorHandler);
                                     _Global.document.exitFullscreen();
                                 } else if (_Global.document.msExitFullscreen) {
-                                    utilities._documentListener.removeEventListener(_Global.document, "MSFullscreenChange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.removeEventListener(_Global.document, "MSFullscreenError", this._fullScreenErrorHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "MSFullscreenChange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "MSFullscreenError", this._fullScreenErrorHandler);
                                     _Global.document.msExitFullscreen();
                                 } else if (_Global.document.mozCancelFullScreen) {
-                                    utilities._documentListener.removeEventListener(_Global.document, "mozfullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.removeEventListener(_Global.document, "mozfullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "mozfullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "mozfullscreenerror", this._fullScreenErrorHandler);
                                     _Global.document.mozCancelFullScreen();
                                 } else if (_Global.document.webkitCancelFullScreen) {
-                                    utilities._documentListener.removeEventListener(_Global.document, "webkitfullscreenchange", this._fullScreenChangeHandler);
-                                    utilities._documentListener.removeEventListener(_Global.document, "webkitfullscreenerror", this._fullScreenErrorHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "webkitfullscreenchange", this._fullScreenChangeHandler);
+                                    utilities._documentListener.removeEventListener(this._element, "webkitfullscreenerror", this._fullScreenErrorHandler);
                                     _Global.document.webkitCancelFullScreen();
                                 }
                             }
@@ -4919,10 +4920,7 @@ define('WinJS/Controls/MediaPlayer', [
                             this._doesStartTimeNeedResetting = false;
                         }
 
-                        // Note: Unlike for the endTime property, we do not call this._subscribeToTimeUpdates(), because during normal playback (playbackRate === 1), 
-                        // we don't have the possibility of going before the startTime. This is because playback is always in the forward direction. In the RR case,
-                        // we already subscribe to time updates when entering the fast forward or rewind state, so we don't have to do it again here.
-
+                        this._subscribeToTimeUpdates();
                         // Update the time display
                         this._updateTimelineVisuals();
 
@@ -5821,14 +5819,14 @@ define('WinJS/Controls/MediaPlayer', [
                     utilities._documentListener.removeEventListener(this._element, "keydown", this._keydownInputHandler);
                     utilities._documentListener.removeEventListener(this._element, "keyup", this._keyupInputHandler);
                     this._controlsKeyupInputHandler = null;
-                    utilities._documentListener.removeEventListener(_Global.document, "fullscreenchange", this._fullScreenChangeHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "MSFullscreenChange", this._fullScreenChangeHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "mozfullscreenchange", this._fullScreenChangeHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "webkitfullscreenchange", this._fullScreenChangeHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "fullscreenerror", this._fullScreenErrorHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "MSFullscreenError", this._fullScreenErrorHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "mozfullscreenerror", this._fullScreenErrorHandler);
-                    utilities._documentListener.removeEventListener(_Global.document, "webkitfullscreenerror", this._fullScreenErrorHandler);
+                    utilities._documentListener.removeEventListener(this._element, "fullscreenchange", this._fullScreenChangeHandler);
+                    utilities._documentListener.removeEventListener(this._element, "MSFullscreenChange", this._fullScreenChangeHandler);
+                    utilities._documentListener.removeEventListener(this._element, "mozfullscreenchange", this._fullScreenChangeHandler);
+                    utilities._documentListener.removeEventListener(this._element, "webkitfullscreenchange", this._fullScreenChangeHandler);
+                    utilities._documentListener.removeEventListener(this._element, "fullscreenerror", this._fullScreenErrorHandler);
+                    utilities._documentListener.removeEventListener(this._element, "MSFullscreenError", this._fullScreenErrorHandler);
+                    utilities._documentListener.removeEventListener(this._element, "mozfullscreenerror", this._fullScreenErrorHandler);
+                    utilities._documentListener.removeEventListener(this._element, "webkitfullscreenerror", this._fullScreenErrorHandler);
                     this._fullScreenChangeHandler = null;
                     this._fullScreenErrorHandler = null;
 

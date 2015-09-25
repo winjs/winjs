@@ -1099,8 +1099,8 @@ define([
         },
 
         _addEventListener: function _addEventListener(element, type, listener, useCapture) {
-            var eventNameLower = type && type.toLowerCase();
-            var entry = customEvents[eventNameLower];
+            var eventName = type;
+            var entry = customEvents[eventName];
             var equivalentEvent = _BaseUtils._browserEventEquivalents[type];
             if (entry) {
                 entry.register(element, type, listener, useCapture);

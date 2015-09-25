@@ -71,7 +71,7 @@ var CorsicaTests;
         mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
-        mediaPlayer.mediaElementAdapter.playAllowed = isPlayAllowedValue;
+        mediaPlayer.mediaElementAdapter.isPlayAllowed = isPlayAllowedValue;
         mediaElement.addEventListener("play", function play() {
             mediaElement.removeEventListener("play", play);
             if (isEventExpectedToFire) {
@@ -95,7 +95,7 @@ var CorsicaTests;
         mediaPlayer._isTestMode = true;
         var mediaElement = new Test.MockMediaElement();
         mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
-        mediaPlayer.mediaElementAdapter.pauseAllowed = isPauseAllowedValue;
+        mediaPlayer.mediaElementAdapter.isPauseAllowed = isPauseAllowedValue;
         mediaElement.addEventListener("pause", function pause() {
             mediaElement.removeEventListener("pause", pause);
             if (isEventExpectedToFire) {
@@ -119,7 +119,7 @@ var CorsicaTests;
         mediaElement.autoplay = true;
         mediaElement.src = "notnull";
         mediaPlayer.mediaElementAdapter.mediaElement = mediaElement;
-        mediaPlayer.mediaElementAdapter.seekAllowed = isSeekAllowedValue;
+        mediaPlayer.mediaElementAdapter.isSeekAllowed = isSeekAllowedValue;
         mediaElement.addEventListener("seeked", function seek() {
             mediaElement.removeEventListener("seeked", seek);
             if (isEventExpectedToFire) {
@@ -316,7 +316,6 @@ var CorsicaTests;
             mediaPlayer.addEventListener("aftershowcontrols", function aftershowcontrols() {
                 mediaPlayer.removeEventListener("aftershowcontrols", aftershowcontrols);
                 LiveUnit.Assert.isTrue(mediaPlayer.isControlsVisible);
-                LiveUnit.Assert.isTrue(mediaPlayer.controlsVisible);
                 safeDispose(mediaPlayer);
                 complete();
             }, false);
@@ -332,7 +331,6 @@ var CorsicaTests;
                 mediaPlayer.removeEventListener("aftershowcontrols", aftershowcontrols);
                 mediaPlayer.addEventListener("afterhidecontrols", function afterhidecontrols() {
                     LiveUnit.Assert.isFalse(mediaPlayer.isControlsVisible);
-                    LiveUnit.Assert.isFalse(mediaPlayer.controlsVisible);
                     mediaPlayer.removeEventListener("afterhidecontrols", afterhidecontrols);
                     safeDispose(mediaPlayer);
                     complete();
@@ -458,27 +456,28 @@ var CorsicaTests;
         };
         MediaPlayerTests.prototype.testWhenSetFullScreenToTrueThenHasCorrectClasses = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.fullScreen = true;
+            mediaPlayer.isFullScreen = true;
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(mediaPlayer.element, "win-mediaplayer-fullscreen"), "MediaPlayer does not have the 'win-mediaplayer-fullscreen' class.");
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(mediaPlayer.element, "win-focusable"), "MediaPlayer has the 'win-focusable' class.");
             safeDispose(mediaPlayer);
         };
         MediaPlayerTests.prototype.testWhenSetFullScreenToFalseThenHasCorrectClasses = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.fullScreen = false;
+            mediaPlayer.isFullScreen = true;
+            mediaPlayer.isFullScreen = false;
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(mediaPlayer.element, "win-mediaplayer-fullscreen"), "MediaPlayer has the 'win-mediaplayer-fullscreen' class.");
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(mediaPlayer.element, "win-focusable"), "MediaPlayer does not have the 'win-focusable' class.");
             safeDispose(mediaPlayer);
         };
         MediaPlayerTests.prototype.testWhenSetFullScreenToTrueThenToggleFullScreenIconUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.fullScreen = true;
+            mediaPlayer.isFullScreen = true;
             LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.backtowindow, mediaPlayer._toolbar.getCommandById("win-mediaplayer-fullscreen").icon, "fullscreen toggle button icon is incorrect.");
             safeDispose(mediaPlayer);
         };
         MediaPlayerTests.prototype.testWhenSetFullScreenToFalseThenToggleFullScreenIconUpdates = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.fullScreen = false;
+            mediaPlayer.isFullScreen = false;
             LiveUnit.Assert.areEqual(WinJS.UI.AppBarIcon.fullscreen, mediaPlayer._toolbar.getCommandById("win-mediaplayer-fullscreen").icon, "fullscreen toggle button icon is incorrect.");
             safeDispose(mediaPlayer);
         };
@@ -492,19 +491,15 @@ var CorsicaTests;
         };
         MediaPlayerTests.prototype.testWhenSetThumbnailEnabledToTrueThenHasCorrectClasses = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.thumbnailEnabled = true;
+            mediaPlayer.isThumbnailEnabled = true;
             LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(mediaPlayer._timeline, "win-mediaplayer-thumbnailmode"), "Does not have the correct classes.");
             safeDispose(mediaPlayer);
         };
         MediaPlayerTests.prototype.testWhenSetThumbnailEnabledToFalseThenHasCorrectClasses = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.thumbnailEnabled = false;
+            mediaPlayer.isThumbnailEnabled = false;
             LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(mediaPlayer._timeline, "win-mediaplayer-thumbnailmode"), "Does not have the correct classes.");
             safeDispose(mediaPlayer);
-        };
-
-        MediaPlayerTests.prototype.testWhenSetIsThumbnailEnabledLegacyProtpertynameThenCurrentPropertynameUpdatesValue = function () {
-            runEnsureLegacyPropertyStillExistsTestCase("isThumbnailEnabled", "thumbnailEnabled", true);
         };
 
         // markers
@@ -513,7 +508,7 @@ var CorsicaTests;
             mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var newMarkerTime = 15;
-            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Hello World!", "win-displaynone");
+            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MarkerType.chapter, "Hello World!", "win-displaynone");
 
             // Search for the marker we just added
             var markers = mediaPlayer._markers;
@@ -522,7 +517,7 @@ var CorsicaTests;
                 if (markers[i].time === newMarkerTime) {
                     foundMarker = true;
                     LiveUnit.Assert.areEqual(newMarkerTime, markers[i].time, "The marker time did not match.");
-                    LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.MarkerType.chapter, markers[i].type, "The marker type did not match.");
+                    LiveUnit.Assert.areEqual(WinJS.UI.MarkerType.chapter, markers[i].type, "The marker type did not match.");
                     LiveUnit.Assert.areEqual("Hello World!", markers[i].data, "The marker data field did not match.");
                     LiveUnit.Assert.areEqual("win-displaynone", markers[i].extraClass, "The marker extraClass field did not match.");
                 }
@@ -539,7 +534,7 @@ var CorsicaTests;
             mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var newMarkerTime = 15;
-            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Hello World!");
+            mediaPlayer.addMarker(newMarkerTime, WinJS.UI.MarkerType.chapter, "Hello World!");
             var markers = mediaPlayer._markers;
             var foundMarker = false;
 
@@ -560,8 +555,8 @@ var CorsicaTests;
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
-            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, "Marker 1");
-            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, "Marker 2");
+            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, "Marker 1");
+            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, "Marker 2");
             LiveUnit.Assert.areNotEqual(2, mediaPlayer._markers.length, "The old marker did not get removed.");
             LiveUnit.Assert.areEqual("Marker 2", mediaPlayer._markers[0].data, "The old marker was not overriden.");
         };
@@ -572,7 +567,7 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0.5;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -600,7 +595,7 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 1;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -628,7 +623,7 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -658,7 +653,7 @@ var CorsicaTests;
             mockMediaElement.duration = 10;
 
             var expectedTime = mockMediaElement.duration;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -685,7 +680,7 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 0.7;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -707,7 +702,7 @@ var CorsicaTests;
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
-            mediaPlayer.addMarker(11, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(11, WinJS.UI.MarkerType.chapter, {});
             var markers = mediaPlayer._markers;
             mediaPlayer.removeMarker(11);
             var markers = mediaPlayer._markers;
@@ -730,7 +725,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(12, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker(12, WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -748,7 +743,7 @@ var CorsicaTests;
 
             var threwException = false;
             try {
-                mediaPlayer.addMarker("foo", WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker("foo", WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -765,7 +760,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(-1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker(-1, WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -781,7 +776,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(mediaPlayer.endTime + 10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker(mediaPlayer.endTime + 10, WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -798,7 +793,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(mediaPlayer.startTime - 10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker(mediaPlayer.startTime - 10, WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -816,7 +811,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             var threwException = false;
             try {
-                mediaPlayer.addMarker(null, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+                mediaPlayer.addMarker(null, WinJS.UI.MarkerType.chapter, {});
             } catch (exception) {
                 threwException = true;
             }
@@ -866,7 +861,7 @@ var CorsicaTests;
             mediaPlayer._isTestMode = true;
             mediaPlayer.mediaElementAdapter.mediaElement = new Test.MockMediaElement();
             mediaPlayer.addMarker(12);
-            LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.MarkerType.chapter, mediaPlayer.markers[0].type);
+            LiveUnit.Assert.areEqual(WinJS.UI.MarkerType.chapter, mediaPlayer.markers[0].type);
             safeDispose(mediaPlayer);
         };
 
@@ -892,7 +887,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = document.createElement("video");
             var threwException = false;
             try {
-                mediaPlayer.addMarker(12, WinJS.UI.MediaPlayer.MarkerType.chapter, {}, null);
+                mediaPlayer.addMarker(12, WinJS.UI.MarkerType.chapter, {}, null);
             } catch (exception) {
                 threwException = true;
             }
@@ -919,7 +914,7 @@ var CorsicaTests;
             mockMediaElement.duration = 10;
 
             var expectedTime = mockMediaElement.duration;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -967,7 +962,7 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
 
             var expectedTime = 1;
-            var expectedType = WinJS.UI.MediaPlayer.MarkerType.chapter;
+            var expectedType = WinJS.UI.MarkerType.chapter;
             var expectedData = "Some data";
             var expectedExtraClass = "win-displaynone";
 
@@ -1047,9 +1042,9 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
 
-            mediaPlayer.addMarker(0, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
-            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
-            mediaPlayer.addMarker(2, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(0, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(2, WinJS.UI.MarkerType.chapter, {});
             mediaPlayer.mediaElementAdapter = {};
             LiveUnit.Assert.isTrue(mediaPlayer.markers.length > 0);
             safeDispose(mediaPlayer);
@@ -1082,7 +1077,7 @@ var CorsicaTests;
             mockMediaElement.autoplay = true;
             mediaPlayer.endTime = mediaPlayer._MINIMUM_MEDIA_LENGTH_FOR_DEFAULT_MARKERS + 1;
             mockMediaElement.src = "notnullstring";
-            mediaPlayer.addMarker(10, WinJS.UI.MediaPlayer.MarkerType.chapter);
+            mediaPlayer.addMarker(10, WinJS.UI.MarkerType.chapter);
             LiveUnit.Assert.isFalse(mediaPlayer._defaultChapterMarkers.length);
             safeDispose(mediaPlayer);
         };
@@ -1104,8 +1099,8 @@ var CorsicaTests;
             mediaPlayer._isTestMode = true;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
-            mediaPlayer.addMarker(20, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
-            mediaPlayer.addMarker(10, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(20, WinJS.UI.MarkerType.chapter, {});
+            mediaPlayer.addMarker(10, WinJS.UI.MarkerType.chapter, {});
             var markers = mediaPlayer._markers;
             LiveUnit.Assert.areEqual(markers[0].time, 10, "The markers array was not sorted properly.");
             LiveUnit.Assert.areEqual(markers[1].time, 20, "The markers array was not sorted properly.");
@@ -1192,9 +1187,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenSetMarkersWithValidMarkersCollectionThenMarkersAreAdded = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             var myMarkers = [
-                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
-                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.advertsing, data: {} }
+                { time: 1, type: WinJS.UI.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
+                { time: 3, type: WinJS.UI.MarkerType.advertsing, data: {} }
             ];
             mediaPlayer.markers = myMarkers;
             LiveUnit.Assert.isTrue(compareArrays(myMarkers, mediaPlayer.markers), "MediaPlayer.markers does not contain the same values we added to it.");
@@ -1207,8 +1202,8 @@ var CorsicaTests;
 
             var myMarkers = [
                 { invalidFieldName: "invalid" },
-                { bar: 1, foo: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom }
+                { bar: 1, foo: WinJS.UI.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MarkerType.custom }
             ];
 
             try {
@@ -1237,9 +1232,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenSetMarkersWithEmptyArrayThenPreviousMarkersAreCleared = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.markers = [
-                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
-                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.advertsing, data: {} }
+                { time: 1, type: WinJS.UI.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
+                { time: 3, type: WinJS.UI.MarkerType.advertsing, data: {} }
             ];
             var myMarkers = [];
             mediaPlayer.markers = myMarkers;
@@ -1262,9 +1257,9 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testWhenSetMarkersAnUnsortedMarkerCollectionThenMarkersAreSorted = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             var myUnsortedMarkers = [
-                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
-                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.advertisement, data: {} }
+                { time: 3, type: WinJS.UI.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
+                { time: 1, type: WinJS.UI.MarkerType.advertisement, data: {} }
             ];
             var mySortedMarkers = myUnsortedMarkers.sort(function (first, next) {
                 return first.time - next.time;
@@ -1276,7 +1271,7 @@ var CorsicaTests;
 
         MediaPlayerTests.prototype.testGivenExistingMarkersWhenSetMarkersThenOldMarkersAreRemoved = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer();
-            mediaPlayer.addMarker(1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(1, WinJS.UI.MarkerType.chapter, {});
             mediaPlayer.markers = [];
             LiveUnit.Assert.areEqual(0, mediaPlayer.markers.length, "The old markers were not removed.");
             safeDispose(mediaPlayer);
@@ -1288,9 +1283,9 @@ var CorsicaTests;
             var mockMediaElement = new Test.MockMediaElement();
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             var markers = [
-                { time: 3, type: WinJS.UI.MediaPlayer.MarkerType.chapter, data: {} },
-                { time: 2, type: WinJS.UI.MediaPlayer.MarkerType.custom, data: {} },
-                { time: 1, type: WinJS.UI.MediaPlayer.MarkerType.advertisement, data: {} }
+                { time: 3, type: WinJS.UI.MarkerType.chapter, data: {} },
+                { time: 2, type: WinJS.UI.MarkerType.custom, data: {} },
+                { time: 1, type: WinJS.UI.MarkerType.advertisement, data: {} }
             ];
             mediaPlayer.markers = markers;
             mockMediaElement.autoplay = true;
@@ -1313,7 +1308,7 @@ var CorsicaTests;
             var audio = document.createElement("audio");
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.mediaElementAdapter.mediaElement = audio;
-            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(mediaPlayer._controls, "win-mediaplayer-audio-full"), "MediaPlayer does not think it's in audio mode, because it doesn't have the expected CSS class.");
+            LiveUnit.Assert.isTrue(mediaPlayer.mediaElementAdapter.mediaElement.tagName === "AUDIO", "MediaPlayer does not think it's in audio mode.");
             safeDispose(mediaPlayer);
         };
 
@@ -1330,7 +1325,7 @@ var CorsicaTests;
             var video = document.createElement("video");
             var mediaPlayer = new WinJS.UI.MediaPlayer();
             mediaPlayer.mediaElementAdapter.mediaElement = video;
-            LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(mediaPlayer._controls, "win-mediaplayer-video-full"), "MediaPlayer does not think it's in video mode, because it doesn't have the expected CSS class.");
+            LiveUnit.Assert.isTrue(mediaPlayer.mediaElementAdapter.mediaElement.tagName === "VIDEO", "MediaPlayer does not think it's in audio mode.");
             safeDispose(mediaPlayer);
         };
 
@@ -1404,7 +1399,7 @@ var CorsicaTests;
             mockMediaElement.duration = 60;
             mockMediaElement.currentTime = mockMediaElement.duration / 2;
             var nextMarkerTime = mediaPlayer.mediaElementAdapter.mediaElement.duration * 0.6;
-            mediaPlayer.addMarker(nextMarkerTime, WinJS.UI.MediaPlayer.MarkerType.chapter, "Next chapter");
+            mediaPlayer.addMarker(nextMarkerTime, WinJS.UI.MarkerType.chapter, "Next chapter");
             mediaPlayer.chapterSkipForward();
             LiveUnit.Assert.areEqual(nextMarkerTime, mockMediaElement.currentTime);
             safeDispose(mediaPlayer);
@@ -1691,7 +1686,7 @@ var CorsicaTests;
             mediaPlayer.showControls();
             mediaPlayer.addEventListener("afterhidecontrols", function afterhidecontrols() {
                 mediaPlayer.removeEventListener("afterhidecontrols", afterhidecontrols);
-                LiveUnit.Assert.isFalse(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.isFalse(mediaPlayer.isControlsVisible);
                 safeDispose(mediaPlayer);
                 complete();
             }, false);
@@ -1709,7 +1704,7 @@ var CorsicaTests;
             mediaPlayer.addEventListener("beforehidecontrols", function beforehidecontrols(ev) {
                 mediaPlayer.removeEventListener("beforehidecontrols", beforehidecontrols);
                 ev.preventDefault();
-                LiveUnit.Assert.isTrue(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.isTrue(mediaPlayer.isControlsVisible);
                 safeDispose(mediaPlayer);
                 complete();
             }, false);
@@ -1727,7 +1722,7 @@ var CorsicaTests;
             mediaPlayer.addEventListener("beforeshowcontrols", function beforeshowcontrols(ev) {
                 mediaPlayer.removeEventListener("beforeshowcontrols", beforeshowcontrols);
                 ev.preventDefault();
-                LiveUnit.Assert.isFalse(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.isFalse(mediaPlayer.isControlsVisible);
                 safeDispose(mediaPlayer);
                 complete();
             }, false);
@@ -1743,7 +1738,7 @@ var CorsicaTests;
             mediaPlayer._skipAnimations = true;
             mediaPlayer.addEventListener("aftershowcontrols", function aftershowcontrols(ev) {
                 mediaPlayer.removeEventListener("aftershowcontrols", aftershowcontrols);
-                LiveUnit.Assert.isTrue(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.isTrue(mediaPlayer.isControlsVisible);
                 safeDispose(mediaPlayer);
                 complete();
             }, false);
@@ -1759,7 +1754,7 @@ var CorsicaTests;
             mediaPlayer._skipAnimations = true;
             mediaPlayer.addEventListener("beforehidecontrols", function beforeshowcontrols(ev) {
                 mediaPlayer.removeEventListener("beforehidecontrols", beforeshowcontrols);
-                LiveUnit.Assert.fail(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.fail(mediaPlayer.isControlsVisible);
             }, false);
             mediaPlayer.hideControls();
             safeDispose(mediaPlayer);
@@ -1775,7 +1770,7 @@ var CorsicaTests;
             mediaPlayer.showControls();
             mediaPlayer.addEventListener("beforeshowcontrols", function beforeshowcontrols(ev) {
                 mediaPlayer.removeEventListener("beforeshowcontrols", beforeshowcontrols);
-                LiveUnit.Assert.fail(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.fail(mediaPlayer.isControlsVisible);
             }, false);
             mediaPlayer.showControls();
             safeDispose(mediaPlayer);
@@ -1791,42 +1786,42 @@ var CorsicaTests;
             mediaPlayer.showControls();
             mediaPlayer.addEventListener("beforeshowcontrols", function beforeshowcontrols(ev) {
                 mediaPlayer.removeEventListener("beforeshowcontrols", beforeshowcontrols);
-                LiveUnit.Assert.fail(mediaPlayer.controlsVisible);
+                LiveUnit.Assert.fail(mediaPlayer.isControlsVisible);
             }, false);
             mediaPlayer.showControls();
             safeDispose(mediaPlayer);
         };
 
         MediaPlayerTests.prototype.testWhenChapterSkipBackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.chapterSkipBack, "chapterSkipBack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.chapterSkipBack, "chapterSkipBack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenChapterSkipForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.chapterSkipForward, "chapterSkipForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.chapterSkipForward, "chapterSkipForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenFastForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.fastForward, "fastForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.fastForward, "fastForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenNextTrackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.nextTrack, "nextTrack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.nextTrack, "nextTrack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPreviousTrackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.previousTrack, "previousTrack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.previousTrack, "previousTrack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPlayThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.play, "play", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.play, "play", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPauseThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.pause, "pause", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.pause, "pause", complete);
         };
 
         MediaPlayerTests.prototype.testWhenRewindThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.rewind, "rewind", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.rewind, "rewind", complete);
         };
 
         MediaPlayerTests.prototype.testWhenSeekThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
@@ -1845,39 +1840,39 @@ var CorsicaTests;
         };
 
         MediaPlayerTests.prototype.testWhenTimeSkipBackThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.timeSkipBack, "timeSkipBack", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.timeSkipBack, "timeSkipBack", complete);
         };
 
         MediaPlayerTests.prototype.testWhenTimeSkipForwardThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.timeSkipForward, "timeSkipForward", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.timeSkipForward, "timeSkipForward", complete);
         };
 
         MediaPlayerTests.prototype.testWhenAudioTracksThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.audioTracks, "_onAudioTracksCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.audioTracks, "_onAudioTracksCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenCastThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
             if (WinJS.Utilities.hasWinRT) {
-                runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.cast, "_onCastCommandInvoked", complete);
+                runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.cast, "_onCastCommandInvoked", complete);
             } else {
                 complete();
             }
         };
 
         MediaPlayerTests.prototype.testWhenClosedCaptionsThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.closedCaptions, "_onClosedCaptionsCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.closedCaptions, "_onClosedCaptionsCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenPlaybackRateThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.playbackRate, "_onPlaybackRateCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.playbackRate, "_onPlaybackRateCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenVolumeThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.volume, "_onVolumeCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.volume, "_onVolumeCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testWhenZoomThenMediaCommandExecutedEventFiresWithCorrectEventArguments = function (complete) {
-            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaPlayer.MediaCommand.zoom, "_onZoomCommandInvoked", complete);
+            runVerifyMediaCommandExecutedEventTest(WinJS.UI.MediaCommand.zoom, "_onZoomCommandInvoked", complete);
         };
 
         MediaPlayerTests.prototype.testGivenPausedAndIsPlayAllowedIsTrueWhenPlayThenMediaIsPlaying = function (complete) {
@@ -2363,7 +2358,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.fastForward();
             mediaPlayer.hideControls();
-            LiveUnit.Assert.isTrue(mediaPlayer.controlsVisible);
+            LiveUnit.Assert.isTrue(mediaPlayer.isControlsVisible);
             safeDispose(mediaPlayer);
         };
 
@@ -2375,7 +2370,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = mockMediaElement;
             mediaPlayer.rewind();
             mediaPlayer.hideControls();
-            LiveUnit.Assert.isTrue(mediaPlayer.controlsVisible);
+            LiveUnit.Assert.isTrue(mediaPlayer.isControlsVisible);
             safeDispose(mediaPlayer);
         };
 
@@ -2473,22 +2468,6 @@ var CorsicaTests;
             mockMediaElement.playbackRate = 2;
             LiveUnit.Assert.areEqual(mediaPlayer._toolbar.getCommandById("win-mediaplayer-playpause").icon, WinJS.UI.AppBarIcon.play);
             safeDispose(mediaPlayer);
-        };
-
-        MediaPlayerTests.prototype.testWhenSetLayoutToFullThenLayoutIsFull = function () {
-            runSetMediaPlayerPropertyCase("layout", WinJS.UI.MediaPlayer.Layout.full, false);
-        };
-
-        MediaPlayerTests.prototype.testWhenSetLayoutTopartialThenLayoutIsPartial = function () {
-            runSetMediaPlayerPropertyCase("layout", WinJS.UI.MediaPlayer.Layout.partial, false);
-        };
-
-        MediaPlayerTests.prototype.testWhenSetLayoutToInvalidValueThenThrowsAnException = function () {
-            runSetMediaPlayerPropertyCase("layout", "invalid value", true);
-        };
-
-        MediaPlayerTests.prototype.testWhenSetLayoutToNullThenThrowsAnException = function () {
-            runSetMediaPlayerPropertyCase("layout", null, true);
         };
 
         MediaPlayerTests.prototype.testWhenSeekToBeginningThenCurrentTimeIsZero = function () {
@@ -2779,7 +2758,7 @@ var CorsicaTests;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
             mediaPlayer.startTime = 5;
-            mediaPlayer.addMarker(mediaPlayer.startTime - 1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(mediaPlayer.startTime - 1, WinJS.UI.MarkerType.chapter, {});
             mediaPlayer.currentTime = mediaPlayer.startTime;
             mediaPlayer.chapterSkipBack();
             LiveUnit.Assert.areEqual(mediaPlayer.startTime, mockMediaElement.currentTime);
@@ -2795,7 +2774,7 @@ var CorsicaTests;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
             mediaPlayer.endTime = 5;
-            mediaPlayer.addMarker(mediaPlayer.endTime + 1, WinJS.UI.MediaPlayer.MarkerType.chapter, {});
+            mediaPlayer.addMarker(mediaPlayer.endTime + 1, WinJS.UI.MarkerType.chapter, {});
             mediaPlayer.currentTime = mediaPlayer.endTime;
             mediaPlayer.chapterSkipForward();
             LiveUnit.Assert.areEqual(mediaPlayer.endTime, mockMediaElement.currentTime);
@@ -3394,7 +3373,7 @@ var CorsicaTests;
             mediaPlayer.mediaElementAdapter.mediaElement = video;
             video.src = "http://lizard.dns.microsoft.com/WMV/Halo4TrailerSmall.wmv";
             video.autoplay = true;
-            LiveUnit.Assert.isFalse(mediaPlayer.fullScreen, "mediaPlayer.fullScreen did not default to 'false'.");
+            LiveUnit.Assert.isFalse(mediaPlayer.isFullScreen, "mediaPlayer.isFullScreen did not default to 'false'.");
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "MediaPlayer.mediaElementAdapter was null.");
             safeDispose(mediaPlayer);
         };
@@ -3406,7 +3385,7 @@ var CorsicaTests;
                                         '</div>';
             WinJS.UI.processAll(containerDiv);
             var mediaPlayer = containerDiv.querySelector(".win-mediaplayer").winControl;
-            LiveUnit.Assert.isFalse(mediaPlayer.fullScreen, "mediaPlayer.fullScreen did not default to 'false'.");
+            LiveUnit.Assert.isFalse(mediaPlayer.isFullScreen, "mediaPlayer.isFullScreen did not default to 'false'.");
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "MediaPlayer.mediaElementAdapter was null.");
             safeDispose(mediaPlayer);
         };
@@ -3414,9 +3393,8 @@ var CorsicaTests;
         MediaPlayerTests.prototype.testGivenWinJSWhenMediaPlayerConstructorIsCalledWithANullElementThenAMediaPlayerControlIsCreated = function () {
             var mediaPlayer = new WinJS.UI.MediaPlayer(null);
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "MediaPlayer.mediaElementAdapter was null.");
-            LiveUnit.Assert.areEqual(true, mediaPlayer.thumbnailEnabled, "mediaPlayer.thumbnailEnabled was not 'true'.");
+            LiveUnit.Assert.areEqual(true, mediaPlayer.isThumbnailEnabled, "mediaPlayer.isThumbnailEnabled was not 'true'.");
             LiveUnit.Assert.isNotNull(mediaPlayer.mediaElementAdapter, "mediaPlayer.mediaElementAdapter was null.");
-            LiveUnit.Assert.areEqual(WinJS.UI.MediaPlayer.Layout.full, mediaPlayer.layout, "mediaPlayer.layout was not 'WinJS.UI.MediaPlayer.Layout.full'.");
             LiveUnit.Assert.areEqual(0, mediaPlayer.startTime, "mediaPlayer.startTime was not 0.");
             LiveUnit.Assert.areEqual(0, mediaPlayer.startTime, "mediaPlayer.startTime was not 0.");
             LiveUnit.Assert.isNotNull(mediaPlayer.timeFormatter, "mediaPlayer.timeFormatter was was null.");
@@ -3486,7 +3464,7 @@ var CorsicaTests;
             mockMediaElement.duration = 10;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
-            mediaPlayer.thumbnailEnabled = true;
+            mediaPlayer.isThumbnailEnabled = true;
             mediaPlayer.addEventListener("thumbnailrequest", function thumbnailrequest() {
                 mediaPlayer.removeEventListener("thumbnailrequest", thumbnailrequest);
                 safeDispose(mediaPlayer);
@@ -3521,7 +3499,7 @@ var CorsicaTests;
             mockMediaElement.duration = 10;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
-            mediaPlayer.thumbnailEnabled = false;
+            mediaPlayer.isThumbnailEnabled = false;
             mediaPlayer.addEventListener("thumbnailrequest", function thumbnailRequest() {
                 mediaPlayer.removeEventListener("thumbnailrequest", thumbnailRequest);
                 LiveUnit.Assert.fail("The thumbnailRequest event should not have been raised.");
@@ -3539,7 +3517,7 @@ var CorsicaTests;
             mockMediaElement.duration = 10;
             mockMediaElement.autoplay = true;
             mockMediaElement.src = "notnull";
-            mediaPlayer.thumbnailEnabled = false;
+            mediaPlayer.isThumbnailEnabled = false;
             mediaPlayer.addEventListener("thumbnailrequest", function thumbnailRequest() {
                 mediaPlayer.removeEventListener("thumbnailrequest", thumbnailRequest);
                 LiveUnit.Assert.fail("The thumbnailRequest event should not have been raised.");
@@ -3627,7 +3605,7 @@ var CorsicaTests;
             overlay.focus();
             mediaPlayer._onInputHandlerKeyDown({ keyCode: WinJS.Utilities.space });
             mediaPlayer._onInputHandlerKeyDown({ keyCode: WinJS.Utilities.gamepadA });
-            LiveUnit.Assert.isFalse(mediaPlayer.controlsVisible);
+            LiveUnit.Assert.isFalse(mediaPlayer.isControlsVisible);
             document.body.removeChild(overlay);
             safeDispose(mediaPlayer);
         };
