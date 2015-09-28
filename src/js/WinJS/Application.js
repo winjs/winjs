@@ -39,6 +39,9 @@ define([
     var running = false;
     var registered = false;
 
+    var Symbol = _Global.Symbol;
+    var isModern = !!Symbol && typeof Symbol.iterator === "symbol"; // jshint ignore:line
+
     var ListenerType = _Base.Class.mix(_Base.Class.define(null, { /* empty */ }, { supportedForProcessing: false }), _Events.eventMixin);
     var listeners = new ListenerType();
     var createEvent = _Events._createEventProperty;
@@ -663,6 +666,13 @@ define([
         dispatchEvent({ type: edgyCanceledET, kind: eventObject.kind });
     }
 
+    function getNavManager() {
+        // Use environment inference to avoid a critical error
+        // in `getForCurrentView` when running in Windows 8 compat mode.
+        var manager = _WinRT.Windows.UI.Core.SystemNavigationManager;
+        return (isModern && manager) ? manager.getForCurrentView() : null;
+    }
+
     function register() {
         if (!registered) {
             registered = true;
@@ -684,10 +694,10 @@ define([
                 }
 
                 // This integrates WinJS.Application into the hardware or OS-provided back button.
-                if (_WinRT.Windows.UI.Core.SystemNavigationManager) {
-                    // On Win10 this accomodates hardware buttons (phone), 
+                var navManager = getNavManager();
+                if (navManager) {
+                    // On Win10 this accomodates hardware buttons (phone),
                     // the taskbar's tablet mode button, and the optional window frame back button.
-                    var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
                     navManager.addEventListener("backrequested", hardwareButtonBackPressed);
                 } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     // For WP 8.1
@@ -725,8 +735,8 @@ define([
                     settingsPane.removeEventListener("commandsrequested", commandsRequested);
                 }
 
-                if (_WinRT.Windows.UI.Core.SystemNavigationManager) {
-                    var navManager = _WinRT.Windows.UI.Core.SystemNavigationManager.getForCurrentView();
+                var navManager = getNavManager();
+                if (navManager) {
                     navManager.removeEventListener("backrequested", hardwareButtonBackPressed);
                 } else if (_WinRT.Windows.Phone.UI.Input.HardwareButtons) {
                     _WinRT.Windows.Phone.UI.Input.HardwareButtons.removeEventListener("backpressed", hardwareButtonBackPressed);
