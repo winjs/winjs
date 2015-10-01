@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>MediaPlayer Test Page</title>
+    
+    <!--<link href="../../bin/Microsoft.WinJS.4.3/css/ui-light.css" rel="stylesheet" />-->
+    <link href="../../bin/Microsoft.WinJS.4.3/css/ui-dark.css" rel="stylesheet" />
+    <script src="../../bin/Microsoft.WinJS.4.3/js/base.js"></script>
+    <script src="../../bin/Microsoft.WinJS.4.3/js/ui.js"></script>
+    
+    <!--<link href="../../bin/Microsoft.WinJS.4.3/css/ui-light-mediaplayer.css" rel="stylesheet" />-->
+    <link href="../../bin/Microsoft.WinJS.4.3/css/ui-dark-mediaplayer.css" rel="stylesheet" />
+    <script src="../../bin/Microsoft.WinJS.4.3/js/mediaplayer.js"></script>
+    
+    <style>
+        .win-mediaplayer {
+            /*position: relative;
+            height: 200px;*/
+        }
+    </style>
+    <script>
+        var mp;
+        function init() {
+            WinJS.UI.processAll();
+            mp = document.getElementById("mediaPlayerEl").winControl;
+            // mp.setContentMetadata("video", {
+            //     title: "My Title",
+            //     description: "Have you seen this description? It's amazing!"
+            // });
+        }
+
+        WinJS.Utilities.ready(init);
+    </script>
+</head>
+<body class="win-type-body">
+    <div id="mediaPlayerEl" data-win-control="WinJS.UI.MediaPlayer" data-win-options="{
+        castButtonVisible: true,
+        chapterSkipBackButtonVisible: true,
+        chapterSkipForwardButtonVisible: true,
+        fastForwardButtonVisible: true,
+        fullscreenButtonVisible: true,
+        goToLiveButtonVisible: true,
+        nextTrackButtonVisible: true,
+        playFromBeginningButtonVisible: true,
+        playPauseButtonVisible: true,
+        playbackRateButtonVisible: true,
+        previousTrackButtonVisible: true,
+        rewindButtonVisible: true,
+        seekBarVisible: true,
+        stopButtonVisible: true,
+        timeSkipBackButtonVisible: true,
+        timeSkipForwardButtonVisible: true,
+        volumeButtonVisible: true,
+        zoomButtonVisible: true,
+        fullScreen: true
+
+    }">
+        <video>
+            <source src="http://video.ch9.ms/ch9/aea3/bf8d2647-ec8c-4f0d-b214-c9ca6a48aea3/KEY01.mp4" type="video/mp4">
+            <track src="subtitles_en.vtt" kind="captions" srclang="en" label="English">
+        </video>
+    </div>
+    <!--<div data-win-control="WinJS.UI.AutoSuggestBox" data-win-options="{placeholderText: 'Search for a video'}"></div>-->
+</body>
+</html>
