@@ -6,14 +6,17 @@
 
 ## Usage
 
+- #### Build WinJS: Make sure you have built copy of the version of WinJS that you want to test against.
+
 - #### Install the dependencies:
   ```
   cd winjs/tools/d.ts-verifier 
   npm install
   ```
 
-- #### Run the command line tool program with a version of the WinJS TypeScript type definition file:
+- #### Create a bin folder, then run the command line tool program with a version of the WinJS TypeScript type definition file:
   ```
+  mkdir bin
   node ./main.js /path/to/winjs.d.ts /path/to/WinJS_directory
   ```
   This will generate a model of the WinJS public API from the provided WinJS.d.ts file, and print a localhost url to the command line.
