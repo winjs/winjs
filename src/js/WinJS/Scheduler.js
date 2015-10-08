@@ -623,12 +623,10 @@ define([
         job._setState(state_paused);
     };
 
-    // Blocked
-    //
-    state_blocked.enter = function (job, work, initialPriority) {
+    function enterState(job, work, initialPriority, state) {
         jobProfilerMark(job, "job-blocked", "StartTM");
         job._work = work;
-        job._setState(state_blocked_waiting);
+        job._setState(state);
 
         // Sign up for a completion from the provided promise, after the completion occurs
         //  transition from the current state at the completion time to the target state
@@ -649,6 +647,12 @@ define([
                 return Promise.wrapError(error);
             }
         );
+    }
+
+    // Blocked
+    //
+    state_blocked.enter = function (job, work, initialPriority) {
+        enterState(job, work, initialPriority, state_blocked_waiting);
     };
 
     // Blocked waiting
@@ -669,29 +673,7 @@ define([
     // Blocked paused
     //
     state_blocked_paused.enter = function (job, work, initialPriority) {
-        jobProfilerMark(job, "job-blocked", "StartTM");
-        job._work = work;
-        job._setState(state_blocked_paused_waiting);
-
-        // Sign up for a completion from the provided promise, after the completion occurs
-        //  transition from the current state at the completion time to the target state
-        //  depending on the completion value.
-        //
-        work.done(
-            function (newWork) {
-                jobProfilerMark(job, "job-blocked", "StopTM");
-                var targetState = job._blockedDone(newWork);
-                job._setState(targetState, newWork, initialPriority);
-            },
-            function (error) {
-                if (!(error && error.name === "Canceled")) {
-                    jobProfilerMark(job, "job-error", "info");
-                }
-                jobProfilerMark(job, "job-blocked", "StopTM");
-                job._setState(state_canceled);
-                return Promise.wrapError(error);
-            }
-        );
+        enterState(job, work, initialPriority, state_blocked_paused_waiting);
     };
 
     // Blocked paused waiting
