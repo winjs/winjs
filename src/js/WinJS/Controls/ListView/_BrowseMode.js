@@ -662,9 +662,9 @@ define([
                     return dropTarget;
                 },
 
-                _fireDragBetweenEvent: function (index, insertAfterIndex, dataTransfer) {
+                _fireEvent: function (index, insertAfterIndex, dataTransfer, eventName) {
                     var event = _Global.document.createEvent("CustomEvent");
-                    event.initCustomEvent("itemdragbetween", true, true, {
+                    event.initCustomEvent(eventName, true, true, {
                         index: index,
                         insertAfterIndex: insertAfterIndex,
                         dataTransfer: dataTransfer
@@ -672,14 +672,12 @@ define([
                     return this.site.element.dispatchEvent(event);
                 },
 
+                _fireDragBetweenEvent: function (index, insertAfterIndex, dataTransfer) {
+                    return this._fireEvent(index, insertAfterIndex, dataTransfer, "itemdragbetween");
+                },
+
                 _fireDropEvent: function (index, insertAfterIndex, dataTransfer) {
-                    var event = _Global.document.createEvent("CustomEvent");
-                    event.initCustomEvent("itemdragdrop", true, true, {
-                        index: index,
-                        insertAfterIndex: insertAfterIndex,
-                        dataTransfer: dataTransfer
-                    });
-                    return this.site.element.dispatchEvent(event);
+                    return this._fireEvent(index, insertAfterIndex, dataTransfer, "itemdragdrop");
                 },
 
                 _handleExitEvent: function () {
