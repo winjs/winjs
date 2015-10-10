@@ -666,7 +666,7 @@ function _handleCaptureKeyEvent(e: KeyboardEvent) {
     var activeElement = <HTMLElement>document.activeElement;
     var shouldPreventDefault = false;
     var stateHandler = _getStateHandler(<HTMLElement>document.activeElement);
-   
+
     if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.accept(activeElement);
     } else if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {
@@ -798,12 +798,12 @@ if (_Global.document) {
     // Note: This module is not supported in WebWorker
 
     // Default mappings
-    keyCodeMap.left.push(Keys.GamepadLeftThumbstickLeft, Keys.GamepadDPadLeft, Keys.NavigationLeft);
-    keyCodeMap.right.push(Keys.GamepadLeftThumbstickRight, Keys.GamepadDPadRight, Keys.NavigationRight);
-    keyCodeMap.up.push(Keys.GamepadLeftThumbstickUp, Keys.GamepadDPadUp, Keys.NavigationUp);
-    keyCodeMap.down.push(Keys.GamepadLeftThumbstickDown, Keys.GamepadDPadDown, Keys.NavigationDown);
-    keyCodeMap.accept.push(Keys.GamepadA, Keys.NavigationAccept);
-    keyCodeMap.cancel.push(Keys.GamepadB, Keys.NavigationCancel);
+    keyCodeMap.left.push(Keys.gamepadLeftThumbstickLeft, Keys.gamepadDPadLeft, Keys.NavigationLeft);
+    keyCodeMap.right.push(Keys.gamepadLeftThumbstickRight, Keys.gamepadDPadRight, Keys.NavigationRight);
+    keyCodeMap.up.push(Keys.gamepadLeftThumbstickUp, Keys.gamepadDPadUp, Keys.NavigationUp);
+    keyCodeMap.down.push(Keys.gamepadLeftThumbstickDown, Keys.gamepadDPadDown, Keys.NavigationDown);
+    keyCodeMap.accept.push(Keys.gamepadA, Keys.NavigationAccept);
+    keyCodeMap.cancel.push(Keys.gamepadB, Keys.NavigationCancel);
 
     _Global.addEventListener("message", (e: MessageEvent): void => {
         // Note: e.source is the Window object of an iframe which could be hosting content

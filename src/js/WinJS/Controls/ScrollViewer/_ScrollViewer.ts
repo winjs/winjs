@@ -368,8 +368,8 @@ export class ScrollViewer {
 
         switch (ev.keyCode) {
             case Keys.upArrow:
-            case Keys.GamepadDPadUp:
-            case Keys.GamepadLeftThumbstickUp:
+            case Keys.gamepadDPadUp:
+            case Keys.gamepadLeftThumbstickUp:
                 if (this._scrollMode === ScrollMode.nonModalText) {
                     if (this._scrollingContainer.scrollTop >= THRESHOLD_TO_SHOW_TOP_ARROW) {
                         // No-op - the user can scroll up.  
@@ -383,8 +383,8 @@ export class ScrollViewer {
                 this._scrollUpBySmallAmount();
                 break;
             case Keys.downArrow:
-            case Keys.GamepadDPadDown:
-            case Keys.GamepadLeftThumbstickDown:
+            case Keys.gamepadDPadDown:
+            case Keys.gamepadLeftThumbstickDown:
                 if (this._scrollMode === ScrollMode.nonModalText) {
                     if (this._scrollingContainer.scrollTop >= (this._scrollingContainer.scrollHeight - this._element.clientHeight)) {
                         var nextFocusElement = XYFocus.findNextFocusElement("down");
@@ -398,22 +398,22 @@ export class ScrollViewer {
                 this._scrollDownBySmallAmount();
                 break;
             case Keys.leftArrow:
-            case Keys.GamepadDPadLeft:
-            case Keys.GamepadLeftThumbstickLeft:
+            case Keys.gamepadDPadLeft:
+            case Keys.gamepadLeftThumbstickLeft:
                 this._moveFocus("left");
                 break;
             case Keys.rightArrow:
-            case Keys.GamepadDPadRight:
-            case Keys.GamepadLeftThumbstickRight:
+            case Keys.gamepadDPadRight:
+            case Keys.gamepadLeftThumbstickRight:
                 this._moveFocus("right");
                 break;
             case Keys.pageUp:
-            case Keys.GamepadLeftShoulder:
+            case Keys.gamepadLeftShoulder:
                 this._scrollUpByLargeAmount();
                 handled = true;
                 break;
             case Keys.pageDown:
-            case Keys.GamepadRightShoulder:
+            case Keys.gamepadRightShoulder:
                 this._scrollDownByLargeAmount();
                 handled = true;
                 break;
