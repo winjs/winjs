@@ -431,6 +431,10 @@
     "_ui/appBarIcons/fontsize.comment":                   "{Locked=qps-ploc,qps-plocm}",
     "ui/appBarIcons/cellphone":                           "\uE1C9", // group:Communications
     "_ui/appBarIcons/cellphone.comment":                  "{Locked=qps-ploc,qps-plocm}",
+    "ui/appBarIcons/print":                               "\uE749", // group:Communications
+    "_ui/appBarIcons/print.comment":                      "{Locked=qps-ploc,qps-plocm}",
+    "ui/appBarIcons/share":                               "\uE72D", // group:Communications
+    "_ui/appBarIcons/share.comment":                      "{Locked=qps-ploc,qps-plocm}",
     "ui/appBarIcons/reshare":                             "\uE1CA", // group:Communications
     "_ui/appBarIcons/reshare.comment":                    "{Locked=qps-ploc,qps-plocm}",
     "ui/appBarIcons/tag":                                 "\uE1CB", // group:Data
