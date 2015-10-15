@@ -9133,9 +9133,17 @@ declare module WinJS.UI.Pages {
         **/
         element: HTMLElement;
         /**
-         * Gets the Promise that is fulfilled with the element after render method is finished.
+         * Gets the Promise that is fulfilled with the element after render method (and the returned promise if exist) is completed.
         **/
         elementReady: IPromise<HTMLElement>;
+        /**
+         * Gets the Promise that is fulfilled with this PageControl object after processed method (and the returned promise if exist) is completed.
+        **/
+        renderComplete: IPromise<IPageControl>;
+        /**
+         * Gets the Promise that is fulfilled with the element after ready method is finished.
+        **/
+        readyComplete: IPromise<IPageControl>;
         /**
          * Gets the URI for the content that defines this page.
         **/
