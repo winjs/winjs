@@ -9124,6 +9124,39 @@ declare module WinJS.UI.Pages {
 
     }
 
+    /**
+     * A PageControl.
+    **/
+    interface IPageControl extends IPageControlMembers {
+        /**
+         * Gets the DOM element that hosts the PageControl.
+        **/
+        element: HTMLElement;
+        /**
+         * Gets the Promise that is fulfilled with the element after render method is finished.
+        **/
+        elementReady: IPromise<HTMLElement>;
+        /**
+         * Gets the URI for the content that defines this page.
+        **/
+        uri: string;
+        /**
+         * Gets whether an URI of the document was identical with the URI of this page when the page was constructed.
+        **/
+        selfhost: boolean;
+        /**
+         * Dispose the page.
+        **/
+        dispose(): void;
+    }
+
+    /**
+     * A constructor that creates a PageControl.
+    **/
+    interface IPageControlConstructor {
+        new (element?: HTMLElement, options?: any, complete?: (page: IPageControl) => void, parentedPromise?: IPromise<any>): IPageControl;
+    }
+
     //#endregion Interfaces
 
     //#region Objects
@@ -9138,14 +9171,14 @@ declare module WinJS.UI.Pages {
      * @param members An object that defines the members that the control will have.
      * @returns A constructor function that creates the PageControl.
     **/
-    function define(uri: string, members: IPageControlMembers): (element?: HTMLElement, options?: any, complete?: (page: any) => void, parentedPromise?: Promise<any>) => void;
+    function define(uri: string, members: IPageControlMembers): IPageControlConstructor;
 
     /**
      * Gets an already-defined page control for the specified URI, or creates a new one.
      * @param uri The URI for the content that defines the page.
      * @returns A constructor function that creates the page.
     **/
-    function get(uri: string): (element?: HTMLElement, options?: any, complete?: (page: any) => void, parentedPromise?: Promise<any>) => void;
+    function get(uri: string): IPageControlConstructor;
 
     /**
      * Creates a PageControl from the specified URI and inserts it inside the specified element.
