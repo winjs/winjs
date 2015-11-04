@@ -7,7 +7,7 @@
     "name": "Microsoft Corporation and other contributors",
     "homepage": "https://github.com/winjs/winjs/graphs/contributors"
   }],
-  "main": ["js/ui.js", "css/ui-dark.css", "fonts/Symbols.ttf"],
+  "main": ["js/base.js","js/ui.js", "css/ui-dark.css", "fonts/Symbols.ttf"],
   "dependencies": {
   }
 }
