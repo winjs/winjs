@@ -1480,6 +1480,7 @@ export class _CommandingSurface {
             type: (originalCommand.type === _Constants.typeContent ? _Constants.typeFlyout : originalCommand.type) || _Constants.typeButton,
             disabled: originalCommand.disabled,
             flyout: originalCommand.flyout,
+            tooltip: originalCommand.tooltip,
             beforeInvoke: () => {
                 // Save the command that was selected
                 this._chosenCommand = <_Command.ICommand>(menuCommand["_originalICommand"]);
