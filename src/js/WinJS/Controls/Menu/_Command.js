@@ -187,9 +187,6 @@ define([
 
                         // Update aria-label
                         this._element.setAttribute("aria-label", this.label);
-                        
-                        // Check if we need to suppress the tooltip
-                        this._testIdenticalTooltip();
                     }
                 },
 
@@ -273,9 +270,6 @@ define([
                         if (this._tooltipControl) {
                             this._tooltipControl.innerHTML = this._tooltip;
                         }
-                        
-                        // Check if we need to suppress the tooltip
-                        this._testIdenticalTooltip();
                     }
                 },
 
@@ -416,10 +410,6 @@ define([
                 },
 
                 // Private properties
-                _testIdenticalTooltip: function AppBarCommand_testIdenticalToolTip() {
-                    this._hideIfFullSize = (this._label === this._tooltip);
-                },
-                
                 _createSeparator: function MenuCommand_createSeparator() {
                     // Make sure there's an input element
                     if (!this._element) {
@@ -464,12 +454,6 @@ define([
                     // Attach a tooltip - Note: we're going to stomp on it's setControl so we don't have to make another DOM element to hang it off of.
                     // This private _tooltipControl attribute is used by other pieces, changing the name could break them.
                     this._tooltipControl = new Tooltip.Tooltip(this._element);
-                    var that = this;
-                    this._tooltipControl.addEventListener("beforeopen", function () {
-                        if (that._hideIfFullSize) {
-                            that._tooltipControl.close();
-                        }
-                    }, false);
                 },
                 _sendEvent: function MenuCommand_sendEvent(eventName, detail) {
                     if (!this._disposed) {
