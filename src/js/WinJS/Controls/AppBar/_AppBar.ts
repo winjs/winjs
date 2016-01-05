@@ -34,6 +34,92 @@ require(["require-style!less/styles-appbar"]);
 
 "use strict";
 
+// Implementation Details:
+//
+// The WinJS AppBar is a specialized UI wrapper for the private _CommandingSurface UI component. // The AppBar relies on the _CommandingSurface for rendering 
+// opened and closed states, knowing how to create the open and close animations, laying out commands, creating command hide/show animations and keyboard 
+// navigation across commands. See the _CommandingSurface implementation details for more information on how that component operates.
+//
+// The responsibilities of the AppBar include:
+//
+//  - Hosting the _CommandingSurface
+//      - From an end user perspective, there should be no visual distinction between where the AppBar ends and the _CommandingSurface begins.
+//          - AppBar wants to rely on the _CommandingSurface to do as much of the rendering as possible.The AppBar relies on the _CommandingSurface to render its opened and 
+//            closed states -- which defines the overall height of the AppBar and CommandingSurface elements. The AppBar has no policy or CSS styles regarding its own height 
+//            and instead takes advantage of the default behavior of its DIV element which is to always grow or shrink to match the height of its content.
+//      - From an end developer perspective, the _CommandingSurface should be abstracted as an implementation detail of the AppBar as much as possible.
+//          - Developers should never have to interact with the CommandingSurface directly.The AppBar exposes the majority of _CommandingSurface functionality through its own APIs
+//          - There are some  HTML elements inside of the _CommandingSurface's DOM that a developer might like to style. After the _CommandingSurface has been instantiated and
+//            added to the AppBar DOM, the AppBar will inject its own "appbar" specific class-names onto these elements to make them more discoverable to developers.
+//          - Example of developer styling guidelines https://msdn.microsoft.com/en-us/library/windows/apps/jj839733.aspx
+//
+//  - Light dismiss
+//      - The AppBar is a light dismissable when opened.This means that the AppBar is closed thru a variety of cues such as tapping anywhere outside of it, pressing the escape 
+//        key, and resizing the window.AppBar relies on the _LightDismissService component for most of this functionality.The only pieces the AppBar is responsible for are:
+//          - Describing what happens when a light dismiss is triggered on the AppBar.
+//          - Describing how the AppBar should take / restore focus when it becomes the topmost light dismissible in the light dismiss stack.
+//      - Debugging Tip: Light dismiss can make debugging an opened AppBar tricky.A good idea is to temporarily suspend the light dismiss cue that triggers when clicking 
+//        outside of the current window.This can be achieved by executing the following code in the JavaScript console window: "WinJS.UI._LightDismissService._setDebug(true)"
+//
+//  - Configuring a state machine for open / close state management:
+//      - The AppBar and CommandingSurface share a private _OpenCloseMachine component to manage their states.The contract is:
+//          - The AppBar Constructor is responsible for the instantiation and configuration of the _OpenCloseMachine.
+//              - AppBar constructor configures the _OpenCloseMachine to always fire events on the AppBar element directly.
+//              - AppBar constructor specifies the callbacks that the _OpenCloseMachine should use to setup and execute the _CommandingSurface open and close animations after
+//                the _OpenCloseMachine determines a state transition has completed.
+//              - AppBar constructor passes the _OpenCloseMachine as an argument to the _CommandingSurface constructor and doesn’t keep any references to it.
+//          - _CommandingSurface is responsible for both, continued communication with, and final the cleanup of, the _OpenCloseMachine
+//              - _CommandingSurface expects a reference to an _OpenCloseMachine in its constructor options.
+//              - Only the _CommandingSurface holds onto a reference to the _OpenCloseMachine, no other object should communicate with the _OpenCloseMachine directly after 
+//                initialization.
+//              - _CommandingSurface is responsible for telling _OpenCloseMachine when a state change or re - render is requested.A simple example of this is  the 
+//                _CommandingSurface.open() method.
+//          - _OpenCloseMachine is responsible for everything else including:
+//              - Ensuring that the animations callbacks get run at the appropriate times.
+//              - Enforcing the rules of the current state and ensuring the right thing happens when an _OpenCloseMachine method is called.For example:
+//                  - open is called while the control is already open
+//                  - close is called while the control is in the middle of opening
+//                  - dispose is called within a beforeopen event handler
+//              - Firing all the beforeopen, afteropen, beforeclose, and afterclose events for the AppBar.
+//
+//  - Rendering with Update DOM.
+//      - AppBar follows the Update DOM pattern for rendering.For more information about this pattern, see:     https://github.com/winjs/winjs/wiki/Update-DOM-Pattern
+//      - Note that the AppBar reads from the DOM when it needs to determine its position relative to the top or bottom edge of the visible document and when measuring its 
+//        closed height to help the _CommandingSurface generate accurate open / close animations.When possible, it caches this information and reads from the cache instead of 
+//        the DOM. This minimizes the performance cost.
+//      - Outside of updateDom, AppBar writes to the DOM in a couple of places:
+//          - The initializeDom function runs during construction and creates the initial version of the AppBar's DOM
+//          - Immediately before and after executing _CommandingSurface open and close animations, inside of the onOpen and onClose callbacks that the AppBar gives to the 
+//            _OpenCloseMachine.There is a rendering bug in Edge when performing the _CommandingSurface's animation if a parent element is using CSS position: -ms-device-fixed; 
+//            AppBar has to work around this by temporarily switching to CSS position: fixed; and converting its physical location into layout viewport coordinates for the 
+//            duration of the Animation only.
+//
+//  - Overlaying App Content
+//      - AppBar is an overlay and should occlude other app content in the body when opened or closed.However, AppBar should not occlude any other WinJS light dismissible 
+//        control when it is closed.
+//      - AppBar has a default starting z - index that was chosen to be very high but still slightly smaller than the starting z - index for light dismissible controls.
+//      - The WinJS _LightDismissService dynamically manages the z - indices of active light dismissible controls in the light dismiss stack.AppBar is also an active light
+//        dismissible when opened, and it is expected that the _LightDismissService will overwrite its z - index to an appropriate higher value while the AppBar is opened.
+//        AppBar is subject to the same stacking context pitfalls as any other light dismissible: https://github.com/winjs/winjs/wiki/Dismissables-and-Stacking-Contexts and 
+//        should always be defined as a direct child of the < body>
+//
+//  - Positioning itself along the top or bottom edge of the App.
+//      - The AppBar always wants to stick to the top or bottom edge of the visual viewport in the users App.Which edge it chooses can be configured by the AppBar.placement 
+//        property.
+//      - In IE11, Edge, Win 8.1 apps and Win 10 apps, the AppBar uses CSS position: -ms - device - fixed; which will cause its top, left, bottom & right CSS properties be 
+//        styled in relation to the visual viewport.
+//      - In other browsers - ms - device - fixed positioning doesn't exist and the AppBar falls back to CSS position: fixed; which will cause its top, left, bottom & right 
+//        CSS properties be styled in relation to the layout viewport.
+//      - See http://quirksmode.org/mobile/viewports2.html for more details on the difference between layout viewport and visual viewport.
+//      - Being able to position the AppBar relative to the visual viewport is particularly important in windows 8.1 apps and Windows 10 apps(as opposed to the web), because
+//        the AppBar is also concerned with getting out of the way of the Windows IHM(virtual keyboard).When the IHM starts to show or hide, the AppBar reacts to a WinRT event, 
+//        if the IHM would occlude the bottom edge of the visual viewport, and the AppBar.placement is set to "bottom", the AppBar will move itself to bottom align with the top 
+//        edge of the IHM.
+//      - Computing this is quite tricky as the IHM is a system pane and not actually in the DOM.AppBar uses the private _KeyboardInfo component to help calculate the top and 
+//        bottom coordinates of the "visible document" which is essentially the top and bottom of the visual viewport minus any IHM occlusion.
+//      - The AppBar is not optimized for scenarios involving optical zoom.How and where the AppBar is affected when an optical zoom(pinch zoom) occurs will vary based on the
+//        type of positioning being used for the environment.
+
 var keyboardInfo = _KeyboardInfo._KeyboardInfo;
 
 var strings = {

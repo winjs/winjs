@@ -20,6 +20,31 @@ define([
 ], function menuInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Resources, _WriteProfilerMark, Promise, _ElementUtilities, _Hoverable, _KeyboardBehavior, _Constants, Flyout, _Overlay, _Command) {
     "use strict";
     
+    // Implementation details:
+    //
+    // WinJS Menu is a child class of WinJS Flyout. Unlike flyouts, menus have a lot of policy on the content they can contain. flyouts can host any arbitrary HTML content,
+    // but menus can only host WinJS MenuCommand objects. Menu relies on its flyout base class for on screen positioning, light dismiss,  and cascading behavior.
+    //
+    // The responsibilities of the WinJS Menu include:
+    //  - Rendering and Laying out commands:
+    //      - MenuCommands are displayed in DOM order. 
+    //      - Menu will add and remove CSS classes on itself depending on whether or it contains any visible MenuCommands whose type property is set to either "toggle" or 
+    //        "flyout".
+    //      - The presence or absence of these command types in a Menu will affect the total width of all commands in the Menu as well as the horizontal alignment of their 
+    //        labels.
+    //      - Menu relies on logic defined in its _Overlay ancestor class to animate the hiding and showing of commands.
+    //	- Menu spacing for last input type: 
+    //      - The vertical padding within MenuCommands in a Menu will vary based on the last input type.
+    //      - When a menu is shown, it will check the last known input type, which is stored in the "inputType" property on the static Flyout._cascadeManager object.
+    //          - If the inputType was "touch" the vertical padding in all commands in the menu will be increased to enable a more touch friendly UI.
+    //          - If the input Type was "mouse" or "keyboard" the vertical padding in all commands in the menu will be decreased for space efficiency
+    //	- Arrow key navigation between commands.
+    //      - Menu listens to keydown events in order to redirect focus to the next/previous command whenever the Up and down arrows keys are pressed.
+    //	- Mouse over event. 
+    //      - Menu all detects mouseover events and if a mouseover occurs over one of its commands, the menu moves focus to that command.
+    //      - If a command has type === "flyout", and that command is hovered over for few hundred milliseconds, the Menu will invoke the "flyout" typed command, causing its
+    //        sub flyout to show in the cascade.
+
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Menu">Represents a menu flyout for displaying commands.</summary>
