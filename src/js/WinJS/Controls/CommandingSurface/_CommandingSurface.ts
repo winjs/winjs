@@ -32,6 +32,129 @@ require(["require-style!less/colors-commandingsurface"]);
 
 "use strict";
 
+// Implementation details:
+//
+//_CommandingSurface is the private UI component that powers most of the experience provided by the WinJS ToolBar and WinJS AppBar.Those controls each act as a specialized 
+// wrappers around the _CommandingSurface but the majority of the value they provide is the exposure of the _CommandingSurfaces UI and functionality.
+//
+//The responsibilities of the_Commanding include:
+//    • Receiving and handling a shared state machine.
+//        ? The _CommandingSurface Constructor looks for a reference to an already instantiated _OpenCloseMachine in the _CommandingSurface constructor arguments.
+//          _OpenCloseMachine is a private WinJS component that is responsible for handling state transitions._CommandingSurface expects its host control to have already
+//          instantiated and configured the _OpenCloseMachine that it wants the _CommandingSurface to use.
+//        ? _CommandingSurface has logic to provide its own default _OpenCloseMachine if one is not provided, but in most cases the host control should provide one if it ever
+//          wants to make sure that it and the _CommandingSurface's open & close states remain in sync.
+//        ? _CommandingSurface takes complete ownership of the _OpenCloseMachine once it receives it.The Host control should not store a reference to the _OpenCloseMachine, 
+//          and should rely on the _CommandingSurface to own all future communication with it as well as clean it up on dispose.
+//        ? See the AppBar and ToolBar constructors for examples of how an _OpenCloseMachine is instantiated and passed to the _CommandingSurface.
+//
+//    • Rendering with Update DOM.CommandingSurface follows the Update DOM pattern for rendering.For more information about this pattern. 
+//      See: https://github.com/winjs/winjs/wiki/Update-DOM-Pattern.
+//        ? Rendering and Laying out commands:
+//        	- _CommandingSurface expects its host control to pass it a WinJS.Binding.List < ICommand>, containing the commands that it wants rendered, to the
+//            _CommandingSurface.data property.The data property works with a WinJS.Binding.List of type WinJS.UI.AppBarCommand  or type WinJS.UI.Command as both implement the
+//            ICommand interface.
+//              ? WinJS.UI.Commands is just an alias for WinJS.UI.AppBar command.The alias was created in WinJS 4.0 since it seemed strange to have to put WinJS.UI.AppBarCommands
+//              .into a WinJS ToolBar control.
+//        	- Commands have a "section" property which in WinJS 4.0 should either be "primary" or "secondary".
+//              ? Any unrecognized section value will be interpreted as  "primary" by the _CommandingSurface.
+//              ? A Command's section property can only be set during the Commands constructor, else it defaults to "primary"
+//        	- _CommandingSurface has two primary elements in its subtree that it uses to host commands.The win-commandingsurface-actionarea and win-commandingsurface-overflowarea.
+//              ? Pictures of  commands rendered in the actionarea and overflowarea: https://msdn.microsoft.com/en-us/library/windows/apps/dn972389.aspx
+//              ? The actionarea hosts commands whose section property is set to "primary".
+//                  ® These commands appear with a label and an icon, and are only ever laid out in a single row.
+//                  ® The action area may also host a win - commandingsurface - overflowbutton element, designated by an "…" ellipsis icon.
+//                        ? Clicking the overflowbutton will open / close the _CommandingSurface
+//                        ? This will always appear to the right of all primary commands in the action area, or the reverse if in RTL.
+//                  ® There is a finite amount of space in the action area for primary commands and the overflow button.
+//              ? The overflow area hosts all secondary commands and any primary commands that the actionarea doesn't have enough room for.
+//                  ® Each time a layout pass occurs, if the actionarea is not sufficiently wide enough to fit all of the primary Commands + overflowbutton on a single row.
+//                    The _CommandingSurface will move some primary commands into the overflowarea instead.
+//                        ? App developers can specify the priority order of their primary commands through the command.priority property to control which comands will move into
+//                          the overflow area first whenever there isn't enough space in the actionarea.
+//                        ? See the Toolbar "dropout & priority" example at http://try.buildwinjs.com/playground/
+//                  ® The overflow area can fit unlimited content.As it gets more content, its element will grow to a maximum height of 50 % of the viewport, once that height
+//                    limit is reached its content will become scrollable.
+//
+//        	- The Command Layout Pipeline:
+//                ? Laying out commands is a 4 stage process managed by the function _updateCommands. The flow of stages in the CommandLayoutPipeline are:
+//                    ® idle - > newDataStage - > measuringStage - > layoutStage - > idle.
+//                ? Commands Layout may or may not complete synchronously.If a stage in the pipeline cannot be completed successfully, layout will resume from the current stage
+//                  the next time Update DOM occurs
+//                ? Idle stage:
+//                    ® We enter this stage when there is no pending command layout work to perform:
+//                        ? the _CommandingSurface is first initialized, before it has any commands in its data property.
+//                        ? When the final stage of the pipeline, the layoutStage, has completed successfully and there is again no work to do.
+//                    ® This is the default stage.
+//                ? newDataStage
+//                    ® We enter this stage when our data has changed:
+//                        ? The _CommandingSurface.data property is set to a new BindingList.
+//                        ? Individual commands in the BindingList stored as the _CommandingSurface.data property are added, removed, moved, or replaced.
+//                    ® This is the earliest stage of the pipeline and is where we build the animations for all the commands that are being newly shown, newly hidden, or 
+//                      previously visible commands that are being shifted arround by other newly shown / hidden commands next to them.
+//                ? measuringStage
+//                    ® We enter this stage when something has changed that would invalidate any cached measurements we might have stored for our DOM:
+//                        ? The newDataStage has just completed successfully.
+//                        ? _CommandingSurface.forceLayout() API has been called.This would typically be called by a host control to indicate to the _CommandingSurface that 
+//                          something in its DOM has changed size and needs to be re - measured.
+//                        ? _CommandingSurface's event handler for window resize is triggered, but the _CommandSurfaces element is unable to be measured. This could mean that some
+//                          element in our ancestor chain has set display none, or that we are not currently in the DOM.
+//                    ® This is the second stage of the pipeline and is where the _CommandingSurface measures the widths several elements including its actionarea, its
+//                      oveflowbutton element, and all of its commands.Once it takes these measurements it caches them to make future operations and the next layoutStages more 
+//                      performant.
+//                ? layoutStage:
+//                    ® The layout stage is entered whenever we need to re - render commands in the actionarea and overflowarea.For example:
+//                        ? The measuringStage has just completed successfully:
+//                        ? In response to the window resizing.The _CommandingSurface width may have been affected, causing the need to re layout so commands can re flow.
+//                        ? The _CommandingSurface has decided to show / hide its overflowbutton.This will either add to, or take away from, the available space in actionarea for
+//                          primary commands, and causing the need to re layout so commands can re flow.
+//                        ? Any property on a command, that is represented in UI, has changed.The AppBarCommand class manages a whitelist of AppBarCommand property names that can
+//                          affect UI.When those properties are changed the AppBarCommand object will throw a private mutation event.The CommandingSurface listens for those event 
+//                          and triggers a re-layout.
+//                    ® All commands in the overflowarea, both primary and secondary, are rendered differently than commands in the actionarea.Commands in the overflow area only
+//                      display their labels, not their icons.They also have different hover and active styles than the commands in the actionarea.
+//                        ? Commands rendered in the overflowArea are actually all projected as WinJS MenuCommands.
+//                          - Whenever the CommandingSurface needs to render a secondary command or overflowing primary command into the overflow area, it leaves the original 
+//                            AppBarCommand element in the action area DOM but hides it from view.It then instantiates a WinJS MenuCommand and copies over the relevant properties 
+//                            from the AppBarCommand onto the MenuCommand.Finally, the MenuCommand Is inserted into DOM of the overflow area.
+//                          - This has led to some issues where click event listeners that developers have added onto their AppBarCommand elements, don't work when the command is
+//                            represented as a MenuCommand with its own separate element in the overflow area. The only workaround is to use the AppBarCommand.onclick property to 
+//                            set the onclick behavior.
+//                        ? Any time the layout phase is entered, all primary commands are re laid out, all previous MenuCommand projections in the overflow area are disposed, and
+//                          all secondary and overflowing primary commands are projected into the Overflow area as new MenuCommands.
+//                        ? When primary commands need to overflow, the CommandingSurface will render all of the overflowing primary commands into the overflowarea first, followed
+//                          by a separator element, followed by all of the secondary commands.
+//
+//        ? Rendering the opened and closed states.
+//            - Rendering the opened or closed states will cause the height of the CommandingSurface element to grow or shrink.
+//                ? Any Control that hosts a _CommandingSurface should not attempt to set any policy on the height of the host control's element. In the Case of AppBar and 
+//                  ToolBar, they each rely on the default behavior of their div element to grow or shrink to match the height of the _CommandingSurface element.
+//                ? When the CommandingSurface opens, the direction in which the actionarea and overflowarea grow and expand will either be oriented upwards towards the top of the
+//                  screen, or downwards towards the bottom of the screen.This behavior is controlled through the _CommandingSurface.overflowDirection property.
+//                ? The _CommandingSurface "closedDisplayMode" property controls how the control should render when closed.
+//            - Correctly positioning the win - commandingsurface - overflowarea element.
+//                ? Vertically:
+//                  ® The overflowarea should not be visible when the control is closed.When the control is opened the overflowarea should appear either on the top or the bottom 
+//                    of the actionarea, depending on the overflowDirection property.
+//                  ® If there is no content in the overflowarea, opening the control should only expand the actionarea.The overflowarea should remain hidden until both, the 
+//                    control is opened AND the overflowarea contains content.
+//                ? Horizontally:
+//                  ® Normally, the opened _CommandingSurface prefers its overflowArea to be right aligned with the actionarea, however IF the overflowArea is wider than the
+//                    actionarea AND the left edge of the overflowarea would be clipped by the left edge of the screen: THEN the opened _CommandingSurface will instead left align 
+//                    its overflowArea with the left edge of the screen.
+//                      ? This work is encapsulated by the function _computeAdjustedOverflowAreaOffset
+//                      ? This functionality is especially useful when the host control of the _CommandingSurface isn't very wide, (for example, a WinJS ToolBar with a fixed width
+//                        of 100px) and is already positioned near the left edge of the screen.
+//                      ? This functionality is RTL aware.
+//
+//        ? Rendering the overflow button.The _CommandingSurface does not want to display the overflow button if there would be no additional content for the end user to discover.
+//            - The overflowbutton will rendered inside of the action area when any of the following are true:
+//                ? The control is opened
+//                ? The control is closed and there are commands in the overflowarea
+//                ? The control is closed and there is additional content to reveal in the actionarea if it were opened.(determined by the closedDisplayMode property)
+//
+//    • Keyboarding: The commanding surface owns all the logic for moving focus between commands via the 4 arrow keys and the home and end ke
+
 interface ICommandInfo {
     command: _Command.ICommand;
     width: number;

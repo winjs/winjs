@@ -33,6 +33,71 @@ require(["require-style!less/styles-toolbar"]);
 
 "use strict";
 
+// The WinJS ToolBar is a specialized UI wrapper for the private _CommandingSurface UI component. The _CommandingSurface is responsible for rendering 
+// opened and closed states, knowing how to create the open and close animations, laying out commands, creating command hide/show animations and 
+// keyboard navigation across commands. The WinJS ToolBar is very similar to the WinJS AppBar, however the ToolBar is meant to be positioned in line 
+// with your app content whereas the AppBar is meant to overlay your app content.
+//
+// The responsibilities of the ToolBar include:
+//
+//    • Seamlessly hosting the _CommandingSurface
+//        ? From an end user perspective, there should be no visual distinction between where the ToolBar ends and the _CommandingSurface begins.
+//            - ToolBar wants to rely on the _CommandingSurface to do as much of the rendering as possible. The ToolBar relies on the _CommandingSurface to render its opened 
+//              and closed states-- which defines the overall height of the ToolBar and CommandingSurface elements. The ToolBar has no policy or CSS styles regarding its own 
+//              height and ToolBar takes advantage of the default behavior of its DIV element which is to always grow or shrink to match the height of its content.
+//        ? From an end developer perspective, the _CommandingSurface should be abstracted as an implementation detail of the ToolBar as much as possible.
+//            - Developers should never have to interact with the CommandingSurface directly.The ToolBar exposes the majority of _CommandingSurface functionality through its 
+//              own APIs
+//            - There are some  HTML elements inside of the _CommandingSurface's DOM that a developer might like to style. After the _CommandingSurface has been instantiated 
+//              and added to the ToolBar DOM, the ToolBar will inject its own "toolbar" specific class-names onto these elements to make them more discoverable to developers.
+//            - Example of developer styling guidelines https://msdn.microsoft.com/en-us/library/windows/apps/jj839733.asp
+//
+//    • Open direction:
+//        ? The ToolBar and its _CommandingSurface component can open upwards or downwards.Because there is no policy on where the ToolBar can be placed in an App, the ToolBar 
+//          always wants to avoid opening in a direction that would cause any of its content to clip outside of the screen.
+//        ? When the ToolBar is opening, it will always choose to expand in the direction(up or down) that currently has the most available space between the edge of the 
+//          ToolBar element and the corresponding edge of the visual viewport.
+//        ? This means that the a ToolBar near the bottom of the page will open upwards, but if the page is scrolled down such that the ToolBar is now near the top, the next
+//          time the ToolBar is opened it will open downwards.
+//
+//    • Light dismiss
+//        ? The ToolBar is a light dismissible when opened. This means that the ToolBar is closed thru a variety of cues such as tapping anywhere outside of it, 
+//          pressing the escape key, and resizing the window.ToolBar relies on the _LightDismissService component for most of this functionality.
+//          The only pieces the ToolBar is responsible for are:
+//            - Describing what happens when a light dismiss is triggered on the ToolBar .
+//            - Describing how the ToolBar should take / restore focus when it becomes the topmost light dismissible in the light dismiss stack
+//        ? Debugging Tip: Light dismiss can make debugging an opened ToolBar tricky.A good idea is to temporarily suspend the light dismiss cue that triggers when clicking
+//          outside of the current window.This can be achieved by executing the following code in the JavaScript console window: "WinJS.UI._LightDismissService._setDebug(true)"
+//
+//    • Inline element when closed, overlay when opened:
+//        ? The design of the toolbar called for it to be an control that developers can place inline with their other app content.When the ToolBar is closed it exists as a an
+//          element in your app, next to other app content and take up space in the flow of the document.
+//        ? However, when the ToolBar opens, its vertical height will increase.Normally the change in height of an inline element will cause all of the other elements below the
+//          expanding element to move out of the way.Rather than push the rest of the app content down when opening, the design of the ToolBar called for it to overlay that content other content, while still taking up the same vertical space in the document as it did when closed.
+//        ? The implementation of this feature is very complicated:
+//            - The only way one element can overlay another is to remove it from the flow of the document and give it a new CSS positioning like "absolute" or "fixed".
+//            - However, simply removing the ToolBar element from the document to make it an overlay, would leave behind a gap in the document that all the neighboring elements 
+//              would try to fill by shifting over, leading to a jarring reflow of many elements whenever the ToolBar was opened.This was also undesirable
+//            - The final solution is as follows
+//                ? Create a transparent placeholder element that is the exact same height and width as the closed ToolBar element.
+//                ? Removing the ToolBar element from its place in the document while simultaneously inserting the placeholder element into the same spot the ToolBar element was 
+//                  just removed from.
+//                ? Inserting the ToolBar element as a direct child of the body and giving it css position: fixed; 
+//                  We insert it directly into the body element because while opened, ToolBar is a Light dismissible overlay and is subject to the same stacking context pitfalls 
+//                  as any other light dismissible. https://github.com/winjs/winjs/wiki/Dismissables-and-Stacking-Contexts
+//                ? Reposition the ToolBar element to be exactly overlaid on top of the placeholder element.
+//                ? Render the ToolBar as opened, via the _CommandingSurface API, increasing the overall height of the ToolBar.
+//            - Closing the ToolBar is basically the same steps but in reverse.
+//        ? One limitation to this implementation is that developers may not position the ToolBar element themselves directly via the CSS "position" or "float" properties.
+//            - This is because The ToolBar expects its element to be in the flow of the document when closed, and the placeholder element would not receive these same styles
+//              when inserted to replace the ToolBar element.
+//            - An easy workaround for developers is to wrap the ToolBar into another DIV element that they may style and position however they'd like.
+//
+//        ? Responding to the IHM:
+//            - If the ToolBar is opened when the IHM is shown, it will close itself.This is to avoid scenarios where the IHM totally occludes the opened ToolBar. If the ToolBar 
+//              did not close itself, then the next mouse or touch input within the App wouldn't appear to do anything since it would just go to closing the light dismissible 
+//              ToolBar anyway.
+
 var strings = {
     get ariaLabel() { return _Resources._getWinJSString("ui/toolbarAriaLabel").value; },
     get overflowButtonAriaLabel() { return _Resources._getWinJSString("ui/toolbarOverflowButtonAriaLabel").value; },

@@ -22,6 +22,81 @@ define([
 ], function flyoutInit(exports, _Global, _Base, _BaseUtils, _ErrorFromName, _Events, _Log, _Resources, _WriteProfilerMark, Animations, _Signal, _LightDismissService, _Dispose, _ElementUtilities, _KeyboardBehavior, _Hoverable, _Constants, _Overlay) {
     "use strict";
 
+    // Implementation details:
+    //
+    // The WinJS Flyout is a low policy control for popup ui and can host any arbitrary HTML that an app would like to display. Flyout derives from the private WinJS 
+    // _Overlay class, and relies on _Overlay to create the hide and show animations as well as fire all beforeshow, aftershow, beforehide, afterhide.  Flyout also has a
+    // child class, WinJS Menu, which is a high policy control for popup ui and has many more restrictions on the content it can host. 
+    //
+    // All of the following information pertains to both Flyouts and Menus, but for simplicity only the term flyout is used. Notes on Menu specific implementation details are
+    // covered separately in the Menu class.
+    //
+    // The responsibilities of the WinJS Flyout include:
+    //
+    //  • On screen positioning:
+    //      ○ A showing Flyout can be positioned in one of two ways 
+    //          - Relative to another element, as specified by the flyout "anchor", "placement", and "alignment" properties and the flyout.show() method
+    //          - At a location specified by a mouse event, as specified in the parameters to the flyout.showAt(MouseEvent) method.
+    //      ○ A shown Flyout always wants to stay within bounds of the visual viewport in the users App. In IE11, Edge, Win 8.1 apps and Win 10 apps, the Flyout uses CSS 
+    //        position: -ms-device-fixed; which will cause its top, left, bottom & right CSS properties be styled in relation to the visual viewport. 
+    //      ○ In other browsers -ms-device-fixed positioning doesn't exist and the Flyout falls back to CSS position: fixed; which will cause its top, left, bottom & right 
+    //        CSS properties be styled in relation to the layout viewport. 
+    //      ○ See http://quirksmode.org/mobile/viewports2.html for more details on the difference between layout viewport and visual viewport.
+    //      ○ Being able to position the Flyout relative to the visual viewport is particularly important in windows 8.1 apps and Windows 10 apps (as opposed to the web), 
+    //        because the Flyout is also concerned with getting out of the way of the Windows IHM (virtual keyboard). When the IHM starts to show or hide, the Flyout reacts to 
+    //        a WinRT event, if the IHM would occlude part of a Flyout, the Flyout will move itself  up and out of the way, normally pinning its bottom edge to the top edge of 
+    //        the IHM.
+    //      ○ Computing this is quite tricky as the IHM is a system pane and not actually in the DOM. Flyout uses the private _KeyboardInfo component to help calculate the top
+    //        and bottom coordinates of the "visible document" which is essentially the top and bottom of the visual viewport minus any IHM occlusion.
+    //      ○ The Flyout is not optimized for scenarios involving optical zoom. How and where the Flyout is affected when an optical zoom (pinch zoom) occurs will vary based on
+    //        the type of positioning being used for the environment.
+    //
+    //  • Rendering
+    //		○ By default the flyout has a minimum height and minmium width defined in CSS, but no maximums, instead preferring to allow its element to  grow to the size of its
+    //        content.
+    //		○ If a showing Flyout would be taller than the height of the "visible document" the flyout's show logic will temporarily constrain the max-height of the flyout 
+    //        element to fit tightly within the upper and lower bounds of the "visible document", for as long as the flyout remains shown. While in this state the Flyout will 
+    //        acquire a vertical scrollbar.
+    //
+    //  • Cascading Behavior:
+    //      ○ Starting in WinJS 4, flyouts, can be cascaded. Previous versions of WinJS did not allow more than one instance of a flyout to be shown at the same time. 
+    //        Attempting to do so would first cause any other shown flyout to hide. 
+    //      ○ Now any flyout can be shown as part of a cascade of other flyouts, allowing any other ancestor flyouts in the same cascade can remain open. 
+    //      ○ The Flyout class relies on a private singleton _CascadeManager component to manage all flyouts in the current cascade. Here are some important implementation
+    //        details for _CascadeManager:
+    //          - The cascade is represented as a stack data structure and should only ever contain flyouts that are shown.
+    //          - If only one flyout is shown, it is considered to be in a cascade of length 1.
+    //          - A flyout "A" is considered to have an ancestor in the current cascade if flyout A's "anchor" property points to any element contained by ANY of the flyouts
+    //            in the current cascade, including the flyout elements themselves.
+    //          - Any time a flyout "A" transitions from hidden to shown, it is always added to the top of the stack. 
+    //              □ Only one cascade of flyouts can be shown at a time. If flyout "A" is about to be shown, and has no ancestors in the current cascade, all flyouts in the
+    //                current cascade must first be hidden and popped from the stack, then flyout "A" may be shown and pushed into the stack as the head flyout in a new cascade.
+    //              □ If flyout "A" had an ancestor flyout in the cascade, flyout "A" will be put into the stack directly above its ancestor. 
+    //              □ If in the above scenario, the ancestor flyout already had other descendant flyouts on top of it in the stack, before flyout "A" can finish showing, all of
+    //                those flyouts are first popped off the stack and hidden,  then flyout "A" is pushed into the stack directly above its ancestor.
+    //          - Any time a flyout "A" is hidden, it is removed from the stack and no longer in the cascade. If that flyout also had any descendant flyouts in the cascade, 
+    //            they are all hidden and removed from the stack as well. Any of flyout A's ancestor flyouts that were already in the cascade will remain there.
+    //
+    //  • Light Dismiss
+    //      ○ Cascades of flyouts are light dismissible, but an individual flyout is not.
+    //          - The WinJS Flyout implements a private LightDismissableLayer component to track focus and interpret light dismiss cues for all flyouts in the cascade. 
+    //            The LightDismissableLayer is stored as a property on the _CascadeManager 
+    //          - Normally when a lightdismissable control loses focus, it would trigger light dismiss, but that is not always the desired scenario for flyouts in the cascade. 
+    //              □ When focus moves from any Flyout in the cascade, to an element outside of the cascade, all flyouts in the cascade should light dismiss.
+    //              □ When focus moves from an ancestor flyout "A" in the cascade, to descendant flyout "B" also in the cascade, no flyouts should light dismiss. A common 
+    //                scenario for this is when flyout B first shows itself, since flyouts always take focus immediately after showing. 
+    //              □ When flyout "A" receives focus, all of A's descendant flyouts in the cascade should light dismiss. A common scenario for this is when a user clicks on an
+    //                ancestor flyout in the cascade, all descendant flyouts will close. WinJS Menu implements one exception to this rule where sometimes the immediate 
+    //                descendant of the ancestor flyout would be allowed to remain open.
+    //          - The LightDismissibleLayer helps WinJS _LightDismissService dynamically manage the z-indices of all flyouts in the cascade. Flyouts as light dismissable 
+    //            overlays are subject to the same stacking context pitfalls as any other light dismissible overlay: 
+    //            https://github.com/winjs/winjs/wiki/Dismissables-and-Stacking-Contexts and therefore every flyout should always be defined as a direct child of the 
+    //            <body> element.
+    //      ○ Debugging Tip: Light dismiss can make debugging shown flyouts tricky. A good idea is to temporarily suspend the light dismiss cue that triggers when clicking
+    //        outside of the current window. This can be achieved by executing the following code in the JavaScript console window: 
+    //        "WinJS.UI._LightDismissService._setDebug(true)"
+
+
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
         /// <field>
         /// <summary locid="WinJS.UI.Flyout">
