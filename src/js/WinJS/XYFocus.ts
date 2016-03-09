@@ -1,4 +1,111 @@
 ﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+//High Level
+// -Provides direct APIs to navigate focus to each cardinal direction relative
+//  to the current focused element within a specified container
+// -Directly listens to configurable key inputs and invokes navigation
+//  automatically
+// -Coordinates with XYFocus implementations within iframes for seamless focus
+//  navigation into and out of an iframe
+
+//Navigation Algorithm
+// -Navigation API is called with a given direction
+// -Source element is established, usually the current focused element
+// -All elements within the focus root (document.body by default) are gathered
+//      -Each element's distance from the source element is measured
+//      -Each element is assigned a score value which takes the following into
+//       account, in order of importance:
+//          -The relative size and alignment difference between the element
+//           and history rectangle
+//          -The distance between the element and source element along the
+//           main axis
+//          -The relative size and alignment difference between the element
+//           and source element
+//          -The distance the element and source element  along the co- axis
+// -The highest scoring element is resolved which is the candidate for navigation
+// -NOTE: a more in -depth summary of this algorithm can be found in the actual
+//        source code which has been well- maintained as the code evolved
+
+//Customizations
+// The focus request can be customized by the following:
+//   -Specific source rectangle/ element, algorithm calculates from this
+//    rectangle instead of the current focused element
+//   -A focus root, only elements within the focus root are considered as
+//    potential targets
+//   -A history rectangle, which heavily favors potential target elements that
+//    are aligned and of similar size to the history rectangle
+//   -Any focusable element can be also annotated with a
+//    "data-win-focus='{ left: "#myDiv" }'" attribute.This attribute is referred
+//    to as an XYFocus override.This allows you to directly control where focus
+//    should move from this element, given the requested direction.
+
+//Automatic Focus
+// The XYFocus module can be configured to listen to specific hotkeys via
+// XYFocus.keyCodeMap.When a mapped key input is detected, it will automatically
+// invoke the above navigation algorithm.By default, the Xbox DPad and left thumbstick
+// keys are mapped.These can be cleared and new keys(e.g.arrow keys, WASD) can be added.
+
+//Suspension
+// Any element can be annotated with "win-xyfocus-suspended", the focus navigation
+// algorithm will ignore any focus request when source of the input comes from within a
+// suspended element.This helps custom controls to declare their element root as suspended
+// and handle focus navigation manually.
+// Taking the ListView as an example, XYFocus with arrow key mappings would heavily conflict
+// with this control.Since the ListView manually handles arrow keys, and does not support
+// direct focus movement in some scenarios around its virtualization logic, the user would
+// experience unwanted behaviors.However, we don't want to just completely disable XYFocus
+// as the rest of the page properly leverages it.To fix this issue, the ListView root element
+// would be annotated with "win-xyfocus-suspended" and XYFocus will not process any input when
+// the source element is contained within the suspended element.
+
+//Toggle Mode
+//Problem Statement
+// Some native elements have their own input logic defined, such as a range input element.
+// If the developer has mapped the arrow keys for XYFocus navigation, then we run into the
+// problem where a right arrow key would navigate to the right element from the input element
+// (if any) instead of manipulating the range values.The opposite scenario/ problem is also true.
+//ToggleMode rules
+// Any element can be annotated with "win-xyfocus-togglemode".An element with just the toggle mode
+// class is said to be in the toggle- mode - rest state, in this state, the element is not treated
+// in any special way.An element can be toggled from toggle-mode-rest to toggle-mode-active
+// state by further annotating it with "win-xyfocus-togglemode-active" in which case the focus
+// navigation algorithm treats the element as if it was suspended.
+//Additional KeyCodeMappings
+// XYFocus.keyCodeMap.accept and XYFocus.keyCodeMap.cancel can be used to control which keys toggle
+// the modes. "Accept" toggles from rest to active, and "Cancel" toggles it from active to rest.
+//Solution
+// A list of input sensitive native HTML elements have the toggle mode logic applied to automatically
+// (see list in XYFocus source code, better maintained there than here).This means that if the
+// XYFocus code navigates to an element type in the list, it will automatically apply the toggle
+// mode onto the element.If the user wants to interact with the element directly, they can press a
+// key mapped in XYFocus.keyCodeMap.accept to activate the toggle mode to suspend focus requests.
+
+//Considerations when authoring new controls
+// When authoring a new control, you may just let XYFocus handle all your focus navigation if the
+// focus navigation story is trivial.If not, then consider using the win-xyfocus-suspended class
+// on the control root to disable XYFocus within your control.In suspended mode, you can still
+// leverage XYFocus.findNextFocusableElement(direction) to aid your custom focus implementation.
+// If the new control's focus movement is trivial but conflicts with existing XYFocus keys, like
+// the Rating control, then leverage win- xyfocus - togglemode to enable toggling of suspension.
+
+//Dealing with edge cases
+// Rule of thumb: Ignore it! One important thing to accept is that XYFocus is a heuristic-it is
+// not a general focus management solution.It works very well in orthogonal, grid - like layouts
+// and will fail utterly outside of them.
+//	-There are numerous layouts that can break the XYFocus' heuristic for determining the next
+//   focusable element.Most of these are unnatural and contrived layouts where buttons are
+//   purposely misaligned and overlapping.Historically, we have ignored these issues.
+//  -If a valid edge case is found, we handle it on a case-by -case basis.In most cases,
+//   leveraging the XYFocus override is good enough.
+//	-If anything more fundamental with the heuristics are found (which has not happened since
+//   XYFocus was handed to WinJS by Xbox), consider tweaking the scoring constants - this is the
+//   most EXTREME case.
+//  -Another category of edge cases revolves around history focus.These have also been historically
+//   ignored as no real app has produced any valid layout that triggers these issues.
+// One common example here is that you could have a list of buttons so long that the score from
+// the primary axis trumps the history score, however, you'd need 10,000s of pixels of consecutive
+// buttons which is unrealistic as a focus movement likely will trigger a scroll which invalidates history.
+
 import _Global = require("./Core/_Global");
 
 import _Base = require("./Core/_Base");
@@ -666,7 +773,7 @@ function _handleCaptureKeyEvent(e: KeyboardEvent) {
     var activeElement = <HTMLElement>document.activeElement;
     var shouldPreventDefault = false;
     var stateHandler = _getStateHandler(<HTMLElement>document.activeElement);
-   
+
     if (keyCodeMap.accept.indexOf(e.keyCode) !== -1) {
         shouldPreventDefault = stateHandler.accept(activeElement);
     } else if (keyCodeMap.cancel.indexOf(e.keyCode) !== -1) {

@@ -1,6 +1,95 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
 /// <reference path="../../../../../typings/require.d.ts" />
 
+//High Level
+// -A content control that consists of a header area and content area
+// -The custom area is wrapped in a PivotItem control, each PivotItem maps
+//  to exactly one header
+// -The headers are contained in the headers container in the header area
+// -Left and right to the headers container, within the header area, are
+//  optional custom header elements
+// -The headers container display logic adapts with available space
+//   -If all header items fit in the headers container, the headers are said
+//    to be static mode; headers are displayed in order and the current
+//    selected header item is highlighted (like a Tab control)
+//   -If there is not enough space in the headers container to fit all header
+//    items, the headers are said to be in overflow mode; the current selected
+//    item is highlighted and always the first displayed header, followed by as
+//    many following headers can fit in the headers container (like the Windows
+//    Phone Mail app)
+// -PivotItems are loaded on- demand, the first time they are navigated to
+// -PivotItems can be navigated between by:
+//    -Tapping/Clicking on a header that is not the current header
+//    -Swiping on the content area
+//      -True swiping in the ideal environment
+//      -Swipe detection in all other supported environments
+//      -Via API
+
+//Anatomy
+// Pivot Root Element
+//  -Header Area
+//    -Header Items
+//      -Left custom header
+//      -Headers Container
+//      -Right custom header
+//    -Viewport
+//      -Surface
+//        -Current PivotItem
+			
+//PivotItems Layout
+// The surface is 300% of the pivot control's width; one full-length left and
+// right of the visible area.The PivotItem content is centered at 100% offset
+// from the left (or right in RTL).The full- length spaces on the left and
+// right to the visible area are used for animation during navigation. During
+// navigation, the old content animates off the viewport to one side, and the
+// new content animates in from the other side.
+
+//Headers Container Rendering
+//Static Mode
+// On Initial Load
+//  -Full render of the headers container
+// When PivotItems are added/ removed
+//  -Measure new total header items width
+//    -If it fits within the available width of the headers container:
+//          Full render of the headers container
+//    -Does not fit:
+//          Transition to Overflow mode
+// When a PivotItem's header property is modified
+//  -Measure new total header items width
+//    -Fits:
+//          Update affected header text
+//    -Does not fit:
+//          Transition to Overflow mode
+// Overflow Mode
+//  -Full render of the headers container on initial load, when PivotItems are
+// added/removed and when a PivotItem's header property is modified. Before
+// each re- render, it measures to see if the new total header items width fits
+// in the header track and transitions to the Static mode if it does.
+
+//Navigation
+//Touch Mode
+// When a touch interaction is detected, the pivot control is put into touch mode.
+//True Swiping
+// Requirements for this mode:
+//  -MSManipulationStateChanged event is available
+//  -Snap Points styling/ APIs are available
+// The pivot content pans and sticks-to-your-finger.When you swipe lightly, the
+// content automatically recenters on touch release.When the swipe is "strong"
+// enough, it flips off the edge of the Pivot control and the next/ previous
+// PivotItem flips in. This is only possible when the MSManipulationStateChanged
+// event is available since during its inertia state, the API predicts how far
+// the swipe goes which allows us to decide whether we should navigate or not.
+//Swipe Detection
+// When the requirements for True Swiping aren't met, then the pivot content
+// is static and always centered.A custom swipe detect algorithm is runs on
+// touch input that takes into account the distance traveled and time between
+// touchstart and touchend.
+//Mouse Mode
+// When not in touch mode, the pivot control is mouse mode.In this mode, we
+// only accept clicks on the header or clicks on the navigtion arrows to
+// navigate the pivot (besides via API).
+
+
 import _Global = require("../../Core/_Global");
 
 import Animations = require("../../Animations");
@@ -1516,5 +1605,5 @@ _Base.Class.mix(Pivot, _Events.createEventProperties(
     _EventNames.itemAnimationEnd,
     _EventNames.itemAnimationStart,
     _EventNames.selectionChanged
-    ));
+));
 _Base.Class.mix(Pivot, _Control.DOMEventMixin);

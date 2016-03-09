@@ -1,4 +1,58 @@
 // Copyright (c) Microsoft Corporation.  All Rights Reserved. Licensed under the MIT License. See License.txt in the project root for license information.
+
+// High Level
+//	- Displays a suggestions list below the input box
+//		- Simple suggestions
+//		- Suggestion results with icons
+//		- Separators
+//	- Maintains a history of previous search queries
+
+//Emphasis on Light-Weight
+// The ASB is a very policy-light control that just displays a list of suggestions
+// below the input box. It does NOT filter the suggestions based on the current input,
+// or sorts the suggestions in any way. It is entirely up to the app developer what and
+// what not to display in the suggestions list, given the current input query.
+
+// Anatomy
+// ASB
+//	- Input box
+//	- Suggestion List wrapper div
+//		? Repeater
+
+// Fake focus and keyboard navigation
+// When the selection list with more than one item is displayed, the user can arrow up
+// and down the list of suggestions which visually mimics focus movement, however, it
+// is not. The focus is always maintained on the input box itself and the control
+// programmatically maintains and styles the "current selected suggestion" indicating
+// what is currently selected.
+
+//IME support
+// The ASB has special IME support in IE/Edge, whenever the msInputContext function is
+// available. The ASB will reposition the suggestion list to account for the space the
+// IME takes up.
+
+//SearchBox
+//History
+// A bit of history first. The SearchBox control predates the ASB control, yet the
+// SearchBox derives from the ASB implementation. The reason is that the SearchBox
+// originally solved a very specific scenario, which is Windows 8 Search contract
+// integration; both, the contract and the control have since been deprecated. Going
+// forward, a new Search-like control was needed, which is the AutoSuggestBox and its
+// specifications are identical to the SearchBox, minus the Search contract integration.
+// So the creation of the ASB was mostly a deletion of code from the SearchBox. Finally,
+// for compatibility's sake, the SearchBox control and all of its original API needed to
+// still exist which is why the SearchBox control simply derives from the ASB and adding
+// all the deleted stuff back on top.
+
+//Features
+//	- FocusOnKeyboardInput (Type-To-Search)
+//    This feature assumes that the SearchBox is a singleton (again, legacy reasons) and
+//    kidnaps every typed key. It first moves focus into the SearchBox, so the typed key
+//    appears in the SearchBox.
+//	- Buddy Icon (The magnifier button next to the input)
+//	  The SearchBox has a magnifier button next to the input that, when clicked, is
+//    equivalent to clicking on a suggestion or hitting the enter key.
+
 define([
     "exports",
     "../Core/_Global",
