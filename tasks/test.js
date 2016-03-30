@@ -179,8 +179,12 @@
     <script>                                                                                                                \r\n\
     if (window.MSApp) {                                                                                                     \r\n\
         window.addEventListener("error", function () { return true; });                                                     \r\n\
-        window.removeEventListener("load", QUnit.load);                                                                     \r\n\
-        window.addEventListener("load", function () { MSApp.execUnsafeLocalFunction(function () { QUnit.load(); }); });     \r\n\
+        if(window.MSApp.execUnsafeLocalFunction) { /* This API was removed in Windows 10 */                                 \r\n\
+            window.removeEventListener("load", QUnit.load);                                                                 \r\n\
+            window.addEventListener("load", function () {                                                                   \r\n\
+                MSApp.execUnsafeLocalFunction(function () { QUnit.load(); });                                               \r\n\
+            });                                                                                                             \r\n\
+        }                                                                                                                   \r\n\
         WinJS.Resources.getString = WinJS.Resources._getStringJS;                                                           \r\n\
     }                                                                                                                       \r\n\
     </script>                                                                                                               \r\n\
