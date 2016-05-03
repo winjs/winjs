@@ -564,9 +564,13 @@ export class AppBar {
     }
 
     private _handleHidingKeyboard() {
-        // Make sure AppBar has the correct offsets since it could have been displaced by the IHM.
-        this._adjustedOffsets = this._computeAdjustedOffsets();
-        this._commandingSurface.deferredDomUpate();
+        var duration = keyboardInfo._animationShowLength + keyboardInfo._scrollTimeout;
+        Promise.timeout(duration).then(
+            () => {
+                // Make sure AppBar has the correct offsets since it could have been displaced by the IHM.
+                this._adjustedOffsets = this._computeAdjustedOffsets();
+                this._commandingSurface.deferredDomUpate();
+            });
     }
 
     private _computeAdjustedOffsets() {
