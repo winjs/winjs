@@ -287,12 +287,14 @@ define([
                         } else {
                             newDate = value;
                         }
-
-                        var oldDate = this._currentDate;
-                        if (oldDate !== newDate) {
-                            this._currentDate = newDate;
-                            this._updateDisplay();
+                        if (newDate) {
+                            var oldDate = this._currentDate;
+                            if (oldDate !== newDate) {
+                                this._currentDate = newDate;
+                                this._updateDisplay();
+                            }
                         }
+                        
                     }
                 },
 
