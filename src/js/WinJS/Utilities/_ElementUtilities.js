@@ -790,7 +790,7 @@ define([
             _resizeEvent: { get: function () { return 'WinJSElementResize'; } }
         }
     );
-   
+
     // - object: The object on which GenericListener will listen for events.
     // - objectName: A string representing the name of *object*. This will be
     //   incorporated into the names of the events and classNames created by
@@ -2094,18 +2094,9 @@ define([
                 return 0;
             }
 
-            var left = element.offsetLeft;
-            var e = element.parentNode;
-            while (e) {
-                left -= e.offsetLeft;
-
-                if (e === parent) {
-                    break;
-                }
-                e = e.parentNode;
-            }
-
-            return left;
+            var elementPosition = exports._getPositionRelativeTo(element, null);
+            var parentPosition = exports._getPositionRelativeTo(parent, null);
+            return elementPosition.left - parentPosition.left;
         },
 
         getRelativeTop: function (element, parent) {
@@ -2127,18 +2118,9 @@ define([
                 return 0;
             }
 
-            var top = element.offsetTop;
-            var e = element.parentNode;
-            while (e) {
-                top -= e.offsetTop;
-
-                if (e === parent) {
-                    break;
-                }
-                e = e.parentNode;
-            }
-
-            return top;
+            var elementPosition = exports._getPositionRelativeTo(element, null);
+            var parentPosition = exports._getPositionRelativeTo(parent, null);
+            return elementPosition.top - parentPosition.top;
         },
 
         getScrollPosition: getScrollPosition,
