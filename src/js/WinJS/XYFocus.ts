@@ -686,6 +686,10 @@ function _isInInactiveToggleModeContainer(element: HTMLElement) {
 }
 
 function _isToggleMode(element: HTMLElement) {
+    if (_ElementUtilities.hasClass(_Global.document.body, ClassNames.xboxPlatform)) {
+        return false;
+    }
+
     if (_ElementUtilities.hasClass(element, ClassNames.toggleMode)) {
         return true;
     }
