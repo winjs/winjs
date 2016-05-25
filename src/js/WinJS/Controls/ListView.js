@@ -1189,6 +1189,9 @@ define([
 
                 _forceLayoutImpl: function ListView_forceLayoutImpl(viewChange) {
                     var that = this;
+                    if (!this._versionManager) {
+                        return;
+                    }
                     this._versionManager.unlocked.then(function () {
                         that._writeProfilerMark("_forceLayoutImpl viewChange(" + viewChange + "),info");
 
