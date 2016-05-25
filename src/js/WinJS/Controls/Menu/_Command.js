@@ -11,8 +11,9 @@ define([
     '../../Utilities/_Control',
     '../../Utilities/_ElementUtilities',
     '../_LegacyAppBar/_Constants',
-    '../Flyout/_Overlay'
-], function menuCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, Promise, _Control, _ElementUtilities, _Constants, _Overlay) {
+    '../Flyout/_Overlay',
+    '../Tooltip'
+], function menuCommandInit(exports, _Global, _Base, _ErrorFromName, _Resources, Promise, _Control, _ElementUtilities, _Constants, _Overlay, Tooltip) {
     "use strict";
 
     _Base.Namespace._moduleDefine(exports, "WinJS.UI", {
@@ -257,6 +258,21 @@ define([
                     }
                 },
 
+                /// <field type="String" locid="WinJS.UI.AppBarCommand.tooltip" helpKeyword="WinJS.UI.AppBarCommand.tooltip">Gets or sets the tooltip text of the AppBarCommand.</field>
+                tooltip: {
+                    get: function () {
+                        return this._tooltip;
+                    },
+                    set: function (value) {
+                        this._tooltip = value;
+
+                        // Update already-constructed tooltips. Separators and content commands won't have these:
+                        if (this._tooltipControl) {
+                            this._tooltipControl.innerHTML = this._tooltip;
+                        }
+                    }
+                },
+
                 /// <field type="Boolean" locid="WinJS.UI.MenuCommand.selected" helpKeyword="WinJS.UI.MenuCommand.selected">
                 /// Gets or sets the selected state of a toggle button. This property is true if the toggle button is selected; otherwise, it's false.
                 /// <compatibleWith platform="Windows" minVersion="8.0"/>
@@ -357,6 +373,10 @@ define([
                         return;
                     }
                     this._disposed = true;
+                    
+                    if (this._tooltipControl) {
+                        this._tooltipControl.dispose();
+                    }
                 },
 
                 addEventListener: function (type, listener, useCapture) {
@@ -431,6 +451,9 @@ define([
                     this._labelSpan = this._toggleSpan.nextElementSibling;
                     this._flyoutSpan = this._labelSpan.nextElementSibling;
 
+                    // Attach a tooltip - Note: we're going to stomp on it's setControl so we don't have to make another DOM element to hang it off of.
+                    // This private _tooltipControl attribute is used by other pieces, changing the name could break them.
+                    this._tooltipControl = new Tooltip.Tooltip(this._element);
                 },
                 _sendEvent: function MenuCommand_sendEvent(eventName, detail) {
                     if (!this._disposed) {
