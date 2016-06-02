@@ -96,7 +96,7 @@
 
             @pane-left: {
                 .win-splitview-panewrapper {
-                    position: static;
+                    position: absolute;
                     top: 0;
                     left: 0;
                     right: auto;
@@ -117,6 +117,7 @@
             &.win-splitview-placementleft {
                 @pane-left();
                 .RTL(@pane-right);
+                position: static;
             }
 
             &.win-splitview-placementright {
