@@ -242,7 +242,10 @@ define(['exports',
                         } else if (this._icon && this._icon.length > 1) {
                             // Must be an image, set that
                             this._imageSpan.textContent = "";
-                            this._imageSpan.style.backgroundImage = this._icon;
+                            if(/[\/\\.]/.test(this._icon))
+                                this._imageSpan.style.backgroundImage = this._icon;
+                            else
+                                _ElementUtilities.addClass(this._imageSpan, this._icon);
                             this._imageSpan.style.msHighContrastAdjust = "none";
                             this._imageSpan.style.display = "";
                         } else {
