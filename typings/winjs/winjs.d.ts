@@ -2542,6 +2542,8 @@ declare module WinJS.UI {
         fontincrease,
         fontsize,
         cellphone,
+        print,
+        share,
         reshare,
         tag,
         repeatone,
@@ -2810,8 +2812,8 @@ declare module WinJS.UI {
 
     //#region Interfaces
 
-    /** 
-     * Define the shape of a Command object to be used in AppBar and ToolBar controls. 
+    /**
+     * Define the shape of a Command object to be used in AppBar and ToolBar controls.
     **/
     export interface ICommand {
         //#region Methods
@@ -4066,7 +4068,7 @@ declare module WinJS.UI {
         **/
         placement: string;
 
-        /** 
+        /**
          * Display options for the AppBar when closed.
         **/
         static ClosedDisplayMode: {
@@ -4088,7 +4090,7 @@ declare module WinJS.UI {
             full: string;
         };
 
-        /** 
+        /**
          * Display options for AppBar placement in relation to the main view.
         */
         static Placement: {
@@ -5397,7 +5399,7 @@ declare module WinJS.UI {
         dispose(): void;
 
         /**
-         * Forces the Hub to update its layout. 
+         * Forces the Hub to update its layout.
          * Use this function when making the Hub visible again after you've set its style.display property to "none” or after style changes have been made that affect the size of the HubSections.
         **/
         forceLayout(): void;
@@ -5954,13 +5956,13 @@ declare module WinJS.UI {
         onselectionchanging(eventInfo: CustomEvent): void;
 
         /**
-         * Raised when the header's visibility property changes. 
+         * Raised when the header's visibility property changes.
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
         **/
         onheadervisibilitychanged(eventInfo: CustomEvent): void;
 
         /**
-         * Raised when the footer's visibility property changes. 
+         * Raised when the footer's visibility property changes.
          * @param eventInfo An object that contains information about the event. The detail property of this object contains the following sub-properties: detail.visible.
         **/
         onfootervisibilitychanged(eventInfo: CustomEvent): void;
@@ -6883,7 +6885,7 @@ declare module WinJS.UI {
         //#region Events
 
         /**
-         * This API supports the Windows Library for JavaScript infrastructure and is not intended to be used directly from your code. 
+         * This API supports the Windows Library for JavaScript infrastructure and is not intended to be used directly from your code.
          * Use NavBarContainer.oninvoked instead.
         **/
         oninvoked: any;
@@ -8001,7 +8003,7 @@ declare module WinJS.UI {
 
         //# region Events
 
-        /** 
+        /**
          * Raised when a SplitViewCommand has been invoked.
          * @param eventInfo An object that contains information about the event.
         **/
@@ -8443,7 +8445,7 @@ declare module WinJS.UI {
         public dispose(): void;
 
         /**
-         * Forces the ToolBar to update its layout. 
+         * Forces the ToolBar to update its layout.
          * Use this function when the window did not change size, but the ToolBar itself did.
         **/
         public forceLayout(): void;
@@ -9947,7 +9949,7 @@ declare module WinJS.Utilities {
         push(...items: T[]): number;
 
         /**
-         * Reverses the elements in an Array. 
+         * Reverses the elements in an Array.
         **/
         reverse(): T[];
 
@@ -9956,7 +9958,7 @@ declare module WinJS.Utilities {
         **/
         shift(): T;
 
-        /** 
+        /**
          * Returns a section of an array.
          * @param start The beginning of the specified portion of the array.
          * @param end The end of the specified portion of the array.
@@ -10019,14 +10021,14 @@ declare module WinJS.Utilities {
 
         /**
          * Calls a defined callback function on each element of an array, and returns an array that contains the results.
-         * @param callbackfn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array. 
+         * @param callbackfn A function that accepts up to three arguments. The map method calls the callbackfn function one time for each element in the array.
          * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
         **/
         map<U>(callbackfn: (value: T, index: number, array: T[]) => U, thisArg?: any): U[];
 
         /**
-         * Returns the elements of an array that meet the condition specified in a callback function. 
-         * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array. 
+         * Returns the elements of an array that meet the condition specified in a callback function.
+         * @param callbackfn A function that accepts up to three arguments. The filter method calls the callbackfn function one time for each element in the array.
          * @param thisArg An object to which the this keyword can refer in the callbackfn function. If thisArg is omitted, undefined is used as the this value.
         **/
         filter(callbackfn: (value: T, index: number, array: T[]) => boolean, thisArg?: any): T[];
@@ -10044,15 +10046,15 @@ declare module WinJS.Utilities {
         **/
         reduce<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;
 
-        /** 
+        /**
          * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
-         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array.
          * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
         **/
         reduceRight(callbackfn: (previousValue: T, currentValue: T, currentIndex: number, array: T[]) => T, initialValue?: T): T;
-        /** 
+        /**
          * Calls the specified callback function for all the elements in an array, in descending order. The return value of the callback function is the accumulated result, and is provided as an argument in the next call to the callback function.
-         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array. 
+         * @param callbackfn A function that accepts up to four arguments. The reduceRight method calls the callbackfn function one time for each element in the array.
          * @param initialValue If initialValue is specified, it is used as the initial value to start the accumulation. The first call to the callbackfn function provides this value as an argument instead of an array value.
         **/
         reduceRight<U>(callbackfn: (previousValue: U, currentValue: T, currentIndex: number, array: T[]) => U, initialValue: U): U;

@@ -171,6 +171,8 @@ define([
                     "fontincrease",
                     "fontsize",
                     "cellphone",
+                    "print",
+                    "share",
                     "reshare",
                     "tag",
                     "repeatone",
