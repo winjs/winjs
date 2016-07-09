@@ -114,6 +114,11 @@ export declare class MenuCommand {
     selected: boolean;
 
     /**
+     * Gets or sets the tooltip of the command.
+    **/
+    tooltip: string;
+
+    /**
      * Gets the type of the command.
     **/
     type: string;
