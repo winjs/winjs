@@ -62,7 +62,7 @@ require(["require-style!less/styles-lightdismissservice"]);
 //   Call WinJS.UI._LightDismissService._setDebug(true)
 //   This disables the "window blur" light dismiss cue. It enables you to move focus
 //   to the debugger or DOM explorer without causing the light dismissables to close.
-// 
+//
 // Example usage of _LightDismissService
 //   To implement a new light dismissable, you just need to:
 //     - Tell the service when you are shown
@@ -75,25 +75,25 @@ require(["require-style!less/styles-lightdismissservice"]);
 //   Here's what a basic light dismissable looks like in code:
 //
 //     var SimpleOverlay = _Base.Class.define(function (element) {
-//         var that = this; 
-//         this.element = element || document.createElement("div"); 
-//         this.element.winControl = this; 
+//         var that = this;
+//         this.element = element || document.createElement("div");
+//         this.element.winControl = this;
 //         _ElementUtilities.addClass(this.element, "simpleoverlay");
 //
-//         this._dismissable = new _LightDismissService.LightDismissableElement({ 
+//         this._dismissable = new _LightDismissService.LightDismissableElement({
 //             element: this.element,
 //             tabIndex: this.element.hasAttribute("tabIndex") ? this.element.tabIndex : -1,
-//             onLightDismiss: function () { 
-//                 that.hide(); 
-//             } 
-//         }); 
+//             onLightDismiss: function () {
+//                 that.hide();
+//             }
+//         });
 //     }, {
 //         show: function () {
-//             _ElementUtilities.addClass(this.element, "simpleoverlay-shown"); 
+//             _ElementUtilities.addClass(this.element, "simpleoverlay-shown");
 //             _LightDismissService.shown(this._dismissable);
 //         },
 //         hide: function () {
-//             _ElementUtilities.removeClass(this.element, "simpleoverlay-shown"); 
+//             _ElementUtilities.removeClass(this.element, "simpleoverlay-shown");
 //             _LightDismissService.hidden(this._dismissable);
 //         }
 //     });
@@ -165,7 +165,7 @@ export var DismissalPolicies = {
     modal: function LightDismissalPolicies_modal_onShouldLightDismiss(info: ILightDismissInfo): boolean {
         // Light dismiss cues should not be seen by dismissables behind the modal
         info.stopPropagation();
-        
+
         switch (info.reason) {
             case LightDismissalReasons.tap:
             case LightDismissalReasons.lostFocus:
@@ -235,7 +235,7 @@ export interface ILightDismissable {
     onShow(service: ILightDismissService): void;
     // This dismissable is now hidden (i.e. has been removed from the light dismiss service).
     onHide(): void;
-    
+
     // Called when a keyDown, keyUp, or keyPress event happens on this dismissable or on a
     // dismissable that is higher in the light dismiss stack. Gives light dismissables the
     // opportunity to intercept keyboard events that occur on light dismissables that are
@@ -276,7 +276,7 @@ export interface ILightDismissableElementArgs {
     //     element.
     tabIndex: number;
     onLightDismiss(info: ILightDismissInfo): void;
-    
+
     onTakeFocus?(useSetActive: boolean): void;
     onShouldLightDismiss?(info: ILightDismissInfo): boolean;
 }
@@ -299,12 +299,12 @@ class AbstractDismissableElement implements ILightDismissable {
         // Allow the caller to override the default implementations of our ILightDismissable methods.
         if (args.onTakeFocus) { this.onTakeFocus = args.onTakeFocus; }
         if (args.onShouldLightDismiss) { this.onShouldLightDismiss = args.onShouldLightDismiss; }
-        
+
         this._ldeOnKeyDownBound = this._ldeOnKeyDown.bind(this);
         this._ldeOnKeyUpBound = this._ldeOnKeyUp.bind(this);
         this._ldeOnKeyPressBound = this._ldeOnKeyPress.bind(this);
     }
-    
+
     // Helper which can be called when implementing onTakeFocus. Restores focus to
     // whatever element within the dismissable previously had focus. Returns true
     // if focus was successfully restored and false otherwise. In the false case,
@@ -323,7 +323,7 @@ class AbstractDismissableElement implements ILightDismissable {
             return this._ldeCurrentFocus && this.containsElement(this._ldeCurrentFocus) && _ElementUtilities._tryFocusOnAnyElement(this._ldeCurrentFocus, useSetActive);
         }
     }
-    
+
     private _ldeOnKeyDown(eventObject: KeyboardEvent) {
         this._ldeService.keyDown(this, eventObject);
     }
@@ -333,7 +333,7 @@ class AbstractDismissableElement implements ILightDismissable {
     private _ldeOnKeyPress(eventObject: KeyboardEvent) {
         this._ldeService.keyPress(this, eventObject);
     }
-    
+
     // ILightDismissable
     //
 
@@ -367,11 +367,11 @@ class AbstractDismissableElement implements ILightDismissable {
         this.element.removeEventListener("keyup", this._ldeOnKeyUpBound);
         this.element.removeEventListener("keypress", this._ldeOnKeyPressBound);
     }
-    
+
     // Concrete subclasses are expected to implement these.
     onKeyInStack(info: IKeyboardInfo): void { }
     onShouldLightDismiss(info: ILightDismissInfo): boolean { return false; }
-    
+
     // Consumers of concrete subclasses of AbstractDismissableElement are expected to
     // provide these as parameters to the constructor.
     onLightDismiss(info: ILightDismissInfo): void { }
@@ -443,7 +443,7 @@ interface IUpdateDomOptions {
 
 class LightDismissService implements ILightDismissService {
     private _debug = false; // Disables dismiss due to window blur. Useful during debugging.
-    
+
     private _clickEaterEl: HTMLElement;
     private _clients: ILightDismissable[] = [];
     // The *_activeDismissable* is the dismissable that currently has focus. It is also
@@ -451,7 +451,7 @@ class LightDismissService implements ILightDismissService {
     private _activeDismissable: ILightDismissable;
     private _notifying = false;
     private _bodyClient = new LightDismissableBody();
-    
+
     private _onBeforeRequestingFocusOnKeyboardInputBound: (eventObject: Event) => void;
     private _onFocusInBound: (eventObject: FocusEvent) => void;
     private _onKeyDownBound: (eventObject: KeyboardEvent) => void;
@@ -461,7 +461,7 @@ class LightDismissService implements ILightDismissService {
 
     constructor() {
         this._clickEaterEl = this._createClickEater();
-        
+
         this._onBeforeRequestingFocusOnKeyboardInputBound = this._onBeforeRequestingFocusOnKeyboardInput.bind(this);
         this._onFocusInBound = this._onFocusIn.bind(this);
         this._onKeyDownBound = this._onKeyDown.bind(this);
@@ -509,7 +509,7 @@ class LightDismissService implements ILightDismissService {
     updated(client: ILightDismissable) {
         this._updateDom();
     }
-    
+
     // Dismissables should call keyDown, keyUp, and keyPress when such an event occurs within the dismissable. The
     // _LightDismissService takes these events and propagates them to other ILightDismissables in the stack by calling
     // onKeyInStack on them. LightDismissableElement and ModalElement call keyDown, keyUp, and keyPress for you so
@@ -527,15 +527,15 @@ class LightDismissService implements ILightDismissService {
     keyPress(client: ILightDismissable, eventObject: KeyboardEvent) {
         this._dispatchKeyboardEvent(client, KeyboardInfoType.keyPress, eventObject);
     }
-    
+
     isShown(client: ILightDismissable) {
         return this._clients.indexOf(client) !== -1;
     }
-    
+
     isTopmost(client: ILightDismissable) {
         return client === this._clients[this._clients.length - 1];
     }
-    
+
     // Disables dismiss due to window blur. Useful during debugging.
     _setDebug(debug: boolean) {
         this._debug = debug;
@@ -578,12 +578,12 @@ class LightDismissService implements ILightDismissService {
         var zIndexGap = 0;
         var lastUsedZIndex = baseZIndex + 1;
         this._clients.forEach(function (c, i) {
-            var currentZIndex = lastUsedZIndex + zIndexGap;
+            var currentZIndex = parseInt(lastUsedZIndex.toString()) + parseInt(zIndexGap.toString());
             c.setZIndex("" + currentZIndex);
             lastUsedZIndex = currentZIndex;
             // count + 1 so that there's an unused zIndex between each pair of
             // dismissables that can be used by the click eater.
-            zIndexGap = c.getZIndexCount() + 1;
+            zIndexGap = parseInt(c.getZIndexCount().toString()) + 1;
         });
         if (serviceActive) {
             this._clickEaterEl.style.zIndex = "" + (lastUsedZIndex - 1);
@@ -594,7 +594,7 @@ class LightDismissService implements ILightDismissService {
             this._activeDismissable = activeDismissable;
             activeDismissableNeedsFocus = true;
         }
-        
+
         if (activeDismissableNeedsFocus) {
             // If the last input type was keyboard, use focus() so a keyboard focus visual is drawn.
             // Otherwise, use setActive() so no focus visual is drawn.
@@ -602,7 +602,7 @@ class LightDismissService implements ILightDismissService {
             this._activeDismissable && this._activeDismissable.onTakeFocus(useSetActive);
         }
     }
-    
+
     private _dispatchKeyboardEvent(client: ILightDismissable, keyboardInfoType: string, eventObject: KeyboardEvent) {
         var index = this._clients.indexOf(client);
         if (index !== -1) {
@@ -660,7 +660,7 @@ class LightDismissService implements ILightDismissService {
 
         return lightDismissInfo._doDefault;
     }
-    
+
     _onBeforeRequestingFocusOnKeyboardInput(eventObject: Event) {
         // Suppress the requestingFocusOnKeyboardInput event.
         return true;
@@ -669,7 +669,7 @@ class LightDismissService implements ILightDismissService {
     //
     // Light dismiss triggers
     //
-    
+
     // Called by tests.
     _clickEaterTapped() {
         this._dispatchLightDismiss(LightDismissalReasons.tap);
@@ -685,7 +685,7 @@ class LightDismissService implements ILightDismissService {
         if (i !== -1) {
             this._clients[i].onFocus(target);
         }
-        
+
         if (i + 1 < this._clients.length) {
             this._dispatchLightDismiss(LightDismissalReasons.lostFocus, this._clients.slice(i + 1), {
                 activeDismissableNeedsFocus: true
@@ -698,7 +698,7 @@ class LightDismissService implements ILightDismissService {
             this._escapePressed(eventObject);
         }
     }
-    
+
     private _escapePressed(eventObject: KeyboardEvent) {
         eventObject.preventDefault();
         eventObject.stopPropagation();
@@ -717,7 +717,7 @@ class LightDismissService implements ILightDismissService {
 
     private _onWindowBlur(eventObject: FocusEvent) {
         if (this._debug) { return; }
-        
+
         // Want to trigger a light dismiss on window blur.
         // We get blur if we click off the window, including into an iframe within our window.
         // Both blurs call this function, but fortunately document.hasFocus is true if either
