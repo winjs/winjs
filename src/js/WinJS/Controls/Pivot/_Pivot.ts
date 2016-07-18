@@ -35,7 +35,7 @@
 //    -Viewport
 //      -Surface
 //        -Current PivotItem
-			
+
 //PivotItems Layout
 // The surface is 300% of the pivot control's width; one full-length left and
 // right of the visible area.The PivotItem content is centered at 100% offset
@@ -777,6 +777,9 @@ export class Pivot {
             this._surfaceElement.appendChild(item.element);
         }
 
+        this._headersState.render();
+        this._headersState.refreshHeadersState(true);
+
         if (index <= this.selectedIndex) {
             this._selectedIndex++;
         }
@@ -784,9 +787,6 @@ export class Pivot {
         if (this._items.length === 1) {
             this.selectedIndex = 0;
         }
-
-        this._headersState.render();
-        this._headersState.refreshHeadersState(true);
     }
 
     _handleItemMoved(ev: CustomEvent) {
