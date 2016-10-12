@@ -1369,7 +1369,7 @@ define([
                         return;
                     }
 
-                    if (typeof this._currentPosition != 'undefined') {
+                    if (typeof this._currentPosition !== 'undefined') {
                         // May need to adjust top by viewport offset
                         if (this._currentPosition.top < 0) {
                             // Need to attach to bottom
@@ -1390,7 +1390,7 @@ define([
                     } else {
                         this._element.style.opacity = 1;
                         this._element.style.visibility = "visible";
-                        return Animations.showPopup(this._element, (typeof this._currentPosition != 'undefined') ? this._currentPosition.animOffset : 0);
+                        return Animations.showPopup(this._element, (typeof this._currentPosition !== 'undefined') ? this._currentPosition.animOffset : 0);
                     }
                 },
 
@@ -1399,7 +1399,7 @@ define([
                         return this._baseAnimateOut();
                     } else {
                         this._element.style.opacity = 0;
-                        return Animations.hidePopup(this._element, (typeof this._currentPosition != 'undefined') ? this._currentPosition.animOffset : 0);
+                        return Animations.hidePopup(this._element, (typeof this._currentPosition !== 'undefined') ? this._currentPosition.animOffset : 0);
                     }
                 },
 
