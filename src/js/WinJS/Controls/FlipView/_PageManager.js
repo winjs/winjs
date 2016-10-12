@@ -282,25 +282,34 @@ define([
                         return;
                     }
 
-                    while (this._currentPage.element && this._getItemStart(this._currentPage) > newPos && this._currentPage.prev.element) {
+                    var movedPages = false;
+
+                    while (this._currentPage.element && this._currentPage.prev && this._currentPage.prev.element && newPos <= this._getItemStart(this._currentPage.prev)) {
                         this._currentPage = this._currentPage.prev;
                         this._fetchOnePrevious(bufferEnd.prev);
                         bufferEnd = bufferEnd.prev;
+                        movedPages = true;
                     }
 
-                    while (this._currentPage.element && this._itemEnd(this._currentPage) <= newPos && this._currentPage.next.element) {
+                    while (this._currentPage.element && this._currentPage.next && this._currentPage.next.element && newPos >= this._getItemStart(this._currentPage.next)) {
                         this._currentPage = this._currentPage.next;
                         this._fetchOneNext(bufferEnd.next);
                         bufferEnd = bufferEnd.next;
+                        movedPages = true;
                     }
+
                     this._setButtonStates();
                     this._checkElementVisibility(false);
                     this._blockTabs = true;
                     this._lastScrollPos = newPos;
+
                     if (this._currentPage.element) {
                         this._tabManager.childFocus = this._currentPage.element;
                     }
-                    this._setListEnds();
+
+                    if (movedPages) {
+                        this._ensureCentered(true);
+                    }
 
                     if (!this._manipulationState && this._viewportOnItemStart()) {
                         // Setup a timeout to invoke _itemSettledOn in cases where the scroll position is changed, and the control
