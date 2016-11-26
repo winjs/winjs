@@ -451,7 +451,9 @@ define([
 
                 do {
                     if (_currentElement === menu) {
-                        _currentElement = _currentElement.firstElementChild;
+                        // the react-winjs framework is adding an extra div so .firstElementChild won't
+                        // work here and causes an infinite loop - use querySelector to find last win-command
+                        _currentElement = _currentElement.querySelector('.win-command:first-child');
                     } else {
                         _currentElement = _currentElement.nextElementSibling;
                     }
@@ -474,7 +476,9 @@ define([
 
                 do {
                     if (_currentElement === menu) {
-                        _currentElement = _currentElement.lastElementChild;
+                        // the react-winjs framework is adding an extra div so .lastElementChild won't
+                        // work here and causes an infinite loop - use querySelector to find last win-command
+                        _currentElement = _currentElement.querySelector('.win-command:last-child');
                     } else {
                         _currentElement = _currentElement.previousElementSibling;
                     }
