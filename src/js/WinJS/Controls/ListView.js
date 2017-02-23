@@ -1685,7 +1685,7 @@ define([
                         modeHandler("PointerUp"),
                         modeHandler("LostPointerCapture"),
                         modeHandler("MSHoldVisual", true),
-                        modeHandler("PointerCancel", true),
+                        modeHandler("PointerCancel"),
                         modeHandler("DragStart"),
                         modeHandler("DragOver"),
                         modeHandler("DragEnter"),
