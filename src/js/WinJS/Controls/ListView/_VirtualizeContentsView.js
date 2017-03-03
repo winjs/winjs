@@ -226,14 +226,24 @@ define([
                         that._listView._writeProfilerMark("_realizeItems_appendedItemsToDom,StartTM");
                         if (that._listView._isZombie()) { return; }
 
-                        function updateDraggable(itemData, element) {
-                            if (!itemData.updatedDraggableAttribute && (that._listView.itemsDraggable || that._listView.itemsReorderable)) {
+                        function updateSwipeable(itemData, element) {
+                            if (!itemData.updatedSwipeableAttribute && (that._listView.itemsDraggable || that._listView.itemsReorderable || that._listView._swipeable)) {
                                 itemData.itemsManagerRecord.renderComplete.done(function () {
                                     if (that._realizePass === currentPass) {
-                                        if (!_ElementUtilities.hasClass(element, _Constants._nonDraggableClass)) {
+                                        var dragDisabledOnItem = _ElementUtilities.hasClass(element, _Constants._nonDraggableClass),
+                                            selectionDisabledOnItem = _ElementUtilities.hasClass(element, _Constants._nonSelectableClass),
+                                            dragEnabled = (that._listView.itemsDraggable || that._listView.itemsReorderable),
+                                            swipeSelectEnabled = (that._listView._selectionAllowed() && that._listView._swipeBehavior === _UI.SwipeBehavior.select);
+                                        if (dragEnabled && !dragDisabledOnItem) {
                                             itemData.itemBox.draggable = true;
                                         }
-                                        itemData.updatedDraggableAttribute = true;
+
+                                        if (that._listView._swipeable && ((dragEnabled && !swipeSelectEnabled && dragDisabledOnItem) ||
+                                            (swipeSelectEnabled && !dragEnabled && selectionDisabledOnItem) ||
+                                            (dragDisabledOnItem && selectionDisabledOnItem))) {
+                                            _ElementUtilities.addClass(itemData.itemBox, _Constants._nonSwipeableClass);
+                                        }
+                                        itemData.updatedSwipeableAttribute = true;
                                     }
                                 });
                             }
@@ -265,7 +275,7 @@ define([
                                     that._listView._currentMode().renderDragSourceOnRealizedItem(itemIndex, itemBox);
                                 }
 
-                                updateDraggable(itemData, element);
+                                updateSwipeable(itemData, element, itemBox);
 
                                 var container = that.getContainer(itemIndex);
                                 if (itemBox.parentNode !== container) {

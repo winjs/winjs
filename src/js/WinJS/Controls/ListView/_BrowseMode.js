@@ -174,6 +174,13 @@ define([
                                 that._pressedElement = value;
                             }
                         },
+
+                        swipeBehavior: {
+                            enumerable: true,
+                            get: function () {
+                                return site._swipeBehavior;
+                            }
+                        },
                         eventHandlerRoot: {
                             enumerable: true,
                             get: function () {
@@ -221,6 +228,12 @@ define([
                             enumerable: true,
                             get: function () {
                                 return site._selection;
+                            }
+                        },
+                        horizontal: {
+                            enumerable: true,
+                            get: function () {
+                                return site._horizontal();
                             }
                         },
                         customFootprintParent: {
@@ -354,7 +367,7 @@ define([
                     var itemIndex = entity.index;
                     var site = this.site;
                     var item = this.site._view.items.itemAt(itemIndex);
-                    if (site._selectionAllowed() && site._selectOnTap() && !(item && _ElementUtilities.hasClass(item, _Constants._nonSelectableClass))) {
+                    if (site._selectionAllowed() && (site._selectOnTap() || site._swipeBehavior === _UI.SwipeBehavior.select) && !(item && _ElementUtilities.hasClass(item, _Constants._nonSelectableClass))) {
                         var selected = site._selection._isIncluded(itemIndex),
                             single = !site._multiSelection(),
                             newSelection = site._selection._cloneSelection();
@@ -443,6 +456,10 @@ define([
 
                 _resetPointerDownState: function SelectionMode_resetPointerDownState() {
                     this._itemEventsHandler.resetPointerDownState();
+                },
+
+                onMSManipulationStateChanged: function (eventObject) {
+                    this._itemEventsHandler.onMSManipulationStateChanged(eventObject);
                 },
 
                 onPointerDown: function SelectionMode_onPointerDown(eventObject) {
@@ -1031,6 +1048,7 @@ define([
                 onKeyDown: function SelectionMode_onKeyDown(eventObject) {
                     var that = this,
                         site = this.site,
+                        swipeEnabled = site._swipeBehavior === _UI.SwipeBehavior.select,
                         view = site._view,
                         oldEntity = site._selection._getFocused(),
                         handled = true,
@@ -1240,6 +1258,16 @@ define([
                                     }
 
                                 });
+                            } else if (oldEntity.type !== _UI.ObjectType.groupHeader && ((eventObject.ctrlKey && keyCode === Key.enter) || keyCode === Key.space)) {
+                                this._itemEventsHandler.toggleSelectionIfAllowed(oldEntity.index);
+                            } else if (oldEntity.type !== _UI.ObjectType.groupHeader &&
+                                    ((eventObject.ctrlKey && keyCode === Key.enter) ||
+                                    (swipeEnabled && eventObject.shiftKey && keyCode === Key.F10) ||
+                                    (swipeEnabled && keyCode === Key.menu) ||
+                                    keyCode === Key.space)) {
+                                // Swipe emulation
+                                this._itemEventsHandler.handleSwipeBehavior(oldEntity.index);
+                                site._changeFocus(oldEntity, true, ctrlKeyDown, false, true);
                             } else if (!eventObject.ctrlKey && keyCode === Key.enter) {
                                 var element = oldEntity.type === _UI.ObjectType.groupHeader ? site._groups.group(oldEntity.index).header : site._view.items.itemBoxAt(oldEntity.index);
                                 if (element) {
@@ -1259,9 +1287,6 @@ define([
                                     }
                                     this._fireInvokeEvent(oldEntity, element);
                                 }
-                            } else if (oldEntity.type !== _UI.ObjectType.groupHeader && ((eventObject.ctrlKey && keyCode === Key.enter) || keyCode === Key.space)) {
-                                this._itemEventsHandler.toggleSelectionIfAllowed(oldEntity.index);
-                                site._changeFocus(oldEntity, true, ctrlKeyDown, false, true);
                             } else if (keyCode === Key.escape && site._selection.count() > 0) {
                                 site._selection._pivot = _Constants._INVALID_INDEX;
                                 site._selection.clear();

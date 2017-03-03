@@ -94,6 +94,7 @@ module WinJSTests {
             _versionManager: new WinJS.UI._VersionManager(),
             _selectionMode: configuration.selectionMode,
             _tap: configuration.tap,
+            _swipeBehavior: WinJS.UI.SwipeBehavior[configuration.crossSlide ? "select" : "none"],
             _isZombie: function () { return true; },
             _element: list,
             _viewport: list,
@@ -276,13 +277,16 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(-1, invoked.index);
         }
 
-        [true, false].forEach(function (ctrlKey) {
-            var shiftKeyOnly = !ctrlKey;
-            verify({
-                shouldBeAdditive: shiftKeyOnly ? options.shiftLeftClickIsAdditive : true,
-                site: options.createSite(),
-                rightClick: false,
-                ctrlKey: ctrlKey
+        [true, false].forEach(function (rightClick) {
+            [true, false].forEach(function (ctrlKey) {
+                var shiftKeyOnly = !rightClick && !ctrlKey;
+
+                verify({
+                    shouldBeAdditive: shiftKeyOnly ? options.shiftLeftClickIsAdditive : true,
+                    site: options.createSite(),
+                    rightClick: rightClick,
+                    ctrlKey: ctrlKey
+                });
             });
         });
     }
@@ -419,7 +423,8 @@ module WinJSTests {
         testStatic = function () {
             var mode = createMode(createSite({
                 selectionMode: "none",
-                tap: "none"
+                tap: "none",
+                crossSlide: true
             }));
 
             click(mode, { target: items[2] });
@@ -446,7 +451,8 @@ module WinJSTests {
         testContentLibrarySingle = function () {
             var mode = createMode(createSite({
                 selectionMode: "single",
-                tap: "invokeOnly"
+                tap: "invokeOnly",
+                crossSlide: true
             }));
 
             click(mode, { target: items[2] });
@@ -474,6 +480,10 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(-1, invoked.index);
 
             rightClick(mode, { target: items[1] });
+            verifySelection(mode, [1]);
+            LiveUnit.Assert.areEqual(-1, invoked.index);
+
+            rightClick(mode, { target: items[1] });
             verifySelection(mode, []);
             LiveUnit.Assert.areEqual(-1, invoked.index);
         };
@@ -481,7 +491,8 @@ module WinJSTests {
         testContentLibraryMulti = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "invokeOnly"
+                tap: "invokeOnly",
+                crossSlide: true
             };
             var site = createSite(siteConfig);
             var mode = createMode(site);
@@ -516,8 +527,21 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(0, invoked.index);
 
             rightClick(mode, { target: items[1] });
-            verifySelection(mode, [0]);
+            verifySelection(mode, [0, 1]);
             LiveUnit.Assert.areEqual(-1, invoked.index);
+
+            rightClick(mode, { target: items[0] });
+            verifySelection(mode, [1]);
+            LiveUnit.Assert.areEqual(-1, invoked.index);
+
+            click(mode, { target: items[4] });
+            verifySelection(mode, [1]);
+
+            mode.onKeyDown(createEvent(Key.leftArrow, true));
+            verifySelection(mode, [1, 2, 3, 4]);
+
+            mode.onKeyDown(createEvent(Key.leftArrow, true));
+            verifySelection(mode, [1, 2, 3, 4]);
 
             verifyRangeSelectionWithClick({
                 shiftLeftClickIsAdditive: false,
@@ -528,7 +552,8 @@ module WinJSTests {
         testContentLibraryMultiKeyboard = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "invokeOnly"
+                tap: "invokeOnly",
+                crossSlide: true
             };
 
             verifyRangeSelectionWithKeyboard({
@@ -542,7 +567,8 @@ module WinJSTests {
         testMasterDetailSingle = function () {
             var mode = createMode(createSite({
                 selectionMode: "single",
-                tap: "directSelect"
+                tap: "directSelect",
+                crossSlide: false
             }));
 
             click(mode, { target: items[2] });
@@ -582,7 +608,8 @@ module WinJSTests {
         testMasterDetailSingleKeyboard = function () {
             var site = createSite({
                 selectionMode: "single",
-                tap: "directSelect"
+                tap: "directSelect",
+                crossSlide: false
             });
             var mode = createMode(site);
 
@@ -606,7 +633,8 @@ module WinJSTests {
         testMasterDetailMulti = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "directSelect"
+                tap: "directSelect",
+                crossSlide: true
             };
             var mode = createMode(createSite(siteConfig));
 
@@ -635,6 +663,10 @@ module WinJSTests {
             LiveUnit.Assert.areEqual(-1, invoked.index);
 
             rightClick(mode, { target: items[2] });
+            verifySelection(mode, [0, 1, 2]);
+            LiveUnit.Assert.areEqual(-1, invoked.index);
+
+            rightClick(mode, { target: items[2] });
             verifySelection(mode, [0, 1]);
             LiveUnit.Assert.areEqual(-1, invoked.index);
 
@@ -652,7 +684,8 @@ module WinJSTests {
         testMasterDetailMultiKeyboard = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "directSelect"
+                tap: "directSelect",
+                crossSlide: true
             };
 
             verifyRangeSelectionWithKeyboard({
@@ -665,7 +698,8 @@ module WinJSTests {
         testPickerSingleMode = function () {
             var mode = createMode(createSite({
                 selectionMode: "single",
-                tap: "toggleSelect"
+                tap: "toggleSelect",
+                crossSlide: true
             }));
 
             click(mode, { target: items[2] });
@@ -697,7 +731,8 @@ module WinJSTests {
         testPickerSingleModeKeyboard = function () {
             var site = createSite({
                 selectionMode: "single",
-                tap: "toggleSelect"
+                tap: "toggleSelect",
+                crossSlide: true
             });
             var mode = createMode(site);
 
@@ -750,7 +785,8 @@ module WinJSTests {
         testPickerMultiMode = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "toggleSelect"
+                tap: "toggleSelect",
+                crossSlide: true
             };
             var mode = createMode(createSite(siteConfig));
 
@@ -782,7 +818,8 @@ module WinJSTests {
         testPickerMultiModeKeyboard = function () {
             var siteConfig = {
                 selectionMode: "multi",
-                tap: "toggleSelect"
+                tap: "toggleSelect",
+                crossSlide: true
             };
             var site = createSite(siteConfig);
             var mode = createMode(site);
@@ -837,7 +874,8 @@ module WinJSTests {
             function testWithSelectionMode(selectionMode) {
                 var mode = createMode(createSite({
                     selectionMode: selectionMode,
-                    tap: "none"
+                    tap: "none",
+                    crossSlide: false
                 })),
                     eventObject;
 
@@ -873,7 +911,12 @@ module WinJSTests {
                     lv.selectionMode = WinJS.UI.SelectionMode.multi;
                     lv.tapBehavior = WinJS.UI.TapBehavior.toggleSelect;
 
-                    LiveUnit.Assert.areEqual(1, lv.element.querySelectorAll("." + WinJS.UI._selectionModeClass).length);
+                    if (WinJS.Utilities.isPhone) {
+                        LiveUnit.Assert.areEqual(1, lv.element.querySelectorAll("." + WinJS.UI._selectionModeClass).length);
+                    } else {
+                        LiveUnit.Assert.areEqual(0, lv.element.querySelectorAll("." + WinJS.UI._selectionModeClass).length);
+                    }
+
                     lv.selectionMode = WinJS.UI.SelectionMode.none;
                     LiveUnit.Assert.areEqual(0, lv.element.querySelectorAll("." + WinJS.UI._selectionModeClass).length);
 
