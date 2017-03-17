@@ -467,7 +467,7 @@ define([
                     if (!this.hidden && !this.disabled && !this._disposed) {
                         if (this._type === _Constants.typeToggle) {
                             this.selected = !this.selected;
-                        } else if (this._type === _Constants.typeFlyout) {
+                        } else if (this._type === _Constants.typeFlyout && this._flyout.hidden) {
                             MenuCommand._activateFlyoutCommand(this);
                         }
 
