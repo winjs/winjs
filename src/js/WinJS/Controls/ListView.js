@@ -1104,7 +1104,7 @@ define([
                                         }
                                     }
                                     if (!handled) {
-                                        if (entityWidth >= right - left) {
+                                        if (entityWidth >= viewportLength) {
                                             // This item is larger than the viewport so we will just set
                                             // the scroll position to the beginning of the item.
                                             newPosition = range.begin;
