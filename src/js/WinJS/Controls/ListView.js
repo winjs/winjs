@@ -2758,6 +2758,9 @@ define([
                 },
 
                 _onFocusIn: function ListView_onFocusIn(event) {
+                    if (this._disposed) {
+                        return;
+                    }
                     this._hasKeyboardFocus = true;
                     var that = this;
                     function moveFocusToItem(keyboardFocused) {
