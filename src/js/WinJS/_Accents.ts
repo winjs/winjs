@@ -106,9 +106,9 @@ export function createAccentRule(selector: string, props: { name: string; value:
 
 // extension GS, 2015-09-04 : individual accent color!
 //
-var uiUserColor;
+var uiUserColor: _WinRT.Windows.UI.Color;
 export function setAccentColor(_r: number, _g: number, _b: number) {
-    var uiColor = { r: _r, g: _g, b: _b };
+    var uiColor: _WinRT.Windows.UI.Color = { r: _r, g: _g, b: _b };
     uiUserColor = uiColor;
     var accent = colorToString(uiUserColor, 1);
     if (colors[0] === accent) {
