@@ -119,7 +119,11 @@ export class _ElementResizeInstrument {
 
         // Return the contentWindow if it exists, else null.
         // If the <object> element hasn't loaded yet, some browsers will throw an exception if you try to read the contentDocument property.
-        return this._elementLoaded && this._element.contentDocument && this._element.contentDocument.defaultView || null;
+        try {
+            return this._elementLoaded && this._element.contentDocument && this._element.contentDocument.defaultView || null;
+        } catch (e) {
+            return null;
+        }
     }
     addedToDom() {
         // _ElementResizeInstrument should block on firing any events until the Object element has loaded and the _ElementResizeInstrument addedToDom() API has been called.
