@@ -185,7 +185,7 @@ function scheduleWriteRules() {
 }
 
 function handleColorsChanged() {
-    var uiColor;
+    var uiColor: _WinRT.Windows.UI.Color;
     if (typeof uiUserColor !== "undefined") {
         uiColor = uiUserColor;
     } else {
