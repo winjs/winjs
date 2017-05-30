@@ -438,7 +438,7 @@ define([
                     if (this._resetPointerDownStateBound) {
                         _ElementUtilities._removeEventListener(_Global, "pointerup", this._resetPointerDownStateBound);
                         _ElementUtilities._removeEventListener(_Global, "pointercancel", this._resetPointerDownStateBound);
-				    }
+                    }
 
                     this._resetPressedContainer();
 
