@@ -124,6 +124,67 @@ module WinJSTests {
         };
     }
 
+    if (!WinJS.Utilities.isPhone) {
+        generate("testNonSwipeableClass", [0, 2], [1, 2], function (listView, complete) {
+            listView.selectionMode = WinJS.UI.SelectionMode.none;
+            listView.itemsDraggable = false;
+            listView.itemsReorderable = false;
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.itemsDraggable = true;
+            LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.itemsDraggable = false;
+            listView.itemsReorderable = true;
+            LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.itemsDraggable = false;
+            listView.itemsReorderable = false;
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.selectionMode = WinJS.UI.SelectionMode.multi;
+            listView.swipeBehavior = WinJS.UI.SwipeBehavior.select;
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.swipeBehavior = WinJS.UI.SwipeBehavior.none;
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(0, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.swipeBehavior = WinJS.UI.SwipeBehavior.select;
+            listView.itemsDraggable = true;
+            LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(1, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+
+            listView.swipeBehavior = WinJS.UI.SwipeBehavior.select;
+            listView.itemsDraggable = false;
+            listView.itemsReorderable = true;
+            LiveUnit.Assert.areEqual(ITEMS_COUNT - 2, listView.element.querySelectorAll("[draggable=true]").length);
+            LiveUnit.Assert.areEqual(1, listView.element.querySelectorAll("." + WinJS.UI._nonSwipeableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonDraggableClass).length);
+            LiveUnit.Assert.areEqual(2, listView.element.querySelectorAll("." + WinJS.UI._nonSelectableClass).length);
+            complete();
+        });
+    }
+
     generate("testSelectAllWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         generateKeyEventInListView(listView, Key.a, true, false, false);
@@ -194,7 +255,19 @@ module WinJSTests {
     generate("testSelectionViaMouseWithNonSelectableItems", [], [1, 2], function (listView, complete) {
         listView.selectionMode = WinJS.UI.SelectionMode.multi;
         click(listView, 0, true);
-        LiveUnit.Assert.isFalse(listView.selection._isIncluded(0));
+        LiveUnit.Assert.isTrue(listView.selection._isIncluded(0));
+
+        listView.selection.clear();
+        click(listView, 1, true);
+        LiveUnit.Assert.isFalse(listView.selection._isIncluded(1));
+
+        listView.selection.clear();
+        click(listView, 2, true);
+        LiveUnit.Assert.isFalse(listView.selection._isIncluded(2));
+
+        listView.selection.clear();
+        click(listView, 3, true);
+        LiveUnit.Assert.isTrue(listView.selection._isIncluded(3));
 
         complete();
     });

@@ -20,6 +20,24 @@ module WinJSTests {
                 return isPhone ? ['', WinJS.UI.SelectionMode.single, 'mul'] : ['', 'sing', 'mul'];
             }
         },
+        swipeBehavior: {
+            getValidValues: function () {
+                return isPhone ? [WinJS.UI.SwipeBehavior.none] : [WinJS.UI.SwipeBehavior.none, WinJS.UI.SwipeBehavior.select];
+            },
+            getInvalidValues: function () {
+                // ListView ignores invalid values of swipeBehavior
+                return;
+            },
+            validate: function (listView, value) {
+                LiveUnit.Assert.areEqual(value, listView.swipeBehavior);
+
+                if (isPhone || value === WinJS.UI.SwipeBehavior.none) {
+                    LiveUnit.Assert.isFalse(WinJS.Utilities.hasClass(listView.element, WinJS.UI._swipeableClass));
+                } else {
+                    LiveUnit.Assert.isTrue(WinJS.Utilities.hasClass(listView.element, WinJS.UI._swipeableClass));
+                }
+            }
+        },
         tapBehavior: {
             getValidValues: function () {
                 return isPhone ? [WinJS.UI.TapBehavior.none, WinJS.UI.TapBehavior.invokeOnly, WinJS.UI.TapBehavior.toggleSelect] : [WinJS.UI.TapBehavior.none, WinJS.UI.TapBehavior.invokeOnly, WinJS.UI.TapBehavior.toggleSelect, WinJS.UI.TapBehavior.directSelect];

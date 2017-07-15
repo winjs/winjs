@@ -777,10 +777,12 @@ module WinJSTests {
                         // Validate the roles in the initial mode (non-static)
                         LiveUnit.Assert.areEqual("none", listView.selectionMode);
                         LiveUnit.Assert.areEqual("invokeOnly", listView.tapBehavior);
+                        LiveUnit.Assert.areEqual("select", listView.swipeBehavior);
                         checkRoles("listbox", "option", "in the initial non-static mode");
 
                         // Switch to static mode and validate the roles
                         listView.tapBehavior = WinJS.UI.TapBehavior.none;
+                        listView.swipeBehavior = WinJS.UI.SwipeBehavior.none;
                         checkRoles("list", "listitem", "after switching to static mode");
 
                         // Switch to a non-static mode and validate the roles

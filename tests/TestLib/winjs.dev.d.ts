@@ -94,6 +94,7 @@ declare module WinJS {
 
         function _setHasWinRT(value: boolean);
         var _selectionPartsSelector;
+        var _supportsTouchActionCrossSlide;
 
         function _writeProfilerMark(mark: string);
 
@@ -138,10 +139,10 @@ declare module WinJS {
 
     module UI {
         /**
-         * Takes a string in the form of "{a: 1, b:2}" 
+         * Takes a string in the form of "{a: 1, b:2}"
          * and returns an object in the form of {a: 1, b:2}
         **/
-        function optionsParser(value: string, context?: any, functionContext?: any): any; 
+        function optionsParser(value: string, context?: any, functionContext?: any): any;
 
         var _optionsLexer;
         var _optionsParser;
@@ -332,7 +333,7 @@ declare module WinJS {
                 _splitToggle: string;
             };
         }
-                
+
         var ScrollMode: { text: string; nonModalText: string; list: string; };
 
         class ScrollViewer {
@@ -350,7 +351,7 @@ declare module WinJS {
 
             _setActive(): any;
         }
-        
+
         interface ISelect {
             value;
             index: number;
@@ -621,7 +622,7 @@ declare module WinJS {
         }
 
         /**
-        * Remnants of the previous implementation of the AppBar control, contains limited functionality. 
+        * Remnants of the previous implementation of the AppBar control, contains limited functionality.
           Currently only used by NavBar and is planned to be replaced by a new implementation.
         **/
         class _LegacyAppBar {
@@ -828,6 +829,7 @@ declare module WinJS {
             touch: string;
             pen: string;
         };
+        var _swipeableClass;
         var _itemFocusOutlineClass;
         var _itemBoxClass;
         var _itemClass;
@@ -846,6 +848,7 @@ declare module WinJS {
         var _progressClass;
         var _nonDraggableClass;
         var _nonSelectableClass;
+        var _nonSwipeableClass;
         var _INVALID_INDEX;
 
         var _seenUrlsMaxSize: number;
