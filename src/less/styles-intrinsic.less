@@ -256,6 +256,9 @@ select[multiple].win-dropdown {
     }
 
     &.win-paused:not(:indeterminate) {
+        -webkit-animation-name: win-progress-fade-out;
+        -webkit-animation-duration: 3s;
+        -webkit-animation-timing-function: cubic-bezier(0.03, 0.76, 0.31, 1.0);
         animation-name: win-progress-fade-out;
         animation-duration: 3s;
         animation-timing-function: cubic-bezier(0.03, 0.76, 0.31, 1.0);
@@ -293,6 +296,15 @@ select[multiple].win-dropdown {
     75% {left: calc(100%); width: 0%;}
     75.1% {left: 0; width: 0%;}
     100% {left: 0; width: 25%;}
+}
+
+@-webkit-keyframes win-progress-fade-out {
+    from {
+        opacity: 1.0;
+    }
+    to {
+        opacity: 0.5;
+    }
 }
 
 @keyframes win-progress-fade-out {
