@@ -1632,9 +1632,9 @@ define([
                         return;
                     }
                     if (this._isHorizontal) {
-                        return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollLeft;
+                        return Math.round(_ElementUtilities.getScrollPosition(this._panningDivContainer).scrollLeft);
                     } else {
-                        return _ElementUtilities.getScrollPosition(this._panningDivContainer).scrollTop;
+                        return Math.round(_ElementUtilities.getScrollPosition(this._panningDivContainer).scrollTop);
                     }
                 },
 
@@ -1655,7 +1655,7 @@ define([
                         if (this._rtl) {
                             return this._getViewportStart() + this._panningDivContainerOffsetWidth;
                         } else {
-                            return _ElementUtilities.getScrollPosition(element).scrollLeft + this._panningDivContainerOffsetWidth;
+                            return Math.round(_ElementUtilities.getScrollPosition(element).scrollLeft) + this._panningDivContainerOffsetWidth;
                         }
                     } else {
                         return element.scrollTop + this._panningDivContainerOffsetHeight;
