@@ -670,7 +670,6 @@ define([
                         } else if (that._elementPointerDownPoint) {
                             // GS: 2018-02-28 no snap fallback
                             if (that._pageManager) {
-                                var element = e.target;
                                 var filterDistance = 8;
                                 var dyDxThresholdRatio = 0.4;
 
@@ -693,7 +692,7 @@ define([
                                     var dt = Date.now() - that._elementPointerDownPoint.time;
                                     delta *= Math.max(1, Math.pow(350 / dt, 2));
                                     if (that._pageManager._isHorizontal && this._rtl) {
-                                        delta = -delta;
+                                        delta *= -1;
                                     }
 
                                     var vwDiv4 = that._pageManager._viewportSize() / 4;
