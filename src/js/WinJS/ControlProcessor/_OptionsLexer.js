@@ -200,7 +200,7 @@ StringLiteral       7.8.4
 
             var lexer = (function () {
                 function isIdentifierStartCharacter(code, text, offset, limit) {
-                    // The ES5 spec decalares that identifiers consist of a bunch of unicode classes, without
+                    // The ES5 spec declares that identifiers consist of a bunch of unicode classes, without
                     // WinRT support for determining unicode class membership we are looking at 2500+ lines of
                     // javascript code to encode the relevant class tables. Instead we look for everything
                     // which is legal and < 0x7f, we exclude whitespace and line terminators, and then accept
