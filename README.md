@@ -56,7 +56,7 @@ grunt
 Refer to http://winjs.azurewebsites.net/#status for the current status of the unit tests and the list of known issues.
 
 # Try WinJS
-Check out our online playground at http://winjs.azurewebsites.net/
+Check out our online playground at https://web.archive.org/web/20180321192214/http://try.buildwinjs.com:80/tutorial/0Welcome/toc/
 
 # Follow Us
 Twitter https://twitter.com/BuildWinJS  
