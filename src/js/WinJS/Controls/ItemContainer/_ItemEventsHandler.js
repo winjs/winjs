@@ -48,6 +48,11 @@ define([
 
                 onPointerDown: function ItemEventsHandler_onPointerDown(eventObject) {
                     _WriteProfilerMark("WinJS.UI._ItemEventsHandler:MSPointerDown,StartTM");
+
+                    if (eventObject.isPrimary) {
+                        this.resetPointerDownState();
+                    }
+
                     var site = this._site,
                         touchInput = (eventObject.pointerType === PT_TOUCH),
                         leftButton,
