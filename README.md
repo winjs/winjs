@@ -5,7 +5,7 @@ Windows Library for JavaScript (WinJS)
  [![Build Status](https://travis-ci.org/winjs/winjs.svg?branch=master)](https://travis-ci.org/winjs/winjs)
 
 # Status
-Right now, Microsoft plans to maintain WinJS's existing features--this means responding to Issues and Pull Requests on a regular basis. We're committed to making sure that WinJS continues to run well. At this time, we don't have plans to invest in new features or feature requests; this also means that we're not planning a new feature release.
+Microsoft is committed to making sure that WinJS continues to run for existing customers.  At this time we don't have plans to invest in new features or feature requests. Bug fixes will be limited to correcting substantial issues that are blocking customer deployments. We may also consider bug fixes to help our customers maintain their existing WinJS-based apps.
 
 # Intro
 WinJS is a set of JavaScript toolkits that allow developers to build applications using HTML/JS/CSS technology forged with the following principles in mind:
