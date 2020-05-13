@@ -1104,7 +1104,7 @@ define([
                                         }
                                     }
                                     if (!handled) {
-                                        if (entityWidth >= right - left) {
+                                        if (entityWidth >= viewportLength) {
                                             // This item is larger than the viewport so we will just set
                                             // the scroll position to the beginning of the item.
                                             newPosition = range.begin;
@@ -2758,6 +2758,9 @@ define([
                 },
 
                 _onFocusIn: function ListView_onFocusIn(event) {
+                    if (this._disposed) {
+                        return;
+                    }
                     this._hasKeyboardFocus = true;
                     var that = this;
                     function moveFocusToItem(keyboardFocused) {

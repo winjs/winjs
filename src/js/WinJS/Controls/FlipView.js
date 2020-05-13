@@ -49,6 +49,8 @@ define([
         /// <resource type="css" src="//$(TARGET_DESTINATION)/css/ui-dark.css" shared="true" />
         FlipView: _Base.Namespace._lazy(function () {
 
+            var supportsSnap = !!_ElementUtilities._supportsSnapPoints;
+            
             // Class names
             var navButtonClass = "win-navbutton",
                 flipViewClass = "win-flipview",
@@ -168,6 +170,8 @@ define([
                     dataSource = list.dataSource;
                 }
                 _ElementUtilities.empty(element);
+
+                this._elementPointerDownPoint = null;
 
                 // Set _flipviewDiv so the element getter works correctly, then call _setOption with eventsOnly flag on before calling _initializeFlipView
                 // so that event listeners are added before page loading
@@ -663,6 +667,44 @@ define([
                             that._fadeInButton("prev");
                             that._fadeInButton("next");
                             that._fadeOutButtons();
+                        } else if (that._elementPointerDownPoint) {
+                            // GS: 2018-02-28 no snap fallback
+                            if (that._pageManager) {
+                                var filterDistance = 8;
+                                var dyDxThresholdRatio = 0.4;
+
+                                var other = that._pageManager._isHorizontal ? Math.abs(e.clientY - that._elementPointerDownPoint.y) : Math.abs(e.clientX - that._elementPointerDownPoint.x);
+                                var delta = that._pageManager._isHorizontal ? e.clientX - that._elementPointerDownPoint.x : e.clientY - that._elementPointerDownPoint.y;
+                                var threshold = Math.abs(delta * dyDxThresholdRatio);
+
+                                var doSwipeDetection =
+                                    // Check vertical threshold to prevent accidental swipe detection during vertical pan
+                                    other < threshold
+                                    // Check horizontal threshold to prevent accidental swipe detection when tapping
+                                    && Math.abs(delta) > filterDistance
+                                    // Check that input type is Touch, however, if touch detection is not supported then we do detection for any input type
+                                    && (!_ElementUtilities._supportsTouchDetection || (that._elementPointerDownPoint.type === e.pointerType && e.pointerType === PT_TOUCH));
+
+                                if (doSwipeDetection) {
+                                    // Swipe navigation detection
+
+                                    // Simulate inertia by multiplying delta by a polynomial function of dt
+                                    var dt = Date.now() - that._elementPointerDownPoint.time;
+                                    delta *= Math.max(1, Math.pow(350 / dt, 2));
+                                    if (that._pageManager._isHorizontal && this._rtl) {
+                                        delta *= -1;
+                                    }
+
+                                    var vwDiv4 = that._pageManager._viewportSize() / 4;
+                                    if (delta < -vwDiv4) {
+                                        that._elementPointerDownPoint = null;
+                                        that.next();
+                                    } else if (delta > vwDiv4) {
+                                        that._elementPointerDownPoint = null;
+                                        that.previous();
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -671,6 +713,9 @@ define([
                             that._mouseInViewport = false;
                             that._touchInteraction = true;
                             that._fadeOutButtons(true);
+                            if (!supportsSnap) {
+                                that._elementPointerDownPoint = { x: e.clientX, y: e.clientY, type: e.pointerType || "mouse", time: Date.now() };
+                            }
                         } else {
                             that._touchInteraction = false;
                             if (!that._isInteractive(e.target)) {
@@ -686,14 +731,18 @@ define([
                     function handlePointerUp(e) {
                         if (e.pointerType !== PT_TOUCH) {
                             that._touchInteraction = false;
+                        } else {
+                            // GS: 2018-02-28 no snap fallback
+                            that._elementPointerDownPoint = null;
                         }
                     }
 
-                    if (this._environmentSupportsTouch) {
+                    // GS: 2018-02-28 no snap fallback
+                    // if (this._environmentSupportsTouch) {
                         _ElementUtilities._addEventListener(this._contentDiv, "pointerdown", handlePointerDown, false);
                         _ElementUtilities._addEventListener(this._contentDiv, "pointermove", handleShowButtons, false);
                         _ElementUtilities._addEventListener(this._contentDiv, "pointerup", handlePointerUp, false);
-                    }
+                    // }
 
                     this._panningDivContainer.addEventListener("scroll", function () {
                         that._scrollPosChanged();

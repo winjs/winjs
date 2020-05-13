@@ -1661,7 +1661,7 @@ define([
 
                         function viewPortPageRealized() {
                             that._listView._hideProgressBar();
-                            that._state.setLoadingState(that._listView._LoadingState.viewPortLoaded);
+                            that._state.setLoadingState && that._state.setLoadingState(that._listView._LoadingState.viewPortLoaded);
                             if (that._executeAnimations) {
                                 that._setState(RealizingAnimatingState, renderingCompleteSignal.promise);
                             }
@@ -1680,12 +1680,12 @@ define([
                             complete();
                         }
 
-                        that._state.setLoadingState(that._listView._LoadingState.itemsLoading);
+                        that._state.setLoadingState && that._state.setLoadingState(that._listView._LoadingState.itemsLoading);
                         if (that._firstLayoutPass) {
                             that._listView._showProgressBar(that._listView._element, "50%", "50%");
                         }
 
-                        var count = that.containers.length;
+                        var count = (that.containers && that.containers.length);
 
                         if (count) {
                             // While the zoom animation is played we want to minimize the # of pages

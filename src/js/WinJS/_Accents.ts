@@ -104,6 +104,23 @@ export function createAccentRule(selector: string, props: { name: string; value:
     scheduleWriteRules();
 }
 
+// extension GS, 2015-09-04 : individual accent color!
+//
+var uiUserColor: _WinRT.Windows.UI.Color;
+export function setAccentColor(_r: number, _g: number, _b: number) {
+    var uiColor: _WinRT.Windows.UI.Color = { r: _r, g: _g, b: _b, a: 255 };
+    uiUserColor = uiColor;
+    var accent = colorToString(uiUserColor, 1);
+    if (colors[0] === accent) {
+        return;
+    }
+    // Establish colors
+    // The order of the colors align with the ColorTypes enum values
+    colors.length = 0;
+    colors.push(accent, colorToString(uiColor, (isDarkTheme ? 0.6 : 0.4)), colorToString(uiColor, (isDarkTheme ? 0.8 : 0.6)), colorToString(uiColor, (isDarkTheme ? 0.9 : 0.7)), colorToString(uiColor, (isDarkTheme ? 0.4 : 0.6)), colorToString(uiColor, (isDarkTheme ? 0.6 : 0.8)), colorToString(uiColor, (isDarkTheme ? 0.7 : 0.9)));
+    scheduleWriteRules();
+}
+
 // Private helpers
 //
 
@@ -168,8 +185,13 @@ function scheduleWriteRules() {
 }
 
 function handleColorsChanged() {
-    var UIColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
-    var uiColor = UISettings.getColorValue(_WinRT.Windows.UI.ViewManagement.UIColorType.accent);
+    var uiColor: _WinRT.Windows.UI.Color;
+    if (typeof uiUserColor !== "undefined") {
+        uiColor = uiUserColor;
+    } else {
+        var uiColorType = _WinRT.Windows.UI.ViewManagement.UIColorType;
+        uiColor = UISettings.getColorValue(uiColorType.accent);
+    }
     var accent = colorToString(uiColor, 1);
     if (colors[0] === accent) {
         return;
@@ -239,6 +261,7 @@ try {
 var toPublish = {
     ColorTypes: ColorTypes,
     createAccentRule: createAccentRule,
+    setAccentColor: setAccentColor,
     
     // Exposed for tests    
     _colors: colors,
