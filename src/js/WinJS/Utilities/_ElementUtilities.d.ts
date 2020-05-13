@@ -430,99 +430,99 @@ export declare enum Key {
     /**
      * The XBox One gamepad A button.
     **/
-    GamepadA,
+    gamepadA,
     /**
      * The XBox One gamepad B button.
     **/
-    GamepadB,
+    gamepadB,
     /**
      * The XBox One gamepad X button.
     **/
-    GamepadX,
+    gamepadX,
     /**
      * The XBox One gamepad Y button.
     **/
-    GamepadY,
+    gamepadY,
     /**
      * The XBox One gamepad right shoulder.
     **/
-    GamepadRightShoulder,
+    gamepadRightShoulder,
     /**
      * The XBox One gamepad left shoulder.
     **/
-    GamepadLeftShoulder,
+    gamepadLeftShoulder,
     /**
      * The XBox One gamepad left trigger.
     **/
-    GamepadLeftTrigger,
+    gamepadLeftTrigger,
     /**
      * The XBox One gamepad right trigger.
     **/
-    GamepadRightTrigger,
+    gamepadRightTrigger,
     /**
      * The XBox One gamepad dpad up.
     **/
-    GamepadDPadUp,
+    gamepadDPadUp,
     /**
      * The XBox One gamepad dpad down.
     **/
-    GamepadDPadDown,
+    gamepadDPadDown,
     /**
      * The XBox One gamepad dpad left.
     **/
-    GamepadDPadLeft,
+    gamepadDPadLeft,
     /**
      * The XBox One gamepad dpad right.
     **/
-    GamepadDPadRight,
+    gamepadDPadRight,
     /**
      * The XBox One gamepad menu button.
     **/
-    GamepadMenu,
+    gamepadMenu,
     /**
      * The XBox One gamepad view button.
     **/
-    GamepadView,
+    gamepadView,
     /**
      * The XBox One gamepad left thumbstick button.
     **/
-    GamepadLeftThumbstick,
+    gamepadLeftThumbstick,
     /**
      * The XBox One gamepad right thumbstick button.
     **/
-    GamepadRightThumbstick,
+    gamepadRightThumbstick,
     /**
      * The XBox One gamepad left thumbstick's up.
     **/
-    GamepadLeftThumbstickUp,
+    gamepadLeftThumbstickUp,
     /**
      * The XBox One gamepad left thumbstick's down.
     **/
-    GamepadLeftThumbstickDown,
+    gamepadLeftThumbstickDown,
     /**
      * The XBox One gamepad left thumbstick's right.
     **/
-    GamepadLeftThumbstickRight,
+    gamepadLeftThumbstickRight,
     /**
      * The XBox One gamepad left thumbstick's left.
     **/
-    GamepadLeftThumbstickLeft,
+    gamepadLeftThumbstickLeft,
     /**
      * The XBox One gamepad right thumbstick's up.
     **/
-    GamepadRightThumbstickUp,
+    gamepadRightThumbstickUp,
     /**
      * The XBox One gamepad right thumbstick's down.
     **/
-    GamepadRightThumbstickDown,
+    gamepadRightThumbstickDown,
     /**
      * The XBox One gamepad right thumbstick's right.
     **/
-    GamepadRightThumbstickRight,
+    gamepadRightThumbstickRight,
     /**
      * The XBox One gamepad right thumbstick's left.
     **/
-    GamepadRightThumbstickLeft,
+    gamepadRightThumbstickLeft,
     /**
         * The open bracket key ([).
     **/
@@ -1052,7 +1052,7 @@ export declare function _getPreciseTotalWidth(element: HTMLElement): number;
 export declare function _getPreciseContentHeight(element: HTMLElement): number;
 export declare function _getPreciseContentWidth(element: HTMLElement): number;
 export declare function _getPreciseMargins(element: HTMLElement): { top: number; right: number; bottom: number; left: number; };
-export declare function _getComputedStyle(element: Element, pseudoElement?: string): CSSStyleDeclaration; 
+export declare function _getComputedStyle(element: Element, pseudoElement?: string): CSSStyleDeclaration;
 export declare function _ensureId(element: HTMLElement): void;
 export declare function _setAttribute(element: HTMLElement, attribute: string, value: string): void;
 export declare function _zoomTo(element: HTMLElement, zoomToOptions: { contentX?: number; contentY?: number; viewportX?: number; viewportY?: number }): void;
