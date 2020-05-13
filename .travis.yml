@@ -2,8 +2,10 @@ language: node_js
 sudo: false
 node_js:
 - '0.11.14'
-before_script:
+install:
+- npm install
 - npm install -g grunt-cli
+before_script:
 - git submodule update --init --recursive
 script:
 - grunt release
