@@ -1475,17 +1475,17 @@ define([
             return animationPromise.then(function () { writeAnimationProfilerMark("enterContent,StopTM"); });
         },
 
-        exitContent: function (outgoing, offset) {
-            /// <signature helpKeyword="WinJS.UI.Animation.exitContent">
-            /// <summary locid="WinJS.UI.Animation.exitContent">
-            /// Execute an exit-content animation.
+        exitAnimation: function (outgoing, offset, startProfileMark, stopProfileMark) {
+            /// <signature helpKeyword="WinJS.UI.Animation.exitAnimation">
+            /// <summary locid="WinJS.UI.Animation.exitAnimation">
+            /// Execute an exit animation.
             /// </summary>
-            /// <param name="outgoing" locid="WinJS.UI.Animation.exitContent_p:outgoing">
+            /// <param name="outgoing" locid="WinJS.UI.Animation.exitAnimation_p:outgoing">
             /// Single element or collection of elements which represent
-            /// the outgoing content.
+            /// the outgoing animation.
             /// At the end of the animation, the opacity of the elements is 0.
             /// </param>
-            /// <param name="offset" locid="WinJS.UI.Animation.exitContent_p:offset">
+            /// <param name="offset" locid="WinJS.UI.Animation.exitAnimation_p:offset">
             /// Optional offset object or collection of offset objects
             /// array describing the ending point of the animation.
             /// If the number of offset objects is less than the length of the
@@ -1497,7 +1497,7 @@ define([
             /// Promise object that completes when the animation is complete.
             /// </returns>
             /// </signature>
-            writeAnimationProfilerMark("exitContent,StartTM");
+            writeAnimationProfilerMark(startProfileMark);
 
             var offsetArray = new OffsetArray(offset, "WinJS-exit", [{ top: "0px", left: "0px" }]);
             var promise1 = _TransitionAnimation.executeAnimation(
@@ -1522,7 +1522,11 @@ define([
                     to: 0
                 });
             return Promise.join([promise1, promise2])
-                .then(function () { writeAnimationProfilerMark("exitContent,StopTM"); });
+                .then(function () { writeAnimationProfilerMark(stopProfileMark); });
+        },
+
+        exitContent: function (outgoing, offset) {
+            return this.exitAnimation(outgoing, offset, "exitContent,StartTM", "exitContent,StopTM");
         },
 
         dragBetweenEnter: function (target, offset) {
@@ -1778,53 +1782,7 @@ define([
         },
 
         exitPage: function (outgoing, offset) {
-            /// <signature helpKeyword="WinJS.UI.Animation.exitPage">
-            /// <summary locid="WinJS.UI.Animation.exitPage">
-            /// Execute an exitPage animation.
-            /// </summary>
-            /// <param name="outgoing" locid="WinJS.UI.Animation.exitPage_p:outgoing">
-            /// Single element or collection of elements representing
-            /// the outgoing page.
-            /// At the end of the animation, the opacity of the elements is 0.
-            /// </param>
-            /// <param name="offset" locid="WinJS.UI.Animation.exitPage_p:offset">
-            /// Optional offset object or collection of offset objects
-            /// array describing the ending point of the animation.
-            /// If the number of offset objects is less than the length of the
-            /// outgoing parameter, then the last value is repeated for all
-            /// remaining elements.
-            /// If this parameter is omitted, then a default value is used.
-            /// </param>
-            /// <returns type="WinJS.Promise" locid="WinJS.UI.Animation.exitPage_returnValue">
-            /// Promise object that completes when the animation is complete.
-            /// </returns>
-            /// </signature>
-            writeAnimationProfilerMark("exitPage,StartTM");
-
-            var offsetArray = new OffsetArray(offset, "WinJS-exit", [{ top: "0px", left: "0px" }]);
-            var promise1 = _TransitionAnimation.executeAnimation(
-                outgoing,
-                offset && {
-                    keyframe: offsetArray.keyframe,
-                    property: transformNames.cssName,
-                    delay: 0,
-                    duration: 117,
-                    timing: "linear",
-                    from: "none",
-                    to: offsetArray.keyframe || translateCallback(offsetArray)
-                });
-
-            var promise2 = _TransitionAnimation.executeTransition(
-                outgoing,
-                {
-                    property: "opacity",
-                    delay: 0,
-                    duration: 117,
-                    timing: "linear",
-                    to: 0
-                });
-            return Promise.join([promise1, promise2])
-                .then(function () { writeAnimationProfilerMark("exitPage,StopTM"); });
+            return this.exitAnimation(outgoing, offset, "exitPage,StartTM", "exitPage,StopTM");
         },
 
         crossFade: function (incoming, outgoing) {
