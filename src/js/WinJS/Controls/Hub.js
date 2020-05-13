@@ -960,7 +960,7 @@ define([
                 _measure: function hub_measure() {
                     // Any time a size changes (section growing, window resizing, etc) cachedSizes should be set to false
                     // and any time the variables need to be read again we should measure the variables. To avoid a lot of
-                    // seperate layouts we measure the variables in a single batch.
+                    // separate layouts we measure the variables in a single batch.
                     if (!this._measured || this._scrollLength === 0) {
                         this._writeProfilerMark("measure,StartTM");
                         this._measured = true;
