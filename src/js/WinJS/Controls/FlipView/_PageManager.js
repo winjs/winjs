@@ -779,7 +779,7 @@ define([
                                 then(function (e) {
                                     if (e === element) {
                                         // Because the VDS and Binding.List can send notifications in
-                                        // different states we accomodate this here by fixing the case
+                                        // different states we accommodate this here by fixing the case
                                         // where VDS hasn't yet removed an item when it sends a removed
                                         // or moved notification.
                                         //
@@ -799,7 +799,7 @@ define([
                                 then(function (e) {
                                     if (e === element) {
                                         // Because the VDS and Binding.List can send notifications in
-                                        // different states we accomodate this here by fixing the case
+                                        // different states we accommodate this here by fixing the case
                                         // where VDS hasn't yet removed an item when it sends a removed
                                         // or moved notification.
                                         //
